@@ -1,0 +1,55 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - syllabus.qmd
+    - teaching_notes.qmd
+    - resources.qmd
+    - slides/*.qmd
+    - notes/*.qmd
+    - exercises/*.qmd
+metadata-files:
+  - course.yml
+website:
+  title: "Example Course"
+  repo-url: "{{< meta repository.url >}}"
+  repo-actions: [edit, issue]
+  sidebar:
+    style: docked
+    search: true
+    contents:
+      - text: Home
+        href: index.qmd
+      - text: Syllabus
+        href: syllabus.qmd
+      - text: Teaching notes
+        href: teaching_notes.qmd
+      - text: Resources
+        href: resources.qmd
+      - section: Materials
+        contents:
+          - text: Example slides
+            href: slides/session_01.qmd
+          - text: Example notes
+            href: notes/session_01.qmd
+          - text: Example exercise
+            href: exercises/session_01.qmd
+format:
+  html:
+    theme: cosmo
+    toc: false
+    css: assets/styles.css
+    include-after-body: assets/repo-actions-bottom.html
+  revealjs:
+    theme: [default, assets/reveal.scss]
+    css: assets/reveal-frankfurt.css
+    include-after-body: assets/reveal-frankfurt.js
+    slide-number: false
+    chalkboard: false
+    preview-links: auto
+    menu: false
+    self-contained: false
+bibliography: bibliography.bib
+execute:
+  freeze: auto

@@ -1,0 +1,15 @@
+generated_from: course.yml
+handbook_schema_note: No handbook_event_match configured; using sessions from course.yml. Current handbook events may lack stable course_id, session_id, and event_id fields.
+sessions:
+  -
+    session_id: session-01
+    title: Example session
+    subtitle: Introduction
+    date: 2027-04-12
+    start: '09:00'
+    end: '10:30'
+    location: Room TBD
+    event_id: null
+    slides: slides/session_01.qmd
+    notes: notes/session_01.qmd
+    exercise: exercises/session_01.qmd

@@ -1,0 +1,17 @@
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const content = document.querySelector('main.content, main');
+  const links = Array.from(document.querySelectorAll('a[href]')).filter((link) => {
+    const href = link.getAttribute('href') || '';
+    return /\/edit\//.test(href) || /\/issues\/(new|choose)/.test(href);
+  });
+  if (!content || links.length === 0) return;
+
+  const existing = document.querySelector('.repo-actions-bottom');
+  const actions = existing || document.createElement('nav');
+  actions.className = 'repo-actions-bottom';
+  actions.setAttribute('aria-label', 'Repository actions');
+  links.forEach((link) => actions.appendChild(link));
+  content.appendChild(actions);
+});
+</script>

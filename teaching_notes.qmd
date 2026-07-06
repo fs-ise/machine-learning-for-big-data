@@ -1,0 +1,19 @@
+---
+title: Teaching notes
+---
+
+These notes help another instructor or teaching assistant run the course.
+
+## Course-level preparation
+
+- Review the syllabus and session notes before the semester starts.
+- Run the external checks configured for the instantiated repository after metadata changes.
+- Run `make site` before publishing substantial updates.
+
+## Sessions
+
+- [Session 01 notes](notes/session_01.qmd)
+
+## Continuous improvement
+
+After each session, record what worked, what confused students, and what should change next time.

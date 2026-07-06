@@ -1,0 +1,30 @@
+.session-table table { width: 100%; }
+.status-completed { color: #14853d; }
+.status-today { color: #b58900; }
+.status-upcoming { color: #666666; }
+
+.repo-actions-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--bs-border-color, #dee2e6);
+}
+
+.repo-actions-bottom {
+  font-size: 0.82rem;
+  opacity: 0.72;
+}
+
+.repo-actions-bottom a {
+  color: var(--bs-secondary-color, #6c757d);
+  text-decoration: none;
+}
+
+.repo-actions-bottom a:hover,
+.repo-actions-bottom a:focus {
+  opacity: 1;
+  text-decoration: underline;
+}

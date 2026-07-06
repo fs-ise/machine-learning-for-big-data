@@ -1,0 +1,83 @@
+---
+title: Example session notes
+session_id: session-01
+event_id: null
+---
+
+::: {.callout-note}
+## Session objective {#session-objective}
+
+By the end of the session, students can explain how course metadata, session files, generated data, and Quarto rendering fit together in a reusable teaching repository.
+:::
+
+## Learning objectives {#learning-objectives}
+
+Students should be able to:
+
+- identify the role of `course.yml` as the course metadata source;
+- distinguish reusable infrastructure from course-specific content;
+- locate slides, notes, exercises, generated data, and publication settings;
+- explain how handbook schedule synchronization supports maintainable session overviews.
+
+## Preparation {#preparation}
+
+Before class, render or inspect the site locally and check that the landing page shows the session overview.
+
+Review `course.yml`, `index.qmd`, `slides/session_01.qmd`, and `data/sessions.generated.yml`.
+
+Prepare a short example of a change that belongs in metadata and a change that belongs in session content.
+
+## Timing and topics {#timing-and-topics}
+
+| Time | Topic | Instructor action | Student activity |
+|---:|---|---|---|
+| 0--10 min | Orientation | Open the landing page and explain the repository purpose. | Identify visible course elements. |
+| 10--25 min | Metadata model | Walk through `course.yml` and generated session data. | Mark values that change for a new course. |
+| 25--45 min | Material structure | Compare slides, notes, and exercises for one session. | Explain why each artifact is separate. |
+| 45--60 min | In-class exercise | Facilitate repository-customization decisions. | Propose minimal changes for a new course. |
+| 60--70 min | Wrap-up | Summarize conventions and next steps. | Ask remaining questions. |
+
+## Instructor guidance {#instructor-guidance}
+
+Emphasize that the template is not a course by itself.
+
+It is a starting point for courses that need consistent publication, rendering, and maintenance conventions.
+
+When students suggest duplicating values, redirect them to the metadata source of truth.
+
+When students ask where to add course-specific material, point to the corresponding session file.
+
+::: {.callout-tip}
+### Optional content marker {#optional-content-marker}
+
+If time permits, show how `make sync-events` updates generated schedule data without requiring remote data during Quarto rendering.
+:::
+
+## Exercise instructions {#exercise-instructions}
+
+Ask students to inspect `course.yml` and answer the exercise questions in `exercises/session_01.qmd`.
+
+Then ask them to classify each proposed change as infrastructure, metadata, generated data, or teaching content.
+
+## Common errors and questions {#common-errors-and-questions}
+
+| Issue | Likely cause | Response |
+|---|---|---|
+| The same title appears in several files. | Metadata was copied instead of referenced. | Keep structural metadata in `course.yml`. |
+| A session appears without materials. | The session file path is missing or incorrect. | Check the session references in `course.yml`. |
+| Schedule data look stale. | Generated data were not refreshed after a schedule change. | Run `make sync-events`. |
+| A column layout creates extra slides. | A level-2 heading was used inside columns. | Use bold labels or lower-level headings inside columns. |
+
+## Fallback options {#fallback-options}
+
+If Quarto is unavailable, inspect source files directly and explain the rendering flow conceptually.
+
+If schedule synchronization is unavailable, use the configured sessions in `course.yml` and regenerate later.
+
+## Lessons learned {#lessons-learned}
+
+Record after teaching:
+
+- Which repository conventions were clear?
+- Which distinctions between metadata, generated data, and content were confusing?
+- Which examples should be added, removed, or simplified next time?

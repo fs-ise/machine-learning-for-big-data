@@ -1,0 +1,12 @@
+_site/
+_freeze/
+_pdf-tmp/
+.quarto/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+.server.pid
+.cache/
+
+/.quarto/
+**/*.quarto_ipynb

@@ -1,0 +1,30 @@
+reviewed_sources:
+  - repository: fs-ise/analytics-and-big-data
+    url: https://github.com/fs-ise/analytics-and-big-data
+    reviewed_ref: main
+    reviewed_sha: unavailable-network-clone-blocked-2026-07-08
+    reusable_patterns: [Makefile targets, slide PDF workflow, exercise profiles, Quarto layout]
+  - repository: fs-ise/open-source-project
+    url: https://github.com/fs-ise/open-source-project
+    reviewed_ref: main
+    reviewed_sha: unavailable-network-clone-blocked-2026-07-08
+    reusable_patterns: [session progress indicators]
+  - repository: fs-ise/quarto-template-presentation
+    url: https://github.com/fs-ise/quarto-template-presentation
+    reviewed_ref: main
+    reviewed_sha: unavailable-network-clone-blocked-2026-07-08
+    reusable_patterns: [presentation conventions, shared reveal styling]
+  - repository: fs-ise/handbook
+    url: https://github.com/fs-ise/handbook
+    reviewed_ref: main
+    reviewed_sha: unavailable-network-clone-blocked-2026-07-08
+    reusable_patterns: [events.yaml scheduling source, repository principles]
+update_process:
+  - Compare each source repository against its last reviewed SHA.
+  - Identify potentially reusable improvements.
+  - Classify changes as reusable infrastructure, reusable teaching convention, course-specific, or obsolete or experimental.
+  - Incorporate only generally reusable improvements.
+  - Update the recorded SHA.
+notes:
+  - Do not implement blind synchronization from a teaching repository into this template.
+  - Replace unavailable SHA markers after a network-enabled local clone can record exact commits.

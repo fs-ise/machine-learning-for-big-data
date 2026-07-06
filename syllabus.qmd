@@ -1,0 +1,41 @@
+---
+title: Syllabus
+---
+
+## Course description
+
+This page documents the public syllabus for {{< meta course.title >}}.
+
+Replace this text with a concise course-specific description after creating a repository from the template.
+
+## Learning objectives
+
+After the course, students should be able to:
+
+- explain the central concepts introduced in the sessions;
+- apply course methods to realistic tasks;
+- discuss trade-offs and limitations;
+- document their work reproducibly.
+
+## Teaching approach
+
+The template supports Git-based, reproducible, and contribution-oriented teaching.
+
+Git sessions can draw on recommendations for teaching conceptual Git models before command memorization [@WagnerThurner2025].
+
+Software-development courses can adapt the structured package-development course pattern and instructor-guide approach [@WagnerThurnerTangOtt2026].
+
+Project-based open-source courses can use the CONTRIBUTE framework to scaffold student participation in authentic development projects [@ThurnerWagner2026].
+
+## Assessment
+
+Describe assessment rules in the instantiated course repository.
+
+## Communication
+
+Use stable course landing links instead of semester-specific LMS deep links where feasible.
+
+## References
+
+::: {#refs}
+:::

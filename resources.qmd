@@ -1,0 +1,9 @@
+---
+title: Resources
+---
+
+## General resources
+
+Add reusable readings, software setup instructions, and support links here.
+
+Use accessible link text and remove this page if the course does not need shared resources.

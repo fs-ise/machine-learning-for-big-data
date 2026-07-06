@@ -1,0 +1,262 @@
+course:
+  id: mlbd
+  title: "Machine Learning for Big Data"
+  short_title: MLBD
+  semester: 2026-WiSe
+  level: Master
+  language: English
+  credits: 6
+  description: "TODO: MLBD Description"
+repository:
+  organization: fs-ise
+  name: machine-learning-for-big-data
+  url: https://github.com/fs-ise/machine-learning-for-big-data
+instructor:
+  name: Gerit Wagner
+schedule:
+  handbook_event_match: "Machine Learning for Big Data"
+  timezone: Europe/Berlin
+  source_path: data/events.yaml
+sessions:
+  - session_id: session-01
+    type: lecture
+    date: 2026-09-04
+    start: '10:00'
+    end: '11:30'
+    location: 'S2.11 (EDV). Room capacity: 30'
+    event_id: 274990-1926698564-0@timeedit.com
+    materials:
+      - type: slides
+        path: slides/lecture_1.html
+      - type: notes
+        path: notes/lecture_1.html
+  - session_id: session-02
+    type: exercise
+    date: 2026-09-04
+    start: '11:45'
+    end: '13:15'
+    location: 'S2.11 (EDV). Room capacity: 30'
+    event_id: 274991-1926698564-0@timeedit.com
+    materials:
+      - type: exercise
+        path: exercises/exercise_1.html
+  - session_id: session-03
+    type: lecture
+    date: 2026-09-04
+    start: '14:15'
+    end: '15:45'
+    location: 'S2.11 (EDV). Room capacity: 30'
+    event_id: 274992-1926698564-0@timeedit.com
+    materials:
+      - type: slides
+        path: slides/lecture_2.html
+      - type: notes
+        path: notes/lecture_2.html
+  - session_id: session-04
+    type: exercise
+    date: 2026-09-04
+    start: '16:00'
+    end: '17:30'
+    location: 'S2.11 (EDV). Room capacity: 30'
+    event_id: 274993-1926698564-0@timeedit.com
+    materials:
+      - type: exercise
+        path: exercises/exercise_2.html
+  - session_id: session-05
+    type: lecture
+    date: 2026-09-11
+    start: '10:00'
+    end: '11:30'
+    location: 'S2.11 (EDV). Room capacity: 30'
+    event_id: 274994-1926698564-0@timeedit.com
+    materials:
+      - type: slides
+        path: slides/lecture_3.html
+      - type: notes
+        path: notes/lecture_3.html
+  - session_id: session-06
+    type: exercise
+    date: 2026-09-11
+    start: '11:45'
+    end: '13:15'
+    location: 'S2.11 (EDV). Room capacity: 30'
+    event_id: 274995-1926698564-0@timeedit.com
+    materials:
+      - type: exercise
+        path: exercises/exercise_3.html
+  - session_id: session-07
+    type: lecture
+    date: 2026-09-11
+    start: '14:15'
+    end: '15:45'
+    location: 'S2.11 (EDV). Room capacity: 30'
+    event_id: 274996-1926698564-0@timeedit.com
+    materials:
+      - type: slides
+        path: slides/lecture_4.html
+      - type: notes
+        path: notes/lecture_4.html
+  - session_id: session-08
+    type: exercise
+    date: 2026-09-11
+    start: '16:00'
+    end: '17:30'
+    location: 'S2.11 (EDV). Room capacity: 30'
+    event_id: 274997-1926698564-0@timeedit.com
+    materials:
+      - type: exercise
+        path: exercises/exercise_4.html
+  - session_id: session-09
+    type: lecture
+    date: 2026-09-17
+    start: '10:00'
+    end: '11:30'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275000-1926698564-0@timeedit.com
+    materials:
+      - type: slides
+        path: slides/lecture_5.html
+      - type: notes
+        path: notes/lecture_5.html
+  - session_id: session-10
+    type: exercise
+    date: 2026-09-17
+    start: '11:45'
+    end: '13:15'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275001-1926698564-0@timeedit.com
+    materials:
+      - type: exercise
+        path: exercises/exercise_5.html
+  - session_id: session-11
+    type: lecture
+    date: 2026-09-18
+    start: '10:00'
+    end: '11:30'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 274998-1926698564-0@timeedit.com
+    materials:
+      - type: slides
+        path: slides/lecture_6.html
+      - type: notes
+        path: notes/lecture_6.html
+  - session_id: session-12
+    type: exercise
+    date: 2026-09-18
+    start: '11:45'
+    end: '13:15'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 274999-1926698564-0@timeedit.com
+    materials:
+      - type: exercise
+        path: exercises/exercise_6.html
+  - session_id: session-13
+    type: lecture
+    date: 2026-09-25
+    start: '10:00'
+    end: '11:30'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275002-1926698564-0@timeedit.com
+    materials:
+      - type: slides
+        path: slides/lecture_7.html
+      - type: notes
+        path: notes/lecture_7.html
+  - session_id: session-14
+    type: exercise
+    date: 2026-09-25
+    start: '11:45'
+    end: '13:15'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275003-1926698564-0@timeedit.com
+    materials:
+      - type: exercise
+        path: exercises/exercise_7.html
+  - session_id: session-15
+    type: lecture
+    date: 2026-09-25
+    start: '14:15'
+    end: '15:45'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275004-1926698564-0@timeedit.com
+    materials:
+      - type: slides
+        path: slides/lecture_8.html
+      - type: notes
+        path: notes/lecture_8.html
+  - session_id: session-16
+    type: exercise
+    date: 2026-09-25
+    start: '16:00'
+    end: '17:30'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275005-1926698564-0@timeedit.com
+    materials:
+      - type: exercise
+        path: exercises/exercise_8.html
+  - session_id: session-17
+    type: lecture
+    date: 2026-10-02
+    start: '10:00'
+    end: '11:30'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275006-1926698564-0@timeedit.com
+    materials:
+      - type: slides
+        path: slides/lecture_9.html
+      - type: notes
+        path: notes/lecture_9.html
+  - session_id: session-18
+    type: exercise
+    date: 2026-10-02
+    start: '11:45'
+    end: '13:15'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275007-1926698564-0@timeedit.com
+    materials:
+      - type: exercise
+        path: exercises/exercise_9.html
+  - session_id: session-19
+    type: lecture
+    date: 2026-10-02
+    start: '14:15'
+    end: '15:45'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275008-1926698564-0@timeedit.com
+    materials:
+      - type: slides
+        path: slides/lecture_10.html
+      - type: notes
+        path: notes/lecture_10.html
+  - session_id: session-20
+    type: exercise
+    date: 2026-10-02
+    start: '16:00'
+    end: '17:30'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275009-1926698564-0@timeedit.com
+    materials:
+      - type: exercise
+        path: exercises/exercise_10.html
+  - session_id: session-21
+    type: lecture
+    date: 2026-10-09
+    start: '10:00'
+    end: '11:30'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275010-1926698564-0@timeedit.com
+    materials:
+      - type: slides
+        path: slides/lecture_11.html
+      - type: notes
+        path: notes/lecture_11.html
+  - session_id: session-22
+    type: exercise
+    date: 2026-10-09
+    start: '11:45'
+    end: '13:15'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    event_id: 275011-1926698564-0@timeedit.com
+    materials:
+      - type: exercise
+        path: exercises/exercise_11.html

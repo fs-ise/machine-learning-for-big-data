@@ -1,0 +1,23 @@
+/*-- scss:defaults --*/
+$presentation-heading-color: #1f3a5f;
+$link-color: #1f6feb;
+
+/*-- scss:rules --*/
+.reveal .discussion {
+  border-left: 0.35rem solid #1f6feb;
+  padding-left: 1rem;
+}
+.reveal .exercise {
+  border-left: 0.35rem solid #14853d;
+  padding-left: 1rem;
+}
+.reveal .optional {
+  opacity: 0.86;
+  border-left: 0.35rem solid #888;
+  padding-left: 1rem;
+}
+.reveal .highlight_must_learn {
+  border-left: 0.45rem solid #d9480f;
+  background: rgba(217, 72, 15, 0.08);
+  padding: 0.75rem 1rem;
+}

@@ -1,0 +1,6 @@
+format:
+  revealjs:
+    output-ext: html
+    pdf-separate-fragments: false
+    menu: false
+    chalkboard: false

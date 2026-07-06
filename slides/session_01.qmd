@@ -1,0 +1,94 @@
+---
+title: Example session
+subtitle: Introduction
+session_id: session-01
+event_id: null
+format: revealjs
+---
+
+# Welcome
+
+This example deck demonstrates reusable slide conventions for a teaching repository.
+
+Use one slide deck per session.
+
+## {data-menu-title="Learning objectives" data-state="hide-menubar"}
+
+<br><br><br><br><br>
+
+::: {.learning-objectives}
+- explain the repository structure;
+- distinguish metadata, generated data, and teaching content;
+- identify which files to change when creating a new course.
+:::
+
+# Format examples {data-stack-name="Format examples"}
+
+## Teaching goals {data-state="hide-menubar"}
+
+The teaching goal is to make repository conventions visible before students or instructors start adding course-specific material.
+
+::: {.highlight_must_learn}
+**Must learn.**
+Course repositories stay maintainable when repeated structural information lives in one metadata source.
+:::
+
+## Core concept  {data-state="hide-menubar"}
+
+::: {.highlight_must_learn}
+**Essential concept.**
+A teaching repository separates reusable infrastructure, configurable metadata, generated data, and course-specific content.
+:::
+
+## Working with columns  {data-state="hide-menubar"}
+
+:::: {.columns}
+::: {.column width="50%"}
+**Instructor focus**
+
+- State the learning goal.
+- Connect to prior knowledge.
+:::
+
+::: {.column width="50%"}
+**Student focus**
+
+- Identify assumptions.
+- Ask clarification questions.
+:::
+::::
+
+# Discussion prompt
+
+::: {.discussion}
+**Discuss.**
+Which information belongs in `course.yml`, and which information belongs in a session file?
+:::
+
+# In-class exercise
+
+::: {.exercise}
+**Exercise.**
+Open `course.yml` and identify the fields that must change for a new course.
+:::
+
+# Optional learning note
+
+::: {.optional}
+**Optional.**
+Quarto projects support shared metadata, which keeps repeated document options in one place [@QuartoProjects].
+:::
+
+# Summary
+
+::: {.highlight_must_learn}
+**Take away.**
+Use `course.yml` for course metadata, one source file per session artifact, generated YAML for schedule data, and Quarto for publication.
+:::
+
+Before the next session, replace the example content with course-specific material and keep reusable infrastructure generic.
+
+# References
+
+::: {#refs}
+:::

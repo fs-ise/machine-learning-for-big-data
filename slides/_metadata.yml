@@ -1,0 +1,35 @@
+format:
+  revealjs:
+    author: "Prof. Dr. Gerit Wagner"
+    theme: simple
+    width: 1600
+    height: 900
+    lazy-load: true
+    slide-number: true
+    include-before-body: ../assets/header.html
+    template-partials:
+      - ../assets/title-slide.html
+    css:
+      - ../assets/frankfurt.css
+    filters:
+      - ../assets/inline-svg-no-embed.lua
+    auto-stretch: false
+    slide-level: 2
+    title-slide-attributes:
+      data-state: "hide-menubar"
+    center: false
+    section-divs: true
+    simplemenu:
+      barhtml:
+        header: ""
+        footer: "<div class='menubar'><ul class='menu'></ul><div class='slide-number'></div></div>"
+      scale: 0.67
+    mermaid:
+      theme: default
+    chalkboard:
+      theme: whiteboard
+      boardmarker-width: 5
+      buttons: false
+
+revealjs-plugins:
+  - simplemenu
