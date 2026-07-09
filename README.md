@@ -1,16 +1,22 @@
-# FS-ISE teaching repository template
+<p align="center">
+    <img alt="Machine Learning for Big Data logo" src="assets/mlbd-logo-long.png" width="600px">
+</p>
 
-This repository is a reusable Quarto template for FS-ISE teaching repositories.
+<div align="center">
 
-For setup, customization, publication, and maintenance guidance, use the FS-ISE handbook page: <https://fs-ise.github.io/handbook/teaching/repository_setup.html>.
+![Offered by: FS-ISE](https://img.shields.io/badge/Offered%20by-FS--ISE-blue)
+![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-green.svg)
 
-## Quick start
+</div>
 
-1. Create a new repository from this template.
-2. Update `course.yml` with the course metadata, repository name, instructor information, schedule configuration, and session file references.
-3. Replace the example session files in `slides/`, `notes/`, and `exercises/`.
-4. Run `make sync-events` when handbook schedule data are configured.
-5. Remove optional pages that the course does not need.
+# Machine Learning for Big Data
+
+Welcome! **Machine Learning for Big Data (MLBD)** is a teaching repository for the Machine Learning for Big Data course.
+You can find more information on the following pages:
+
+- [Course page](https://fs-ise.github.io/machine-learning-for-big-data/)
+- [Syllabus](https://fs-ise.github.io/machine-learning-for-big-data/syllabus.html)
+- [Teaching notes](https://fs-ise.github.io/machine-learning-for-big-data/teaching_notes.html)
 
 ## Key files
 
@@ -26,8 +32,6 @@ For setup, customization, publication, and maintenance guidance, use the FS-ISE 
 - `make sync-events` regenerates session schedule data.
 - `make clean` removes generated build artifacts.
 
-## Licensing
+## License
 
-Teaching content defaults to CC BY 4.0 unless noted otherwise.
-
-Helper scripts are template infrastructure and intentionally do not declare a separate software-license decision.
+The teaching contents are licensed under the [CC BY 4.0 License](https://creativecommons.org/licenses/by/4.0/) unless noted otherwise.

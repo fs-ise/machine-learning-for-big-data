@@ -2,10 +2,28 @@
 title: "{{< meta course.title >}}"
 ---
 
+<p align="left">
+  <img alt="Machine Learning for Big Data logo" src="assets/mlbd-logo-short.png" width="120px">
+</p>
+
+![Course Status](https://img.shields.io/badge/Current%20course--{{< meta course.semester >}}-green)
+[![Level](https://img.shields.io/badge/Level-{{< meta course.level >}}-blue)](syllabus.html)
+[![Degree Program](https://img.shields.io/badge/Degree%20Program-Master%20in%20Management-blue)](syllabus.html)
+[![Prerequisites](https://img.shields.io/badge/Prerequisites-Good%20Knowledge%20in%20Statistics-blue)](syllabus.html)
+![Duration](https://img.shields.io/badge/Work%20load-150h%20(6%20ECTS)-blue)<br>
+[![Language](https://img.shields.io/badge/Language-{{< meta course.language >}}-blue)](syllabus.html)
+[![Format](https://img.shields.io/badge/Format-Lecture%20%2B%20Exercises-blue)](syllabus.html)
+![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-green.svg)
+
+Instructor: {{< meta instructor.name >}}
+
+Welcome to **{{< meta course.title >}}**. This course introduces machine learning as a core part of data science for big data contexts, where analysts work with large, high-dimensional, and diverse datasets. Throughout the semester, you will learn how modern machine learning methods complement classical statistics, how to prepare and explore data, and how to build models for classification, prediction, and managerial decision support. The course combines lectures, in-class and home exercises, and practical work with R to help you connect methods and algorithms to real analytical problems.
+
+## Sessions
+
 ```{python}
 #| echo: false
 #| output: asis
 from scripts.session_overview import markdown_table
 print(markdown_table())
 ```
-

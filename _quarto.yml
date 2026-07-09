@@ -12,7 +12,8 @@ project:
 metadata-files:
   - course.yml
 website:
-  title: "Example Course"
+  title: "Machine Learning for Big Data"
+  favicon: assets/favicon.ico
   repo-url: "{{< meta repository.url >}}"
   repo-actions: [edit, issue]
   sidebar:
