@@ -299,11 +299,11 @@ def normalize_event(
     }
 
 
-def default_session_type(
+def default_event_type(
     position: int,
 ) -> str:
     """
-    Return the initial session type based on its
+    Return the initial event type based on its
     one-based position:
 
         1 -> lecture
@@ -321,7 +321,7 @@ def default_session_type(
 
 def default_materials(
     position: int,
-    session_type: str,
+    event_type: str,
 ) -> list[dict[str, str]]:
     """
     Generate initial material references.
@@ -332,20 +332,13 @@ def default_materials(
 
     material_number = (position + 1) // 2
 
-    if session_type == "lecture":
+    if event_type == "lecture":
         return [
             {
                 "type": "slides",
                 "path": (
                     f"slides/"
-                    f"lecture_{material_number}.html"
-                ),
-            },
-            {
-                "type": "notes",
-                "path": (
-                    f"notes/"
-                    f"lecture_{material_number}.html"
+                    f"session_{material_number:02d}.html"
                 ),
             },
         ]
@@ -355,14 +348,14 @@ def default_materials(
             "type": "exercise",
             "path": (
                 f"exercises/"
-                f"exercise_{material_number}.html"
+                f"session_{material_number:02d}.html"
             ),
         },
     ]
 
 
-def apply_missing_session_defaults(
-    sessions: list[dict[str, Any]],
+def apply_missing_event_defaults(
+    events: list[dict[str, Any]],
 ) -> None:
     """
     Add type and materials only when the fields are missing.
@@ -371,35 +364,35 @@ def apply_missing_session_defaults(
     empty materials list.
     """
 
-    for position, session in enumerate(
-        sessions,
+    for position, event in enumerate(
+        events,
         start=1,
     ):
-        if "type" not in session:
-            session["type"] = default_session_type(
+        if "type" not in event:
+            event["type"] = default_event_type(
                 position
             )
 
-        if "materials" not in session:
-            session["materials"] = default_materials(
+        if "materials" not in event:
+            event["materials"] = default_materials(
                 position,
-                str(session["type"]),
+                str(event["type"]),
             )
 
 
-def get_next_session_number(
-    sessions: list[dict[str, Any]],
+def get_next_event_number(
+    events: list[dict[str, Any]],
 ) -> int:
     numbers: list[int] = []
 
-    for session in sessions:
-        session_id = str(
-            session.get("session_id", "")
+    for event in events:
+        event_id = str(
+            event.get("event_id", "")
         )
 
         match = re.fullmatch(
-            r"session-(\d+)",
-            session_id,
+            r"event-(\d+)",
+            event_id,
         )
 
         if match:
@@ -410,27 +403,27 @@ def get_next_session_number(
     return max(numbers, default=0) + 1
 
 
-def merge_sessions(
-    events: list[dict[str, Any]],
-    existing_sessions: list[dict[str, Any]],
+def merge_events(
+    handbook_events: list[dict[str, Any]],
+    existing_events: list[dict[str, Any]],
 ) -> tuple[
     list[dict[str, Any]],
     int,
     int,
 ]:
-    sessions = [
-        dict(session)
-        for session in existing_sessions
+    events = [
+        dict(event)
+        for event in existing_events
     ]
 
-    # Backfill defaults for sessions created before
+    # Backfill defaults for events created before
     # type/materials were introduced.
-    apply_missing_session_defaults(sessions)
+    apply_missing_event_defaults(events)
 
-    session_index_by_event_id: dict[str, int] = {}
+    event_index_by_event_id: dict[str, int] = {}
 
-    for index, session in enumerate(sessions):
-        event_id = session.get("event_id")
+    for index, event in enumerate(events):
+        event_id = event.get("event_id")
 
         if event_id is None:
             continue
@@ -439,19 +432,19 @@ def merge_sessions(
 
         if (
             event_id_string
-            in session_index_by_event_id
+            in event_index_by_event_id
         ):
             raise SystemExit(
-                "Duplicate event_id in existing sessions: "
+                "Duplicate event_id in existing events: "
                 f"{event_id_string}"
             )
 
-        session_index_by_event_id[
+        event_index_by_event_id[
             event_id_string
         ] = index
 
-    next_session_number = get_next_session_number(
-        sessions
+    next_event_number = get_next_event_number(
+        events
     )
 
     n_updated = 0
@@ -459,8 +452,8 @@ def merge_sessions(
 
     seen_source_uids: set[str] = set()
 
-    for event in events:
-        event_data = normalize_event(event)
+    for handbook_event in handbook_events:
+        event_data = normalize_event(handbook_event)
 
         event_id = str(
             event_data["event_id"]
@@ -475,58 +468,58 @@ def merge_sessions(
         seen_source_uids.add(event_id)
 
         existing_index = (
-            session_index_by_event_id.get(
+            event_index_by_event_id.get(
                 event_id
             )
         )
 
         if existing_index is not None:
-            updated_session = dict(
-                sessions[existing_index]
+            updated_event = dict(
+                events[existing_index]
             )
 
             # Only update event-controlled fields.
             # User-controlled type and materials are preserved.
-            updated_session.update(
+            updated_event.update(
                 event_data
             )
 
-            sessions[existing_index] = (
-                updated_session
+            events[existing_index] = (
+                updated_event
             )
 
             n_updated += 1
             continue
 
-        position = len(sessions) + 1
+        position = len(events) + 1
 
-        session_type = default_session_type(
+        event_type = default_event_type(
             position
         )
 
-        new_session = {
-            "session_id": (
-                f"session-{next_session_number:02d}"
+        new_event = {
+            "event_id": (
+                f"event-{next_event_number:02d}"
             ),
-            "type": session_type,
+            "type": event_type,
             **event_data,
             "materials": default_materials(
                 position,
-                session_type,
+                event_type,
             ),
         }
 
-        sessions.append(new_session)
+        events.append(new_event)
 
-        session_index_by_event_id[
+        event_index_by_event_id[
             event_id
-        ] = len(sessions) - 1
+        ] = len(events) - 1
 
-        next_session_number += 1
+        next_event_number += 1
         n_added += 1
 
     return (
-        sessions,
+        events,
         n_updated,
         n_added,
     )
@@ -589,12 +582,12 @@ def compact_list_item_dashes(
     return "\n".join(result)
 
 
-def render_sessions(
-    sessions: list[dict[str, Any]],
+def render_events(
+    events: list[dict[str, Any]],
 ) -> str:
     rendered = yaml.safe_dump(
         {
-            "sessions": sessions,
+            "events": events,
         },
         sort_keys=False,
         allow_unicode=True,
@@ -605,27 +598,27 @@ def render_sessions(
     )
 
 
-def find_top_level_sessions_blocks(
+def find_top_level_events_blocks(
     lines: list[str],
 ) -> list[tuple[int, int]]:
     """
-    Find all top-level sessions blocks.
+    Find all top-level events or legacy sessions blocks.
 
     Handles both:
 
-        sessions: []
+        events: []
 
     and:
 
-        sessions:
-          - session_id: ...
+        events:
+          - event_id: ...
     """
 
     starts = [
         index
         for index, line in enumerate(lines)
         if re.match(
-            r"^sessions\s*:",
+            r"^(events|sessions)\s*:",
             line,
         )
     ]
@@ -653,25 +646,25 @@ def find_top_level_sessions_blocks(
     return blocks
 
 
-def replace_sessions_blocks(
+def replace_events_blocks(
     course_text: str,
-    sessions: list[dict[str, Any]],
+    events: list[dict[str, Any]],
 ) -> str:
     """
-    Replace all top-level sessions blocks with exactly one
-    synchronized sessions block.
+    Replace all top-level events blocks with exactly one
+    synchronized events block.
 
-    Also repairs files containing duplicate sessions blocks.
+    Also repairs files containing duplicate events blocks.
     """
 
     lines = course_text.splitlines()
 
-    blocks = find_top_level_sessions_blocks(
+    blocks = find_top_level_events_blocks(
         lines
     )
 
-    rendered_lines = render_sessions(
-        sessions
+    rendered_lines = render_events(
+        events
     ).splitlines()
 
     if not blocks:
@@ -753,6 +746,39 @@ def load_events(
 
     return events, url
 
+
+
+# Backward-compatible aliases for older tests and helper scripts.
+merge_sessions = merge_events
+render_sessions = render_events
+find_top_level_sessions_blocks = find_top_level_events_blocks
+replace_sessions_blocks = replace_events_blocks
+
+
+def select(
+    events: list[dict[str, Any]],
+    match: dict[str, Any],
+) -> list[dict[str, Any]]:
+    title_contains = str(match.get("title_contains", ""))
+
+    return [
+        event
+        for event in events
+        if title_contains.casefold() in str(event.get("title", "")).casefold()
+    ]
+
+
+def normalize(event: dict[str, Any]) -> dict[str, Any]:
+    event = dict(event)
+
+    if not event.get("source_uid"):
+        event["source_uid"] = (
+            "generated-"
+            f"{event.get('title', 'event')}-"
+            f"{event.get('start', '')}"
+        )
+
+    return normalize_event(event)
 
 def main(
     argv: list[str] | None = None,
@@ -844,32 +870,33 @@ def main(
         semester_end=semester_end,
     )
 
-    existing_sessions = (
-        course_config.get("sessions")
+    existing_events = (
+        course_config.get("events")
+        or course_config.get("sessions")
         or []
     )
 
     if not isinstance(
-        existing_sessions,
+        existing_events,
         list,
     ):
         raise SystemExit(
-            "course.yml sessions must be "
+            "course.yml events must be "
             "a list or empty."
         )
 
     (
-        sessions,
+        events,
         n_updated,
         n_added,
-    ) = merge_sessions(
+    ) = merge_events(
         selected_events,
-        existing_sessions,
+        existing_events,
     )
 
-    updated_course_text = replace_sessions_blocks(
+    updated_course_text = replace_events_blocks(
         course_text,
-        sessions,
+        events,
     )
 
     course_path.write_text(
@@ -879,9 +906,9 @@ def main(
 
     print(
         f"Updated {course_path}: "
-        f"{n_updated} sessions updated, "
-        f"{n_added} sessions added, "
-        f"{len(sessions)} sessions total."
+        f"{n_updated} events updated, "
+        f"{n_added} events added, "
+        f"{len(events)} events total."
     )
 
     print(

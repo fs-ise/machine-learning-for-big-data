@@ -3,6 +3,33 @@
 .status-today { color: #b58900; }
 .status-upcoming { color: #666666; }
 
+.event-badge {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: var(--bs-secondary-bg, #e9ecef);
+  color: var(--bs-secondary-color, #495057);
+  font-size: 0.75em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.event-badge-lecture {
+  background: #e7f1ff;
+  color: #0b5ed7;
+}
+
+.event-badge-exercise {
+  background: #e9f7ef;
+  color: #146c43;
+}
+
+.event-badge-group-presentation {
+  background: #fff3cd;
+  color: #997404;
+}
+
 .repo-actions-bottom {
   display: flex;
   flex-wrap: wrap;

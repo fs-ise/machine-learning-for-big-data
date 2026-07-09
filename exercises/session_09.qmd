@@ -1,6 +1,6 @@
 ---
-title: "Session 1: Basics in R"
-session_id: session-01
+title: "Session 9: ML for Non-Tabular Data (Image, Video, Audio)"
+session_id: session-09
 format:
   html: default
   ipynb: default
@@ -8,7 +8,7 @@ format:
 
 ## Task
 
-Work through the Session 1 exercise on Basics in R.
+Work through the Session 9 exercise on ML for Non-Tabular Data (Image, Video, Audio).
 
 ::: {.content-visible when-profile="assign"}
 1. Review the lecture concepts.

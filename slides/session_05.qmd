@@ -1,9 +1,9 @@
 ---
-title: "Session 1: Big Data"
+title: "Session 5: ML Baselines (Classification)"
 subtitle: "Lecture Slides"
-section_label: "Big Data"
-session: "Session 1"
-date: "2026-09-04"
+section_label: "ML Baselines (Classification)"
+session: "Session 5"
+date: "2026-09-17"
 format: revealjs
 ---
 

@@ -1,9 +1,9 @@
 ---
-title: "Session 1: Big Data"
+title: "Session 6: ML Foundations (Workflow)"
 subtitle: "Lecture Slides"
-section_label: "Big Data"
-session: "Session 1"
-date: "2026-09-04"
+section_label: "ML Foundations (Workflow)"
+session: "Session 6"
+date: "2026-09-18"
 format: revealjs
 ---
 

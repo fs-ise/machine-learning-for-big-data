@@ -43,8 +43,115 @@ def session_status(
     return "⚪ Upcoming", "status-upcoming"
 
 
+def load_events(root: Path = ROOT) -> list[dict[str, Any]]:
+    config = load_yaml(root / "course.yml")
+    return config.get("events", config.get("sessions", []))
+
+
+# Backward-compatible name for existing imports.
 def load_sessions(root: Path = ROOT) -> list[dict[str, Any]]:
-    return load_yaml(root / "course.yml").get("sessions", [])
+    return load_events(root)
+
+
+def material_source_path(path: str) -> str:
+    material_path = Path(path)
+
+    if material_path.suffix == ".html":
+        return str(material_path.with_suffix(".qmd"))
+
+    return path
+
+
+def read_material_title(root: Path, path: str) -> str | None:
+    source = root / material_source_path(path)
+
+    if not source.exists() or not source.is_file():
+        return None
+
+    in_front_matter = False
+
+    for line in source.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+
+        if stripped == "---":
+            if in_front_matter:
+                break
+
+            in_front_matter = True
+            continue
+
+        if not in_front_matter:
+            continue
+
+        if stripped.startswith("title:"):
+            return stripped.split(":", 1)[1].strip().strip('"\'')
+
+    return None
+
+
+def primary_material(event: dict[str, Any]) -> dict[str, Any] | None:
+    preferred = {
+        "lecture": ["slides"],
+        "exercise": ["exercise"],
+        "group presentation": ["slides", "presentation"],
+        "group_presentation": ["slides", "presentation"],
+    }
+
+    materials = event.get("materials", [])
+
+    if not isinstance(materials, list):
+        return None
+
+    event_type = str(event.get("type", "")).strip().casefold()
+    preferred_types = preferred.get(event_type, [])
+
+    for material_type in preferred_types:
+        for material in materials:
+            if str(material.get("type", "")).casefold() == material_type:
+                return material
+
+    for material in materials:
+        if str(material.get("type", "")).casefold() in {"slides", "exercise"}:
+            return material
+
+    return materials[0] if materials else None
+
+
+def event_badge(event_type: str) -> str:
+    labels = {
+        "lecture": "Lecture",
+        "exercise": "Exercise",
+        "group presentation": "Group presentation",
+        "group_presentation": "Group presentation",
+    }
+    label = labels.get(
+        event_type.strip().casefold(),
+        event_type.replace("_", " ").title() or "Event",
+    )
+    badge_slug = (
+        event_type.strip()
+        .casefold()
+        .replace("_", "-")
+        .replace(" ", "-")
+    )
+    class_name = f"event-badge event-badge-{badge_slug}"
+    return f'<span class="{class_name}">{label}</span>'
+
+
+def event_title(event: dict[str, Any], root: Path = ROOT) -> str:
+    material = primary_material(event)
+    title = None
+
+    if material and material.get("path"):
+        title = read_material_title(root, str(material["path"]))
+
+    title = title or event.get("title") or event.get("event_id") or "Event"
+    badge = event_badge(str(event.get("type", "event")))
+
+    if material and material.get("path"):
+        return f"[{title}]({material['path']}) {badge}"
+
+    return f"{title} {badge}"
 
 
 def material_links(session: dict[str, Any]) -> str:
@@ -77,24 +184,16 @@ def markdown_table(
     today: date | None = None,
 ) -> str:
     rows = [
-        "| Status | Session | Date | Time | Location | Materials |",
+        "| Status | Title | Date | Time | Location | Materials |",
         "|---|---|---|---|---|---|",
     ]
 
-    for session in load_sessions(root):
-        status, _ = session_status(session, today)
-
-        title = session.get(
-            "title",
-            session.get("session_id", "Session"),
-        )
-        subtitle = session.get("subtitle")
-
-        name = f"{title}: {subtitle}" if subtitle else title
+    for event in load_events(root):
+        status, _ = session_status(event, today)
 
         date_text = str(
-            session.get("date")
-            or session.get("start_date")
+            event.get("date")
+            or event.get("start_date")
             or "TBD"
         )
 
@@ -102,19 +201,19 @@ def markdown_table(
             "–".join(
                 value
                 for value in [
-                    str(session.get("start", "")),
-                    str(session.get("end", "")),
+                    str(event.get("start", "")),
+                    str(event.get("end", "")),
                 ]
                 if value
             )
             or "TBD"
         )
 
-        location = session.get("location") or "TBD"
-        materials = material_links(session)
+        location = event.get("location") or "TBD"
+        materials = material_links(event)
 
         rows.append(
-            f"| {status} | {name} | {date_text} | "
+            f"| {status} | {event_title(event, root)} | {date_text} | "
             f"{time_text} | {location} | {materials} |"
         )
 

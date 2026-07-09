@@ -1,6 +1,6 @@
 ---
-title: "Session 1: Basics in R"
-session_id: session-01
+title: "Session 8: ML for Non-Tabular Data (Text)"
+session_id: session-08
 format:
   html: default
   ipynb: default
@@ -8,7 +8,7 @@ format:
 
 ## Task
 
-Work through the Session 1 exercise on Basics in R.
+Work through the Session 8 exercise on ML for Non-Tabular Data (Text).
 
 ::: {.content-visible when-profile="assign"}
 1. Review the lecture concepts.

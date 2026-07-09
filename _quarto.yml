@@ -34,15 +34,14 @@ format:
     toc: false
     css: assets/styles.css
     include-after-body: assets/repo-actions-bottom.html
-  revealjs:
-    theme: [default, assets/reveal.scss]
-    css: assets/reveal-frankfurt.css
-    include-after-body: assets/reveal-frankfurt.js
-    slide-number: false
-    chalkboard: false
-    preview-links: auto
-    menu: false
-    self-contained: false
+    grid:
+      sidebar-width: 280px
+      body-width: 1000px
+      margin-width: 280px
+      gutter-width: 1.5rem
+
+
+format-links: false
 
 bibliography: bibliography.bib
 execute:

@@ -1,9 +1,9 @@
 ---
-title: "Session 1: Big Data"
+title: "Session 8: ML for Non-Tabular Data (Text)"
 subtitle: "Lecture Slides"
-section_label: "Big Data"
-session: "Session 1"
-date: "2026-09-04"
+section_label: "ML for Non-Tabular Data (Text)"
+session: "Session 8"
+date: "2026-09-25"
 format: revealjs
 ---
 

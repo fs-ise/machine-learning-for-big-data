@@ -1,6 +1,6 @@
 ---
-title: "Session 1: Basics in R"
-session_id: session-01
+title: "Session 3: EDA"
+session_id: session-03
 format:
   html: default
   ipynb: default
@@ -8,7 +8,7 @@ format:
 
 ## Task
 
-Work through the Session 1 exercise on Basics in R.
+Work through the Session 3 exercise on EDA.
 
 ::: {.content-visible when-profile="assign"}
 1. Review the lecture concepts.

@@ -1,9 +1,9 @@
 ---
-title: "Session 1: Big Data"
+title: "Session 3: EDA"
 subtitle: "Lecture Slides"
-section_label: "Big Data"
-session: "Session 1"
-date: "2026-09-04"
+section_label: "EDA"
+session: "Session 3"
+date: "2026-09-11"
 format: revealjs
 ---
 

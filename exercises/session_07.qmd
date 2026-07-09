@@ -1,6 +1,6 @@
 ---
-title: "Session 1: Basics in R"
-session_id: session-01
+title: "Session 7: ML Foundations (Algorithms)"
+session_id: session-07
 format:
   html: default
   ipynb: default
@@ -8,7 +8,7 @@ format:
 
 ## Task
 
-Work through the Session 1 exercise on Basics in R.
+Work through the Session 7 exercise on ML Foundations (Algorithms).
 
 ::: {.content-visible when-profile="assign"}
 1. Review the lecture concepts.

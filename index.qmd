@@ -8,3 +8,4 @@ title: "{{< meta course.title >}}"
 from scripts.session_overview import markdown_table
 print(markdown_table())
 ```
+
