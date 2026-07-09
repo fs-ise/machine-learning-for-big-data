@@ -2,15 +2,6 @@
 title: "{{< meta course.title >}}"
 ---
 
-{{< meta course.title >}} is a generic, configurable teaching repository.
-
-Use this landing page for syllabus links, teaching material, and the automatically generated session overview.
-
-- [Syllabus](syllabus.qmd)
-- [Teaching notes](teaching_notes.qmd)
-- [Resources](resources.qmd)
-- [Example slides](slides/session_01.qmd)
-
 ```{python}
 #| echo: false
 #| output: asis

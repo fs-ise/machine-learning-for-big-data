@@ -27,14 +27,7 @@ website:
         href: teaching_notes.qmd
       - text: Resources
         href: resources.qmd
-      - section: Materials
-        contents:
-          - text: Example slides
-            href: slides/session_01.qmd
-          - text: Example notes
-            href: notes/session_01.qmd
-          - text: Example exercise
-            href: exercises/session_01.qmd
+
 format:
   html:
     theme: cosmo
@@ -50,6 +43,7 @@ format:
     preview-links: auto
     menu: false
     self-contained: false
+
 bibliography: bibliography.bib
 execute:
   freeze: auto

@@ -23,7 +23,7 @@ sessions:
     date: 2026-09-04
     start: '10:00'
     end: '11:30'
-    location: 'S2.11 (EDV). Room capacity: 30'
+    location: 'S2.11'
     event_id: 274990-1926698564-0@timeedit.com
     materials:
       - type: slides
@@ -35,7 +35,7 @@ sessions:
     date: 2026-09-04
     start: '11:45'
     end: '13:15'
-    location: 'S2.11 (EDV). Room capacity: 30'
+    location: 'S2.11'
     event_id: 274991-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -45,7 +45,7 @@ sessions:
     date: 2026-09-04
     start: '14:15'
     end: '15:45'
-    location: 'S2.11 (EDV). Room capacity: 30'
+    location: 'S2.11'
     event_id: 274992-1926698564-0@timeedit.com
     materials:
       - type: slides
@@ -57,7 +57,7 @@ sessions:
     date: 2026-09-04
     start: '16:00'
     end: '17:30'
-    location: 'S2.11 (EDV). Room capacity: 30'
+    location: 'S2.11'
     event_id: 274993-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -67,7 +67,7 @@ sessions:
     date: 2026-09-11
     start: '10:00'
     end: '11:30'
-    location: 'S2.11 (EDV). Room capacity: 30'
+    location: 'S2.11'
     event_id: 274994-1926698564-0@timeedit.com
     materials:
       - type: slides
@@ -79,7 +79,7 @@ sessions:
     date: 2026-09-11
     start: '11:45'
     end: '13:15'
-    location: 'S2.11 (EDV). Room capacity: 30'
+    location: 'S2.11'
     event_id: 274995-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -89,7 +89,7 @@ sessions:
     date: 2026-09-11
     start: '14:15'
     end: '15:45'
-    location: 'S2.11 (EDV). Room capacity: 30'
+    location: 'S2.11'
     event_id: 274996-1926698564-0@timeedit.com
     materials:
       - type: slides
@@ -101,7 +101,7 @@ sessions:
     date: 2026-09-11
     start: '16:00'
     end: '17:30'
-    location: 'S2.11 (EDV). Room capacity: 30'
+    location: 'S2.11'
     event_id: 274997-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -111,7 +111,7 @@ sessions:
     date: 2026-09-17
     start: '10:00'
     end: '11:30'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275000-1926698564-0@timeedit.com
     materials:
       - type: slides
@@ -123,7 +123,7 @@ sessions:
     date: 2026-09-17
     start: '11:45'
     end: '13:15'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275001-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -133,7 +133,7 @@ sessions:
     date: 2026-09-18
     start: '10:00'
     end: '11:30'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 274998-1926698564-0@timeedit.com
     materials:
       - type: slides
@@ -145,7 +145,7 @@ sessions:
     date: 2026-09-18
     start: '11:45'
     end: '13:15'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 274999-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -155,7 +155,7 @@ sessions:
     date: 2026-09-25
     start: '10:00'
     end: '11:30'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275002-1926698564-0@timeedit.com
     materials:
       - type: slides
@@ -167,7 +167,7 @@ sessions:
     date: 2026-09-25
     start: '11:45'
     end: '13:15'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275003-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -177,7 +177,7 @@ sessions:
     date: 2026-09-25
     start: '14:15'
     end: '15:45'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275004-1926698564-0@timeedit.com
     materials:
       - type: slides
@@ -189,7 +189,7 @@ sessions:
     date: 2026-09-25
     start: '16:00'
     end: '17:30'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275005-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -199,7 +199,7 @@ sessions:
     date: 2026-10-02
     start: '10:00'
     end: '11:30'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275006-1926698564-0@timeedit.com
     materials:
       - type: slides
@@ -211,7 +211,7 @@ sessions:
     date: 2026-10-02
     start: '11:45'
     end: '13:15'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275007-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -221,7 +221,7 @@ sessions:
     date: 2026-10-02
     start: '14:15'
     end: '15:45'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275008-1926698564-0@timeedit.com
     materials:
       - type: slides
@@ -233,7 +233,7 @@ sessions:
     date: 2026-10-02
     start: '16:00'
     end: '17:30'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275009-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -243,7 +243,7 @@ sessions:
     date: 2026-10-09
     start: '10:00'
     end: '11:30'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275010-1926698564-0@timeedit.com
     materials:
       - type: slides
@@ -255,7 +255,7 @@ sessions:
     date: 2026-10-09
     start: '11:45'
     end: '13:15'
-    location: 'S2.07 (EDV). Room capacity: 36'
+    location: 'S2.07'
     event_id: 275011-1926698564-0@timeedit.com
     materials:
       - type: exercise

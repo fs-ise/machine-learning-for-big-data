@@ -2,40 +2,100 @@
 title: Syllabus
 ---
 
-## Course description
+# Machine Learning for Big Data [FIN72063]
 
-This page documents the public syllabus for {{< meta course.title >}}.
+| Field | Details |
+|---|-----------------------------|
+| Instructor | Wagner, Gerit |
+| Module Coordinator | Roßbach, Peter |
+| Programme(s) | Master in Management |
+| Term | Semester 3 Q1 |
+| Module Duration | 1 Semester |
+| Compulsory/Elective Module | Concentration Module |
+| Credits | 6 |
+| Frequency | Annually |
+| Language | English |
+| Total Workload | 150 h |
+| Academic Teaching Hours | 44 |
+| Remaining Workload | Self-study |
+| Prerequisites | Good Knowledge in Statistics |
 
-Replace this text with a concise course-specific description after creating a repository from the template.
+One academic teaching hour corresponds to 45 minutes.
 
-## Learning objectives
+Self-study includes lesson preparation and follow-up activities, reading assignments, assessment preparation, take-home assignments, etc.
 
-After the course, students should be able to:
+## Content
 
-- explain the central concepts introduced in the sessions;
-- apply course methods to realistic tasks;
-- discuss trade-offs and limitations;
-- document their work reproducibly.
+Machine Learning as part of Data Science is an emerging field in industry and academics. It covers methodologies and algorithms to tackle the challenges in times of big data, where we are confronted with large amounts of high-dimensional data of different types. While the classical statistical methods have some weaknesses in this area, new types of methods and algorithms have been developed. Today, they are widely used in science and practice, benefitting from the calculation power of modern computer technologies. These methods are a mixture of statistics, machine learning, data visualisation, and computer science.
 
-## Teaching approach
+This course provides an introduction into the field of machine learning, covering computational techniques and algorithms for finding and analysing patterns even in large-scale datasets. Topics to be covered include data collection, integration, analysis, visualisation, classification, prediction, and decision making. Students will implement and apply the methods using the software R.
 
-The template supports Git-based, reproducible, and contribution-oriented teaching.
+## Intended Learning Outcomes
 
-Git sessions can draw on recommendations for teaching conceptual Git models before command memorization [@WagnerThurner2025].
+### Knowledge
 
-Software-development courses can adapt the structured package-development course pattern and instructor-guide approach [@WagnerThurnerTangOtt2026].
+Students will acquire a comprehensive understanding of the challenges of data analysis in times of big data and learn how to apply modern methods of data analytics to different application areas. They can:
 
-Project-based open-source courses can use the CONTRIBUTE framework to scaffold student participation in authentic development projects [@ThurnerWagner2026].
+- Explain the specifics of data analysis in the case of big data.
+- Explain the differences between statistics and machine learning.
+- Apply modern methods of machine learning to different application areas.
+
+### Skills
+
+Students learn to analyse data, choose the appropriate modeling techniques, and construct models for decision support. They also learn how to implement data analytics processes using modern analytical languages like R. They are able to:
+
+- Choose the appropriate methods according to the problem to solve.
+- Develop analytics processes via different data analytics tools.
+- Train and tune models to achieve optimal results.
+- Analyse the resulting models to find the best solution.
+
+### Competences
+
+Students are qualified to find and analyse patterns in data and to transform the gained knowledge into managerial decisions. They acquire a fundamental background to fulfil the demands of a modern data scientist. They are able to:
+
+- Understand the underlying business problems.
+- Identify the problem-relevant data.
+- Build quantitative models to solve the problem, choosing from a variety of methods.
+- Transform model results into managerial decisions.
+
+## Forms of Teaching, Methods, and Support
+
+Lecture with in-class and home exercises, practical group work using Excel and R.
 
 ## Assessment
 
-Describe assessment rules in the instantiated course repository.
+| Type of examination | Duration or length | Performance Points | Due date or date of exam |
+|---|---|---|---|
+| Group project, text document | Ongoing | 120 | At the end of the module |
 
-## Communication
+## Recommended Literature
 
-Use stable course landing links instead of semester-specific LMS deep links where feasible.
+### General Introduction
 
-## References
+- Alpaydin [-@Alpaydin2016NewAI]
+- Schutt and O'Neil [-@SchuttONeil2013]
+- Schmarzo [-@Schmarzo2016]
 
-::: {#refs}
-:::
+### Methods and Algorithms
+
+- Alpaydin [-@Alpaydin2016IntroML]
+- Hastie, Tibshirani, and Friedman [-@HastieTibshiraniFriedman2009]
+- James et al. [-@JamesWittenHastieTibshirani2013]
+
+## Module Structure
+
+### 1. Big Data
+
+### 2. Fundamentals of Machine Learning
+
+- 2.1 What is Data Science?
+- 2.2 Statistics and Machine Learning
+- 2.3 Data Preparation
+- 2.4 Exploratory Data Analysis
+
+### 3. Methods, Algorithms, and Applications
+
+- 3.1 Classification
+- 3.2 Regression
+
+# References
