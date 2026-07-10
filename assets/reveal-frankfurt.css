@@ -46,22 +46,6 @@ body,
   height: calc(var(--fs-header-h) - 24px);  /* header height minus padding */
 }
 
-/* custom slide number  */
-#custom-slide-number {
-  position: fixed;
-  bottom: 20px;
-  right: 30px;
-  background-color: #003366; /* Frankfurt blue */
-  color: #ffffff;
-  padding: 6px 12px;
-  border-radius: 10px;
-  font-size: 1em;
-  font-weight: 600;
-  z-index: 1000;
-  opacity: 0.9;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-
 /* IMPORTANT: no extra margin-top — don't push slides down */
 .reveal .slides{
   margin-top: 0 !important;

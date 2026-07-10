@@ -10,13 +10,6 @@
   function updateChrome() {
     const title = document.getElementById('slide-title-display');
     if (title) title.textContent = currentTitle();
-
-    const number = document.getElementById('custom-slide-number');
-    if (number && window.Reveal) {
-      const indices = Reveal.getIndices();
-      const total = Reveal.getTotalSlides();
-      number.textContent = `${indices.h + indices.v + 1} / ${total}`;
-    }
   }
 
   function addChrome() {
@@ -25,12 +18,6 @@
       header.id = 'fs-header';
       header.innerHTML = `<span id="slide-title-display"></span><img src="${logoUrl}" alt="Frankfurt School Logo">`;
       document.body.appendChild(header);
-    }
-
-    if (!document.getElementById('custom-slide-number')) {
-      const number = document.createElement('div');
-      number.id = 'custom-slide-number';
-      document.body.appendChild(number);
     }
 
     updateChrome();
