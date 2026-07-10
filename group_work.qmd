@@ -94,7 +94,7 @@ Your project preference should identify a concrete business problem rather than 
 
 ### Application and allocation
 
-Submit your three ranked project preferences by **{{< var group_work.application_deadline >}}**.
+Submit your three ranked project preferences by **{{< meta group_work.application_deadline >}}**.
 Groups and projects will then be assigned based on the submitted preferences.
 
 ### Project work
@@ -104,7 +104,7 @@ Your work should progress from problem framing and dataset design to analysis, m
 
 ### Presentation
 
-- Presentation date: **{{< var group_work.presentation_date >}}**
+- Presentation date: **{{< meta group_work.presentation_date >}}**
 - Each group has **30 minutes** to present the project.
 - Up to **15 additional minutes** may be used for questions and discussion.
 - Every group member must present part of the project and contribute to the discussion.
@@ -113,8 +113,8 @@ Your work should progress from problem framing and dataset design to analysis, m
 
 ### Final submission
 
-- Final report deadline: **{{< var group_work.submission_date >}}**
-- Submit the final text document via the [Canvas assignment]({{< var group_work.submission_url >}}).
+- Final report deadline: **{{< meta group_work.submission_date >}}**
+- Submit the final text document via the [Canvas assignment]({{< meta group_work.submission_url >}}).
 - Submit the report as a **PDF**, not as a Word document.
 - The analytical notebook must be executed before submission.
 
@@ -210,12 +210,12 @@ You are therefore expected to contribute equally and to document your individual
 
 ### Consultation and support
 
-- Book appointments via: [Bookings]({{< var instructor.bookings_url >}})
-- Join meetings via: [Teams]({{< var instructor.online_meeting_url >}})
+- Book appointments via: [Bookings]({{< meta instructor.bookings_url >}})
+- Join meetings via: [Teams]({{< meta instructor.online_meeting_url >}})
 
 ### Submission
 
-Submit all required files via the [Canvas assignment]({{< var group_work.submission_url >}}).
+Submit all required files via the [Canvas assignment]({{< meta group_work.submission_url >}}).
 
 ::: {.callout-note title="Note"}
 High-quality project work may contribute to future course development, for example by extending teaching materials or informing teaching cases.

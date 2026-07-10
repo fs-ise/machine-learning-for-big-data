@@ -1,14 +1,6 @@
 project:
   type: website
   output-dir: _site
-  render:
-    - index.qmd
-    - syllabus.qmd
-    - teaching_notes.qmd
-    - resources.qmd
-    - slides/*.qmd
-    - notes/*.qmd
-    - exercises/*.qmd
 metadata-files:
   - course.yml
 website:
