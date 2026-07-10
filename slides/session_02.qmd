@@ -19,9 +19,7 @@ format: revealjs
 :::
 
 
-# Business problem: Churn prediction {data-stack-name="Business problem: Churn prediction"}
-
-## Predicting customer churn
+{{< include ../shared-teaching-materials/analytics/_rise_of_analytics.qmd >}}
 
 
 ## Summary {data-state="hide-menubar"}

@@ -1,0 +1,276 @@
+---
+title: "Group work"
+---
+
+**TODO: VALIDATE**
+
+> In this group project, you will develop and analyze a realistic business analytics case, including data, modeling, and critical reflection.
+> The project focuses on business-relevant contexts such as management, finance, operations, or digital platforms.
+> You will design and work with a synthetic dataset that reflects a realistic organizational process or decision situation.
+> This allows you to address both upstream challenges—problem framing and data design—and downstream challenges such as deployment, implementation, ethics, and risk.
+> Your work should be grounded in appropriate and reputable references, such as academic literature and industry reports.
+
+## Objectives
+
+- Design a realistic business analytics scenario
+- Select and apply appropriate analytical models
+- Communicate results using CRISP-DM as a structuring framework
+- Critically reflect on assumptions, limitations, and improvements
+
+## Group formation and project allocation
+
+- The group size is **2–3 participants**.
+- Projects may be allocated to more than one group.
+- You may apply individually or as a group.
+- Apply by email and indicate **three project preferences**, ranked as:
+
+  - Preference 1
+  - Preference 2
+  - Preference 3
+
+- For a group application, one email containing the names of all group members is sufficient.
+- Based on the applications, groups will be arranged and projects assigned.
+- If one participant remains after group formation, an existing group may be expanded by one participant.
+
+{{< pagebreak >}}
+
+## Project topics
+
+Select a business topic and formulate a concrete analytical question. Suitable domains include:
+
+- **Finance**, such as credit default, fraud, or customer lifetime value
+- **Marketing**, such as churn, customer segmentation, or campaign effectiveness
+- **Human Resources**, such as attrition, promotion, or team productivity
+- **Digital business**, such as user engagement, gig worker retention, or pricing strategy
+
+Your project preference should identify a concrete business problem rather than only a general domain.
+
+## Task
+
+- Select a business topic and formulate a concrete question.
+- Create a synthetic but realistic dataset representing internal organizational data.
+  You may complement this with synthetic or real external data if appropriate.
+- Develop an analytical notebook following the CRISP-DM process:
+
+  1. **Business understanding**  
+     What is the context, the concrete question, and the decision relevance? Who are the stakeholders?
+
+  2. **Data understanding**  
+     What does the dataset contain? How does it reflect a realistic business setting? What insights emerge from exploratory data analysis?
+
+  3. **Data preparation**  
+     How is the data cleaned, transformed, and enriched?
+
+  4. **Modeling**  
+     Which model is used and why? How is it trained and tuned?
+
+  5. **Evaluation**  
+     Which metrics are used? How should the results be interpreted in practice?
+
+  6. **Deployment**  
+     How would the model be implemented? What are the requirements, risks, and ethical considerations?
+
+- Develop a report that presents and critically reflects on the case, including:
+
+  - What can be learned from the case
+  - How it connects to or extends course content
+  - Simplifying assumptions and limitations
+  - Opportunities for improvement
+
+::: {.callout-note title="Notes"}
+
+- Support key elements of your analysis with reputable sources, particularly the relevance of the problem, typical data sources, and common modeling approaches.
+- Simplifications are acceptable if they are clearly stated and justified.
+- Advanced extensions may include advanced data preparation, model comparison or refinement, robustness checks, interactive visualizations, or more detailed deployment considerations.
+- Your code must run and reproduce your results.
+- If you plan to work with a large-scale big-data scenario, consult with me in advance.
+- Real-time or streaming-data projects are strongly discouraged because they are difficult to implement and evaluate within the scope of this project.
+
+:::
+
+{{< pagebreak >}}
+
+## Project process
+
+### Application and allocation
+
+Submit your three ranked project preferences by **{{< var group_work.application_deadline >}}**.
+Groups and projects will then be assigned based on the submitted preferences.
+
+### Project work
+
+Develop the case, dataset, analysis, and presentation iteratively.
+Your work should progress from problem framing and dataset design to analysis, modeling, evaluation, and reflection.
+
+### Presentation
+
+- Presentation date: **{{< var group_work.presentation_date >}}**
+- Each group has **30 minutes** to present the project.
+- Up to **15 additional minutes** may be used for questions and discussion.
+- Every group member must present part of the project and contribute to the discussion.
+- Attendance is required for all project presentations.
+- Submit the presentation file and the corresponding analysis files by the presentation deadline.
+
+### Final submission
+
+- Final report deadline: **{{< var group_work.submission_date >}}**
+- Submit the final text document via the [Canvas assignment]({{< var group_work.submission_url >}}).
+- Submit the report as a **PDF**, not as a Word document.
+- The analytical notebook must be executed before submission.
+
+{{< pagebreak >}}
+
+## Deliverables
+
+### Synthetic dataset generation script
+
+A Python script that:
+
+- Clearly documents the business context and purpose in the module docstring
+- Defines the data schema and variables
+- Implements data generation logic, including distributions and relationships
+- Includes realism features, such as noise, missing values, or duplicates where appropriate
+- States key assumptions and provides justification where possible
+- Produces reproducible output using a fixed random seed
+- Exports the generated dataset
+
+### Dataset
+
+- CSV file or files containing the simulated data
+
+### Analytical notebook
+
+A Jupyter Notebook that:
+
+- Covers the full CRISP-DM process
+- Includes explanations in Markdown
+- Is fully executable and reproducible
+
+### Presentation
+
+A slide deck that:
+
+- Clearly introduces the business problem and decision context
+- Explains the analytical approach and key modeling decisions
+- Communicates the most important findings and their practical relevance
+- Critically discusses limitations, risks, and potential improvements
+
+### Report
+
+Maximum length: **15 pages**, including title page and references.
+
+**Section 1: Case package**
+
+- Business context and motivation
+- Problem statement and objectives
+- Stakeholders and decision relevance
+- Positioning in practice, supported by references
+
+**Section 2: Analytical approach and key findings**
+
+- Overview and justification of the analytical approach
+- Selected key results without duplicating the notebook
+- Key business insights
+
+**Section 3: Reflection**
+
+- Assumptions
+- Limitations of the dataset and analytical approach
+- Ethical and deployment considerations
+- Potential improvements and extensions
+
+## Evaluation
+
+The group project is an **ongoing assessment worth 120 performance points**.
+The evaluation is based on the submitted materials, the presentation, and the discussion.
+
+Each group receives a group evaluation.
+For the final evaluation of individual participants, supplements or deductions from the group grade may be made based on the individual's contribution to the project, presentation, and discussion.
+You are therefore expected to contribute equally and to document your individual contributions clearly and transparently.
+
+::: {.small}
+
+| Category | Points | Criteria |
+|---|---:|---|
+| **A. Case and dataset design** | 30 pts | Clarity and relevance of the problem; realism of the dataset; transparency of data generation |
+| **B. Analysis quality** | 40 pts | Method justification; correctness; CRISP-DM use; insightfulness |
+| **C. Communication** | 40 pts | Structure; visualization; clean code; argument quality; use of references; reflection; presentation and discussion |
+| **D. Advanced extension** | 10 pts | Meaningful additional feature beyond the core requirements |
+
+:::
+
+**Note:** The applied methodology and reasoning are more important than achieving the highest possible model performance.
+
+### AI policy
+
+- Allowed: generating dataset scripts, debugging code, and documentation support
+- Not allowed: generating complete end-to-end solutions
+- You must be able to explain and defend your work at any time
+- All outputs must be validated
+
+### Consultation and support
+
+- Book appointments via: [Bookings]({{< var instructor.bookings_url >}})
+- Join meetings via: [Teams]({{< var instructor.online_meeting_url >}})
+
+### Submission
+
+Submit all required files via the [Canvas assignment]({{< var group_work.submission_url >}}).
+
+::: {.callout-note title="Note"}
+High-quality project work may contribute to future course development, for example by extending teaching materials or informing teaching cases.
+In such cases, we will discuss how contributions are acknowledged.
+:::
+
+{{< pagebreak >}}
+
+## Example: Synthetic data generation script
+
+```python
+"""
+Purpose:
+- Simulate [business scenario]
+
+Data schema:
+- age: numeric (years)
+- income: numeric (annual income in EUR)
+
+Generation logic:
+- Age is drawn from a normal distribution (mean=40, sd=10)
+- Income depends linearly on age with added noise
+
+Assumptions and justification:
+- Age distribution approximates working population demographics
+- Income increases with age due to experience (human capital theory)
+- Noise reflects unobserved heterogeneity in earnings
+
+References (if applicable):
+- [Add source, e.g., industry report or academic literature]
+"""
+
+import numpy as np
+import pandas as pd
+
+np.random.seed(42)  # Reproducibility
+
+# 1. Define dataset size
+n = 1000
+
+# 2. Generate base variables
+age = np.random.normal(loc=40, scale=10, size=n)
+
+# 3. Define relationships
+income = age * 1000 + np.random.normal(loc=0, scale=5000, size=n)
+
+# 4. Add realism, such as missing values
+missing_mask = np.random.rand(n) < 0.05
+income[missing_mask] = np.nan
+
+# 5. Create dataframe and export
+df = pd.DataFrame({
+    "age": age,
+    "income": income,
+})
+
+df.to_csv("dataset.csv", index=False)
+```

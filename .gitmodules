@@ -1,0 +1,3 @@
+[submodule "shared-teaching-materials"]
+	path = shared-teaching-materials
+	url = https://github.com/fs-ise/shared-teaching-materials.git

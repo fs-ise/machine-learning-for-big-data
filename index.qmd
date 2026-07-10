@@ -17,6 +17,8 @@ Welcome to **{{< meta course.title >}}**. This course introduces machine learnin
 
 ## Sessions
 
+[Orga slides](slides/session_00_orga.qmd)
+
 ```{python}
 #| echo: false
 #| output: asis

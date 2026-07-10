@@ -26,6 +26,8 @@ website:
         href: index.qmd
       - text: Syllabus
         href: syllabus.qmd
+      - text: Group work
+        href: group_work.qmd
       - text: Teaching notes
         href: teaching_notes.qmd
       - text: Resources

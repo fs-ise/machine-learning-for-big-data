@@ -12,11 +12,21 @@ repository:
   name: machine-learning-for-big-data
   url: 'https://github.com/fs-ise/machine-learning-for-big-data'
 instructor:
-  name: Gerit Wagner
+  name: Dr. Gerit Wagner
+  name_no_title: Gerit Wagner
+  email: g.wagner@fs.de
+  url: https://www.frankfurt-school.de/en/research-and-faculty/faculty/faculty-directory/gerit-wagner
+  online_meeting_url: https://teams.microsoft.com/meet/35117082310591?p=f5NP6xsZSwVGssoMjB
+  bookings_url: https://outlook.office.com/bookwithme/user/42312b4f18fd4acbb4255b5ce301f5d0%40fs.de?anonymous&ismsaljsauthenabled
 schedule:
   handbook_event_match: Machine Learning for Big Data
   timezone: Europe/Berlin
   source_path: data/events.yaml
+group_work:
+  application_deadline: "TODO"
+  presentation_date: "2026-10-02"
+  submission_date: "TODO"
+  submission_url: "TODO"
 events:
   - session_id: session-01-lecture
     type: lecture

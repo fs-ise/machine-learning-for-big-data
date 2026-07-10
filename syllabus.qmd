@@ -1,5 +1,6 @@
 ---
 title: Syllabus
+format: html
 ---
 
 # Machine Learning for Big Data [FIN72063]

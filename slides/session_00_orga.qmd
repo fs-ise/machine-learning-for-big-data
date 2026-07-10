@@ -1,0 +1,405 @@
+---
+title: "Machine Learning for Big Data"
+subtitle: "Course logistics"
+section_label: "Introduction"
+session: "Session 0"
+---
+
+
+
+# Welcome {data-stack-name="Welcome"}
+
+## Prof. Dr. Gerit Wagner
+
+::: {.columns}
+::: {.column width="70%"}
+
+Academic background
+
+- Universität Regensburg: Doctoral Student
+- HEC Montréal: Postdoctoral Fellowship
+- Otto-Friedrich-Universität Bamberg: Assistant Professor
+- Frankfurt School of Finance & Management: Full Professor
+
+Research interests
+
+- Open, agentic, and boundary-spanning work
+- AI-supported knowledge synthesis
+
+Teaching interests
+
+- Analytics and big data
+- IT security
+- Programming and software engineering
+- Digital knowledge-intensive and platform-based work
+- Literature review methods
+
+:::
+
+::: {.column width="30%"}
+![](../images/gerit_wagner.jpg)
+:::
+:::
+
+
+## About you
+
+<!--
+For smaller courses (approx. 15 students):
+
+Please answer the three questions.
+Then choose **one** optional area where you would like to share a bit more.
+
+HIGHLIGHT items as optional
+-->
+
+Please take a moment to think about the following questions.
+For each question, I’ll invite a few of you to briefly share your thoughts.
+
+<br>
+
+**1. Have you worked in an industry role or completed an internship with an analytics focus?**
+
+- What was something that felt **very useful** in your analytics work?
+- Or where would you have liked to be **better prepared** for a data-related task?
+
+**2. Which analytics tools or programming languages have you used?**
+
+- What was a particularly interesting analytics **challenge** you encountered?
+- Or a tool you found especially powerful or **surprising**?
+
+**3. What are your expectations for the course?**
+
+<!--
+  - What do you want to be able to do by the end of this course?
+  - What would make this course “worth it” for you?
+-->
+
+# Machine Learning for Big Data {data-stack-name="Machine Learning for Big Data"}
+
+## Machine Learning for Big Data in the curriculum
+
+**TODO: follow up on "Machine learning expands analytical capability. You explore algorithms designed for large and complex datasets, including classification and prediction methods, and understand how modern computational tools extend traditional statistical approaches." (see [here](https://www.frankfurt-school.de/en/study/master/master-in-management))**
+
+![](../images/mim_mlbd_curriculum.png){.absolute top=200 left=300 width="800" }
+
+<!--
+
+          ## What exactly is "analytics"?
+
+          :::: {.columns}
+
+          ::: {.column width="45%"}
+          <br><br>
+          ![](../images/deng-xiang--WXQm_NTK0U-unsplash.jpg){width=100% fig-align="center"}
+          :::
+
+          ::: {.column width="55%"}
+          <br><br>
+
+          **Business analytics** refers to the computer-supported examination of data using mathematical models to drive decisions and actions within business situations [based on @DavenportHarris2007].
+
+          ::: {.fragment}
+
+          Related fields [based on @ChenEtAl2012]:
+
+          - **Business intelligence** refers to "the techniques, technologies, systems, practices, methodologies, and applications that analyze critical business data to help an enterprise better understand its business and market and make timely business decisions."
+          - **Data mining** refers to algorithmic techniques used to discover patterns, relationships, and knowledge from large datasets.
+          - **Data science** is the interdisciplinary field that combines statistical methods, data mining, machine learning, and database technologies to extract knowledge and insights from large and complex datasets.
+
+          :::
+
+          :::
+
+          ::::
+
+          ## Why analytics (and this course) matter
+
+          **{{< iconify solar:money-bag-bold >}} Finance — Quantitative arbitrage at Princeton-Newport Partners**
+
+          - Early pioneer of applying the Black-Scholes option pricing model in real markets
+          - Systematic identification of mispriced options through mathematical arbitrage
+          - Demonstrated how financial models and data could generate consistent trading profits
+
+          https://www.youtube.com/watch?v=A5w-dEgIU1M
+
+          . . .
+
+          **{{< iconify mdi:film-open >}} Entertainment — Personalization at scale at Netflix**
+
+          - Recommendation systems shape what millions watch
+          - Continuous A/B testing and model refinement
+          - Data directly drives engagement and revenue
+
+          . . .
+
+          **{{< iconify lucide-lab:baseball >}} Sports — The Moneyball revolution at Oakland Athletics**
+
+          - Advanced metrics replaced traditional scouting intuition
+          - Data-driven player selection with limited budget
+          - Competitive advantage through better measurement
+
+-->
+
+## Course architecture
+
+**1. Big Data**
+
+**2. Fundamentals of Machine Learning**
+
+- 2.1 What is Data Science?
+- 2.2 Statistics and Machine Learning
+- 2.3 Data Preparation
+- 2.4 Exploratory Data Analysis
+
+**3. Methods, Algorithms, and Applications**
+
+- 3.1 Classification
+- 3.2 Regression
+
+<!--
+
+    <div style="text-align:center">
+    ![](../images/overview_structure.png){width=80%}
+    </div>
+
+    ```{mermaid}
+    %%{init: {
+      "theme": "base",
+      "themeVariables": {
+        "primaryColor": "#E8EEF7",
+        "primaryTextColor": "#1F2D3D",
+        "primaryBorderColor": "#3A506B",
+        "lineColor": "#3A506B",
+        "secondaryColor": "#F4F6FA",
+        "fontSize": "18px",
+        "fontFamily": "Helvetica, Arial, sans-serif"
+      }
+    }}%%
+
+    flowchart LR
+
+      classDef foundation fill:#E8EEF7,stroke:#3A506B,stroke-width:2px,rx:10,ry:10,text-align:center;
+      classDef stack fill:#F4F6FA,stroke:#3A506B,stroke-width:2px,rx:10,ry:10,text-align:center;
+      classDef synthesis fill:#E8EEF7,stroke:#3A506B,stroke-width:2px,rx:10,ry:10,text-align:center;
+
+      subgraph Right["<b>Synthesis</b>"]
+        direction TB
+        S["<div align='center'><b>Integration and exam prepation</b></div>"]
+      end
+
+      subgraph Stack["<b>Analytics</b>"]
+        direction LR
+        D["<div align='center'><b>Data foundations</b><br/>Exploration and architecture</div>"]
+        M["<div align='center'><b>Analytical modeling</b><br/>Regression · ML · Big Data</div>"]
+        O["<div align='center'><b>Deployment</b><br/>Organizations</div>"]
+        D --> M --> O
+      end
+
+      subgraph Left["<b>Introduction</b>"]
+        direction TB
+        F2["<div align='center'><b>The rise of analytics</b></div>"]
+      end
+
+      class F2 foundation;
+      class D,M,O stack;
+      class S synthesis;
+    ```
+
+    Update before including:
+
+    ## Learning objectives
+
+    **Knowledge**
+
+    - **Differentiate** between descriptive, predictive, and prescriptive analytics approaches.
+    - **Describe** architectures for data warehousing and big data processing, with reference to the underlying data modeling concepts.
+    - **Explain** fundamental concepts of data analytics, and its role in data-driven organizations.
+
+    **Skills**
+
+    - **Select** appropriate analytical methods for transactional or non-transactional data, and for descriptive, predictive, and prescriptive analysis tasks.
+    - **Apply** analytical methods to real-world datasets, including structuring, transforming, and visualizing data. This also involves training models, evaluating performance, and interpreting analytical results for decision-making.
+    - **Implement** analytical procedures in Python, using standard data science libraries (`pandas`, `scikit-learn`, `matplotlib`).
+
+    **Competence**
+
+    - **Design** analytics solutions aligned with business goals and governance principles.
+    - **Integrate** analytical technologies into organizational decision-making processes
+    - **Assess** the operational and strategic implications of data analytics in organizations.
+-->
+
+
+## What this course does *not* cover
+
+
+- **Engineering of production-grade analytical systems**
+
+  - Software engineering
+  - Database design
+  - DevOps/MLOps pipelines
+  - Scalable application development
+
+- **Statistical theory**
+
+  - Inferential statistics
+  - Proofs/derivations
+
+- **Mathematical optimization and simulation models**
+
+  - Scheduling, logistics, queueing
+
+- **Autonomous or agentic decision systems**
+ 
+  - Robots/agents acting on decisions
+  - Reinforcement learning
+
+{{< iconify fluent-mdl2:insights >}} We will *touch* these areas where needed, but our focus is on **analytical reasoning for business decisions**<br> and **notebook-based implementations**.
+
+
+# Course logistics  {data-stack-name="Course logistics"}
+
+## Course logistics
+
+Workload:
+
+* 150 h total
+* 44 academic teaching hours (45 minutes each)
+* Remaining workload: self-study, including lesson preparation and follow-up, reading, assessment preparation, and take-home assignments
+
+Assessment:
+
+* Group project: ongoing, submitted as a text document at the end of the module
+* 120 performance points
+
+Sessions:
+
+* See overview in Canvas
+
+Contact:
+
+- Instructor: [{{< meta instructor.name >}}]({{< meta instructor.url >}}){target="_blank"} ([{{< meta instructor.email >}}](mailto:{{< meta instructor.email >}}))
+- Office hours: [book an appointment]({{< meta instructor.bookings_url >}}){target="_blank"}
+- Online meeting: [Microsoft Teams]({{< meta instructor.online_meeting_url >}}){target="_blank"}
+
+Individual circumstances
+
+If you have family responsibilities, religious holidays, health-related matters, or other individual circumstances that may affect your participation or performance, please reach out early.
+We will work together to find a fair and workable solution.
+
+<!--
+      (individually or in small groups)
+      TBD: online or offline preferred? (add location?)
+
+      Materials: available via VC: https://vc.uni-bamberg.de/course/view.php?id=71961 (password: IdW2526#stud)
+
+      - Exam: 90 points (minimum required: 45 points)
+      - Summaries for the exams
+        - You can submit summaries at lectures 4, 7, and 10.
+        - Each summary can be one page (A5).
+        - Contents have to be summarized.
+        - The summaries will be available during the exams.
+
+      If contents are not summarized, we may return them (with one opportunity to revise)
+
+      - Assignments: 12 points (in 3 parts)
+
+      bis zu 12 Punkte können vorher als Studienleistung eingebracht werden
+      über die 90 Punkte der Klausur hinaus
+      nach 45 Punkten in der Klausur werden die Bonuspunkte zugerechnet (cut bei 90 Punkten)
+      ggf. 6 Bonuspunkte (zB. auf Kurzvortrag zu Paper - Kurzvortrag skaliert nicht bei größeren Kursen)
+      Ggf. Übungsaufgaben mit Quiz
+
+
+      TODO: `group-projects/Guidelines for the GroupProjects.pdf`
+-->
+
+## Materials
+
+Slides and materials
+
+- Presentation slides and notebooks will be made available for download.
+
+Short surveys at the end of each session
+
+- If you notice anything that could benefit from further clarification or improvement, please take a note and let me know there.
+
+Your input makes a real difference 🙏
+
+. . . 
+
+<br>
+
+Learning markers
+
+- Facilitate learning and exam preparation.
+- Help distinguish between illustrative material and key concepts and skills to prioritize.
+
+::: {.highlight_must_learn}
+
+**Key concepts**
+
+These markers highlight key skills and knowledge areas that you should prioritize when preparing for the exam.
+<br>
+*Note*: This does not mean that other contents are excluded—they remain relevant for a complete understanding.
+
+:::
+
+
+::: {.learning_note}
+
+**Learning focus**
+
+These notes indicate how the content may be addressed in the exam and how you can prepare effectively.
+
+:::
+
+## Literature
+
+- You are expected to take complementary notes and read the recommended literature.
+<!-- - You can contribute directly to the [teaching materials](https://github.com/fs-ise/big-data-analytics) by submitting an issue ♻️ or suggesting edits 🛠️. -->
+- Literature and complementary materials will be listed at the end of each lecture.
+- Reading of complementary materials depends on your interest and ambition.
+
+<!-- - Materials will be made available whenever possible. -->
+
+**General Introduction**
+
+- Alpaydin [-@Alpaydin2016NewAI]
+- Schutt and O'Neil [-@SchuttONeil2013]
+- Schmarzo [-@Schmarzo2016]
+
+**Methods and Algorithms**
+
+- Alpaydin [-@Alpaydin2016IntroML]
+- Hastie, Tibshirani, and Friedman [-@HastieTibshiraniFriedman2009]
+- James et al. [-@JamesWittenHastieTibshirani2013]
+
+## You may also be interested in ... {data-state="hide-menubar"}
+
+:::: {.columns}
+
+::: {.column width="55%"}
+Bachelor's theses: See [SuSy](https://susy.frankfurt-school.de/) and additional information on [this page](https://fs-ise.github.io/theses/).
+
+
+In SuSy, you can find more information on my research topics:
+
+- **Open, Agentic, and Boundary-Spanning Work**  
+  This area examines how AI agents and open digital infrastructures reshape knowledge work and collaboration across organizational boundaries.
+  It focuses on agentic systems embedded in real work contexts (e.g., Git workflows, handbooks, and repositories) and how they transform coordination, governance, and accountability.
+- **AI-Supported Knowledge Synthesis**  
+  This area investigates how AI supports knowledge synthesis across academic and professional contexts, focusing on transparency, rigor, and traceability in AI-assisted processes.
+  It includes literature reviews and synthesis in digital gardens, second-brain systems, and other knowledge repositories.
+
+:::
+
+::: {.column width="45%"}
+<br><br><br><br>
+
+![](../images/yen-vu-TdgfSyDoWBE-unsplash.jpg){width=70% fig-align=center}
+:::
+
+::::
+
+# References {data-state="hide-menubar"}
