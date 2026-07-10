@@ -2,10 +2,6 @@
 title: "{{< meta course.title >}}"
 ---
 
-<p align="left">
-  <img alt="Machine Learning for Big Data logo" src="assets/mlbd-logo-short.png" width="120px">
-</p>
-
 ![Course Status](https://img.shields.io/badge/Current%20course--{{< meta course.semester >}}-green)
 [![Level](https://img.shields.io/badge/Level-{{< meta course.level >}}-blue)](syllabus.html)
 [![Degree Program](https://img.shields.io/badge/Degree%20Program-Master%20in%20Management-blue)](syllabus.html)

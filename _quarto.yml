@@ -17,6 +17,8 @@ website:
   repo-url: "{{< meta repository.url >}}"
   repo-actions: [edit, issue]
   sidebar:
+    logo: assets/mlbd-logo-short.png
+    logo-alt: "Machine Learning for Big Data logo"
     style: docked
     search: true
     contents:
