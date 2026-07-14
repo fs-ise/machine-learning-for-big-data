@@ -9,6 +9,5 @@ session_id: session-03
 TODO
 :::
 
-
 https://srathinagiri.github.io/PowerBI/pages/OLAPDataCube.html
 -> but the slides only focus on slicing!!!
