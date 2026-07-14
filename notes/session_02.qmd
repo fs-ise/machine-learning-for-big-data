@@ -1,0 +1,10 @@
+---
+title: Example session notes
+session_id: session-02
+---
+
+::: {.callout-note}
+## Session objective {#session-objective}
+
+TODO
+:::

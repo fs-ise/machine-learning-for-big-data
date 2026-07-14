@@ -1,0 +1,14 @@
+---
+title: Example session notes
+session_id: session-03
+---
+
+::: {.callout-note}
+## Session objective {#session-objective}
+
+TODO
+:::
+
+
+https://srathinagiri.github.io/PowerBI/pages/OLAPDataCube.html
+-> but the slides only focus on slicing!!!
