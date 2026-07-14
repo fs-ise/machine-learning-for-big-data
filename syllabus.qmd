@@ -85,18 +85,16 @@ Lecture with in-class and home exercises, practical group work using Excel and R
 
 ## Module Structure
 
-### 1. Big Data
+### 1. Introduction to Big Data
 
-### 2. Fundamentals of Machine Learning
-
-- 2.1 What is Data Science?
-- 2.2 Statistics and Machine Learning
-- 2.3 Data Preparation
-- 2.4 Exploratory Data Analysis
+### 2. Data Foundations
 
 ### 3. Methods, Algorithms, and Applications
 
-- 3.1 Classification
-- 3.2 Regression
+- Baseline Models
+- Machine Learning for Structured Data
+- Machine Learning for Unstructured Data
+
+### 4. Deployment in Organizations
 
 # References
