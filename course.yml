@@ -197,17 +197,17 @@ events:
     event_id: 275006-1926698564-0@timeedit.com
     materials:
       - type: slides
-        path: slides/session_09.html
-  - session_id: session-09-exercise
-    type: exercise
+        path: slides/session_09_a.html
+  - session_id: session-09-lecture2
+    type: lecture
     date: 2026-10-02
     start: '11:45'
     end: '13:15'
     location: S2.07
     event_id: 275007-1926698564-0@timeedit.com
     materials:
-      - type: exercise
-        path: exercises/session_09.html
+      - type: slides
+        path: slides/session_09_b.html
   - session_id: session-10-presentation
     type: group presentation
     date: 2026-10-02

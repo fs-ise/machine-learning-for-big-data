@@ -1,0 +1,34 @@
+---
+title: "Session 9: Deployment in Organizations"
+subtitle: "Lecture Slides"
+section_label: "Deployment in Organizations"
+session: "Session 9"
+date: "2026-10-02"
+format: revealjs
+---
+
+## {data-menu-title="Learning objectives" data-state="hide-menubar"}
+
+<br><br><br><br><br>
+
+::: {.learning-objectives}
+- **Explain** A
+- **Understand** B
+- **Evaluate** C
+- **Apply** D
+:::
+
+
+# Business problem: Churn prediction {data-stack-name="Business problem: Churn prediction"}
+
+## Predicting customer churn
+
+
+## Summary {data-state="hide-menubar"}
+
+- A
+- B
+- C
+- D
+
+# References {data-state="hide-menubar"}
