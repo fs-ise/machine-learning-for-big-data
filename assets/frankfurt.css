@@ -2,7 +2,6 @@
 :root {
   --fs-header-h: 60px;              /* smaller now, just for logo/title block */
   --brand-color: #002EFF;           /* Frankfurt blue from the logo */
-  --fs-footer-bg: #003366;          /* Frankfurt blue used for footer accents */
   --font-family: "Source Sans Pro", sans-serif;
   --font-size: 28px;
 }
@@ -88,17 +87,47 @@ body,
   font-size: 0.8em;
 }
 
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+  color: #000;
+  font-family: var(--font-family);
+  font-weight: 600;
+  line-height: 1.2;
+  text-transform: none;
+}
+
 .reveal h2 {
-  margin-bottom: 1em;  /* Increase to 1.5em or 2em if you want more space */
+  margin-top: 0;
+  margin-bottom: 1em;  /* Match Analytics and Big Data heading spacing */
 }
 
 .reveal .slides section.level2 {
   top: 0 !important;
-  padding-top: 1.5rem;
+  padding-top: 0;
 }
 
 .reveal .slides section.level2 > h2:first-child {
   margin-top: 0;
+}
+
+.reveal .slides section {
+  padding-top: 0;
+}
+
+.reveal .slides section ul,
+.reveal .slides section ol {
+  margin-top: 0.35em;
+  margin-bottom: 0.35em;
+}
+
+.reveal .slides section li {
+  margin-bottom: 0.25em;
+}
+
+.reveal .columns {
+  gap: 1.2em;
 }
 
 .reveal .slides section.level1.center {
@@ -239,9 +268,27 @@ body,
   font-size: 0.9em;
 }
 
-.highlight_must_learn {
-  border-left: 4px solid #e57373;
-  padding-left: 12px;
+/* MLBD-specific callout utilities retained from the former reveal.scss theme overlay. */
+.reveal .discussion {
+  border-left: 0.35rem solid #1f6feb;
+  padding-left: 1rem;
+}
+
+.reveal .exercise {
+  border-left: 0.35rem solid #14853d;
+  padding-left: 1rem;
+}
+
+.reveal .optional {
+  opacity: 0.86;
+  border-left: 0.35rem solid #888;
+  padding-left: 1rem;
+}
+
+.reveal .highlight_must_learn {
+  border-left: 0.45rem solid #d9480f;
+  background: rgba(217, 72, 15, 0.08);
+  padding: 0.75rem 1rem;
 }
 
 .learning_note {

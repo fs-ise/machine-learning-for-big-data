@@ -40,6 +40,9 @@ format:
 
 format-links: false
 
-bibliography: references.bib
+bibliography:
+- references.bib
+- shared-teaching-materials/references.bib
+
 execute:
   freeze: auto
