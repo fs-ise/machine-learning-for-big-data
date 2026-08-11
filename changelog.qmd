@@ -1,0 +1,96 @@
+---
+title: "Changelog"
+---
+
+Major changes in content are tracked here.
+A summary of all file-level changes is available through the [Git commit history]({{< meta repository.url >}}/commits/main).
+
+## 2026-08-11 Plan to import from analytics-and-big-data
+
+::: {.callout-tip title="Import plan" collapse=true}
+
+Import the relevant source materials unchanged as a migration baseline, then recompose the course section-by-section.
+Keep the existing `machine-learning-for-big-data` session structure, `course.yml`, styling, and session paths authoritative.
+Separate structural migration, Python-to-R conversion, and content revision into distinct stages.
+
+### Stage 1: Import source materials
+
+Copy the relevant materials from `analytics-and-big-data` unchanged:
+
+- slides
+- exercises
+- teaching notes
+- required datasets
+- referenced images/includes
+- bibliography entries
+
+Record the source repository and commit SHA in `changelog.qmd`.
+
+Commit separately:
+
+```text
+Import teaching materials from analytics-and-big-data
+```
+
+### Stage 2: Recompose into MLBD sessions
+
+Map and rename the imported materials according to the target syllabus:
+
+| Target session         | Main source                    |
+| ---------------------- | ------------------------------ |
+| 1: Big Data            | Lecture 8 + parts of Lecture 1 |
+| 1: Basics in R         | Create anew                    |
+| 2: Analytics           | Lecture 1                      |
+| 2: Data Preparation    | Lecture 2 + Exercise 2         |
+| 3: EDA                 | Lecture 2 + Exercise 2         |
+| 4: Regression          | Lecture 4 + Exercise 4         |
+| 5: Classification      | Lecture 5 + Exercise 5         |
+| 6: ML Workflow         | Lecture 6                      |
+| 7: ML Algorithms       | Lecture 7                      |
+| 8: Text                | Lecture 8 + Exercise 8         |
+| 9: Image, Video, Audio | Lecture 9 + Exercise 9         |
+| 9: Deployment          | Lecture 10 + Exercise 10       |
+
+At this stage, retain Python examples unchanged.
+
+### Stage 3: Port session-by-session to R
+
+Work through each session:
+
+```text
+slides/session_XX.qmd
+exercises/session_XX.qmd
+notes/session_XX.qmd
+data/assets
+```
+
+For each session:
+
+- convert Python/pandas/scikit-learn examples to R;
+- use `tidyverse` and `tidymodels` where appropriate;
+- update exercises and solutions;
+- update teaching notes;
+- verify datasets, figures, and relative paths;
+- render and test the complete session.
+
+Commit completed sessions separately, for example:
+
+```text
+Port Session 4 regression materials to R
+```
+
+### Stage 4: Standardize course infrastructure
+
+After the content migration:
+
+- standardize exercise assignment/solution profiles;
+- instead of `.ipynb` output, use `.qmd` and knitr (provide a corresponding introductory explanation);
+- remove obsolete Python/Jupyter/Codespaces instructions;
+- update links, survey variables, metadata, and course references;
+- verify the full course render and session overview.
+
+:::
+
+## 2026-07-20 Consideration of shared-teaching-materials
+
+- Considered and discarded the possibility of using [fs-ise/shared-teaching-materials](https://github.com/fs-ise/shared-teaching-materials) as a shared Git submodule to avoid redundancies

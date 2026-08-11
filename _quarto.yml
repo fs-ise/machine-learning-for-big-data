@@ -24,6 +24,8 @@ website:
         href: teaching_notes.qmd
       - text: Resources
         href: resources.qmd
+      - text: Changelog
+        href: changelog.qmd
 
 format:
   html:
