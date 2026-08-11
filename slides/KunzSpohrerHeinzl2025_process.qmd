@@ -1,0 +1,93 @@
+```{=html}
+<div id="ba-process-diagram-ksh2025" class="ba-process-diagram-ksh2025">
+  <style>
+    #ba-process-diagram-ksh2025 {
+      text-align: center;
+    }
+
+    #ba-process-diagram-ksh2025 svg {
+      width: 92%;
+      height: auto;
+      max-height: 235px;
+      overflow: visible;
+      font-family: Arial, sans-serif;
+    }
+
+    #ba-process-diagram-ksh2025 .ba-process-diagram-ksh2025__box {
+      fill: white;
+      stroke: black;
+      stroke-width: 1.6;
+    }
+
+    #ba-process-diagram-ksh2025 .ba-process-diagram-ksh2025__arrow {
+      fill: none;
+      stroke: black;
+      stroke-width: 2;
+      marker-end: url(#ba-process-diagram-ksh2025-arrow);
+    }
+
+    #ba-process-diagram-ksh2025 .ba-process-diagram-ksh2025__label {
+      font-size: 18px;
+    }
+  </style>
+
+  <svg
+    viewBox="0 0 1200 260"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-labelledby="ba-process-diagram-ksh2025-title"
+  >
+    <title id="ba-process-diagram-ksh2025-title">
+      Business analytics value creation process
+    </title>
+
+    <defs>
+      <marker
+        id="ba-process-diagram-ksh2025-arrow"
+        viewBox="0 0 10 10"
+        markerWidth="6"
+        markerHeight="6"
+        refX="10"
+        refY="5"
+        orient="auto"
+      >
+        <path d="M0,0 L10,5 L0,10 Z" fill="black"></path>
+      </marker>
+    </defs>
+
+    <!-- Main boxes -->
+    <rect class="ba-process-diagram-ksh2025__box" x="40" y="100" width="110" height="55"></rect>
+    <text x="95" y="127" text-anchor="middle" dominant-baseline="middle" class="ba-process-diagram-ksh2025__label">Data</text>
+
+    <rect class="ba-process-diagram-ksh2025__box" x="190" y="45" width="135" height="165"></rect>
+    <text x="257.5" y="90" text-anchor="middle" class="ba-process-diagram-ksh2025__label">
+      <tspan x="257.5" dy="0">Business</tspan>
+      <tspan x="257.5" dy="24">Analytics</tspan>
+      <tspan x="257.5" dy="24">system</tspan>
+    </text>
+
+    <rect class="ba-process-diagram-ksh2025__box" x="380" y="100" width="125" height="55"></rect>
+    <text x="442.5" y="127" text-anchor="middle" dominant-baseline="middle" class="ba-process-diagram-ksh2025__label">Information</text>
+
+    <rect class="ba-process-diagram-ksh2025__box" x="550" y="100" width="125" height="55"></rect>
+    <text x="612.5" y="127" text-anchor="middle" dominant-baseline="middle" class="ba-process-diagram-ksh2025__label">Knowledge</text>
+
+    <rect class="ba-process-diagram-ksh2025__box" x="735" y="100" width="110" height="55"></rect>
+    <text x="790" y="127" text-anchor="middle" dominant-baseline="middle" class="ba-process-diagram-ksh2025__label">Decision</text>
+
+    <rect class="ba-process-diagram-ksh2025__box" x="895" y="100" width="110" height="55"></rect>
+    <text x="950" y="127" text-anchor="middle" dominant-baseline="middle" class="ba-process-diagram-ksh2025__label">Action</text>
+
+    <rect class="ba-process-diagram-ksh2025__box" x="1060" y="100" width="110" height="55"></rect>
+    <text x="1115" y="127" text-anchor="middle" dominant-baseline="middle" class="ba-process-diagram-ksh2025__label">Value</text>
+
+    <!-- Main flow arrows -->
+    <line class="ba-process-diagram-ksh2025__arrow" x1="150" y1="127" x2="190" y2="127"></line>
+    <line class="ba-process-diagram-ksh2025__arrow" x1="325" y1="127" x2="380" y2="127"></line>
+    <line class="ba-process-diagram-ksh2025__arrow" x1="505" y1="127" x2="550" y2="127"></line>
+    <line class="ba-process-diagram-ksh2025__arrow" x1="675" y1="127" x2="735" y2="127"></line>
+    <line class="ba-process-diagram-ksh2025__arrow" x1="845" y1="127" x2="895" y2="127"></line>
+    <line class="ba-process-diagram-ksh2025__arrow" x1="1005" y1="127" x2="1060" y2="127"></line>
+  </svg>
+</div>
+```

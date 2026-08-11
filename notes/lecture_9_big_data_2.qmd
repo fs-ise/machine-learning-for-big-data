@@ -1,0 +1,76 @@
+---
+title: "Notes: Session 9: Big data 2"
+format: html
+---
+
+2026-05-04: 80 min
+
+| Time (min) | Duration | Topic | Additional materials |
+|------------|----------|-------|----------------------|
+| 0–90       | 90       | TODO  |                      |
+
+
+TODO
+
+- Clarify explanations of RNN and transformers
+- Extend: example of backpropagation (in class - Note: when using the [http://hmkcode.github.io/ai/backpropagation-step-by-step](http://hmkcode.github.io/ai/backpropagation-step-by-step) example - fix typos!)
+- Fix inconsistent notation (learning rate: a and \eta)
+- Glossary (inductive bias, ...)
+    - The inductive bias of a neural network is the set of assumptions built into the model that shape what kinds of patterns it is likely to learn from data.
+- The "simple calculation example" in the ABD slides (PR) is useful to show the actual math. The neural networks videos (https://www.youtube.com/watch?v=aircAruvnKk) explain the effect more clearly (of gradient vector and "cost nudges").
+Ideally, students should have a solid intuition, seen the math, and know when (not) to use neural networks.
+- Comprehensive resource (formal specification and implementation): https://d2l.ai/index.html
+- Maybe start with something like: https://web.stanford.edu/~jurafsky/slp3/slides/nn25aug.pdf
+
+![](../images/neural_networks_focus.png)
+
+## Introductory comments
+
+NN : very inspiring class of models and algorithms, which model how nature solves particular problems. NN: brain, but also: genetic algorithms, or ant algorithms for search problems.
+
+## Exercise
+
+2026-05-04: 80 min
+
+Explanation: https://www.youtube.com/watch?v=ru9dXF04iSE&t=10s  - but: tasks/learnings are not clearly evident/articulated 
+
+
+## Part 4: Optional Reflection Questions
+
+1. Which of the use cases involve supervised learning?
+2. Which use cases involve sequential or temporal data?
+3. Which use cases are especially suitable for deep learning approaches?
+4. In which cases might feature engineering still be beneficial?
+5. Which use cases could raise ethical, legal, or privacy concerns?
+6. Which tasks require labeled training data and which do not?
+7. Which challenge tasks are not purely prediction problems?
+8. Where might optimization or decision models be more suitable than predictive models?
+
+
+{{< pagebreak >}}
+
+## Materials
+
+Neural Networks:
+
+- https://www.youtube.com/watch?v=aircAruvnKk
+- https://www.youtube.com/watch?v=IHZwWFHWa-w
+- https://www.youtube.com/watch?v=Ilg3gGewQ5U
+
+- Good MIT intro https://introtodeeplearning.com/slides/6S191_MIT_DeepLearning_L1.pdf
+- https://aaubs.github.io/ds23/en/m3/01_intro-to-traditional-dl/
+- https://github.com/microsoft/ai-for-beginners
+- TODO: p. 29: binary logistic regression as a 1-layer network: https://web.stanford.edu/~jurafsky/slp3/slides/nn25aug.pdf
+
+Calculate backpropagation:
+
+- Berkeley https://inst.eecs.berkeley.edu/~cs188/archive/fa24/assets/discussions/disc11-examprep-sols.pdf
+- Stanford https://cs230.stanford.edu/winter2020/section3_exercises.pdf
+- https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+
+https://www.ismll.uni-hildesheim.de/lehre/ml-19w/exercises/tutorial07.pdf
+
+Interactive js visualization of NNs: https://github.com/hmkcode/netflow.js
+
+Insight from https://developers.google.com/machine-learning/crash-course/neural-networks/interactive-exercises
+-> even if all inputs are 0, the output can be non-zero. (due to biases)

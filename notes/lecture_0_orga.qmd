@@ -1,0 +1,89 @@
+---
+title: "Notes: Orga"
+format: html
+---
+
+::: {.callout-note title="Preparation"}
+- Check room
+- Print student list
+- Prepare/bring tags to form groups
+- Prepare a Teams session for students to share their work (update `instructor.online_meeting_url` in `course.yml`).
+:::
+
+| Time (min)  | Duration  | Topic                   |
+|-------------|-----------|-------------------------|
+| 00-20       | 20        | Orga                    |
+
+## Myself
+
+I do not know everything. I make mistakes. ...
+
+My Story as a teacher. Copy Stanford slides for CS vs. Evolved role...
+
+- Theoretische Informatik: just reusing Stanford slides (reputable institution: good, but no own contribution)
+Also Connect to Student expectations: broad knowledge (by Heart, being able to discuss immediately instead of asking ChatGPT) plus deep expertise
+
+- Story (TI: Stanford slides, ... - both: hard skills + engagement with practice)
+- I give my very best, aim to make this the best analytics course.
+
+Mention surveys after each session (voluntary, but help me assess and prioritize)
+
+Mention (without bullets on the slide)
+
+- What I expect from students
+- What students can expect from me
+
+First round
+
+- Lot of unknowns: how long session will take, how much you already know, what is challenging or easy
+- I will learn as much as you will.
+- I will ask for your feedback **very** regularly (at the end of each session)
+
+## About you
+
+Maybe:
+
+- prior experience (e.g., python)?
+- Ask students how they learn (PDF, ...) whether they use a knowledge management system (which one), ...
+
+
+## Curriculum
+
+Ask/check whether it is the right overview (how many students are in semester 4 or 6)
+
+## Analytics and why it matters
+
+Takeaway - why analytics matters:
+Analytics is not just about data.
+It changes **how decisions are made, how organizations compete, and who wins.**
+
+## Architecture
+
+## Objectives
+
+- Python implementation: we will acquire some technical skills.
+  Python was selected deliberately. I know there are many graphical, low-code/no-code tools out there.
+  But they have their limitations. If we learn Python, that is more useful to understand other tools as well.
+  In addition, using LLMs on Python code is much easier, and you can clearly see and control what is suggested.
+
+## Not covered
+
+- Engineering: "building the system"
+- Statistical theory: "explaining the WHY"
+- Mathematical models: "building more specialized models"
+- Autonomous systems: "Implementing the decisions"
+
+## Logistics
+
+- Format of the session (exercises, preparation/reading)
+- Summary presentations of practitioner materials?
+- Consultation hour?
+
+
+## Materials
+
+- You always have the slides available (especially if you sit in the back, some slides may be hard to read)
+
+## Theses
+
+- My students publish (very proud of them)

@@ -1,0 +1,227 @@
+---
+title: "Exercise 1: The rise of analytics"
+---
+
+:::{.direction}
+
+In this session, we split into two groups.
+
+| Exercise part                             | Time (min) |
+| ----------------------------------------- | ---------- |
+| [Task 1: Competing on Analytics](#task-1) | 30         |
+| [Task 2: Jupyter notebook](#task-2)       | 30         |
+| [Discussion](#discussion)                 | 20         |
+| [Wrap-up](#wrap-up)                       | 5          |
+| **Overall**                               | 85         |
+
+:::
+
+## Task 1: Read _Competing on Analytics_ <a id="task_1"></a>
+
+:::{.direction}
+Read the _Competing on Analytics_ paper by @Davenport2006.
+Prepare to discuss the following questions:
+:::
+
+1. **What does it mean for a company to “compete on analytics”?**  
+   How is this different from simply using data or reports in decision-making?
+
+:::{.direction}
+<br><br><br><br><br><br><br><br><br>
+:::
+
+:::{.sol}
+To “compete on analytics” means that a company uses data, statistical analysis, modeling, and experimentation as a core strategic capability across the organization.
+Analytics is not just a support tool; it becomes a basis for competitive advantage.
+@Davenport2006 argues that such firms do not merely know what happened in the past, but use predictive and optimization methods to determine what will happen, what customers will do, what prices maximize profit, and how processes can be improved.
+
+This is different from simply using data or reports in decision-making. Many firms use descriptive statistics and reports, but analytics competitors go further by:
+
+- applying advanced models rather than only dashboards or summaries,
+- embedding analytics across multiple functions rather than in isolated departments,
+- coordinating these efforts under an enterprise strategy,
+- and repeatedly using evidence to improve decisions over time.
+
+In short, ordinary data use supports decisions; competing on analytics makes superior, repeatable, organization-wide decision-making a source of advantage.
+:::
+
+2. **What organizational capabilities are required to compete on analytics?**  
+   Consider aspects such as leadership, culture, people, and technology.
+
+:::{.direction}
+<br><br><br><br><br><br><br><br><br>
+:::
+
+:::{.sol}
+According to @Davenport2006, companies that compete on analytics need a combination of organizational and technical capabilities.
+There is a need for:
+
+1. **Strong senior leadership**, ideally from the CEO. Top executives must actively champion data-based decision-making and signal that analytics is central to strategy.
+
+2. **Analytics-oriented culture**. Employees are expected to justify decisions with evidence, performance is measured quantitatively, and the organization develops a “test and learn” mindset in which ideas are validated through experiments.
+
+3. **The right people**. This includes not only technically skilled analysts, but also people who can translate complex analyses into business language and work closely with decision-makers.
+  Analytical talent must be numerous enough to matter and visible enough to influence the business.
+
+4. **Enterprise approach**. Analytics should not be fragmented across departments with separate tools and inconsistent data definitions.
+  Instead, it should be managed coherently across the organization, with shared leadership, standards, and infrastructure.
+
+5. **The right technology and data foundation**.
+  @Davenport2006 highlights the importance of a clear data strategy, integrated and standardized data, data warehouses, business intelligence tools, and sufficient computing power.
+  These capabilities take time to build and require sustained investment.
+
+Overall, competing on analytics depends on aligning leadership, culture, talent, organization, and technology around fact-based improvement.
+:::
+
+3. **Which companies or industries compete on analytics?**  
+   Give examples and explain how analytics creates their competitive advantage.
+
+:::{.direction}
+<br><br><br><br><br><br><br><br><br>
+:::
+
+:::{.sol}
+In Davenport’s paper, several examples illustrate what it means to compete on analytics.
+
+- **Amazon** is a central example.
+  Its advantage comes from using analytics in areas such as customer recommendations, supply chain management, and operational optimization.
+  This helps it personalize the customer experience and manage large-scale complexity efficiently.
+
+- **Capital One** competes on analytics through extensive experimentation and quantitative analysis in marketing, pricing, and risk assessment.
+  Its competitive advantage comes from constantly testing offers and learning which customers to target and how to manage risk profitably.
+
+- **Harrah’s** (now Caesars Entertainment) used analytics to improve customer loyalty, promotions, pricing, and service.
+  Its advantage came from understanding customer behavior in great detail and using this knowledge to increase retention and spending.
+
+- **Progressive** used analytics to refine insurance pricing.
+  Instead of broadly rejecting risky customers, it analyzed detailed customer segments and priced them more precisely, allowing it to profit where competitors relied on cruder categories.
+
+- **Marriott** applied analytics to revenue management, pricing, and customer retention.
+  By optimizing room prices and related offerings, it improved revenue performance across its hotels.
+
+Davenport also points to **sports organizations** such as the Boston Red Sox, the Oakland A’s, and the New England Patriots.
+Their advantage came from applying statistical analysis to player selection, performance evaluation, and other decisions that were traditionally based more heavily on intuition.
+
+More broadly, industries that seem especially suited to competing on analytics are finance, retail, hospitality, logistics, insurance, and professional sports, because they generate rich data and make many repeatable decisions that can be improved through modeling and experimentation.
+
+{{< pagebreak >}}
+:::
+
+## Task 2: Create an analytical notebook in Jupyter <a id="task_2"></a>
+
+:::{.direction}
+
+Navigate to your Codespace in the [analytics-and-big-data-notebooks](https://github.com/fs-ise/analytics-and-big-data-notebooks){target="_blank"} repository and create your first analytical notebook in Jupyter.
+
+### 1. Select an example case (business problem and dataset)
+
+Choose a dataset from Kaggle, for example:
+
+* [Retail and shopping](https://www.kaggle.com/datasets?topic=retailAndShoppingDataset)
+* [Financial datasets](https://www.kaggle.com/datasets?search=financial)
+* [Trending datasets](https://www.kaggle.com/datasets?topic=trendingDataset)
+
+Define a clear business problem that can be addressed using the selected dataset.
+
+### 2. Draft the analytical notebook
+
+Create a new notebook and structure it according to the CRISP-DM framework.
+
+Start with a structured skeleton:
+
+* Include both markdown and code cells
+* Import a dataset (e.g., from Kaggle)
+* Describe planned steps and analytical approaches
+* If unsure about specific steps, clearly mark them as `TODO`, suggest likely approaches, or outline alternative options
+
+### 3. Refine the notebook
+
+Review your notebook and annotate each part by indicating whether it is:
+
+* **Descriptive** (what happened?)
+* **Predictive** (what will happen?)
+* **Prescriptive** (what should be done?)
+
+### 4. Begin with the implementation
+
+Proceed with initial implementation steps:
+
+* Import the dataset (e.g., CSV file)
+* Create a descriptive overview of the data
+* Select and implement a basic predictive model
+
+Consult the documentation of relevant Python libraries such as *pandas* and *scikit-learn* as needed.
+
+:::
+
+:::{.sol}
+
+A good notebook solution should be structured according to **CRISP-DM**:
+
+1. **Business understanding**  
+   Clearly describe the business problem, explain why it is relevant, and define the target of the analysis.
+
+2. **Data understanding**  
+   Import the dataset, inspect its structure, and create a first descriptive overview (for example: variables, missing values, distributions, summary statistics, or simple visualizations).
+
+3. **Data preparation**  
+   Anticipate how data should be cleaned and prepared. This may include handling missing values, selecting variables, encoding categories, or splitting the data into training and test sets.
+
+4. **Modeling**  
+   Select a first predictive model that fits the problem. Reasonable starting points could be:
+   - regression models for predicting numeric outcomes,
+   - classification models for predicting categories,
+   - or a machine-learning models and AI for prediction.
+
+5. **Evaluation**  
+   Plan to assess whether the model is useful for the business problem. Explain the chosen metric and interpret the results in plain language.
+
+6. **Interpretation / deployment**  
+   Anticipate what the findings could mean for decision-making and what could be done next.
+
+In the notebook, students should also indicate which parts are:
+
+- **descriptive** (understanding and summarizing the data),
+- **predictive** (building and evaluating a model),
+- **prescriptive** (discussing what actions could follow from the results).
+
+A complete solution does not need to finish every step perfectly.
+It is acceptable to leave key coding parts as **TODO**, propose likely next steps, or discuss modeling options that could be tried.
+The goal is to demonstrate a structured analytics workflow and familiarize yourself with Jupyter Notebooks.
+
+:::
+
+:::{.direction}
+
+## Discussion
+
+In class, we will discuss
+
+- Solutions for Task 1 (*Competing on Analytics*)
+- Solutions for Task 2 (Jupyter Notebooks)
+
+You can share your notebook 🔴 LIVE: [in this meeting]({{< meta instructor.online_meeting_url >}}){target="_blank"}.
+
+## Wrap-up <a id="wrap-up"></a>
+
+🎉🎈 You have completed the first notebook - good work! 🎈🎉
+
+In this notebook, we have learned to
+
+* Explain what it means to compete on analytics and why it creates competitive advantage
+* Set up and use Jupyter notebooks in a Python-based analytics environment
+* Structure an analytical workflow following CRISP-DM principles
+* Distinguish between descriptive, predictive, and prescriptive analytics
+* Begin implementing a basic data analysis workflow in Python
+
+::: {.callout-note title="Stop the Codespace"}
+To continue using your work in the next session, <b>stop</b> your Codespace [here](https://github.com/codespaces){target="_blank"}.
+Stopping the Codespace preserves the current state of your work and does not consume computational resources.
+:::
+
+::: {.callout-tip title="Session 1 survey"}
+Before you wrap up, please complete the Session 1 survey here: [{{< meta surveys.session_01.url >}}]({{< meta surveys.session_01.url >}}){target="_blank"}. Thank you 🙏
+:::
+
+# References
+:::

@@ -1,0 +1,1304 @@
+---
+title: "Analytics & Big Data"
+subtitle: "Regression 2"
+section_label: "Analytical modeling"
+session: "Session 5"
+date: "2026-04-14"
+---
+
+## {data-menu-title="Learning objectives" data-state="hide-menubar"}
+
+<br><br><br><br><br>
+
+::: {.learning-objectives}
+- **Explain** how business problems can be formulated as binary classification tasks and modeled using logistic regression.
+- **Understand** how logistic regression uses a linear predictor and sigmoid function to produce probabilities, apply thresholds, and interpret log-odds and coefficients.
+- **Evaluate** classification models using confusion matrices and metrics such as accuracy, precision, recall, and F1 score.
+- **Apply** model predictions to decision-making by selecting appropriate thresholds based on business costs and expected value.
+:::
+
+
+# Business problem: Churn prediction {data-stack-name="Business problem: Churn prediction"}
+
+## Predicting customer churn
+
+:::: {.columns}
+
+::: {.column width="70%"}
+
+
+A lost customer is often a predictable customer. 
+Firms collect many traces of customer relationships — usage, spending, support interactions, contract data.
+The analytical challenge is to turn these traces into an early warning system.
+
+**Typical variables in a churn dataset**
+
+- **Who is the customer?** tenure, segment, contract type, subscription tier
+- **How do they use the service?** login frequency, feature usage, inactivity days
+- **How satisfied are they?** complaints, support tickets, response times, NPS/satisfaction
+- **Are there warning signs?** payment delays, downgrades, cancellations of add-ons, price sensitivity
+
+**Prediction goal**
+
+Predict:
+
+$$P(\text{churn}=1 \mid X)$$
+
+where $X$ contains the observed customer characteristics and behaviors.
+
+:::
+
+::: {.column width="30%"}
+
+![](../images/customer_churn.png){width="420"}
+
+:::
+
+::::
+
+<!--
+**Why this is valuable**
+
+- Intervene **before** churn happens
+- Focus retention efforts on the right customers
+- Support decisions with probabilities, not intuition alone
+- Move from reactive reporting to proactive customer management
+-->
+
+## Geometric view of the problem
+
+<!--
+        min 3 : https://www.youtube.com/watch?v=4u81xU7BIOc
+-->
+
+Churn prediction is a **binary classification problem**:
+
+```{python}
+# | fig-align: center
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Reproducibility
+np.random.seed(42)
+
+n = 100
+
+# Continuous predictor: average response time (hours)
+# Faster response -> no churn
+response_no_churn = np.random.normal(loc=2, scale=0.8, size=n // 2)
+
+# Slower response -> churn
+response_churn = np.random.normal(loc=8, scale=1.5, size=n // 2)
+
+# Combine predictor
+response_time = np.concatenate([response_no_churn, response_churn])
+
+# Binary outcome
+churn = np.array([0] * (n // 2) + [1] * (n // 2))
+
+# Plot
+plt.figure()
+
+plt.scatter(response_time[churn == 0], churn[churn == 0], alpha=0.7)
+plt.scatter(response_time[churn == 1], churn[churn == 1], alpha=0.7)
+
+# Labels
+plt.xlabel("Average Response Time (hours)")
+plt.ylabel("Churn (0 = No, 1 = Yes)")
+plt.yticks([0, 1])
+plt.title("Churn vs. Response Time (Continuous Predictor)")
+
+plt.show()
+```
+
+
+Possible approach: We could use Linear Regression with a threshold at `0.5` to classify output:
+
+- If $f(x) < 0.5$, predict `y=0`
+- If $f(x) \ge 0.5$, predict `y=1`
+ 
+::: notes
+On whiteboard: draw previous versions (continuous -> continuous; categorical -> continuous / multidimensional)
+- good (simple; geographical) explanation:  https://www.youtube.com/watch?v=yIYKR4sgzI8
+- TODO : include illustrations from video, min 2.17 and 3.20
+
+Our natural expectation would be *decreasing marginal effects* - if customers are reasonably annoyed by waiting times, they will quit.
+There is no linear change with every additional hour they wait.
+
+On slides: Draw regression line and illustrate the cutoff threshold when the `y=0.5` cuts the regression line.
+
+Illustrate sensitivity of regression lines to outliers (min 5 in https://www.youtube.com/watch?v=4u81xU7BIOc)
+
+Also: linear regression will not respect the restriction of outcomes to {0,1}, but also give larger or negative (continuous) values.
+The "marginal effects" logic of linear regression does not make sense.
+:::
+
+# Logistic regression {data-stack-name="Logistic regression"}
+
+## Classification
+
+Examples:
+
+- Online transactions: Fraudulent (yes/no)?
+- Customer churn: yes/no?
+- EMail: Spam/not spam?
+
+$$y \in \{0,1\}$$ with
+
+0: "Negative class" (e.g., no fraud, no churn, no spam)  
+1: "Positive class" (e.g., fraud, churn, spam)
+
+
+::: notes
+
+Don't be confused by Logistic "Regression" - it works like regression, but it is actually a classification algorithm
+
+The binary classification can be extended to multiple classes:
+
+$$y \in \{0,1,2,3,4\}$$
+
+:::
+
+<!--
+TODO: include an overview of classifiers (see paper notes): rule-based, threshold-based, area-based, GLM - logistic regression: particular link function
+-->
+
+## Logistic regression model
+
+<!--
+TODO: Linear regression typically gives us continuous **scores**, but for our case of binary classification, scores between 0 and 1 are needed. Probabilities would be a score ranging between 0 and 1 (with a "nice" interpretation).
+
+
+As explained previously, linear models would also return scores > 1 or negative scores. This is problematic for a binary classification, and especially problematic when 
+
+TODO: mention threshold approach to 
+-->
+
+Ideally, our model should predict the **probability** of $y_i=1$.
+This would allow us to apply a threshold for classification, but it would also give us more information (how likely an observation belongs to the *positive class*).
+
+It means we need a model that produces predicted probabilities between 0 and 1:
+
+. . . 
+
+**Step 1: Linear model**
+
+$$z_i = \beta_0 + \beta_1 x_i$$
+
+<!--
+* Same structure as linear regression
+* $z_i \in \mathbb{R}$ (can be any real number)
+-->
+
+. . . 
+
+**Step 2: Transform to probability via sigmoid function**
+
+$$\mathbb{P}(y_i = 1 \mid x_i) = \sigma(z_i) \text{  with  } \sigma(z) = \frac{1}{1 + e^{-z}}$$
+
+. . . 
+
+::: {.highlight_must_learn}
+
+**Logistic regression model**
+
+$$\mathbb{P}(y_i = 1 \mid x_i) = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}$$
+
+**Key intuition:**
+
+* Linear predictor $z$ → transformed by the sigmoid (logistic) function
+* Output always in $[0,1]$
+* Can be interpreted as a probability (next slide)
+
+:::
+
+## Log-odds
+
+Logistic regression assumes that the **log-odds of the outcome are linear in the predictors**:
+
+$$\log\left(\frac{p_i}{1 - p_i}\right) = \beta_0 + \beta_1 x_i$$
+
+*Note: $\frac{p_i}{1 - p_i}$ are the "odds".*  
+
+. . . 
+
+<br>
+
+This implies a **sigmoid-shaped relationship** between $x_i$ and the probability of $y_i=1$:
+
+$$p_i = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}$$
+
+The sigmoid function serves as a *link function* to convert the linear predictor into a *probability*.
+
+## The Sigmoid function
+
+```{python}
+#| fig-align: center
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Sigmoid function
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+
+# X values
+x = np.linspace(-10, 10, 200)
+
+# Different parameter settings
+params = [
+    (0, 1, "β0=0, β1=1"),
+    (-2, 1, "β0=-2, β1=1"),
+    (2, 1, "β0=2, β1=1"),
+    (0, 0.5, "β0=0, β1=0.5"),
+    (0, 2, "β0=0, β1=2"),
+]
+
+# Plot
+plt.figure(figsize=(16, 6))
+
+for beta0, beta1, label in params:
+    z = beta0 + beta1 * x
+    plt.plot(x, sigmoid(z), label=label)
+
+plt.xlabel("x")
+plt.ylabel("P(y=1 | x)")
+plt.title("")
+plt.legend()
+plt.grid()
+
+plt.show()
+```
+
+:::  {.callout-note}
+- Changing **β₀ shifts** the curve left/right
+- Changing **β₁ changes slope** (flatter vs. steeper transition)
+:::
+
+::: notes
+Highlight that the sigmoid function resolves the "constant marginal effects problem"
+:::
+
+
+
+## Estimation: Maximum likelihood
+
+Instead of minimizing squared errors, logistic regression chooses parameters that make the observed data most likely.
+
+**Core idea**: We want predicted probabilities to match observed outcomes:
+
+* If $y_i = 1$ → predicted probability should be **high**
+* If $y_i = 0$ → predicted probability should be **low**
+
+. . .
+
+**Likelihood function**
+
+For each observation: $P(y_i \mid x_i) = p_i^{y_i} (1 - p_i)^{1 - y_i}$
+
+For all observations:
+
+$$L(\beta) = \prod_{i=1}^n p_i^{y_i} (1 - p_i)^{1 - y_i}$$
+
+. . .
+
+**Maximization**: Choose $\beta_0, \beta_1$ to maximize this likelihood
+
+<br>
+
+{{< iconify fluent-mdl2:insights >}}  **Intuition:** We search for the model that assigns high probability to what actually happened.
+
+::: {.learning_note .fragment}
+No need to memorize the formula. Understand the idea.
+:::
+
+## Logistic regression in Python
+
+We estimate the model using the sklearn library:
+
+```{python}
+#| echo: true
+#| output: true
+
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+
+df = pd.DataFrame({
+    "response_time": [1, 2, 3, 5, 7, 8, 9, 11],
+    "churn":         [0, 0, 0, 0, 1, 1, 1, 1]
+})
+X = df[["response_time"]]
+y = df["churn"]
+
+model = LogisticRegression()
+model.fit(X, y)
+
+print("Intercept (β0):", model.intercept_[0])
+print("Slope (β1):", model.coef_[0][0])
+```
+
+## Interpretation of coefficients
+
+Logistic regression coefficients are not directly effects on probability.
+They describe effects on the log-odds.
+
+. . .
+
+**Coefficient meaning**
+
+$$\log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 x$$
+
+* $\beta_1$: change in **log-odds** when $x$ increases by 1
+
+. . .
+
+::: {.highlight_must_learn}
+
+**More intuitive: odds ratios**
+
+Exponentiate the coefficient: $e^{\beta_1}$
+
+- Factor change in the **odds**
+- Example:
+
+  - $e^{\beta_1} = 1.5$ → odds increase by **50%**
+  - $e^{\beta_1} = 0.7$ → odds decrease by **30%**
+
+**Important implication**
+
+- Effect on probability is **nonlinear**
+- Depends on current level of $x$
+
+:::
+
+::: notes
+**Takeaway:**
+Logistic regression is linear in log-odds — but **nonlinear in probabilities**.
+
+→ Same change in $x$ has **different impact** depending on where you are on the sigmoid curve
+:::
+
+
+# Evaluation {data-stack-name="Evaluation"}
+
+
+
+```{python}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (
+    confusion_matrix,
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+)
+
+# Simulated churn data
+rng = np.random.default_rng(42)
+n = 140
+response_time = rng.uniform(0.5, 12.0, n)  # average response time in hours
+
+# Higher response time -> higher churn probability
+logit = -3.8 + 0.62 * response_time
+p_true = 1 / (1 + np.exp(-logit))
+churn = rng.binomial(1, p_true)
+
+df = pd.DataFrame({
+    "Average response time (hours)": response_time,
+    "Churn": churn,
+})
+
+# Fit logistic regression
+X = df[["Average response time (hours)"]]
+y = df["Churn"]
+model = LogisticRegression()
+model.fit(X, y)
+
+# Predictions
+x_grid = np.linspace(X.min().item(), X.max().item(), 300).reshape(-1, 1)
+p_grid = model.predict_proba(x_grid)[:, 1]
+df["Predicted probability"] = model.predict_proba(X)[:, 1]
+df["Predicted class"] = (df["Predicted probability"] >= 0.5).astype(int)
+
+cm = confusion_matrix(y, df["Predicted class"])
+metrics_df = pd.DataFrame(
+    {
+        "Metric": ["Accuracy", "Precision", "Recall", "F1"],
+        "Value": [
+            accuracy_score(y, df["Predicted class"]),
+            precision_score(y, df["Predicted class"]),
+            recall_score(y, df["Predicted class"]),
+            f1_score(y, df["Predicted class"]),
+        ],
+    }
+)
+```
+
+## Predicted probabilities
+
+::: columns
+::: {.column width="50%"}
+A logistic regression model predicts a **probability** of churn:
+
+$$
+P(\text{churn}_i=1\mid x)=\frac{1}{1+e^{-(\beta_0+\beta_1 x_i)}}
+$$
+
+<!--
+- Predictor: **average response time (hours)**
+- Higher response time  $\rightarrow$ higher churn probability
+-->
+
+<br>
+
+::: {.highlight_must_learn}
+A threshold (such as **0.5**) is needed to convert probabilities into class labels.
+
+Comparing predicted vs. actual class labels allows us to evaluate the performance of a classifier like logistic regression.
+:::
+
+:::
+
+::: {.column width="50%"}
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=(7.5, 5.2))
+ax.scatter(
+    df.loc[df["Churn"] == 0, "Average response time (hours)"],
+    df.loc[df["Churn"] == 0, "Churn"],
+    alpha=0.70,
+)
+ax.scatter(
+    df.loc[df["Churn"] == 1, "Average response time (hours)"],
+    df.loc[df["Churn"] == 1, "Churn"],
+    alpha=0.70,
+)
+ax.plot(x_grid[:, 0], p_grid, linewidth=3)
+ax.axhline(0.5, linestyle="--", linewidth=1)
+ax.set_xlabel("Average response time (hours)")
+ax.set_ylabel("Churn / predicted probability")
+ax.set_yticks([0, 0.5, 1.0])
+ax.set_ylim(-0.05, 1.05)
+ax.set_title("Observed churn outcomes and logistic prediction")
+plt.tight_layout()
+plt.show()
+```
+:::
+:::
+
+::: aside
+Note: there are no meaningful *residuals* (or $R^2$), as in linear regression models.
+:::
+
+## Confusion matrix
+
+::: columns
+::: {.column width="50%"}
+Using a **0.5 threshold**, predicted probabilities are turned into classes.
+
+The confusion matrix summarizes:
+
+- **True negatives (TN):** predicted no churn, observed no churn  
+- **False positives (FP):** predicted churn, observed no churn  
+- **False negatives (FN):** predicted no churn, observed churn  
+- **True positives (TP):** predicted churn, observed churn
+:::
+
+::: {.column width="50%"}
+```{python}
+#| fig-align: center
+fig, ax = plt.subplots(figsize=(7, 5.2))
+
+# Heatmap
+im = ax.imshow(cm, cmap="Blues")
+
+# Choose contrasting text color based on cell intensity
+threshold = cm.max() / 2
+
+for i, row in enumerate(cm):
+    for j, value in enumerate(row):
+        text_color = "white" if value > threshold else "black"
+        ax.text(
+            j,
+            i,
+            f"{value}",
+            ha="center",
+            va="center",
+            fontsize=16,
+            fontweight="bold",
+            color=text_color,
+        )
+
+# Axis labels
+ax.set_xticks([0, 1], labels=["Predicted 0", "Predicted 1"])
+ax.set_yticks([0, 1], labels=["Actual 0", "Actual 1"])
+ax.set_title("Confusion matrix")
+
+# Colorbar
+fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+
+plt.tight_layout()
+plt.show()
+```
+:::
+:::
+
+## Evaluation metrics
+
+```{python}
+#| fig-align: center
+import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(42)
+
+# -------------------------------------------------
+# Target confusion-matrix counts
+# -------------------------------------------------
+TARGET = {
+    "TP": 59,
+    "TN": 55,
+    "FN": 14,
+    "FP": 12,
+}
+
+n_pos = TARGET["TP"] + TARGET["FN"]   # actual positives
+n_neg = TARGET["TN"] + TARGET["FP"]   # actual negatives
+
+
+# -------------------------------------------------
+# Classifier boundary
+# -------------------------------------------------
+def boundary(x):
+    return 4.6 - 0.55 * x
+
+
+# -------------------------------------------------
+# Geometry aligned with the boundary
+# -------------------------------------------------
+line_direction = np.array([1.0, -0.55])
+line_direction = line_direction / np.linalg.norm(line_direction)
+
+normal_direction = np.array([0.55, 1.0])
+normal_direction = normal_direction / np.linalg.norm(normal_direction)
+
+midpoint = np.array([3.8, boundary(3.8)])
+
+
+def aligned_to_xy(t, d):
+    """
+    Convert coordinates in the line-aligned system to x/y coordinates.
+
+    t = coordinate along the classifier line
+    d = signed distance from the classifier line
+        d > 0  -> above the line
+        d < 0  -> below the line
+    """
+    return midpoint + np.outer(t, line_direction) + np.outer(d, normal_direction)
+
+
+# -------------------------------------------------
+# Generate two base clouds
+# -------------------------------------------------
+# sd_along: spread along the classifier line
+# sd_across: spread across the classifier line
+#
+# Larger sd_across gives more overlap.
+# Larger t_shift separates the clouds more left/right.
+sd_along = 0.80
+sd_across = 0.55
+t_shift = 0.90
+
+# Fixed base draws so the search is deterministic
+pos_base = rng.normal(size=(n_pos, 2))
+neg_base = rng.normal(size=(n_neg, 2))
+
+
+def evaluate(pos_sep, neg_sep):
+    """
+    Move positive and negative clouds away from the line by pos_sep / neg_sep
+    along the normal direction and compute resulting confusion-matrix counts.
+    """
+    # Positive cloud: shifted rightward along the line and upward from the line
+    pos_t = pos_base[:, 0] * sd_along + t_shift
+    pos_d = pos_base[:, 1] * sd_across + pos_sep
+
+    # Negative cloud: shifted leftward along the line and downward from the line
+    neg_t = neg_base[:, 0] * sd_along - t_shift
+    neg_d = neg_base[:, 1] * sd_across - neg_sep
+
+    tp = int(np.sum(pos_d >= 0))
+    fn = int(np.sum(pos_d < 0))
+    fp = int(np.sum(neg_d >= 0))
+    tn = int(np.sum(neg_d < 0))
+
+    score = (
+        abs(tp - TARGET["TP"])
+        + abs(fn - TARGET["FN"])
+        + abs(tn - TARGET["TN"])
+        + abs(fp - TARGET["FP"])
+    )
+
+    return {
+        "score": score,
+        "pos_sep": pos_sep,
+        "neg_sep": neg_sep,
+        "tp": tp,
+        "fn": fn,
+        "tn": tn,
+        "fp": fp,
+        "pos_t": pos_t,
+        "pos_d": pos_d,
+        "neg_t": neg_t,
+        "neg_d": neg_d,
+    }
+
+
+# -------------------------------------------------
+# Search for cloud distances from the line
+# -------------------------------------------------
+# Among equally good solutions, prefer larger separation from the line.
+best = None
+best_key = None
+
+for pos_sep in np.linspace(0.35, 0.90, 221):
+    for neg_sep in np.linspace(0.35, 0.90, 221):
+        result = evaluate(pos_sep, neg_sep)
+        key = (result["score"], -(result["pos_sep"] + result["neg_sep"]))
+
+        if best is None or key < best_key:
+            best = result
+            best_key = key
+
+# -------------------------------------------------
+# Build final point clouds
+# -------------------------------------------------
+pos_points = aligned_to_xy(best["pos_t"], best["pos_d"])
+neg_points = aligned_to_xy(best["neg_t"], best["neg_d"])
+
+tp = pos_points[best["pos_d"] >= 0]
+fn = pos_points[best["pos_d"] < 0]
+tn = neg_points[best["neg_d"] < 0]
+fp = neg_points[best["neg_d"] >= 0]
+
+
+# -------------------------------------------------
+# Plot
+# -------------------------------------------------
+fig, ax = plt.subplots(figsize=(6, 4.5))
+
+x = np.linspace(0.2, 7.4, 400)
+ax.plot(
+    x,
+    boundary(x),
+    color="#F39A3E",
+    linewidth=4.5,
+    solid_capstyle="round",
+    zorder=2,
+)
+
+ax.scatter(
+    tp[:, 0], tp[:, 1],
+    s=65,
+    facecolor="#6FD3B6",
+    edgecolor="#2A9D78",
+    linewidth=1.5,
+    zorder=3,
+    label=f"TP = {best['tp']}",
+)
+
+ax.scatter(
+    tn[:, 0], tn[:, 1],
+    s=65,
+    facecolor="#7DB7F0",
+    edgecolor="#1F5FAF",
+    linewidth=1.5,
+    zorder=3,
+    label=f"TN = {best['tn']}",
+)
+
+ax.scatter(
+    fn[:, 0], fn[:, 1],
+    s=82,
+    facecolor="#6FD3B6",
+    edgecolor="#C73E1D",
+    linewidth=2.1,
+    zorder=4,
+    label=f"FN = {best['fn']}",
+)
+
+ax.scatter(
+    fp[:, 0], fp[:, 1],
+    s=82,
+    facecolor="#7DB7F0",
+    edgecolor="#C73E1D",
+    linewidth=2.1,
+    zorder=4,
+    label=f"FP = {best['fp']}",
+)
+
+ax.set_xlim(0, 7.5)
+ax.set_ylim(0, 5.0)
+
+for spine in ["top", "right"]:
+    ax.spines[spine].set_visible(False)
+
+for spine in ["left", "bottom"]:
+    ax.spines[spine].set_linewidth(4)
+    ax.spines[spine].set_color("#174A7A")
+
+ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+
+ax.set_title("Classifier line (orange)")
+
+ax.legend(
+    loc="upper right",
+    frameon=True,
+    facecolor="white",
+    edgecolor="#cccccc",
+)
+
+plt.tight_layout()
+plt.show()
+```
+
+. . . 
+
+::: {.highlight_must_learn}
+
+::: {.small}
+| Metric | Formula | Value | Interpretation |
+|:--|:----:|:----:|:------------|
+| Accuracy | $\frac{TP+TN}{TP+TN+FP+FN}$ | 81.4% | Overall share of correct predictions |
+| Precision | $\frac{TP}{TP+FP}$ | 83.1% | Among predicted positives, how many are actually positive? |
+| Recall | $\frac{TP}{TP+FN}$ | 80.8% | Among actual positives, how many did the model identify? |
+| F1 | $2\cdot\frac{\text{Precision}\cdot\text{Recall}}{\text{Precision}+\text{Recall}}$ | 81.9% | Balance between precision and recall |
+:::
+
+:::
+
+
+::: notes
+The metrics depend on how we define the classes (what is "positive").
+:::
+
+## ROC curve and AUC
+
+::: columns
+::: {.column width="48%"}
+
+::: {.highlight_must_learn}
+
+**ROC** (Receiver Operating Characteristic) curve summarizes the trade-off between:
+
+- **True Positive Rate (aka. recall or sensitivity)**
+- **False Positive Rate**
+
+As we vary the **classification threshold**, the model becomes more or less conservative in predicting `churn = 1`.
+
+**Area under the curve (AUC)** summarizes ROC performance in a single number:
+
+- **AUC = 0.5**: no better than random guessing
+- **AUC = 1.0**: perfect separation
+- **Higher AUC**: better ranking of churners vs. non-churners
+
+A good classifier achieves:
+
+- **high true positive rate**
+- **low false positive rate**
+
+→ curves closer to the **top-left corner** indicate better model fit.
+
+:::
+<!--
+    **TODO: insight: ROC depends on the dataset!**
+-->
+
+:::
+
+::: {.column width="52%"}
+
+<br><br>
+
+```{python}
+#| fig-align: center
+from sklearn.metrics import roc_curve, roc_auc_score
+import matplotlib.pyplot as plt
+
+y_true = df["Churn"].astype(int)                 # must be 0/1
+y_score = df["Predicted probability"].astype(float)
+
+fpr, tpr, thresholds = roc_curve(y_true, y_score)
+auc = roc_auc_score(y_true, y_score)
+
+fig, ax = plt.subplots(figsize=(8, 5.2))
+ax.plot(fpr, tpr, linewidth=3, label=f"Logistic regression (AUC = {auc:.2f})")
+ax.plot([0, 1], [0, 1], linewidth=1.5, linestyle="--", label="Random classifier")
+
+ax.set_xlabel("1 - Specificity (False Positive Rate)")
+ax.set_ylabel("Sensitivity (True Positive Rate)")
+ax.set_title("ROC curve")
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+ax.legend(loc="lower right")
+
+plt.tight_layout()
+plt.show()
+```
+
+:::
+:::
+
+::: notes
+
+Unlike accuracy, ROC/AUC evaluates the classifier across **all possible thresholds**.
+
+Emphasize that each point on the ROC curve corresponds to a different classification threshold.
+
+Good link back to the confusion matrix:
+
+- lowering the threshold catches more churners
+- but also creates more false alarms
+
+AUC is especially useful when we want to compare models independently of one specific cutoff such as 0.5.
+:::
+
+
+
+
+# From prediction to decisions {data-stack-name="From prediction to decisions"}
+
+## From prediction to decision
+
+A logistic regression model predicts a **probability of churn**:
+
+$$
+p(x) = P(\text{churn}=1 \mid x)
+$$
+
+. . .
+
+This probability is based on historical data, reflecting how similar customers behaved in the past, and capturing a baseline churn risk.
+It is not a certainty.
+
+. . .
+
+Suppose a firm has two possible actions:
+
+- **Intervene**: offer a retention incentive
+- **Do nothing**
+
+. . .
+
+So the business problem is no longer only:
+
+> Who is likely to churn?
+
+It becomes:
+
+> For whom is an intervention worth it?
+
+
+::: notes
+Important distinction:
+The model predicts what is likely to happen if we do nothing different.
+It does not yet tell us whether we should intervene.
+:::
+
+
+## Decision-making under uncertainty
+
+We can use the expected value criterion to **translate predictions into decisions** by combining:
+
+- **Predicted churn probability** from the model
+- **Business consequences** of the action
+
+. . .
+
+A simple payoff structure:
+
+| Action | Customer would churn | Customer would stay |
+|---|---:|---:|
+| Intervene | +20 | -10 |
+| Do nothing | -100 | 0 |
+
+. . .
+
+Interpretation:
+
+- Saving a likely churner creates value
+- Intervening with a customer who would stay creates unnecessary cost
+- Missing a true churner is very costly
+
+::: notes
+Stress that these are simplified business values.
+They encode the firm's priorities and economics.
+:::
+
+## Expected value of (not) intervening
+
+| Action | Customer would churn | Customer would stay |
+|---|---:|---:|
+| Intervene | +20 | -10 |
+| Do nothing | -100 | 0 |
+
+Probabilities:
+
+- With probability $p(x)$, the customer is at risk and intervention helps
+- With probability $1-p(x)$, the customer would stay anyway and intervention wastes resources
+
+<!--
+Let $p(x)$ denote the predicted churn probability.
+-->
+
+If we **intervene**, the expected value is:
+
+$$EV(intervene) = p(x)\cdot 20 + (1-p(x))\cdot (-10) = 30p(x) - 10$$
+
+. . . 
+
+If we **do nothing**, the expected value is:
+
+$$
+EV(do\_nothing) = p(x)\cdot (-100) + (1-p(x))\cdot 0 = -100p(x)
+$$
+
+::: aside
+Based on @Elkan2001.
+:::
+
+::: notes
+
+Interpretation:
+
+- If the customer would churn, the firm bears a large loss
+- If the customer would stay, there is no cost
+
+:::
+
+## Optimal decision rule
+
+Instead of selecting one action, we should intervene whenever:
+
+$$
+EV(intervene) > EV(do\_nothing)
+$$
+
+. . .
+
+Insert the expected values:
+
+$$
+p(x)\cdot 20 + (1-p(x))\cdot (-10) > -100p(x)
+$$
+
+. . .
+
+Simplify:
+
+$$
+20p(x) -10 +10p(x) > -100p(x)
+$$
+
+$$
+130p(x) > 10
+$$
+
+$$
+p(x) > 0.077
+$$
+
+## Decision threshold
+
+This gives a clear rule:
+
+<br>
+
+> Intervene if $p(x) > 0.077$ (if predicted churn probability exceeds 7.7%).
+
+<br>
+
+. . .
+
+The threshold is low because:
+
+- Losing a customer is **very costly**
+- Intervening is **relatively cheap**
+
+So even a small churn probability can justify action.
+
+. . .
+
+<br>
+
+{{< iconify fluent-mdl2:insights >}} A classification threshold does not have to be 0.5.
+It should depend on the **business context**.
+
+
+::: notes
+This is a nice place to contrast statistical classification with managerial decision-making.
+Students often assume 0.5 is automatic or “correct”.
+:::
+
+<!--
+
+## General decision rule
+
+
+More generally, the threshold can be written as:
+
+$$
+t = \frac{C_{01}}{C_{01}+C_{10}}
+$$
+
+where:
+
+- $C_{01}$ = cost of unnecessary intervention
+- $C_{10}$ = cost of missing a churner
+
+. . .
+
+Decision rule:
+
+$$
+\text{Intervene if } p(x) > t
+$$
+-->
+
+## Two sources of knowledge
+
+This decision combines two complementary inputs:
+
+**1. Data-driven component**
+
+- Logistic regression estimates:
+$$
+p(x)=P(\text{churn}=1\mid x)
+$$
+- Learned from historical data  
+- Provides a probability (what is likely to happen)
+
+**2. Business-driven component**
+
+- A threshold that determines when to act  
+- Ideally derived from expected value considerations  
+- Based on business costs, strategy, and domain knowledge  
+
+. . .
+
+::: {.highlight_must_learn}
+The model produces probabilities — not decisions.
+
+There are multiple ways to set a threshold for classification, depending on the context.
+
+A decision only emerges when probabilities are combined with a chosen threshold —  
+this is where predictive analytics becomes prescriptive analytics.
+:::
+
+<!--
+
+## Big conceptual takeaway
+
+$$
+\textbf{Data} \rightarrow \textbf{Model} \rightarrow \textbf{Probability}
+\qquad + \qquad
+\textbf{Business costs} \rightarrow \textbf{Threshold}
+\rightarrow \textbf{Decision}
+$$
+
+. . .
+
+The model does **not** decide what to do.
+
+It produces probabilities.
+
+The **business defines the threshold**, and together they determine the action.
+
+
+## Why probabilities matter
+
+Probabilities create a clean interface between **prediction** and **decision-making**.
+
+. . .
+
+With probabilities:
+
+- the output is interpretable
+- the threshold can come directly from business costs
+- model and decision rule remain conceptually separate
+
+. . .
+
+With arbitrary scores:
+
+- interpretation is less clear
+- thresholds must often be tuned empirically
+- the connection to business value is less direct
+
+
+    ## Important assumptions
+
+    ::: notes
+
+    This reasoning assumes that:
+
+    - the relationship between features and churn remains reasonably stable
+    - intervention effects are similar to what the business expects
+    - the cost/benefit structure is known and relevant
+
+    If these change, the threshold should also change.
+
+    :::
+
+
+    ## Takeaway
+
+    ::: {.highlight_must_learn}
+    **Data gives us probabilities.**
+
+    **Business defines the threshold.**
+
+    **Together, they determine the decision.**
+    :::
+
+    ::: notes
+    This is the main message of the section.
+    Nice bridge to ML later:
+    many models can produce probabilities or scores,
+    but business decision-making still requires a threshold and value logic.
+    :::
+
+
+    TOOD: potential extensions:
+
+    ###  Improving the model
+
+    - Add interaction effects
+    - Model non-linear relationships (transformations)
+
+    ### Dealing with class imbalance
+
+    - Why accuracy can be misleading
+    - Focus on relevant metrics
+    -> SMOTE
+
+Decided to skip multi-label prediction
+-->
+
+# Outlook: Machine learning {data-stack-name="Outlook"}
+
+## From statistical models to machine learning
+
+Logistic regression is a classification model and represents a basic form of machine learning:
+
+- learns from data  
+- makes predictions  
+- but with strong structural assumptions
+
+It is:
+
+- Interpretable
+- Fast and robust
+- Often a baseline model
+
+. . .
+
+<br>
+
+Logistic regression is often the first model to try —  simple, transparent, and surprisingly effective.
+
+<br>
+
+{{< iconify fluent-mdl2:insights >}}  More complex models are useful only if they improve performance meaningfully
+
+
+## From statistical models to machine learning
+
+:::: {.columns}
+
+::: {.column width="45%"}
+
+::: {.highlight_must_learn}
+
+**New challenges in machine learning**
+
+**1. Overfitting**
+
+- Models may fit noise instead of signal  
+- Good training performance ≠ good generalization  
+
+**2. Role of data**
+
+- More observations and features become critical  
+
+**3. Evaluation**
+
+- Same metrics (accuracy, precision, recall, F1)  
+- But evaluated on unseen data
+
+**4. Model tuning**
+
+- Not only thresholds  
+- Additional hyperparameters
+
+:::
+
+:::
+
+::: {.column width="55%"}
+
+<br><br>
+
+| Logistic regression | Machine learning models |
+|---|---|
+| Linear decision boundary | Can learn nonlinear boundaries |
+| Strong assumptions | Fewer assumptions |
+| Selected variables | Many variables (high-dimensional) |
+| Interpretable | Often less interpretable |
+
+<br>
+
+**Key shift:**
+
+- From structured, theory-driven models
+- To flexible, data-driven models
+
+:::
+
+::::
+
+## Summary {data-state="hide-menubar"}
+
+- Logistic regression is a method for **binary classification**, where the goal is to predict whether an outcome occurs (e.g., churn vs. no churn).
+- It predicts **probabilities** $P(y=1 \mid X)$ using a linear predictor combined with a **sigmoid function**, ensuring outputs between 0 and 1.
+- Coefficients are interpreted in terms of **log-odds** (or odds ratios), not direct probability changes.
+- Parameters are estimated via **maximum likelihood**, aiming to match predicted probabilities with observed outcomes.
+- Model performance is evaluated using **classification metrics** such as confusion matrices, accuracy, precision, recall, F1, and ROC/AUC.
+- A **threshold** is required to convert probabilities into class labels, and should be chosen based on **business costs**, not fixed at 0.5.
+
+## Survey: Session 5 {data-state="hide-menubar"}
+
+<br><br>
+
+::: {style="display:flex; justify-content:center;"}
+
+{{< qrcode "{{< meta surveys.session_05.url >}}" width=400 height=400 >}}
+
+:::
+
+<br><br>
+
+[{{< meta surveys.session_05.url >}}]({{< meta surveys.session_05.url >}})
+
+::: aside
+Note: Responses may be analyzed and published in anonymized form.
+
+Please complete the survey before you leave today — thank you 🙏
+:::
+
+
+# References {data-state="hide-menubar"}

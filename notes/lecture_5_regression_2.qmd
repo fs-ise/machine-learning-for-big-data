@@ -1,0 +1,188 @@
+---
+title: "Notes: Session 5: Regression 2"
+format: html
+---
+
+2026-04-14: 65 min for the lecture + 25 min for the discussion of group projects
+
+| Time (min) | Duration | Topic                         | Additional materials |
+|------------|----------|-------------------------------|----------------------|
+| 0–30       | 30       | Refining the model            |                      |
+| 30–60      | 30       | Explanation ↔ prediction      |                      |
+| 60–90      | 30       | Regression → Machine learning |                      |
+
+
+TODO
+
+- Deepen linear regression and surface modeling tensions.
+- When we use regression as a baseline, we will also run it in a train/test mode (unlike in exercises 4 and 5)
+
+```{python}
+# | echo: false
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Data
+np.random.seed(1)
+x = np.linspace(0, 10, 50)
+y = 2 * x + 3 + np.random.normal(0, 3, size=len(x))
+
+# Fit line
+coef = np.polyfit(x, y, 1)
+y_fit = np.polyval(coef, x)
+
+# Plot
+plt.figure()
+plt.scatter(x, y)
+plt.plot(x, y_fit)
+plt.xlabel("X (continuous)")
+plt.ylabel("Y (continuous)")
+plt.title("Linear Regression (Continuous Outcome)")
+plt.show()
+```
+
+```{python}
+# | echo: false
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(1)
+
+# 4 categories
+categories = np.random.choice([0, 1, 2, 3], size=80)
+
+# Assign different means per group
+means = {0: 5, 1: 7, 2: 10, 3: 6}
+y = np.array([means[c] for c in categories]) + np.random.normal(0, 1.5, size=80)
+
+# Compute group means
+group_means = [y[categories == i].mean() for i in range(4)]
+
+# Plot
+plt.figure()
+
+# Jitter for better visibility
+x_jitter = categories + np.random.normal(0, 0.05, size=len(categories))
+
+plt.scatter(x_jitter, y, alpha=0.6)
+
+# Plot group means
+plt.plot(range(4), group_means, marker="o")
+
+plt.xticks(range(4), ["A", "B", "C", "D"])
+plt.xlabel("Categorical Predictor (4 levels)")
+plt.ylabel("Y (continuous)")
+plt.title("Regression with 4-Level Categorical Predictor")
+
+plt.show()
+```
+
+```{python}
+# | echo: false
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Data
+np.random.seed(1)
+x = np.linspace(0, 10, 100)
+logits = -5 + 1 * x
+p = 1 / (1 + np.exp(-logits))
+
+# Simulated binary outcomes
+y = np.random.binomial(1, p)
+
+# Plot
+plt.figure()
+plt.scatter(x, y, alpha=0.4)
+plt.plot(x, p)
+plt.xlabel("X (continuous)")
+plt.ylabel("Probability / Outcome (0 or 1)")
+plt.title("Logistic Regression (Binary Outcome)")
+plt.show()
+```
+
+
+### Classification Approaches
+
+* **Black box models**
+  → Directly map input → class (low interpretability)
+
+* **Score + threshold**
+  → Compute a score, then classify via cutoff
+  (separates prediction from decision)
+
+* **Regions / rules**
+  → Partition input space into decision areas
+  (e.g., trees, rule systems)
+
+### Logistic Regression Choice
+
+We use the **score approach**, where the score is: $p(x)=P(Y=1\mid x)$
+
+→ **Interpretable probability** + threshold ⇒ classification
+
+## From Logit to Sigmoid (whiteboard)
+
+Start with the **Logit formulation** and define:
+$$\log\left(\frac{y}{1-y}\right)=\beta_0 + \beta_1 x = z$$
+
+**Solve for (y)**
+
+Exponentiate:
+$$
+\frac{y}{1-y} = e^{z}
+$$
+
+Rearrange:
+$$
+y = (1-y)\cdot e^{z}
+$$
+
+$$
+y + y e^{z} = e^{z}
+$$
+
+$$
+y(1 + e^{z}) = e^{z}
+$$
+
+$$
+y = \frac{e^{z}}{1 + e^{z}}
+$$
+
+
+**Final step (multiply numerator and denominator by $e^{-z}$)**:
+
+$$
+y = \frac{e^{z}}{1 + e^{z}} \cdot \frac{e^{-z}}{e^{-z}}
+= \frac{1}{1 + e^{-z}}
+$$
+
+## Exercise
+
+2026-04-14: 90 min, did not start with Part 5 (students indicated that we could discuss solutions earlier)
+
+| Time (min) | Duration | Topic                         | Additional materials |
+|------------|----------|-------------------------------|----------------------|
+| 0–30       | 30       | Group work assignment         |                      |
+| 30–90      | 60       | Logistic regression           |                      |
+
+
+Part 1.3: TODO: extract confidence and interpret practical and statistical significance? (the small coefficient for income could be practically significant because of the high values of income, which is not standardized)
+
+{{< pagebreak >}}
+
+## Materials
+
+- good slides: https://harvard-iacs.github.io/2019-CS109A/lectures/lecture10/ (https://harvard-iacs.github.io/2019-CS109A/lectures/lecture11/presentation/Lecture11_LogReg2.pdf)
+- good (simple; geographical) explanation:  https://www.youtube.com/watch?v=yIYKR4sgzI8
+- Lecture, Ng: https://www.youtube.com/watch?v=4u81xU7BIOc
+- https://web.stanford.edu/class/cme250/files/cme250_lecture2.pdf
+- https://slds-lmu.github.io/i2ml/chapters/03_supervised_classification/03-04-classification-logistic/
+- https://ubc-cs.github.io/cpsc330-2023W1/README.html
+- Optional /extension: changing the data: https://ubc-cs.github.io/cpsc330-2023W1/lectures/09_classification-metrics.html#optional-changing-the-data
+- https://harvard-iacs.github.io/2019-CS109A/lectures/lecture-11/notebook/
+- https://github.com/UBC-CS/cpsc330-2023W1
+- https://slds-lmu.github.io/i2ml/
+- https://www2.stat.duke.edu/courses/Spring20/sta210.001/labs/lab-08-logistic.html
+

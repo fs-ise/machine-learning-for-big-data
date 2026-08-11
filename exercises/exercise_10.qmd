@@ -1,0 +1,107 @@
+---
+title: "Exercise 10: Analytics in organizations"
+---
+
+In this exercise, you will analyze how analytics contributes to strategic objectives in organizations.
+
+This is a **small-group task**. 
+We will facilitate the group formation at the beginning of the session.
+
+Your task is to identify where analytics enters concrete business processes, which decisions it supports, what data and systems are needed, and how the organization learns from outcomes.
+
+You will develop an **Analytics-Enabled Strategy Map** for one selected company.
+
+<!--
+
+## Learning objectives
+
+After completing this exercise, you should be able to:
+
+1. Connect a strategic objective to related KPIs.
+2. Identify business processes in which analytics creates value.
+3. Explain which decisions are supported by analytics.
+4. Describe the data sources and systems needed for analytics-enabled work.
+5. Reflect on learning loops, governance mechanisms, and regulatory or ethical boundaries.
+-->
+
+## Step 1: Select your case
+
+Select **one** company from the following list:
+
+| Case | Industry |
+|---|---|
+| Netflix | Streaming / entertainment |
+| Meta | Social media / digital platforms |
+| X / Twitter | Social media / digital platforms |
+| Siemens | Manufacturing / industrial technology |
+
+<!--You may propose another case, but it must have enough public material to analyze strategy, processes, analytics, data, systems, and governance.
+-->
+
+## Step 2: Familiarize yourself with the company
+
+Start by building a basic understanding of the company:
+
+- What is the company’s business model?
+- Who are its main customers or users?
+- What are its main products, services, or platforms?
+- What strategic objective seems especially important for the company?
+- What could be plausible key performance indicators for this objective?
+
+Do not assume that official strategic metrics are publicly available.  
+If necessary, infer plausible KPIs and justify your reasoning.
+
+{{< pagebreak >}}
+
+## Step 3: Conduct complementary web research
+
+Use public materials such as annual reports, investor presentations, engineering blogs, research blogs, transparency reports, product documentation, regulatory documents, high-quality journalism, or academic case studies.
+
+Use at least **three credible sources**. These can be company sources, external sources, or a combination of both.
+
+Useful starting points include:
+
+- Overview of engineering blogs: [Top 20 Tech Blogs Every Developer Should Follow](https://medium.com/developersglobal/top-20-tech-blogs-every-developer-should-follow-598ff45b477d)
+- Company annual reports or investor relations pages
+- Company engineering, research, safety, transparency, or product blogs
+- High-quality journalism or academic case studies on the selected company
+
+For each source, ask:
+
+- What strategic objective does this source reveal?
+- Which business processes are described?
+- Which analytics applications are described or implied?
+- Which decisions are supported by analytics?
+- Which data sources or systems are mentioned?
+- Are there signs of experimentation, feedback, monitoring, governance, or regulation?
+
+## Step 4: Build an Analytics-Enabled Strategy Map
+
+<!--
+Fill out the following table for your selected case.
+
+| Guiding question | Notes |
+|---|---|
+| What strategic objective is especially relevant for the selected analytics application? |  |
+| Which operational KPIs help track progress toward this objective? |  |
+| Which specific analytics application contributes to this objective? |  |
+| In which business process is analytics used? Describe the process as a chain of **decision → data → action → outcome**. |  |
+| How does analytics create value in this case, for example through better decisions, personalization, automation, efficiency, risk reduction, or learning? |  |
+| What legal, ethical, technical, or organizational limits matter? |  |
+-->
+
+Fill out [this table](https://raw.githubusercontent.com/fs-ise/analytics-and-big-data/refs/heads/main/assets/template_analytics_in_organizations.docx) for your selected case.
+
+::: {.callout-note}
+## Notes
+
+Focus on **specific analytics-enabled decisions**, not broad statements such as “the company uses AI.”
+
+The goal is to understand how analytics connects strategic objectives to concrete processes, decisions, data, actions, and outcomes.
+
+Some information may not be publicly available. In such cases, make a careful, evidence-based inference and clearly indicate where you are interpreting rather than reporting.
+:::
+
+::: {.callout-tip title="Session 10 survey"}
+Before you wrap up, please complete the Session 10 survey here: [{{< meta surveys.session_10.url >}}]({{< meta surveys.session_10.url >}}){target="_blank"}. Thank you 🙏
+:::

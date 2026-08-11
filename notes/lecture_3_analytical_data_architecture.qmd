@@ -1,0 +1,65 @@
+---
+title: "Notes: Session 2: Analytical data architecture"
+format: html
+---
+
+| Time (min) | Duration | Topic                | Additional materials |
+|------------|----------|----------------------|----------------------|
+| 0–23       | 23       | Data warehouse       |                      |
+| 23–46      | 23       | ETL pipeline         |                      |
+| 46–68      | 22       | Dimensional modeling |                      |
+| 68–90      | 22       | OLAP operations      |                      |
+
+2026-03-30 lecture: 85 minutes (5 min short)
+
+TODO
+
+- Check for code-based example of ELT/ETL: https://proceedings.scipy.org/articles/wjjm7869
+- Refer to the @Davenport2006 case: competing on analytics requires organizations to go beyond simple descriptive statistics.
+  As such, traditional DWH may be the (historical) foundation for analytics.
+- Clarify: OLTP <-> OLAP and OLTP -> ETL -> DWH -> OLAP
+- Distinguish fact and dimension tables
+- Learning objective: writing SQL queries!?
+- Illustrate: OLAP as a "systems approach", notebooks as a more flexible data science approach
+- Rotating hypercube: similar to rotating in tidy-data preparation?
+- Complete the exercise on paper? Provide a PDF version?
+
+## Summary/previous lectures
+
+- Rise of analytics: descriptive/predictive/prescriptive, CRISP-DM
+- Data preparation: variable types, data quality, structuring (what tools expect), clustering/k-means
+- Tech. setup: Jupyter notebooks, Codespaces
+-> Almost completed data foundations, will start with modeling next session
+
+## DWH concept
+
+**Subject-oriented (Inmon):**
+A DWH is organized around **core business subjects** (e.g., customer, product, sales), which correspond to **facts and dimensions in a star schema**.
+Instead of storing data separately across operational systems (e.g., CRM, billing, support), the DWH integrates them into unified subject areas—e.g., a **Customer** view combining purchases, interactions, payments, and demographics.
+
+## Modern analytics
+
+DWH codifies data preparation procedures (all transformations, etc. we covered in the previous lecture), access to databases, metadata-knowledge.
+This could make DWH-evolution more efficient for organizations than replacing them with new systems in a greenfield-approach.
+
+Data quality issues could be discussed along DWH/ETL. E.g., transformations are in the transformation phase, incorrect data should be fixed in the source systems, for duplicates it depends (whether they are in or between-dataset duplicates)
+
+Modern ML/analytics applications often operate as a layer on top of a DWH
+
+## Exercise
+
+2026-03-30: 90 minutes (approx. 60 minutes for part 1+2 with discussion; 30 minutes for part 5/1+2; skipped remaining modelling/OLAP/Questions)
+
+TODO:
+
+- Do fact tables require a primary key?
+- Can we add the same tuple multiple times?
+- Check: is this handled by "artificial primary keys" (built-in)?
+- Key question: why should time be a separate table?
+- Creating a time dimension table is helpful to trigger database indexing (for efficient OLAP operations)
+
+Part 2: lesson should be "extract time as table" and "integrate" class into wine.
+
+{{< pagebreak >}}
+
+## Materials

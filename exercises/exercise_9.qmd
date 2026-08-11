@@ -1,0 +1,307 @@
+---
+title: "Exercise 9: Big data and neural networks"
+---
+
+::: {.direction}
+
+In this notebook, we cover:
+
+| Exercise part                                                 | Time (min)  |
+| ------------------------------------------------------------- | ----------: |
+| [Part 1: Backpropagation step by step](#part-1)               | 25 min      |
+| [Part 2: Interactive neural networks](#part-2)                | 20 min      |
+| [Part 3: Code understanding: PyTorch model objects](#part-3)  | 10 min      |
+| [Part 4: Use cases quiz: NovaStream](#part-4)                 | 25 min      |
+| [Wrap-up](#wrap-up)                                            | 5 min       |
+| Total                                                         | 90 min      |
+
+<br><br>
+
+:::
+
+## Part 1: Backpropagation step by step <a id="part-1"></a>
+
+::: {.direction}
+
+Go to [http://hmkcode.github.io/ai/backpropagation-step-by-step](http://hmkcode.github.io/ai/backpropagation-step-by-step) and study the backpropagation algorithm in one iteration.
+
+Note that for simplification, the example uses no activation function.
+
+:::
+
+
+::: {.sol}
+
+## Solution
+
+See [http://hmkcode.github.io/ai/backpropagation-step-by-step](http://hmkcode.github.io/ai/backpropagation-step-by-step).
+
+:::
+
+::: {.direction}
+{{< pagebreak >}}
+:::
+
+## Part 2: Interactive neural networks <a id="part-2"></a>
+
+::: {.direction}
+
+Go to the [Tensorflow Playground](https://playground.tensorflow.org/) and experiment with classification problems.
+Your goal is to achieve a low test loss with the simplest possible model.
+
+In the TensorFlow Playground, select each of the following datasets on the left-hand side:
+
+1. circle dataset
+2. two-clusters dataset
+3. spiral dataset
+
+For each dataset, modify the neural network design by changing:
+
+- number of hidden layers
+- number of neurons per layer
+- activation function
+- input features, where useful
+
+Your goal is to find a neural network design that predicts the selected dataset pattern accurately, as indicated by a low test loss.
+
+Do not simply add as many neurons and layers as possible.
+Instead, try to find a minimal setup that works well.
+
+For each dataset, document:
+
+- selected input features
+- number of hidden layers
+- number of neurons per layer
+- activation function
+- final test loss
+
+Briefly explain:
+
+- which settings worked well
+- why the dataset required a simpler or more complex neural network design
+- how the architecture affected the model’s ability to capture the non-linear pattern
+
+:::
+
+::: {.sol}
+
+## Solution
+
+There is not one single correct solution for this task.
+The TensorFlow Playground uses random initialization, and the final test loss can vary slightly across runs.
+The goal is therefore not to reproduce one exact value, but to find a model that is as simple as possible while still capturing the structure of the dataset.
+
+| Dataset | Input features | Hidden layers | Neurons per layer | Activation function | Example final test loss |
+|---|---:|---:|---:|---|---:|
+| Two clusters | $x_1$, $x_2$ | 0 | none | Linear output only | 0.00 |
+| Circle | $x_1$, $x_2$, $x_1^2$, $x_2^2$ | 1 | 3–4 | Tanh or ReLU | 0.00 |
+| Spiral | $x_1$, $x_2$ |3–4 | 6–8 each | ReLU | approx. 0.03–0.10 |
+
+For the **two-clusters dataset**, the classes are almost linearly separable.
+This means that the model does not need hidden layers.
+A simple linear classifier using $x_1$ and $x_2$ can already draw an appropriate decision boundary.
+Adding more layers or many neurons may still work, but it is unnecessary and makes the model more complex than needed.
+
+For the **circle dataset**, a small non-linear model already works well.
+The pattern cannot be separated by a straight line, so a model without hidden layers is usually not sufficient when only $x_1$ and $x_2$ are used.
+Adding squared input features such as $x_1^2$ and $x_2^2$ makes the circular structure easier to learn. With these features, one hidden layer with only a few neurons is often enough.
+
+For the **spiral dataset**, the decision boundary is much more complex.
+The classes are intertwined in a curved, non-linear pattern, so a simple linear model or a very small hidden layer cannot capture the structure well.
+Several hidden layers with multiple neurons are usually needed (e.g., all features, one layer with 7 neurons, one layer with 5 neurons).
+The ReLU activation function works particularly well because it allowed the network to combine several local linear boundaries into a more flexible non-linear decision surface.
+
+Overall, the experiments show that the required network architecture depends strongly on the complexity of the dataset.
+Simple, linearly separable patterns can be learned with very small models, while strongly non-linear patterns require additional hidden layers, more neurons, and suitable activation functions.
+The aim is not to maximize model size, but to choose the smallest architecture that captures the relevant pattern with low test loss.
+:::
+
+{{< pagebreak >}}
+
+## Part 3: Code understanding — PyTorch model objects <a id="part-3"></a>
+
+::: {.direction}
+
+In `sklearn`, we often specify the model through parameters such as strings or tuples:
+
+```python
+MLPClassifier(
+    hidden_layer_sizes=(32, 16),
+    activation="relu",
+    solver="adam"
+)
+````
+
+In PyTorch, we usually define a model as an object. The model inherits functionality from `nn.Module`.
+Inspect the following model:
+
+```python
+import torch.nn as nn
+
+class MLP(nn.Module):
+    def __init__(self, input_dim, hidden_layers, output_dim):
+        super().__init__()
+
+        layers = []
+        prev_dim = input_dim
+
+        for h in hidden_layers:
+            layers.append(nn.Linear(prev_dim, h))
+            layers.append(nn.ReLU())
+            prev_dim = h
+
+        layers.append(nn.Linear(prev_dim, output_dim))
+
+        self.model = nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.model(x)
+
+
+model = MLP(
+    input_dim=10,
+    hidden_layers=[8, 4],
+    output_dim=1
+)
+```
+
+{{< pagebreak >}}
+
+Write down the sequence of layers created by this model.
+
+Use this format:
+
+```text
+Input: 10 features
+Linear: 10 -> ...
+ReLU
+Linear: ... -> ...
+ReLU
+Linear: ... -> 1
+Output: 1 value
+```
+
+Then answer briefly:
+
+1. How many hidden layers does the model have?
+2. How many trainable `Linear` layers does it have?
+3. What would change if `hidden_layers=[32, 16, 8]`?
+
+:::
+
+::: {.sol}
+
+## Solution
+
+Task 1:
+
+```text
+Input: 10 features
+Linear: 10 -> 8
+ReLU
+Linear: 8 -> 4
+ReLU
+Linear: 4 -> 1
+Output: 1 value
+```
+
+:::
+
+{{< pagebreak >}}
+
+## Part 4: Use Cases Quiz — NovaStream <a id="part-4"></a>
+
+::: {.direction}
+
+**Background**
+
+*NovaStream* is a rapidly growing digital streaming startup offering movies, series, podcasts, music, and livestream content through a subscription-based platform. Due to strong recent growth, the company plans to scale its operations, improve personalization, optimize infrastructure usage, and strengthen platform security.
+
+Management believes that data-driven and AI-supported decision-making will be critical for future growth. As a result, the company faces a variety of analytical questions that must be addressed using suitable analytical modeling approaches.
+
+### Task
+
+For each use case below:
+
+* Select a suitable analytical modeling approach covered in the lectures.
+* Justify your choice with reference to:
+
+  * the nature of the available input data,
+  * the expected targets or outputs,
+  * and the suitability of the selected analytical model for the task.
+
+Briefly explain why your chosen approach is appropriate compared to possible alternatives.
+
+Some use cases may not fit perfectly into the standard analytical models discussed in class. In such cases, explain the limitations of standard approaches and discuss which additional analytical or optimization methods may be more appropriate.
+
+
+| #                | Use Case                                                                                                                                                                                                                                                                                                                                                          | Recommendation         |
+| --- | ---------------------- | -------------------------------- |
+| 1                | NovaStream wants to identify subscribers who are likely to cancel their subscription within the next 30 days. Available data includes viewing behavior, subscription history, customer support interactions, app usage patterns, and payment information. Early identification would allow the company to proactively offer incentives and reduce customer churn. |                                       |
+| 2                | To improve user engagement, NovaStream wants to recommend movies, series, podcasts, and songs that individual users are likely to consume next. The platform collects information about viewing history, ratings, watch duration, search queries, and similarities between users.                                                                                 |                                       |
+| 3                | NovaStream plans to expand internationally and wants to automatically generate subtitles for livestreams and recorded content in multiple languages. The company wants the generated subtitles to adapt well to conversational language and different speaking styles.                                                                                            |                                       |
+| 4                | The startup has noticed suspicious activity involving accounts that appear to be shared simultaneously across many devices and geographic regions. NovaStream wants to automatically detect unusual behavior patterns that may indicate fraudulent usage or unauthorized account sharing.                                                                         |                                       |
+| 5        | To accelerate growth, NovaStream plans to dynamically adjust subscription prices and promotional discounts depending on customer demand, competitor actions, viewing behavior, and seasonal effects. The company wants to continuously optimize pricing decisions over time.                                                                                      |                                       |
+
+{{< pagebreak >}}
+
+| #                | Use Case                                                                                                                                                                                                                                                                                                                                                          | Recommendation         |
+| --- | ---------------------- | -------------------------------- |
+| 6                | Users can upload custom cover images for podcasts and playlists. NovaStream wants to automatically classify uploaded images into categories such as sports, entertainment, education, politics, or technology in order to improve search and content discovery.                                                                                                   |                                       |
+| 7         | NovaStream is introducing a same-day merchandise delivery service for selected cities. The company wants to determine optimal delivery routes for drivers while minimizing transportation costs and ensuring that promised delivery times are met despite changing traffic conditions.                                                                            |                                       |
+| 8                | NovaStream wants to predict which song, video, or podcast episode a user is most likely to consume next based on recent interaction sequences, time of day, device usage, and historical consumption patterns.                                                                                                                                                    |                                       |
+| 9                | Product managers want to understand which combinations of movies, series, podcasts, or songs are frequently consumed together in order to improve homepage design, bundled recommendations, and promotional campaigns.                                                                                                                                            |                                       |
+| 10               | During livestream events, NovaStream offers real-time chat functionality. To maintain a safe platform environment, the company wants to automatically detect toxic, hateful, or abusive chat messages as they are posted.                                                                                                                                         |                                       |
+
+{{< pagebreak >}}
+
+| #                | Use Case                                                                                                                                                                                                                                                                                                                                                          | Recommendation         |
+| --- | ---------------------- | -------------------------------- |
+| 11                | The marketing department wants to identify groups of customers with similar viewing and listening behavior in order to design more targeted campaigns and personalized subscription offers. The company does not currently have predefined customer categories.                                                                                                   |                                       |
+| 12                | Due to rapid growth, NovaStream’s infrastructure team must better predict future server demand and bandwidth consumption in order to avoid outages during peak usage periods while also minimizing unnecessary cloud costs. Historical usage data across days, weeks, and special events is available.                                                            |                                       |
+
+:::
+
+::: {.sol}
+
+## Solution
+
+| #  | Summary Statement                                       | Likely Suitable Approaches                                              |
+| -- | ------------------------------------------------------- | ----------------------------------------------------------------------- |
+| 1  | Predict customers likely to cancel soon.                | Logistic Regression, Random Forest, Neural Networks                     |
+| 2  | Recommend personalized media content to users.          | Recommendation Systems, Neural Networks, Transformers                   |
+| 3  | Generate multilingual subtitles from spoken content.    | Transformers, RNN/LSTM                                                  |
+| 4  | Detect suspicious or fraudulent account behavior.       | Anomaly Detection, Neural Networks                                      |
+| 5  | Optimize subscription prices and discounts dynamically. | Reinforcement Learning, Dynamic Pricing Models, Optimization Approaches |
+| 6  | Classify uploaded images into content categories.       | CNN                                                                     |
+| 7  | Optimize same-day delivery routes under constraints.    | Vehicle Routing / Operations Research / Optimization Algorithms         |
+| 8  | Predict the next item a user will consume.              | RNN/LSTM, Time series, Transformer                                                   |
+| 9  | Identify media items frequently consumed together.      | k-Means, Association Rule Mining                                                 |
+| 10 | Detect toxic or abusive chat messages in real time.     | Transformer-based NLP models, Neural Networks                           |
+| 11 | Segment customers into behavior-based groups.           | Clustering, e.g., K-Means                                               |
+| 12 | Forecast future server and bandwidth demand.            | Linear Regression, Time-Series Models, RNN/LSTM                         |
+
+:::
+
+::: {.direction}
+{{< pagebreak >}}
+
+# Wrap-up <a id="wrap-up"></a>
+
+In this exercise, we explored how neural networks learn and how analytical models can be selected for different business problems.
+
+| Topic | Key takeaway |
+|---|---|
+| Backpropagation | Neural networks learn by gradually adjusting weights based on errors |
+| TensorFlow Playground | Different neural architectures vary in how well they model non-linear patterns |
+| PyTorch models | Neural networks can be defined as sequences of layers and activation functions |
+| Analytical use cases | Different problems require different analytical approaches |
+
+In the last sessions, we covered a range of models for tabular and unstructured data in regression, classification, and prediction tasks.
+At the same time, other problems may require different models, such as time-series forecasting or route optimization.
+
+::: {.callout-tip title="Session 9 survey"}
+Before you wrap up, please complete the Session 9 survey here: [{{< meta surveys.session_09.url >}}]({{< meta surveys.session_09.url >}}){target="_blank"}. Thank you 🙏
+:::
+
+:::
