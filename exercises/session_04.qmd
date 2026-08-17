@@ -6,16 +6,750 @@ format:
   ipynb: default
 ---
 
-## Task
+:::{.direction}
 
-Work through the Session 4 exercise on ML Baselines (Regression).
+In this notebook, we cover:
 
-::: {.content-visible when-profile="assign"}
-1. Review the lecture concepts.
-2. Apply the concepts to the provided data or examples.
+| Exercise part                                                | Time (min) |
+| ------------------------------------------------------------ | ---------: |
+| [Baseline regression](#baseline)                             |         18 |
+| [Regression tables with `statsmodels`](#statsmodels)         |         17 |
+| [Regression diagnostics](#diagnostics)                       |         22 |
+| [Subgroup analysis](#subgroup-analysis)                      |         18 |
+| [Deployment](#deployment)                                    |         10 |
+| [Wrap-up](#wrap-up)                                          |          5 |
+| Overall                                                      |         90 |
+
+
+Note: resume your codspace at [analytics-and-big-data-notebooks](https://github.com/fs-ise/analytics-and-big-data-notebooks).
+
+# Case: Employee performance at MetaCorp
+
+You are a business analyst working for MetaCorp.
+The company wants to understand which factors are associated with employee performance.
+A central question in this notebook is whether **remote work** is associated with employee performance once we also account for other relevant variables.
+
+MetaCorp is interested in questions such as:
+
+- Does remote work seem to be associated with higher or lower performance?
+- Does this relationship remain once we control for experience, training, salary, and management quality?
+- Is the relationship between remote work and performance similar across departments?
+- When should we be careful not to overinterpret regression results?
+
+The target variable is: `performance`, a quantitative employee performance score
+
+Potential predictors include:
+
+- `experience`: years of work experience
+- `training_hours`: annual training hours
+- `salary`: annual salary in EUR
+- `remote_share`: share of working time spent remotely (between 0 and 1)
+- `team_size`: size of the employee's team
+- `manager_quality`: manager quality on a 1–5 scale
+- `department`: department (`Sales`, `IT`, `HR`)
+
+# Setup and dataset
+
+## Load the dataset
+
+```{python}
+import pandas as pd
+
+df = pd.read_csv("data/employee_performance_data.csv")
+df.head()
+```
+
+{{< pagebreak >}}
+
+## Variable overview
+
+| Variable | Meaning | Type |
+|---|---|---|
+| `performance` | employee performance score | target variable |
+| `experience` | years of experience | numeric |
+| `training_hours` | annual training hours | numeric |
+| `salary` | annual salary in EUR | numeric |
+| `remote_share` | share of remote work between 0 and 1 | numeric |
+| `team_size` | size of employee team | numeric |
+| `manager_quality` | manager quality rating from 1 to 5 | numeric |
+| `department` | employee department | categorical |
+
+## Quick inspection
+
+```{python}
+df.describe(include="all")
+```
+
+{{< pagebreak >}}
+
+# Part A — Baseline regression <a id="baseline"></a>
+
+We begin with one regression model for the full company.
+This gives us a first answer to the question:
+
+> How is `remote_share` associated with performance when we control for other variables at the same time?
+
+This is useful because simple bivariate comparisons can be misleading. For example, employees with higher remote work shares may also differ in their department, training patterns, or salaries.
+
 :::
 
-::: {.content-visible when-profile="solution"}
-1. Compare your solution with the discussed workflow.
-2. Reflect on assumptions, limitations, and next steps.
+## Task A1: Fit a regression model with `scikit-learn`
+
+:::{.direction}
+Use the full dataset to estimate a linear regression model for `performance` — use concepts from the lecture and consult the [LinearRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html) documentation if needed.
+
+Your tasks:
+
+1. One-hot encode nominal variables.
+2. Define `X` and `y`.
+3. Fit a `LinearRegression()` model.
+4. Print the coefficients and intercept.
+5. Pay special attention to the coefficient of `remote_share`.
+
+```{python}
+#| eval: false
+from sklearn.linear_model import LinearRegression
+
+# Write your own code here.
+# Suggested objects: df_model, X, y, model, coef_df
+```
+
+*Note. When initial versions raise errors, remember that regression models work with numerical predictors exclusively. Find a way to address this and run the model.*
+:::
+
+:::{.sol}
+
+```{python}
+from sklearn.linear_model import LinearRegression
+
+# One-hot encode the department variable
+df_model = pd.get_dummies(df, columns=["department"], drop_first=True)
+# drop_first effectively removes the HR department, setting it as the reference level
+
+# Define X (features) and y (target)
+# Note that we drop variables that should not be included in the model
+X = df_model.drop(columns=["performance", "name", "employee_id", "role"])
+y = df_model["performance"]
+
+# Fit the linear regression model
+model = LinearRegression()
+model.fit(X, y)
+
+# Create a coefficient table
+coef_df = pd.DataFrame({
+    "variable": X.columns,
+    "coefficient": model.coef_
+})
+
+# Print results
+print(coef_df)
+print("Intercept:", model.intercept_)
+```
+
+> *Note: The `HR` department serves as the reference category.*
+
+:::
+
+{{< pagebreak >}}
+
+## Task A2: Interpret the coefficients
+
+:::{.direction}
+Answer the following questions:
+:::
+
+1. Which variables have a positive association with performance?
+
+::: {.sol}
+The variables with a positive association with performance are:
+
+* `experience`
+* `training_hours`
+* `salary`
+* `team_size`
+* `manager_quality`
+* `department_IT`
+* `department_Sales`
+
+Their coefficients are all positive, which means that higher values of these variables are associated with higher predicted performance, holding the other variables constant.
+:::
+
+2. Which variables have a negative association with performance?
+
+::: {.sol}
+The variable with a negative association with performance is:
+
+* `remote_share`
+
+Its coefficient is negative (`-0.936`), which means that a higher share of remote work is associated with slightly lower predicted performance, holding the other variables constant.
+:::
+
+3. How would you interpret the coefficient of `remote_share`?
+
+::: {.sol}
+The coefficient of `remote_share` is about `-0.94`. Because `remote_share` ranges from 0 to 1, this means:
+
+* moving from fully on-site (`0`) to fully remote (`1`) is associated with a decrease of about `0.94` points in predicted performance, holding the other variables constant.
+
+A smaller change is often easier to interpret in practice. For example:
+
+* an increase of `0.10` in `remote_share` (10 percentage points more remote work) is associated with a decrease of about `0.094` performance points.
+:::
+
+4. Is the `remote_share` effect large or small in practical terms?
+
+::: {.sol}
+The effect appears to be small in practical terms.
+
+Even a very large change in remote work share—from fully on-site to fully remote—is associated with less than one point lower predicted performance (`-0.94`).
+For a more realistic change of 10 percentage points, the predicted difference is only about `-0.094` points.
+
+Compared with other coefficients, especially `manager_quality` (`5.82`) or the department coefficients (`about 13` to `14`), the `remote_share` effect is relatively small.
+:::
+5. How should dummy variables such as `department_IT` or `department_Sales` be interpreted?
+
+::: {.sol}
+Dummy variables compare one category to the omitted reference category.
+
+Here, `department_IT` and `department_Sales` show how those departments differ from the reference department, which is the department that was dropped during one-hot encoding.
+If `drop_first=True` was used and the departments are ordered alphabetically, the reference category is `HR`.
+
+This means:
+
+* `department_IT = 13.93` suggests that employees in IT have, on average, about `13.93` points higher predicted performance than employees in the reference department, holding all other variables constant.
+* `department_Sales = 12.76` suggests that employees in Sales have, on average, about `12.76` points higher predicted performance than employees in the reference department, again holding other variables constant.
+
+These coefficients do not compare IT directly with Sales. Each is compared to the reference department.
+:::
+
+
+:::{.direction}
+
+::: {.callout-note title="Interpretation reminder"}
+A coefficient expresses the expected change in the dependent variable when the predictor increases by one unit, **holding the other variables constant**.
+:::
+
+::: {.callout-important title="Important note on remote_share"}
+Because `remote_share` ranges from 0 to 1, a one-unit increase means moving from **fully on-site** to **fully remote**.
+
+In practice, you may also want to interpret smaller changes, such as an increase of **0.10** or **10 percentage points**.
+:::
+
+:::
+
+{{< pagebreak >}}
+
+# Part B — Regression tables with `statsmodels` <a id="statsmodels"></a>
+
+:::{.direction}
+
+In this notebook, we use `statsmodels` to complement `scikit-learn`—not for better predictions, but to gain a deeper understanding of how regression results are **constructed, tested, and interpreted**.
+
+::: {.callout-note title="Why use `statsmodels` as an alternative library?"}
+When working with regression models, we often want to **interpret results in a structured, test-oriented way**—for example:
+
+* testing whether coefficients are statistically significant
+* examining standard errors and confidence intervals
+* evaluating overall model fit (e.g., R², F-tests)
+* interpreting regression tables in a familiar format
+
+While `scikit-learn` is excellent for **fitting models and making predictions**, it does not focus on detailed statistical inference or provide rich regression summaries.
+
+This is where `statsmodels` becomes particularly useful.
+
+`statsmodels` can be seen as an **alternative library with a workflow similar to R**, especially for those familiar with classical statistical modeling. It provides:
+
+* **comprehensive regression output** (tables with coefficients, standard errors, p-values, confidence intervals)
+* a strong focus on **statistical testing and interpretation**
+* a convenient **formula-based interface** (using strings like `y ~ x1 + x2`), which is widely used in R
+
+The formula syntax is especially important to understand, as it allows you to specify models in a clear and expressive way.
+:::
+
+:::
+
+## Task B1: Estimate the same model with `statsmodels`
+
+
+:::{.direction}
+Use `statsmodels` to create a regression table for the same model.
+
+```{python}
+#| eval: false
+import statsmodels.api as sm
+
+# Write your own code here.
+```
+:::
+
+:::{.sol}
+
+```{python}
+import statsmodels.formula.api as smf
+
+# Fit the regression model using a formula
+model_sm = smf.ols(
+    formula="performance ~ experience + training_hours + salary + remote_share + team_size + manager_quality + C(department)",
+    data=df
+).fit()
+
+# Print the regression table
+print(model_sm.summary())
+```
+
+:::
+
+{{< pagebreak >}}
+
+## Task B2: Interpret the regression table
+
+:::{.direction}
+In Part A, you estimated the same model using `scikit-learn`.
+Now, use the `statsmodels` output to deepen your understanding of regression results and modeling workflows.
+
+Focus on both the **results** and the **differences between the two approaches**.
+:::
+
+### Questions:
+
+1. **Compare coefficients**
+   Are the coefficient estimates (e.g., for `remote_share`) similar to those from `scikit-learn`?
+
+::: {.sol}
+Yes, the coefficients are the same (up to rounding). Both libraries estimate the same model on the same data, so we expect identical results.
+:::
+
+2. **Understanding statistical significance**
+   Which variables are statistically significant based on the p-values?
+   How does this additional information change (or not change) your interpretation from Part A?
+
+::: {.sol}
+All variables except `remote_share` are statistically significant (p < 0.05).
+
+This adds to Part A: although `remote_share` has a negative coefficient, it is not statistically reliable.
+:::
+
+3. **Interpreting `remote_share` more formally**
+   What do the p-value and confidence interval suggest about the reliability of the `remote_share` effect?
+
+::: {.sol}
+The p-value (0.449) is high and the confidence interval includes 0.
+
+This suggests that the effect of `remote_share` is uncertain and not statistically significant.
+:::
+
+4. **Model fit and explanatory power**
+   What do R² and adjusted R² tell you about how well the model explains performance?
+   Why should we be cautious when interpreting these values?
+
+::: {.sol}
+R² ≈ 0.82 means the model explains a large share of variation in performance.
+
+However, a high R² does not guarantee that the model is correct or that effects are causal.
+:::
+
+5. **Comparing workflows: `scikit-learn` vs. `statsmodels`**
+   Reflect on how the model was specified in both parts:
+
+   * How did you define variables and transformations in `scikit-learn`?
+   * How does the **formula interface** in `statsmodels` simplify (or change) this process?
+   * What are the advantages of using a formula like `performance ~ remote_share + ...`?
+
+::: {.sol}
+In `scikit-learn`, we manually prepared data (e.g., dummy variables, X/y).
+
+In `statsmodels`, the formula (`performance ~ ... + C(department)`) simplifies this.
+
+The formula approach is more readable and better suited for interpretation.
+:::
+
+
+{{< pagebreak >}}
+
+# Part C — Regression diagnostics <a id="diagnostics"></a>
+
+::: {.direction}
+Regression coefficients are only part of the story.
+Before relying on model predictions, it is important to assess whether the model provides a reasonable representation of the data.
+
+A key assumption of linear regression is **linearity**:
+the model assumes that the relationship between the predictors and the outcome can be approximated by a straight line (conditional on the other variables).
+If this assumption is violated, the estimated coefficients may be misleading—even if they appear statistically significant.
+
+To assess this, we focus on **residual plots**. Residuals capture what the model cannot explain.
+If the model is appropriate, these unexplained parts should look like random noise.
+Systematic patterns in the residuals, however, indicate that the model is missing important structure (e.g., non-linear relationships).
+
+At the same time, remember that linearity is only one of several assumptions we discussed in the lecture.
+
+This is why residual plots are one of the most important and intuitive diagnostic tools in regression analysis.
+
+A key point is that even if `remote_share` has a positive or negative coefficient, that does **not automatically mean** that the model is perfectly specified or that the relationship should be interpreted causally.
+:::
+
+## Task C1: Residual plot
+
+Create a simple residual plot for the fitted `scikit-learn` model from part A.
+
+::: {.direction}
+
+```{python}
+#| eval: false
+import matplotlib.pyplot as plt
+
+# residuals = y - model.predict(X_without_constant_or_matching_feature_matrix)
+# plt.scatter(model.predict(X_without_constant_or_matching_feature_matrix), residuals)
+# plt.axhline(0, linestyle="--")
+# plt.xlabel("Predicted performance")
+# plt.ylabel("Residuals")
+# plt.title("Residual plot")
+# plt.show()
+```
+
+:::
+
+:::{.sol}
+
+```{python}
+import matplotlib.pyplot as plt
+
+residuals = y - model.predict(X)
+plt.scatter(model.predict(X), residuals)
+plt.axhline(0, linestyle="--")
+plt.xlabel("Predicted performance")
+plt.ylabel("Residuals")
+plt.title("Residual plot")
+plt.show()
+```
+
+:::
+
+Questions:
+
+1. Do the residuals look roughly random?
+
+:::{.sol}
+Yes, the residuals appear to be randomly scattered around zero.
+
+This suggests that the linear model is a reasonable approximation of the relationship in the data.
+:::
+
+2. Do you see patterns that may indicate model problems?
+
+:::{.sol}
+No clear patterns are visible (e.g., no curvature or systematic structure).
+
+This indicates that there are no obvious signs of model misspecification based on this plot.
+:::
+
+3. What would a clear funnel shape suggest?
+
+:::{.sol}
+A funnel shape would suggest **heteroscedasticity**, meaning that the variance of the residuals changes with the predicted values.
+
+This would violate a key regression assumption (constant variance) and could make standard errors and statistical tests unreliable.
+:::
+
+
+{{< pagebreak >}}
+
+# Part D — Subgroup analysis: does one model fit all departments? <a id="subgroup-analysis"></a>
+
+::: {.direction}
+
+Sometimes, a single regression model for the whole company may hide important differences.
+The relationship between predictors and performance may not be the same for all employees. For example, internal feedback at MetaCorp suggests that **complaints about remote work are more frequent in some departments than in others**. In departments with high coordination needs, employees may report communication challenges or delays, while in others, remote work may support concentration and flexibility.
+
+This suggests that the effect of `remote_share` may depend on the **work context**—even if our initial model treats all employees the same.
+Instead of assuming that one model fits everyone equally well, we can explore this idea by estimating separate models for different groups.
+
+This helps us answer questions such as:
+
+- Do relationships look similar across departments?
+- Are some variables more important in certain contexts?
+- Does the effect of `remote_share` change depending on the work environment?
+
+In this task, we take a first step toward understanding such differences by comparing models across departments.
+
+:::
+
+
+## Task D1: Department-specific regressions
+
+Estimate separate regressions for `Sales`, `IT`, and `HR`.
+
+:::{.direction}
+
+```{python}
+#| eval: false
+
+# Write your own code here, using the following scaffold
+
+# import statsmodels.api as sm
+
+# for dept in df["department"].unique():
+     # df_sub = ...
+
+     # X_sub = ...
+     # y_sub = ...
+
+     # TODO: fit OLS
+     # model_sub = ...
+
+     # print(f"\n=== Regression results for {dept} ===")
+     # print(model_sub.summary())
+```
+:::
+
+:::{.sol}
+
+```{python}
+import statsmodels.api as sm
+
+results = {}
+
+for dept in df["department"].unique():
+    # Subset data for one department
+    df_sub = df[df["department"] == dept].copy()
+
+    # Define X and y
+    X_sub = df_sub[
+        ["experience", "training_hours", "salary", "remote_share", "team_size", "manager_quality"]
+    ]
+    y_sub = df_sub["performance"]
+
+    # Add constant and fit OLS model
+    X_sub = sm.add_constant(X_sub)
+    model_sub = sm.OLS(y_sub, X_sub).fit()
+
+    # Store result
+    results[dept] = model_sub
+
+    print(f"\n=== Regression results for {dept} ===")
+    print(model_sub.summary())
+```
+:::
+
+{{< pagebreak >}}
+
+## Task D2: Compare the subgroup models
+
+Use the results to answer the following questions.
+
+1. Do the coefficients differ across departments?
+
+:::{.sol}
+Yes, the coefficients differ across departments.
+While most variables (e.g., experience, training_hours, salary, team_size, manager_quality) are positively associated with performance in all departments, the magnitude of these effects varies.
+
+For example, experience has a stronger effect in Sales than in HR, and manager_quality is much more influential in IT than in the other departments.
+In contrast, training_hours shows a very similar effect across all departments.
+
+This indicates that the strength of relationships is not constant across departments.
+:::
+
+2. Is `remote_share` associated with performance in the same way in every department?
+
+:::{.sol}
+No, the association differs across departments.
+
+In Sales, remote_share has a negative but not statistically significant effect.
+In HR, it has a negative and statistically significant effect, suggesting that more remote work is associated with lower performance.
+In contrast, in IT, the effect is positive and statistically significant.
+
+This shows that remote work impacts performance differently depending on the department.
+:::
+
+3. Does `manager_quality` seem equally important in all departments?
+
+:::{.sol}
+No, although manager_quality is positively and significantly associated with performance in all departments, its importance varies.
+
+The effect is strongest in IT, where the coefficient is substantially larger than in Sales and HR.
+This suggests that high-quality management may be particularly critical in IT compared to other departments.
+:::
+
+4. What does this tell us about heterogeneity in company data?
+
+:::{.sol}
+The results indicate that the data are heterogeneous across departments.
+The same variables do not have identical effects everywhere, and some relationships (e.g., remote_share) even change direction.
+
+This suggests that departments differ in their work structures, tasks, and coordination needs, leading to different performance drivers.
+:::
+
+5. Why might a single model be too simplistic?
+
+:::{.sol}
+A single model assumes that the effects of all variables are the same across departments (apart from intercept differences when using dummies).
+
+However, the subgroup results show that some effects vary in magnitude or even direction.
+A single model would therefore mask these differences and potentially lead to misleading conclusions.
+
+Using subgroup models or interaction terms can better capture these variations.
+:::
+
+
+::: {.callout-note title="Key idea"}
+If relationships differ strongly between groups, a single regression model can hide important structure.
+:::
+
+# Part E — Deployment <a id="deployment"></a>
+
+Saving and loading a model is useful in practice, but it is not the main conceptual focus of this notebook.
+
+Here, it is included as an optional extension after you have already worked through model estimation, interpretation, diagnostics, and subgroup analysis.
+
+## Task E1 (optional): Save a fitted model
+
+:::{.direction}
+
+```{python}
+#| eval: false
+import joblib
+
+# TODO: save the fitted sklearn model
+# joblib.dump(model, "data/employee_performance_model.joblib")
+```
+
+:::
+
+
+:::{.sol}
+
+```{python}
+import joblib
+
+# Save the fitted sklearn model
+joblib.dump(model, "data/employee_performance_model.joblib")
+```
+
+:::
+
+{{< pagebreak >}}
+
+## Task E2 (optional): Load the model and predict a new case
+
+::: {.direction}
+
+```{python}
+#| eval: false
+# loaded_model = ...
+
+# new_employee = pd.DataFrame([
+#     {
+#         "experience": 8,
+#         ...
+#     }
+# ])
+
+# prediction = ...
+# print(prediction)
+```
+
+> ⚠️ **Important note**
+> In this example, we only save the trained model, but not the preprocessing steps (e.g., one-hot encoding of the `department` variable).
+>
+> The prediction works only because we manually created a new data point that exactly matches the structure of the training data (`X`).
+> In real-world applications, you should always save the full preprocessing pipeline together with the model to ensure consistent predictions.
+
+:::
+
+:::{.sol}
+
+```{python}
+import joblib
+import pandas as pd
+
+# Load the saved model
+loaded_model = joblib.load("data/employee_performance_model.joblib")
+
+# Create a new employee record (must match training data structure)
+new_employee = pd.DataFrame([
+    {
+        "experience": 8,
+        "training_hours": 45,
+        "salary": 56000,
+        "remote_share": 0.4,
+        "team_size": 7,
+        "manager_quality": 4,
+        "department_IT": 1,
+        "department_Sales": 0,
+    }
+])
+
+# Generate prediction
+prediction = loaded_model.predict(new_employee)
+print(prediction)
+```
+
+:::
+
+## Task E3: Reflect on practical and organizational considerations
+
+:::{.direction}
+In practice, deploying a model like this involves more than just saving and loading it.
+Think about how such a model would be used in a real company like MetaCorp.
+:::
+
+**Questions:**
+
+1. What practical challenges might arise when using this model to support decisions about employees?
+
+::: {.sol}
+* The model may rely on incomplete or imperfect data (e.g., missing relevant factors like motivation or task complexity).
+* Input data for new predictions must be prepared in exactly the same way (same variables, same encoding).
+* The model may not generalize well if the company changes (e.g., new work practices or policies).
+* Interpretation requires care—managers may misread coefficients as causal effects.
+:::
+
+2. What risks could emerge if the model is used without careful interpretation or oversight?
+
+::: {.sol}
+* Decisions could be based on misleading relationships (e.g., interpreting correlation as causation).
+* The model could unintentionally disadvantage certain groups (e.g., departments or work styles).
+* Overreliance on the model could reduce human judgment and context-sensitive decision-making.
+* Employees may lose trust if decisions appear opaque or unfair.
+:::
+
+3. What steps and safeguards would be important to ensure that the model is used **fairly, transparently, and responsibly**, taking into account legal and organizational requirements (e.g., employee representation, data protection)?
+
+::: {.sol}
+* Ensure **legal compliance from the outset**, especially with data protection regulations (e.g., GDPR) and rules governing employee data and monitoring.
+* Involve **employee representatives (e.g., works councils)** early in the process, as the use of such models for employee-related decisions may require formal involvement and approval.
+* Define clearly **how the model will be used** (e.g., decision support vs. automated decisions) and ensure this aligns with legal and organizational guidelines.
+* Ensure transparency: document how the model works, what data is used, and how results should be interpreted.
+* Communicate openly with employees to maintain trust and clarify the purpose and limits of the model.
+* Check for potential bias or unfair effects across groups (e.g., departments) and address them if necessary.
+* Validate the model regularly and monitor whether it remains appropriate as conditions change.
+
+Overall, responsible use requires aligning technical implementation with legal requirements, organizational processes, and ethical considerations.
+:::
+
+
+:::{.direction}
+{{< pagebreak >}}
+
+## Wrap-up <a id="wrap-up"></a>
+
+🎉🎈 You have completed the notebook - good work! 🎈🎉
+
+In this notebook, we have learned to
+
+* Fit and interpret linear regression models using `scikit-learn`
+* Read and understand regression tables with `statsmodels`
+* Interpret coefficients, including the effect of `remote_share`
+* Reflect on statistical significance, model fit, and practical relevance
+* Diagnose regression models using residual plots and assumptions
+* Compare models across departments
+* Save, load, and apply a trained model for prediction
+
+::: {.callout-note title="Stop the Codespace"}
+Remember to <b>stop</b> your Codespace [here](https://github.com/codespaces).
+:::
+
+::: {.callout-tip title="Session 4 survey"}
+Before you wrap up, please complete the Session 4 survey here: [{{< meta surveys.session_04.url >}}]({{< meta surveys.session_04.url >}}){target="_blank"}. Thank you 🙏
+:::
+
 :::

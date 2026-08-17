@@ -1,6 +1,6 @@
 ---
-title: "Notes: Session 4: Regression 1"
-format: html
+title: "Notes: Session 4: Regression"
+session_id: session-04
 ---
 
 | Time (min) | Duration | Topic                  | Additional materials |
@@ -55,7 +55,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 
 # Load dataset (download from Kaggle and place train.csv locally)
-df = pd.read_csv("data/ames.csv")
+df = pd.read_csv("../exercises/data/ames.csv")
 
 df.columns
 
