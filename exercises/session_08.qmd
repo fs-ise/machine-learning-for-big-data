@@ -6,16 +6,943 @@ format:
   ipynb: default
 ---
 
-## Task
+::: {.direction}
 
-Work through the Session 8 exercise on ML for Non-Tabular Data (Text).
+In this notebook, we implement and compare different text analytics methods:
 
-::: {.content-visible when-profile="assign"}
-1. Review the lecture concepts.
-2. Apply the concepts to the provided data or examples.
+| Exercise part                                             | Time (min) |
+| --------------------------------------------------------- | ---------: |
+| [Part 1: Case and dataset](#part-1)                       |         10 |
+| [Part 2: Sparse text representations](#part-2)            |         20 |
+| [Part 3: Dense representations](#part-3)                  |         25 |
+| [Part 4: Classification](#part-4)                         |         20 |
+| [Part 5: Edge cases and reflection](#part-5)              |         10 |
+| [Wrap-up](#wrap-up)                                      |          5 |
+| **Overall**                                               |     **90** |
+
+
+> Resume your Codespace at [analytics-and-big-data-notebooks](https://github.com/fs-ise/analytics-and-big-data-notebooks){target="_blank"}.
+
+
+# Case: Understanding movie reviews
+
+You are a data analyst working for **ReviewSense**, a fictional analytics team that supports a streaming platform.
+The platform collects many user reviews for movies and series.
+Management wants to understand whether text analytics can help to classify reviews as positive or negative and to identify semantically similar reviews.
+
+We use a small public sample of the **IMDB movie review sentiment dataset**.
+The dataset contains movie reviews with binary sentiment labels.
+For this exercise, the course repository should contain a prepared subset ([data/imdb_reviews_sample.csv](data/imdb_reviews_sample.csv)) with the following columns:
+
+| Variable | Meaning | Type |
+|---|---|---|
+| `review` | review text | text |
+| `sentiment` | sentiment label: `positive` or `negative` | categorical |
+
+::: {.callout-note title="Dataset note"}
+Use a local course copy of the IMDB sample rather than downloading the full dataset during class.
+This makes the exercise more reliable and keeps the focus on representation, similarity, visualization, and prediction.
+A small sample of 1,000–3,000 reviews is sufficient for this exercise.
 :::
 
-::: {.content-visible when-profile="solution"}
-1. Compare your solution with the discussed workflow.
-2. Reflect on assumptions, limitations, and next steps.
+{{< pagebreak >}}
+:::
+
+# Part 1: Case and dataset <a id="part-1"></a>
+
+::: {.direction}
+
+We begin by loading the dataset and inspecting text as a form of data.
+Unlike the structured datasets from earlier exercises, the relevant information is inside a free-text column.
+
+:::
+
+## Task 1.1 — Load and inspect the dataset
+
+::: {.direction}
+
+Load the dataset and inspect the first rows.
+Also run statistics on the `sentiment` column.
+Then answer the questions below.
+
+```{python}
+#| eval: false
+import pandas as pd
+
+# Load the prepared IMDB sample
+# df = ...
+
+# Inspect the data
+# ...
+```
+
+:::
+
+::: {.sol}
+
+```{python}
+import pandas as pd
+
+df = pd.read_csv("data/imdb_reviews_sample.csv")
+df.head()
+
+df["sentiment"].value_counts()
+```
+:::
+
+## Task 1.2 — Prepare text, labels, and a train-test split
+
+::: {.direction}
+
+Create a lightly cleaned text column (use regex replacement to remove html `<br>` tags, and multiple spaces), create a numeric target variable, and split the data into training and test data.
+
+```{python}
+#| eval: false
+from sklearn.model_selection import train_test_split
+
+# Light text cleaning
+# df["clean_review"] = ...
+
+# Convert sentiment labels into 0/1 values
+# df["label"] = ...
+
+# Define X and y
+# X = ...
+# y = ...
+
+# Split into training and test data
+# X_train, X_test, y_train, y_test = train_test_split(...)
+```
+
+
+:::
+
+::: {.sol}
+
+## Solution
+
+```{python}
+from sklearn.model_selection import train_test_split
+
+df = df.dropna(subset=["review", "sentiment"]).copy()
+
+# Many IMDB review exports contain HTML line breaks such as <br />.
+# This light cleaning keeps the task simple but removes a common artifact.
+df["clean_review"] = (
+    df["review"]
+    .str.replace(r"<br\s*/?>", " ", regex=True)
+    .str.replace(r"\s+", " ", regex=True)
+    .str.strip()
+)
+
+df["label"] = df["sentiment"].map({"negative": 0, "positive": 1})
+
+X = df["clean_review"]
+y = df["label"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.25,
+    random_state=42,
+    stratify=y,
+)
+
+print(X_train.shape, X_test.shape)
+print(y_train.value_counts(normalize=True))
+print(y_test.value_counts(normalize=True))
+```
+
+:::
+
+{{< pagebreak >}}
+
+# Part 2: Sparse text representations <a id="part-2"></a>
+
+::: {.direction}
+
+Sparse representations transform text into a large matrix.
+Each row represents a document and each column represents a word or phrase.
+Most cells are zero because each review uses only a small share of the full vocabulary.
+
+In this part, we compare two classical approaches:
+
+- **Bag-of-Words:** counts how often a word appears.
+- **TF-IDF:** gives more weight to words that are characteristic for a document and less weight to words that occur everywhere.
+
+:::
+
+## Task 2.1 — Create Bag-of-Words and TF-IDF matrices
+
+::: {.direction}
+
+Create a Bag-of-Words matrix and a TF-IDF matrix.
+Inspect the matrix shapes and calculate the sparsity of the TF-IDF matrix.
+
+```{python}
+#| eval: false
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+
+# Create Bag-of-Words features
+# count_vectorizer = CountVectorizer(...)
+# X_train_bow = ...
+# X_test_bow = ...
+
+# Create TF-IDF features
+# tfidf_vectorizer = TfidfVectorizer(...)
+# X_train_tfidf = ...
+# X_test_tfidf = ...
+
+# Inspect shape and sparsity
+# print(...)
+```
+
+Questions:
+
+1. How many documents are represented in the training matrix?
+2. How many features are created?
+3. What does a high sparsity value mean?
+
+<br><br><br><br><br><br>
+
+:::
+
+::: {.sol}
+
+## Solution
+
+```{python}
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+
+count_vectorizer = CountVectorizer(
+    stop_words="english",
+    max_features=5000,
+)
+X_train_bow = count_vectorizer.fit_transform(X_train)
+X_test_bow = count_vectorizer.transform(X_test)
+
+tfidf_vectorizer = TfidfVectorizer(
+    stop_words="english",
+    max_features=5000,
+    min_df=2,
+    ngram_range=(1, 2),
+)
+X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)
+X_test_tfidf = tfidf_vectorizer.transform(X_test)
+
+sparsity = 1 - (X_train_tfidf.nnz / (X_train_tfidf.shape[0] * X_train_tfidf.shape[1]))
+
+print("Bag-of-Words shape:", X_train_bow.shape)
+print("TF-IDF shape:", X_train_tfidf.shape)
+print("TF-IDF sparsity:", round(sparsity, 4))
+```
+
+Expected interpretation:
+
+- The number of rows corresponds to the number of training reviews.
+- The number of columns corresponds to the vocabulary retained by the vectorizer.
+- A high sparsity value means that most document-feature combinations are zero.
+  This is typical for classical text representations.
+
+{{< pagebreak >}}
+:::
+
+## Task 2.2 — Inspect sparse features for one review
+
+::: {.direction}
+
+Select one review from the training data and inspect the highest TF-IDF features.
+
+```{python}
+#| eval: false
+# Select one review
+# review_id = 0
+
+# Retrieve feature names
+# feature_names = ...
+
+# Retrieve TF-IDF values for this review
+# row = ...
+
+# Show the strongest features
+# ...
+```
+
+Question:
+
+- Do the strongest features seem meaningful for understanding the review?
+
+<br><br><br><br><br><br>
+
+:::
+
+::: {.sol}
+
+## Solution
+
+```{python}
+import numpy as np
+
+review_id = 0
+feature_names = np.array(tfidf_vectorizer.get_feature_names_out())
+row = X_train_tfidf[review_id].toarray().ravel()
+
+top_positions = row.argsort()[::-1][:15]
+
+top_features = pd.DataFrame({
+    "feature": feature_names[top_positions],
+    "tfidf": row[top_positions],
+})
+
+display(X_train.iloc[review_id])
+display(top_features)
+```
+
+A good answer should recognize that TF-IDF features are interpretable because they correspond to words or short phrases.
+However, they mainly show lexical signals.
+They do not fully capture context, irony, negation, or meaning beyond word occurrence.
+
+:::
+
+{{< pagebreak >}}
+
+## Task 2.3 — Find similar reviews using TF-IDF
+
+::: {.direction}
+
+Use cosine similarity to find the reviews most similar to a selected query review.
+
+```{python}
+#| eval: false
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Choose a query review from the training data
+# query_id = 0
+
+# Compute similarity between this review and all other training reviews
+# similarities = ...
+
+# Identify the top 5 most similar reviews, excluding the query itself
+# top_ids = ...
+
+# Create an overview table with review text, sentiment, and similarity
+# ...
+```
+
+Questions:
+
+1. Are the most similar reviews similar in meaning or mainly similar in wording?
+2. Do the retrieved reviews have the same sentiment label as the query review?
+3. What does this tell us about sparse similarity?
+
+<br><br><br><br><br><br><br><br>
+
+:::
+
+::: {.sol}
+
+## Solution
+
+```{python}
+from sklearn.metrics.pairwise import cosine_similarity
+
+query_id = 0
+similarities = cosine_similarity(X_train_tfidf[query_id], X_train_tfidf).ravel()
+
+top_ids = similarities.argsort()[::-1][1:6]
+
+similar_reviews_tfidf = pd.DataFrame({
+    "similarity": similarities[top_ids],
+    "sentiment": y_train.iloc[top_ids].map({0: "negative", 1: "positive"}).values,
+    "review": X_train.iloc[top_ids].values,
+})
+
+print("Query review:")
+print(X_train.iloc[query_id])
+print("Query sentiment:", "positive" if y_train.iloc[query_id] == 1 else "negative")
+
+display(similar_reviews_tfidf)
+```
+
+Expected interpretation:
+
+- TF-IDF similarity is often driven by shared words and phrases.
+- Retrieved reviews may be similar in topic or wording, but not necessarily in deeper meaning.
+- Sparse similarity can be useful, but it is limited when two texts express similar ideas with different words.
+
+:::
+
+{{< pagebreak >}}
+
+# Part 3: Dense representations <a id="part-3"></a>
+
+::: {.direction}
+
+Dense representations transform each review into a shorter vector of continuous numbers.
+In contrast to sparse TF-IDF vectors, dense vectors do not correspond directly to individual words.
+They are learned representations intended to capture semantic relationships.
+
+We use a pretrained sentence embedding model.
+The first run may take a moment because the model must be available in the environment.
+
+:::
+
+## Task 3.1 — Create sentence embeddings
+
+::: {.direction}
+
+Create dense embeddings for the training and test reviews.
+Use a small and efficient sentence-transformer model.
+
+```{python}
+#| eval: false
+# If needed, install once in the Codespace terminal:
+# pip install sentence-transformers
+
+from sentence_transformers import SentenceTransformer
+
+# Load the embedding model
+# embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+# Encode training and test texts
+# X_train_emb = ...
+# X_test_emb = ...
+
+# Inspect the embedding matrix
+# print(...)
+```
+
+Questions:
+
+1. How many dimensions does each dense vector have?
+2. Why is this representation called dense?
+3. Why are the dimensions less directly interpretable than TF-IDF features?
+
+<br><br><br><br><br><br>
+
+:::
+
+::: {.sol}
+
+## Solution
+
+```{python}
+#| eval: false
+
+from sentence_transformers import SentenceTransformer
+
+embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+X_train_emb = embedding_model.encode(
+    X_train.tolist(),
+    show_progress_bar=True,
+    normalize_embeddings=True,
+)
+X_test_emb = embedding_model.encode(
+    X_test.tolist(),
+    show_progress_bar=True,
+    normalize_embeddings=True,
+)
+
+print("Training embeddings:", X_train_emb.shape)
+print("Test embeddings:", X_test_emb.shape)
+```
+
+Expected interpretation:
+
+- With `all-MiniLM-L6-v2`, each review is represented by a 384-dimensional vector.
+- The representation is dense because most values are non-zero.
+- The dimensions are learned features rather than directly named words, so they are less transparent than TF-IDF columns.
+
+:::
+
+{{< pagebreak >}}
+
+## Task 3.2 — Find similar reviews using dense embeddings
+
+::: {.direction}
+
+Repeat the similarity search from Task 2.3, but now use dense embeddings.
+
+```{python}
+#| eval: false
+from sklearn.metrics.pairwise import cosine_similarity
+
+# query_id = 0
+# similarities_dense = ...
+# top_ids_dense = ...
+# similar_reviews_dense = ...
+```
+
+Questions:
+
+1. Compare the dense results with the TF-IDF results.
+2. Which representation retrieves reviews that are more similar in meaning?
+3. Do dense embeddings always retrieve reviews with the same sentiment?
+
+<br><br><br><br><br><br><br><br>
+
+:::
+
+::: {.sol}
+
+## Solution
+
+```{python}
+#| eval: false
+from sklearn.metrics.pairwise import cosine_similarity
+
+query_id = 0
+similarities_dense = cosine_similarity(
+    X_train_emb[query_id].reshape(1, -1),
+    X_train_emb,
+).ravel()
+
+top_ids_dense = similarities_dense.argsort()[::-1][1:6]
+
+similar_reviews_dense = pd.DataFrame({
+    "similarity": similarities_dense[top_ids_dense],
+    "sentiment": y_train.iloc[top_ids_dense].map({0: "negative", 1: "positive"}).values,
+    "review": X_train.iloc[top_ids_dense].values,
+})
+
+print("Query review:")
+print(X_train.iloc[query_id])
+print("Query sentiment:", "positive" if y_train.iloc[query_id] == 1 else "negative")
+
+display(similar_reviews_dense)
+```
+
+Expected interpretation:
+
+Dense embeddings often retrieve reviews that are similar in overall meaning even if they do not share many exact words.
+However, dense similarity is not identical to sentiment similarity.
+Two reviews can be semantically close because they discuss similar topics, genres, actors, or plot elements, while still expressing different evaluations.
+
+:::
+
+{{< pagebreak >}}
+
+## Task 3.3 — Visualize dense embeddings
+
+::: {.direction}
+
+Reduce the dense embeddings to two dimensions and create a scatter plot.
+Color the points by sentiment.
+
+Use a sample if the dataset is large.
+
+```{python}
+#| eval: false
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+
+# Select a sample for visualization
+# sample_size = ...
+# sample_df = ...
+
+# Create embeddings for the sample
+# sample_embeddings = ...
+
+# Reduce to two dimensions
+# pca = ...
+# coords = ...
+
+# Plot the result
+# ...
+```
+
+Questions:
+
+1. Do positive and negative reviews form clearly separated clusters?
+2. What kinds of patterns do you see?
+3. Why should a two-dimensional plot be interpreted carefully?
+
+<br><br><br><br><br><br><br><br>
+
+:::
+
+::: {.sol}
+
+## Solution
+
+```{python}
+#| eval: false
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+
+sample_size = min(500, len(df))
+sample_df = df.sample(n=sample_size, random_state=42).copy()
+
+sample_embeddings = embedding_model.encode(
+    sample_df["review"].tolist(),
+    show_progress_bar=True,
+    normalize_embeddings=True,
+)
+
+pca = PCA(n_components=2, random_state=42)
+coords = pca.fit_transform(sample_embeddings)
+
+sample_df["dim_1"] = coords[:, 0]
+sample_df["dim_2"] = coords[:, 1]
+
+plt.figure(figsize=(8, 6))
+plt.scatter(
+    sample_df["dim_1"],
+    sample_df["dim_2"],
+    c=sample_df["label"],
+    alpha=0.65,
+)
+plt.xlabel("PCA dimension 1")
+plt.ylabel("PCA dimension 2")
+plt.title("Dense review embeddings reduced to two dimensions")
+plt.show()
+```
+
+Expected interpretation:
+
+- There may be some separation, but do not expect a perfect positive/negative split.
+- The plot may reveal topic-based or style-based neighborhoods as well as sentiment-related patterns.
+- PCA compresses hundreds of dimensions into two dimensions, so the plot is only a simplified view of the embedding space.
+
+:::
+
+{{< pagebreak >}}
+
+# Part 4: Classification <a id="part-4"></a>
+
+::: {.direction}
+
+We now compare whether sparse and dense representations are useful for predicting sentiment.
+The model is intentionally simple: logistic regression.
+This keeps the focus on the representation rather than on complex modeling choices.
+
+:::
+
+## Task 4.1 — Train a classifier on TF-IDF features
+
+::: {.direction}
+
+Train a logistic regression model using TF-IDF features.
+Report accuracy, the classification report, and training time.
+
+```{python}
+#| eval: false
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import time
+
+# Start timer
+# ...
+
+# Fit model
+# tfidf_clf = ...
+
+# Predict on test set
+# y_pred_tfidf = ...
+
+# Stop timer
+# ...
+
+# Evaluate
+# ...
+```
+
+Questions:
+
+1. How well does the model perform?
+2. Which errors are more common: false positives or false negatives?
+3. Why is this model relatively interpretable?
+
+<br><br><br><br><br><br>
+
+:::
+
+::: {.sol}
+
+## Solution
+
+```{python}
+#| eval: false
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import time
+
+start_time = time.time()
+
+tfidf_clf = LogisticRegression(max_iter=1000)
+tfidf_clf.fit(X_train_tfidf, y_train)
+
+y_pred_tfidf = tfidf_clf.predict(X_test_tfidf)
+
+tfidf_train_time = time.time() - start_time
+
+tfidf_accuracy = accuracy_score(y_test, y_pred_tfidf)
+print("Accuracy:", round(tfidf_accuracy, 3))
+print("Training time:", round(tfidf_train_time, 3), "seconds")
+print(classification_report(y_test, y_pred_tfidf, target_names=["negative", "positive"]))
+print(confusion_matrix(y_test, y_pred_tfidf))
+```
+
+A good interpretation should note that TF-IDF combined with logistic regression is often a strong baseline for sentiment classification.
+It is relatively interpretable because features correspond to words or phrases, and coefficients can be inspected.
+
+:::
+
+{{< pagebreak >}}
+
+## Task 4.2 — Train a classifier on dense embeddings
+
+::: {.direction}
+
+Train the same type of classifier using dense embeddings.
+Report the same metrics.
+
+```{python}
+#| eval: false
+# Start timer
+# ...
+
+# Fit model on dense embeddings
+# dense_clf = ...
+
+# Predict on test embeddings
+# y_pred_dense = ...
+
+# Stop timer and evaluate
+# ...
+```
+
+Questions:
+
+1. Does the dense model perform better, worse, or similarly?
+2. Is the dense model easier or harder to interpret?
+3. Which representation was more expensive to create?
+
+<br><br><br><br><br><br>
+
+:::
+
+::: {.sol}
+
+## Solution
+
+```{python}
+#| eval: false
+start_time = time.time()
+
+dense_clf = LogisticRegression(max_iter=1000)
+dense_clf.fit(X_train_emb, y_train)
+
+y_pred_dense = dense_clf.predict(X_test_emb)
+
+dense_train_time = time.time() - start_time
+
+dense_accuracy = accuracy_score(y_test, y_pred_dense)
+print("Accuracy:", round(dense_accuracy, 3))
+print("Training time:", round(dense_train_time, 3), "seconds")
+print(classification_report(y_test, y_pred_dense, target_names=["negative", "positive"]))
+print(confusion_matrix(y_test, y_pred_dense))
+```
+
+Expected interpretation:
+
+The dense model may perform better, worse, or similarly depending on the dataset size, model, and preprocessing.
+Generic pretrained embeddings are useful because they encode semantic information, but TF-IDF can be very competitive for supervised sentiment classification.
+The important learning outcome is not that dense vectors always win, but that they represent texts differently.
+
+:::
+
+{{< pagebreak >}}
+
+## Task 4.3 — Compare sparse and dense models
+
+::: {.direction}
+
+Create a small comparison table.
+
+```{python}
+#| eval: false
+# results = pd.DataFrame(...)
+# results
+```
+
+Then complete the interpretation table below.
+
+| Criterion | TF-IDF + logistic regression | Dense embeddings + logistic regression |
+|---|---|---|
+| Accuracy |  |  |
+| Training time |  |  |
+| Feature interpretability |  |  |
+| Captures exact words |  |  |
+| Captures semantic similarity |  |  |
+
+<br><br><br><br><br><br>
+
+:::
+
+::: {.sol}
+
+## Solution
+
+```{python}
+#| eval: false
+
+results = pd.DataFrame(
+    {
+        "representation": ["TF-IDF", "Dense embeddings"],
+        "accuracy": [tfidf_accuracy, dense_accuracy],
+        "training_time_seconds": [tfidf_train_time, dense_train_time],
+    }
+)
+
+results
+```
+
+A possible interpretation:
+
+| Criterion | TF-IDF + logistic regression | Dense embeddings + logistic regression |
+|---|---|---|
+| Accuracy | Often strong for sentiment | Often strong, but not automatically better |
+| Training time | Usually fast | Embedding creation may be slower |
+| Feature interpretability | High | Lower |
+| Captures exact words | Yes | Less directly |
+| Captures semantic similarity | Limited | Stronger |
+
+The comparison should emphasize trade-offs rather than a single winner.
+
+:::
+
+{{< pagebreak >}}
+
+# Part 5: Edge cases and reflection <a id="part-5"></a>
+
+::: {.direction}
+
+We now test how the models behave on short, manually created edge cases.
+These cases are not meant to be a representative dataset.
+They are a stress test that helps us discuss robustness, ambiguity, and generalization.
+
+
+Create a small synthetic test set with ambiguous or difficult examples.
+Apply both models and compare predictions.
+
+```{python}
+#| eval: false
+edge_cases = pd.DataFrame({
+    "review": [
+        "This movie was sick in the best possible way.",
+        "This movie made me sick.",
+        "Not bad at all.",
+        "A masterpiece? Not really.",
+        "The acting was fine, but the story went nowhere.",
+        "I expected more.",
+        "The plot was unpredictable and surprisingly moving.",
+        "I would not say it is a bad movie.",
+    ],
+    "expected_sentiment": [
+        "positive",
+        "negative",
+        "positive",
+        "negative",
+        "negative",
+        "negative",
+        "positive",
+        "positive_or_ambiguous",
+    ],
+})
+
+# Predict with TF-IDF model
+# ...
+
+# Predict with dense model
+# ...
+
+# Display results
+# edge_cases
+```
+
+Questions:
+
+1. Which examples are difficult for the models?
+2. Which representation seems more robust to wording differences?
+3. What types of meaning are still difficult for both models?
+
+<br><br><br><br><br><br>
+
+:::
+
+::: {.sol}
+
+## Solution
+
+```{python}
+#| eval: false
+edge_cases = pd.DataFrame(
+    {
+        "review": [
+            "This movie was sick in the best possible way.",
+            "This movie made me sick.",
+            "Not bad at all.",
+            "A masterpiece? Not really.",
+            "The acting was fine, but the story went nowhere.",
+            "I expected more.",
+            "The plot was unpredictable and surprisingly moving.",
+            "I would not say it is a bad movie.",
+        ],
+        "expected_sentiment": [
+            "positive",
+            "negative",
+            "positive",
+            "negative",
+            "negative",
+            "negative",
+            "positive",
+            "positive_or_ambiguous",
+        ],
+    }
+)
+
+label_map = {0: "negative", 1: "positive"}
+
+edge_tfidf = tfidf_vectorizer.transform(edge_cases["review"])
+edge_cases["tfidf_prediction"] = pd.Series(tfidf_clf.predict(edge_tfidf)).map(label_map)
+
+edge_emb = embedding_model.encode(
+    edge_cases["review"].tolist(),
+    normalize_embeddings=True,
+)
+edge_cases["dense_prediction"] = pd.Series(dense_clf.predict(edge_emb)).map(label_map)
+
+edge_cases
+```
+
+Expected interpretation:
+
+- Negation, irony, slang, and understatement can be difficult.
+- TF-IDF may rely heavily on visible sentiment words such as `bad`, `sick`, or `masterpiece`.
+- Dense embeddings may better capture some paraphrases, but they can also fail when the sentence is short, ironic, or context-dependent.
+- The synthetic examples are useful for qualitative failure analysis, not for measuring general performance.
+
+:::
+
+::: {.direction}
+{{< pagebreak >}}
+
+# Wrap-up <a id="wrap-up"></a>
+
+In this exercise, we moved from manually transforming text into sparse matrices to using learned dense representations.
+The key lesson is not that one representation is always better.
+Rather, each representation supports a different analytical perspective:
+
+| Representation | Main idea | Strength | Limitation |
+|---|---|---|---|
+| Bag-of-Words | Count words | Simple and transparent | Ignores meaning and order |
+| TF-IDF | Weight characteristic words | Strong interpretable baseline | Still mostly lexical |
+| Dense embeddings | Encode semantic relationships | Useful for similarity and generalization | Less transparent and more resource-intensive |
+
+::: {.callout-tip title="Session 8 survey"}
+Before you wrap up, please complete the Session 8 survey here: [{{< meta surveys.session_08.url >}}]({{< meta surveys.session_08.url >}}){target="_blank"}. Thank you 🙏
+:::
+
 :::

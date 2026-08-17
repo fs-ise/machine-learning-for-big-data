@@ -28,7 +28,7 @@ A summary of all file-level changes is available through the [Git commit history
 - [x] Session 5: Classification
 - [x] Session 6: ML Workflow
 - [x] Session 7: ML Algorithms
-- [ ] Session 8: Text
+- [x] Session 8: Text
 - [ ] Session 9: Image, Video, Audio
 - [ ] Session 9: Deployment
 - [ ] Verify `course.yml` paths and session ordering
