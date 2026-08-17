@@ -13,6 +13,7 @@ These notes help another instructor or teaching assistant run the course.
 ## Sessions
 
 - [Session 01 notes](notes/session_01.qmd)
+- [Session 06 notes](notes/session_06.qmd)
 
 ## Continuous improvement
 

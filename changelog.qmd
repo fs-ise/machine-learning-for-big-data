@@ -26,7 +26,7 @@ A summary of all file-level changes is available through the [Git commit history
 - [x] Session 3: EDA
 - [x] Session 4: Regression
 - [x] Session 5: Classification
-- [ ] Session 6: ML Workflow
+- [x] Session 6: ML Workflow
 - [ ] Session 7: ML Algorithms
 - [ ] Session 8: Text
 - [ ] Session 9: Image, Video, Audio

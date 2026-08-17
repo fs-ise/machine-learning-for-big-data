@@ -1,5 +1,6 @@
 ---
-title: "Notes: Session 6: Machine learning 1"
+title: "Notes: Session 6: ML Foundations (Workflow)"
+session_id: session-06
 format: html
 ---
 
@@ -89,7 +90,10 @@ Key point:
 - Cross-validation provides a more reliable estimate of **generalization performance** during that selection process.
 - A final untouched test set helps address remaining model-selection bias.
 
-## Exercises
+## Exercise facilitation
+
+The authoritative exercise is `../exercises/session_06.qmd`. It remains an imported outline at this stage; do not fill the missing practical detail until the dedicated R/content-review stage.
+
 
 2026-04-20: 75 min (`Data Analytics with Python.pdf` : partitioning (p.20) and cross-validation (p.41).)
 
