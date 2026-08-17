@@ -1,0 +1,90 @@
+---
+title: "Notes: Session 9: ML for Non-Tabular Data (Image, Video, Audio)"
+session_id: session-09
+format: html
+---
+
+2026-05-04 source delivery: 80 minutes. The recomposed core is planned for 90 minutes; use the discussion prompts to adjust pace.
+
+| Time (min) | Duration | Topic | Guidance |
+|---:|---:|---|---|
+| 0–15 | 15 | Why modality and structure matter | Contrast fixed columns, pixel neighborhoods, and ordered observations. |
+| 15–40 | 25 | Neural-network foundations and training | Work through the perceptron, activations, forward pass, loss, backpropagation, and gradient descent in the core flow. |
+| 40–52 | 12 | MLPs and CNNs | Move from fixed-length vectors to spatial inductive bias. |
+| 52–65 | 13 | Video, RNNs, and audio | Show that video combines space and time; audio representation affects architecture. |
+| 65–75 | 10 | Transformers and multimodality | Contrast recurrence with attention and discuss long-range relationships. |
+| 75–90 | 15 | Architecture-choice discussion | Use examples from the exercise and reinforce input → architecture → output. |
+
+## Teaching emphasis
+
+The main teaching point is that specialized networks encode assumptions about **data structure**. CNNs reuse local filters over spatial data; RNNs reuse recurrent cells over time; Transformers compare positions through attention. Do not present them as isolated model definitions.
+
+Neural networks are inspired by natural systems, but an artificial neuron is only a loose analogy to a biological neuron. The foundations are about 80 years old; recent progress followed from larger datasets, greater computing power (especially GPUs/TPUs), and improved architectures. Mention multimodal AI as a motivation without turning the session into an implementation survey.
+
+## Foundations and training
+
+- Inputs loosely correspond to dendrites and outputs to axons.
+- A single classical perceptron learns a linear boundary.
+- Hidden layers and nonlinear activations make abstract intermediate representations possible.
+- Explain a forward pass as data flowing layer by layer to a prediction.
+- Explain training mathematically as well as conceptually: work through the loss, gradient, learning rate, backpropagation, and parameter update material retained in the slides.
+- The number of layers and neurons is specified before training; weights and biases are learned.
+- Sigmoid is smooth and supports gradient-based optimization; ReLU is commonly used for efficient hidden-layer computation.
+
+The detailed derivations, gradient-descent mechanics, architecture/training choices, and original Python implementation examples remain in the core slides. `optional/session_09_neural_network_training.qmd` contains the worked external backpropagation and TensorFlow Playground activities.
+
+## Architecture and modality explanations
+
+### MLPs and tabular data
+
+An MLP's dense connections are a natural starting point for fixed-length feature vectors. Do not imply that it always beats established tabular models. Flattening an image or sequence makes an MLP possible, but hides location or order and can require many parameters.
+
+### CNNs, images, and video
+
+Use the moving-filter diagram to explain local receptive fields and weight sharing. A 28×28 grayscale image with 32 filters can produce 28×28×32 activations; this illustrates feature maps rather than independent input variables.
+
+For video, ask students to identify two structures: spatial relationships inside frames and temporal relationships between frames. A CNN can extract frame features, followed by recurrence or attention over time. Avoid requiring students to memorize Inception-ResNet-v2; the architecture figure only shows how complex combinations of layers can become.
+
+### RNNs and sequential data
+
+Describe recurrence as **memory through a hidden state**. The same cell is reused over ordered elements. Suitable examples include time series, audio, language, and user-interaction sequences. A key misconception is to treat sequence positions as interchangeable columns: changing order can change meaning.
+
+### Transformers
+
+Describe **attention** as directly relating sequence positions, including distant positions. A Transformer is not merely an RNN with more memory. Tokens can represent language units, image patches, or audio/video segments, which explains the move toward multimodal applications.
+
+### Audio
+
+Audio is a useful case because representation changes the modeling choice. A waveform or feature stream is sequential; a spectrogram has local time-frequency structure and can be processed like an image. CNNs, RNNs, and Transformers can therefore all be sensible, alone or combined.
+
+## Common misconceptions and discussion prompts
+
+- **“One architecture belongs to exactly one modality.”** Correct this with spectrograms, video pipelines, and multimodal Transformers.
+- **“Deep learning removes feature engineering.”** Hidden layers learn representations, but practitioners still choose inputs, encodings, normalization, and domain transformations.
+- **“A larger network is always better.”** Capacity must match the problem and increases overfitting and computational risk.
+- **“Output design follows the input modality.”** Architecture follows input structure; output neurons, activation, and loss follow the prediction task.
+- Ask: What information disappears if pixels or frames are shuffled?
+- Ask: What is one observation, and what is one input unit, in each modality?
+
+## Exercise facilitation
+
+Allow approximately 20 minutes for reading the PyTorch MLP object and 50 minutes for the NovaStream modality cases, leaving 10 minutes for synthesis. The code is intentionally preserved in Python for this structural migration; students inspect it rather than port it.
+
+For each use case, insist on three elements: input representation, expected output, and architectural assumption. Cases such as churn should surface that an MLP is not automatically preferable to logistic regression or tree models. Subtitle generation, next-item prediction, cover-image classification, and chat moderation make the sequence/spatial distinctions concrete.
+
+The original broader NovaStream quiz also included recommendation, anomaly detection, pricing optimization, route optimization, association rules, and clustering. Those cases were omitted from the core because they do not directly reinforce Session 9's image/video/audio architecture goal.
+
+## Follow-up review
+
+- Clarify RNN and Transformer explanations after observing student questions.
+- Add a substantive video task or dataset during later content redevelopment; the imported exercise contained modality-selection scenarios but no hands-on media dataset.
+- During the later Python-to-R/framework stage, decide whether implementation examples remain useful and which framework should be authoritative.
+
+{{< pagebreak >}}
+
+## Materials
+
+- [3Blue1Brown neural-network explanation](https://www.youtube.com/watch?v=aircAruvnKk)
+- [MIT Introduction to Deep Learning](https://introtodeeplearning.com/)
+- [Dive into Deep Learning](https://d2l.ai/)
+- [Microsoft AI for Beginners](https://github.com/microsoft/ai-for-beginners)

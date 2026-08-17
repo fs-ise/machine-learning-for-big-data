@@ -6,16 +6,137 @@ format:
   ipynb: default
 ---
 
-## Task
+::: {.direction}
 
-Work through the Session 9 exercise on ML for Non-Tabular Data (Image, Video, Audio).
+| Exercise part | Time |
+|---|---:|
+| [Part 1: Read an MLP architecture](#part-1) | 20 min |
+| [Part 2: Match architectures to media use cases](#part-2) | 50 min |
+| [Wrap-up](#wrap-up) | 10 min |
+| **Total** | **80 min** |
 
-::: {.content-visible when-profile="assign"}
-1. Review the lecture concepts.
-2. Apply the concepts to the provided data or examples.
+The optional supplement contains the source's detailed backpropagation and TensorFlow Playground activities.
+
 :::
 
-::: {.content-visible when-profile="solution"}
-1. Compare your solution with the discussed workflow.
-2. Reflect on assumptions, limitations, and next steps.
+## Part 1: Read an MLP architecture {#part-1}
+
+::: {.direction}
+
+In `sklearn`, model structure is often specified through parameters. In PyTorch, a model commonly inherits from `nn.Module`. Inspect the original Python model below; do not execute or translate it.
+
+```python
+import torch.nn as nn
+
+class MLP(nn.Module):
+    def __init__(self, input_dim, hidden_layers, output_dim):
+        super().__init__()
+        layers = []
+        prev_dim = input_dim
+
+        for h in hidden_layers:
+            layers.append(nn.Linear(prev_dim, h))
+            layers.append(nn.ReLU())
+            prev_dim = h
+
+        layers.append(nn.Linear(prev_dim, output_dim))
+        self.model = nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.model(x)
+
+model = MLP(input_dim=10, hidden_layers=[8, 4], output_dim=1)
+```
+
+1. Write down the sequence of layers and dimensions.
+2. How many hidden layers and trainable `Linear` layers are present?
+3. What changes for `hidden_layers=[32, 16, 8]`?
+4. What kind of data structure does this MLP expect? What structural information would be lost if a video were simply flattened into ten features?
+
+:::
+
+::: {.sol}
+
+### Solution
+
+```text
+Input: 10 features
+Linear: 10 -> 8
+ReLU
+Linear: 8 -> 4
+ReLU
+Linear: 4 -> 1
+Output: 1 value
+```
+
+The model has two hidden layers and three trainable `Linear` layers. With `[32, 16, 8]`, it has three hidden layers with those widths and a final `8 -> 1` layer. It expects a fixed-length feature vector. Flattening media removes explicit spatial and temporal relationships, which CNNs and sequence architectures are designed to preserve.
+
+:::
+
+{{< pagebreak >}}
+
+## Part 2: Match architectures to media use cases {#part-2}
+
+::: {.direction}
+
+**Background.** *NovaStream* offers movies, series, podcasts, music, and livestreams. For each use case:
+
+1. identify the input structure and expected output;
+2. recommend an architecture or analytical approach;
+3. justify how the model's assumptions fit the data;
+4. name a plausible alternative or explain why a standard predictive model is insufficient.
+
+| # | Use case | Recommendation and justification |
+|---:|---|---|
+| 1 | Predict subscriber churn from aggregated viewing, subscription, support, app-usage, and payment features. | |
+| 2 | Generate multilingual subtitles from conversational livestream audio. | |
+| 3 | Classify uploaded podcast cover images as sports, entertainment, education, politics, or technology. | |
+| 4 | Predict the next song, video, or podcast from recent interaction sequences, time of day, device, and consumption history. | |
+| 5 | Detect toxic or abusive livestream chat messages as they are posted. | |
+| 6 | Forecast server demand and bandwidth from historical usage across days, weeks, and special events. | |
+
+{{< pagebreak >}}
+
+For use cases 2–4, also answer:
+
+- Where is the **spatial** or **sequential** structure?
+- Would changing the order or location of input elements change their meaning?
+- For audio or video, would you combine more than one architecture? Why?
+- What are the likely units of input (features, pixels, frames, waveform samples, spectrogram regions, or tokens)?
+
+:::
+
+::: {.sol}
+
+### Solution
+
+| # | Input and output | Suitable approach |
+|---:|---|---|
+| 1 | Fixed-length customer feature vector → churn probability | An MLP, logistic regression, or tree ensemble. The inputs are primarily tabular; a specialized media architecture is not automatically beneficial. |
+| 2 | Ordered audio representation → subtitle token sequence | Transformer; an RNN/LSTM remains a conceptual alternative. A CNN can extract local features from a spectrogram before sequence modeling. |
+| 3 | Spatial pixel grid → image category | CNN, because local visual patterns recur across image positions. A vision Transformer is an alternative. |
+| 4 | Ordered interactions → next-item probability | RNN/LSTM or Transformer because temporal order and longer-range dependencies matter. |
+| 5 | Ordered language tokens → toxicity label | Transformer-based language model; simpler text classifiers remain useful baselines. |
+| 6 | Ordered measurements → future demand | Time-series methods, RNN/LSTM, or Transformer, depending on scale and complexity. Classical forecasting should remain a baseline. |
+
+Video typically combines a CNN's spatial feature extraction with an RNN, temporal model, or Transformer across frames. Audio may be modeled as a waveform sequence or as a spectrogram, so its representation can support an RNN/Transformer, a CNN, or a combination.
+
+:::
+
+## Wrap-up {#wrap-up}
+
+::: {.direction}
+
+For one NovaStream case, sketch a pipeline:
+
+```text
+raw modality -> numerical representation -> architecture -> output -> evaluation
+```
+
+Then compare it with a case whose input has a different structure. State which architectural assumption changes.
+
+::: {.callout-tip title="Session 9 survey"}
+Complete the [Session 9 survey]({{< meta surveys.session_09.url >}}){target="_blank"} before leaving.
+:::
+
 :::

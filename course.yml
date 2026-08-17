@@ -197,7 +197,7 @@ events:
     event_id: 275006-1926698564-0@timeedit.com
     materials:
       - type: slides
-        path: slides/session_09_a.html
+        path: slides/session_09.html
   - session_id: session-09-lecture2
     type: lecture
     date: 2026-10-02

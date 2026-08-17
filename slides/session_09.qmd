@@ -1,9 +1,10 @@
 ---
-title: "Analytics & Big Data"
-subtitle: "Big data 2"
-section_label: "Analytical modeling"
+title: "Session 9: ML for Non-Tabular Data (Image, Video, Audio)"
+subtitle: "Lecture Slides"
+section_label: "ML for Non-Tabular Data (Image, Video, Audio)"
 session: "Session 9"
-date: "2026-05-04"
+date: "2026-10-02"
+format: revealjs
 nocite: |
     @ZhangEtAl2023
 ---
@@ -50,7 +51,7 @@ Why did we have to wait for the AI breakthroughs for so long?
 
 -> AI-Winters: 1974-1980, 1987-1993
 
--> availability of computing power and data (next slide) 
+-> availability of computing power and data (next slide)
 :::
 
 
@@ -160,7 +161,7 @@ Note: the number of layers and neurons is specified ex-ante and does not change 
 :::
 
 ::: {.learning_note .fragment}
-🎥 Grant Anderson (3Blue1Brown) provides a series of instructive  
+🎥 Grant Anderson (3Blue1Brown) provides a series of instructive
 animated explanations, including one on [Neural Networks](https://www.youtube.com/watch?v=aircAruvnKk).
 :::
 
@@ -177,7 +178,7 @@ animated explanations, including one on [Neural Networks](https://www.youtube.co
 :::
 
 ::: aside
-In a classical perceptron, the activation is typically binary (0 or 1), representing whether the neuron “fires.”  
+In a classical perceptron, the activation is typically binary (0 or 1), representing whether the neuron “fires.”
 In modern neural networks, activations are usually continuous-valued scalars determined by the activation function.
 :::
 
@@ -358,7 +359,7 @@ w_{ij}^{\text{old}}
 \Delta w_{ij}
 $$
 
-. . . 
+. . .
 
 > Because neural networks have many parameters, each update changes the model in many dimensions at once.
 > The learning rate therefore has to be chosen carefully: large steps can destabilize training, while very small steps can make learning inefficient.
@@ -455,7 +456,7 @@ TBD: similar to SVM: kernels facilitate learning in higher-dimensional transform
 ::: {.highlight_must_learn}
 
 {{< iconify fluent-mdl2:insights >}}  **Best-practice logic**
-Start with choices that are mostly determined by the **data structure** and the **prediction task**.  
+Start with choices that are mostly determined by the **data structure** and the **prediction task**.
 Then tune the parts that require experimentation.
 
 
@@ -510,19 +511,19 @@ These choices require **more experimentation** to tune complexity and parameters
 ::: {.column width="33%"}
 
 ::: {.design-card}
-1. Network structure  
+1. Network structure
 *How much can the model represent?*
 
-**Depth**  
+**Depth**
 number of layers
 
 - shallow → simple patterns
 - deep → complex abstractions
 
-**Width**  
+**Width**
 neurons per layer
 
-Typical starts:  
+Typical starts:
 `32`, `64`, `128`, `256`
 :::
 
@@ -531,7 +532,7 @@ Typical starts:
 ::: {.column width="33%"}
 
 ::: {.design-card}
-2. Learning rate $\eta$  
+2. Learning rate $\eta$
 *How large are the update steps?*
 
 $$
@@ -541,7 +542,7 @@ $$
 - too high → unstable
 - too low → slow
 
-Typical range:  
+Typical range:
 $10^{-3}$ to $10^{-4}$
 
 <br><br>
@@ -553,14 +554,14 @@ $10^{-3}$ to $10^{-4}$
 ::: {.column width="33%"}
 
 ::: {.design-card}
-3. Regularization  
+3. Regularization
 *How do we reduce overfitting?*
 
-- **Dropout**  
+- **Dropout**
   randomly disables units
-- **Weight decay**  
+- **Weight decay**
   penalizes large weights
-- **Early stopping**  
+- **Early stopping**
   stops before overfitting
 <br><br><br><br>
 
@@ -706,12 +707,12 @@ See the torch [Module](https://docs.pytorch.org/docs/2.11/generated/torch.nn.Mod
 
 ## Summary {data-state="hide-menubar"}
 
-- Neural networks transform inputs into outputs through **weighted connections**, **biases**, and **activation functions**.  
+- Neural networks transform inputs into outputs through **weighted connections**, **biases**, and **activation functions**.
   A single perceptron can only learn **linear decision boundaries**; multilayer networks with nonlinear activations can model more complex patterns.
 
 - Training consists of a **forward pass**, loss calculation, **backpropagation**, and parameter updates via an optimizer such as gradient descent or Adam.
 
-- Different neural network architectures encode different assumptions about data:  
+- Different neural network architectures encode different assumptions about data:
   **MLPs** for tabular data, **CNNs** for spatial data, **RNNs** for sequences, and **Transformers** for attention-based language tasks.
 
 - Designing neural networks means choosing the architecture, output layer, loss function, learning rate, optimizer, and regularization strategy, then iteratively evaluating and adjusting these choices.

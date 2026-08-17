@@ -1,0 +1,138 @@
+---
+title: "Optional Session 9: Neural-network training and interactive exploration"
+format: html
+---
+
+This supplement preserves the detailed training and implementation material imported with Session 9. It is not part of the core image, video, and audio flow.
+
+## Loss and backpropagation
+
+For one training example $i$, the squared error across output neurons is
+
+$$E_i = \frac{1}{2}\sum_{j=1}^{m}(o_{ij}-t_{ij})^2,$$
+
+and the total loss sums this error across training examples. The factor $1/2$ simplifies derivatives.
+
+Backpropagation calculates gradients of the loss with respect to the network's weights. An optimizer uses those gradients to update weights and reduce the difference between predicted and true outputs.
+
+```text
+initialize weights and biases
+repeat until a stopping criterion is met:
+    pass inputs forward through all layers
+    compare predictions with target values
+    propagate error backward through all layers
+    update weights and biases
+```
+
+## Gradient descent details
+
+For parameters $w_1,\ldots,w_m$, the gradient is
+
+$$
+\nabla E = \left(\frac{\partial E}{\partial w_1},\ldots,
+\frac{\partial E}{\partial w_m}\right).
+$$
+
+A basic update in the negative-gradient direction is
+
+$$\Delta w_{ij}=-\eta\frac{\partial E}{\partial w_{ij}},
+\qquad w_{ij}^{new}=w_{ij}^{old}+\Delta w_{ij},$$
+
+where $\eta$ is the learning rate. Large steps can destabilize training; very small steps can make it inefficient.
+
+![](../images/neuronal_networks_gradient_illustration.png){width=55% fig-align=center}
+
+### Optional task: one backpropagation iteration
+
+Study the worked example at [Backpropagation Step by Step](http://hmkcode.github.io/ai/backpropagation-step-by-step). It omits an activation function for simplification. Trace one iteration and identify the forward calculation, loss, backward gradient, and parameter update.
+
+## TensorFlow Playground
+
+Go to [TensorFlow Playground](https://playground.tensorflow.org/) and try the two-clusters, circle, and spiral datasets. Seek a low test loss with the simplest model possible by changing:
+
+- input features;
+- hidden layers and neurons;
+- activation function.
+
+Record the settings and final test loss, then explain why each pattern requires a simpler or more complex boundary. Random initialization means there is no single exact result.
+
+Typical observations from the imported solution:
+
+| Dataset | Illustrative economical setup | Interpretation |
+|---|---|---|
+| Two clusters | no hidden layer; $x_1,x_2$ | nearly linearly separable |
+| Circle | squared input features and one small hidden layer | nonlinear, but engineered features expose its structure |
+| Spiral | several layers with multiple ReLU units | intertwined nonlinear boundary requires more capacity |
+
+The aim is not to maximize model size, but to choose the smallest architecture that captures the pattern.
+
+## Training setup choices
+
+- Adam is a strong default optimizer, and hidden layers commonly start with ReLU.
+- **Depth and width** control representational capacity.
+- The **learning rate** controls update size.
+- **Dropout, weight decay, and early stopping** help reduce overfitting.
+
+These are experimental choices; data structure and prediction task should guide architecture and output design first.
+
+## Original Python implementation examples
+
+The code remains in its imported language. `sklearn` provides basic feed-forward networks but not CNNs, RNNs, or Transformers.
+
+```python
+from sklearn.neural_network import MLPClassifier
+
+model = MLPClassifier(
+    hidden_layer_sizes=(32, 16),
+    activation="relu",
+    solver="adam",
+    learning_rate_init=0.001,
+    alpha=0.0001,
+    max_iter=200
+)
+model.fit(X_train, y_train)
+```
+
+PyTorch expresses the architecture through layer objects rather than an architecture-name parameter:
+
+```python
+import torch
+import torch.nn as nn
+
+class MLP(nn.Module):
+    def __init__(self, input_dim, hidden_layers, output_dim):
+        super().__init__()
+        layers = []
+        prev_dim = input_dim
+        for h in hidden_layers:
+            layers.append(nn.Linear(prev_dim, h))
+            layers.append(nn.ReLU())
+            prev_dim = h
+        layers.append(nn.Linear(prev_dim, output_dim))
+        self.model = nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.model(x)
+
+X = torch.randn(100, 10)
+y = torch.sum(X, dim=1, keepdim=True)
+model = MLP(input_dim=10, hidden_layers=[32, 16], output_dim=1)
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+for epoch in range(100):
+    predictions = model(X)
+    loss = criterion(predictions, y)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+```
+
+## Instructor notes for the supplement
+
+- Allow about 25 minutes for the worked backpropagation task and 20 minutes for Playground.
+- Fix typographical errors in the linked backpropagation example when discussing it.
+- Keep notation for the learning rate ($\eta$) consistent.
+- Playground demonstrates that linearly separable patterns need little capacity, while nonlinear patterns need features, hidden units, or deeper networks.
+- Even all-zero inputs can produce a nonzero output because neurons include biases.
+- Useful intuition resources include the [3Blue1Brown neural-network series](https://www.youtube.com/watch?v=aircAruvnKk) and [Dive into Deep Learning](https://d2l.ai/).
