@@ -30,7 +30,7 @@ A summary of all file-level changes is available through the [Git commit history
 - [x] Session 7: ML Algorithms
 - [x] Session 8: Text
 - [x] Session 9: Image, Video, Audio
-- [ ] Session 9: Deployment
+- [x] Session 9: Deployment
 - [ ] Verify `course.yml` paths and session ordering
 - [ ] Commit structural recomposition
 

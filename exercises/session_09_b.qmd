@@ -1,0 +1,94 @@
+---
+title: "Session 9: Deployment in Organizations"
+session_id: session-09-deployment
+format: html
+---
+
+In this **group-project scaffold**, your group will analyze how analytics contributes to strategic objectives in an organization. You will identify where analytics enters concrete business processes, which decisions it supports or automates, what data and systems are needed, and how the organization learns from outcomes.
+
+Your group will develop an **Analytics-Enabled Strategy Map** for one selected company. Retain the map as a scaffold for your later group-project work.
+
+::: {.direction}
+
+| Project stage | Suggested time |
+|---|---:|
+| [1. Select a case](#select-case) | 5 min |
+| [2. Understand the organization](#understand) | 15 min |
+| [3. Research the deployment](#research) | 20 min |
+| [4. Build the strategy map](#strategy-map) | 30 min |
+| [5. Share and refine](#share) | 10 min |
+| **Total** | **80 min** |
+
+:::
+
+## 1. Select a case {#select-case}
+
+Select **one** company from the following list:
+
+| Case | Industry |
+|---|---|
+| Netflix | Streaming / entertainment |
+| Meta | Social media / digital platforms |
+| X / Twitter | Social media / digital platforms |
+| Siemens | Manufacturing / industrial technology |
+
+## 2. Understand the organization {#understand}
+
+Build a basic understanding of the company:
+
+- What is its business model?
+- Who are its main customers or users?
+- What are its main products, services, or platforms?
+- What organizational problem, opportunity, or strategic objective seems especially important?
+- What could be plausible key performance indicators for this objective?
+
+Official strategic metrics may not be publicly available. If necessary, infer plausible KPIs and justify your reasoning.
+
+## 3. Research the deployment {#research}
+
+Use at least **three credible public sources**, such as annual reports, investor presentations, engineering or research blogs, transparency reports, product documentation, regulatory documents, high-quality journalism, or academic case studies.
+
+A useful starting point is this [overview of engineering blogs](https://medium.com/developersglobal/top-20-tech-blogs-every-developer-should-follow-598ff45b477d).
+
+For each source, ask:
+
+- What strategic objective does it reveal?
+- Which business processes and ML/AI capabilities are described or implied?
+- Which decisions are supported by analytics, and which are automated?
+- Which data sources or systems are mentioned?
+- Are there signs of experimentation, feedback, monitoring, governance, or regulation?
+
+## 4. Build an Analytics-Enabled Strategy Map {#strategy-map}
+
+Complete the map below for your selected case. Connect the rows into a coherent chain rather than treating them as isolated questions.
+
+| Strategy-map element | Guiding question | Group notes |
+|---|---|---|
+| Organizational problem or opportunity | What concrete problem or opportunity does the organization address? | |
+| Strategic objective and KPIs | What objective is especially relevant, and which operational KPIs indicate progress? | |
+| ML/AI capability | Which specific analytical application contributes to the objective? | |
+| Business process | Where is it used? Describe the process as **decision → data → action → outcome**. | |
+| Expected business value | Does it improve decisions, personalization, efficiency, automation, risk reduction, or organizational learning? | |
+| Complementary organizational capabilities | Which technical and human resources, data infrastructure, management capabilities, culture, roles, or skills are required? | |
+| Augmentation or automation | Does the application augment a human decision, automate it, or combine both? Where and why is a human involved? | |
+| Risks and boundaries | What can go wrong, who is affected, and what should not be optimized? | |
+| Governance and accountability | Who owns the system and decision, and which oversight, monitoring, escalation, contestability, or incident-response mechanisms are needed? | |
+| Explainability | Who needs which explanation—to understand, contest, improve, audit, or govern the system? | |
+| Regulatory considerations | How might the NIST AI RMF, GDPR, or EU AI Act inform the deployment? Identify questions for later verification rather than offering legal advice. | |
+| Feedback and learning | How are outcomes monitored, and how do feedback and accumulated knowledge improve the process or system? | |
+
+::: {.callout-note title="Working principles"}
+Focus on **specific analytics-enabled decisions**, not broad statements such as “the company uses AI.” Some information may not be public; clearly distinguish evidence from your group’s reasoned interpretation.
+:::
+
+## 5. Share and refine {#share}
+
+Prepare a short explanation of your map. Another group should be able to trace the connection from organizational objective to ML/AI capability, decision, action, value, and feedback.
+
+During feedback, ask:
+
+1. Is the expected business value plausible and tied to a process and KPI?
+2. Are the required complementary capabilities visible?
+3. Is the proposed division of work between humans and AI justified?
+4. Are accountability, explanation, risk, and regulatory questions specific enough to guide later project work?
+5. Which claims require additional evidence or verification?
