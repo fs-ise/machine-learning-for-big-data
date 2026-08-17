@@ -5,50 +5,13 @@ format: html
 
 | Time (min) | Duration | Topic                                      | Additional materials |
 |------------|----------|--------------------------------------------|----------------------|
-| 0–10       | 10       | Foundations                                |                      |
-| 10–40      | 30       | Data preparation                           |                      |
-| 40–55      | 15       | Univariate exploratory data analysis       |                      |
-| 55–65      | 10       | Multivariate exploratory data analysis     |                      |
-| 65–90      | 25       | Clustering in EDA                          |                      |
+| 0–20       | 20       | Univariate exploratory data analysis       |                      |
+| 20–40      | 20       | Multivariate exploratory data analysis     |                      |
+| 40–90      | 50       | Clustering in EDA                          |                      |
 
 TODO: 
 
-- prepare better explanations of interval/ratio/...
 - think how the second part of clustering should be presented (hierarchical; distance measures). It was covered (too) quickly in the last session.
-
-Badly formatted data blocks analysis — data preparation unlocks it.
-
-Data quality: never trust data blindly. Always evaluate data you receive as an input
-
-Data preparation:
-
-- Statistics traditionally relies on a controlled mode of data collection
-- Repurposing of data, analyzing transactional data is not a typical setting
-- Data quality measures are relatively limited (focused on outliers)
-- Data preparation (manual correction or the use of synthetic data) are even discarded as a questionable research practice
-
-
-## Data structuring
-
-- Need to develop the intuition and clear understanding of how data should be structured.
-- Go back to the examples: and highlight values, variables, observations. Define observational unit. The wide format is an output in a report, not an input.
-Observational unit: **Quarterly sales per region** (implicitly: across years)
-
-**Key learning**: Data structures for analytics may tolerate redundancies!
--> Illustrate this on the whiteboard: ERD/ERM: different rationale (ACID): preventing inconsistent states in operational databases
--> analytical data: often extracted (copied), will not be changed by operational systems. May not even be persisted (just used in-memory for the analysis)
--> in *tidy data*, there is no need for assigning unique IDs. Duplicates are a concern, but unique IDs are not enough to conclude that there are not duplicates.
-
-{{< pagebreak >}}
-
-## Data integration
-
-Remember the @Davenport2006 case: competing on analytics means pooling data that was generated in-house and data acquired from outside data sources.
-
-Question: what does the "merge()" method correspond to in SQL?
-
-Metaphor: statisticians carefully collect their data on their own (live on their own island) - business analysts have to work with existing data (which can be very messy)
-
 
 But: Sometimes it is better to know/predict something even if we cannot explain it instead of doing nothing! Examples:
 
@@ -59,17 +22,6 @@ But: Sometimes it is better to know/predict something even if we cannot explain 
 ## EDA/Clustering
 
 TODO: Illustrate how k-means clustering works for a given k (random centroids/assignments, recalculation of centroids), using different colors
-
-## Exercise
-
-TODO: include an example for tidying data with different observational units (e.g., different levels like department sales vs. package deliveries to customers)
-
-Note: focus on pandas `df` (not so much on other Python data types)
-Possible extension: financial API (code for the API call should be included)
-
-Implementation in Python/pandas: level of difficulty: use the library documentation vs. use ChatGPT
-
-Possible extensions: data structuring with tables requiring transpose
 
 ## Survey
 

@@ -22,7 +22,7 @@ A summary of all file-level changes is available through the [Git commit history
 - [x] Session 1: Big Data
 - [ ] Session 1: Basics in R
 - [x] Session 2: Analytics
-- [ ] Session 2: Data Preparation
+- [x] Session 2: Data Preparation
 - [ ] Session 3: EDA
 - [ ] Session 4: Regression
 - [ ] Session 5: Classification
