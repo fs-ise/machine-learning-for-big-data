@@ -1,5 +1,6 @@
 ---
-title: "Notes: Session 5: Regression 2"
+title: "Notes: Session 5: Classification"
+session_id: session-05
 format: html
 ---
 
@@ -7,15 +8,15 @@ format: html
 
 | Time (min) | Duration | Topic                         | Additional materials |
 |------------|----------|-------------------------------|----------------------|
-| 0–30       | 30       | Refining the model            |                      |
-| 30–60      | 30       | Explanation ↔ prediction      |                      |
-| 60–90      | 30       | Regression → Machine learning |                      |
+| 0–30       | 30       | From regression to classification |                   |
+| 30–60      | 30       | Logistic regression and probabilities |              |
+| 60–90      | 30       | Thresholds, evaluation, and decisions |              |
 
 
 TODO
 
-- Deepen linear regression and surface modeling tensions.
-- When we use regression as a baseline, we will also run it in a train/test mode (unlike in exercises 4 and 5)
+- Use the linear-regression comparison to surface modeling tensions before introducing classification.
+- Emphasize the distinction between probability estimation and the threshold-based classification decision.
 
 ```{python}
 # | echo: false
