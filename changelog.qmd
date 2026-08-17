@@ -19,9 +19,9 @@ A summary of all file-level changes is available through the [Git commit history
 
 **Stage 2 — Recompose course**
 
-- [ ] Session 1: Big Data
+- [x] Session 1: Big Data
 - [ ] Session 1: Basics in R
-- [ ] Session 2: Analytics
+- [x] Session 2: Analytics
 - [ ] Session 2: Data Preparation
 - [ ] Session 3: EDA
 - [ ] Session 4: Regression

@@ -1,10 +1,44 @@
 ---
-title: Example session notes
+title: "Notes: Session 2: Analytics"
 session_id: session-02
 ---
 
-::: {.callout-note}
-## Session objective {#session-objective}
+## Lecture
 
-TODO
+| Time (min) | Duration | Topic | Additional materials |
+|------------|----------|-------|----------------------|
+| 0–15       | 15       | More computing power | |
+| 15–30      | 15       | Analytical data architectures | |
+| 30–45      | 15       | New algorithms | |
+| 45–75      | 30       | Analytics capabilities and purposes | |
+| 75–90      | 15       | CRISP-DM | |
+
+::: objective
+Explain why modern machine learning and AI for big data became powerful through more computing power, new algorithms, and maturing analytics processes.
 :::
+
+The opening argument is deliberately organized around these three mutually reinforcing developments. More data motivates Session 1 Big Data; this session starts with the capabilities that made it possible to process that data and derive value from it.
+
+After the evolution of computing power, connect infrastructure to analytical data architectures. Contrast the governance and consistency advantages of traditional data warehouses with their limitations for flexible, real-time, and unstructured data. Explain how data lakes separate data movement from transformation, and how a logical data warehouse provides uniform analytical views through query-time integration.
+
+Focus on algorithms as enablers of more elaborate models and analyses. AlphaFold also illustrates how science and algorithmic competitions drive progress and enables commercial applications in pharmaceutical and biotech industries.
+
+## Algorithms
+
+- Shortest path/routing: these are still the algorithms that solve this type of problem most efficiently. Not ChatGPT (example: Joyce Hübner and the route for hundreds of marathons connecting all major cities in Germany)
+- Evolutionary algorithms: sometimes, finding the optimal solution is not feasible, but good approximations may be sufficient. Also, principles from nature are used as an inspiration.
+- Scheduling: Operating Systems themselves improve, benefitting multiple analytical problems
+- PageRank: Ask students whether they know the purpose.
+- Deep learning: human brain as the inspiration for the algorithm design (will revisit it later in the lecture)
+- Gradient boosting: combining different algorithms to solve challenging problems.
+- Transformer models: complex NN architectures that are able to process unstructured data well and also generate output (useful for principal data, but also for analytical code)
+
+## Analytical processes
+
+Key trends of improvement:
+
+- **Maturing:** from descriptive to predictive and prescriptive, reducing ambiguity and the need for human involvement in business decisions.
+- **Pervasive:** extending analytics to more areas and departments, with disciplines refining specialized models.
+- **Standardized:** sharing algorithms, software environments, and governance models such as CRISP-DM across organizations and industries.
+
+CRISP-DM is a well-established model for data analytics and provides a useful structure for the course. Emphasize that analytics is iterative rather than a linear pipeline.

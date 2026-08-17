@@ -3,13 +3,11 @@ title: "Notes: Session 8: Big data 1"
 format: html
 ---
 
-2026-05-04: 95 min (lecture)
+TODO: after the Big-Data/Architectures slides were removed (compared to analytics-and-big-data), this session may need to be expanded.
 
 | Time (min) | Duration | Topic | Additional materials |
 |------------|----------|-------|----------------------|
-| 0–30       | 30       | Big Data / 4V   |                      |
-| 30–50      | 20       | Architecture    |                      |
-| 50–90      | 40       | Text analytics  |                      |
+| 0–40       | 40       | Text analytics | |
 
 TODO:
 

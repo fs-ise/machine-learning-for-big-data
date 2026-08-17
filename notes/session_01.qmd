@@ -1,7 +1,20 @@
 ---
-title: Example session notes
+title: "Notes: Session 1: Big Data"
 session_id: session-01
 event_id: null
 ---
 
-Follow up on "Machine learning expands analytical capability. You explore algorithms designed for large and complex datasets, including classification and prediction methods, and understand how modern computational tools extend traditional statistical approaches." (see [here](https://www.frankfurt-school.de/en/study/master/master-in-management))
+## Lecture
+
+| Time (min) | Duration | Topic | Additional materials |
+|------------|----------|-------|----------------------|
+| 0–20       | 20       | Growth and sources of data | |
+| 20–90      | 70       | Big Data, the 4Vs, and business cases | |
+
+::: objective
+Explain why the growth and changing characteristics of data matter for business analytics.
+:::
+
+Emphasize that big data is not simply “lots of data.” Each V presents a distinct managerial dilemma: decision complexity (volume), decisions while events unfold (velocity), integration of previously separate data worlds (variety), and whether apparent signals can be trusted (veracity).
+
+Use the UPS, Visa, Walmart, and digital-advertising cases to connect each characteristic to models, operational decisions, and business outcomes.
