@@ -6,16 +6,24 @@ format:
   ipynb: default
 ---
 
-## Task
-
-Work through the Session 7 exercise on ML Foundations (Algorithms).
-
-::: {.content-visible when-profile="assign"}
-1. Review the lecture concepts.
-2. Apply the concepts to the provided data or examples.
+::: {.callout-warning title="Development status"}
+The imported Session 7 exercise contains objectives and source references, but no substantive tasks. The comparative exercise applying regularized models, k-NN, decision trees, random forests, and SVMs with `tidymodels` remains to be developed during the later R migration and content-review stage.
 :::
 
-::: {.content-visible when-profile="solution"}
-1. Compare your solution with the discussed workflow.
-2. Reflect on assumptions, limitations, and next steps.
+::: {.learning-objectives}
+- Implement and evaluate decision trees, and neural networks for a business prediction task.
+- Compare models with respect to accuracy, interpretability, and practical implications.
+- Recommend a suitable model for deployment.
+:::
+
+## Exercise outline
+
+NOTE: see `Data Analytics with Python.pdf`
+
+::: {.callout-note title="TODO: comparative exercise"}
+Develop the substantive comparative tasks and solutions during the later R migration/content-review stage. The eventual exercise should compare regularized models, k-NN, decision trees, random forests, and SVMs using `tidymodels`; no implementation is added at this structural-migration stage.
+:::
+
+::: {.callout-tip title="Session 7 survey"}
+Before you wrap up, please complete the Session 7 survey here: [{{< meta surveys.session_07.url >}}]({{< meta surveys.session_07.url >}}){target="_blank"}. Thank you 🙏
 :::

@@ -1,5 +1,6 @@
 ---
-title: "Notes: Session 7: Machine learning 2"
+title: "Notes: Session 7: ML Foundations (Algorithms)"
+session_id: session-07
 format: html
 ---
 
@@ -11,10 +12,10 @@ format: html
 
 
 
-TODO: 
+TODO:
 
-- Better prepare the explanation of decision trees (entropy, information gain) (see https://www.cs.cmu.edu/~aarti/Class/10315_Fall20/recs/DecisionTreesBoostingExampleProblem.pdf)  
-- Check regression trees carefully  
+- Better prepare the explanation of decision trees (entropy, information gain) (see https://www.cs.cmu.edu/~aarti/Class/10315_Fall20/recs/DecisionTreesBoostingExampleProblem.pdf)
+- Check regression trees carefully
 - Prepare explanation and visualization of SVMs (on the slides)
 
 ## Decision trees
@@ -171,7 +172,7 @@ plt.show()
 
 **Teaching point:**
 The midpoint between means uses the class centers.
-The maximal margin classifier uses the **edge cases** that define the safest separating threshold. This matches the standard SVM intuition that only the nearest points determine the margin. 
+The maximal margin classifier uses the **edge cases** that define the safest separating threshold. This matches the standard SVM intuition that only the nearest points determine the margin.
 
 ## Support vector classifier (soft margin)
 
@@ -230,7 +231,7 @@ plt.show()
 ```
 
 **Teaching point:**
-This is the most important soft-margin visual: one point can be **inside the margin but still correctly classified**, while another can be **across the boundary and misclassified**. That is exactly the role of slack variables in the standard support vector classifier formulation. 
+This is the most important soft-margin visual: one point can be **inside the margin but still correctly classified**, while another can be **across the boundary and misclassified**. That is exactly the role of slack variables in the standard support vector classifier formulation.
 
 ## Support Vector Machines (Kernel trick for nonlinear patterns)
 
@@ -306,7 +307,9 @@ The kernel trick makes nonlinear patterns **linearly separable in a transformed 
 - **Support vector machine** → handles nonlinear patterns
 
 
-# Exercises
+# Exercise facilitation
+
+The authoritative exercise is `../exercises/session_07.qmd`. The imported source provides learning objectives and a reference to `Data Analytics with Python.pdf`, but no substantive tasks. Preserve this known gap until the later R migration/content-review stage, when the comparative `tidymodels` exercise will be designed.
 
 2026-04-20: 80 min (`Data Analytics with Python.pdf` : Ridge Regression (p.57), Decision Trees and Random Forests (p.28), and Support Vector Regression (p.20))
 
