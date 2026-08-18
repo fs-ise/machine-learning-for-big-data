@@ -215,6 +215,10 @@ These notes indicate how the content may be addressed in the exam and how you ca
 - Hastie, Tibshirani, and Friedman [-@HastieTibshiraniFriedman2009]
 - James et al. [-@JamesWittenHastieTibshirani2013]
 
+**R and Data Analysis**
+
+- Wickham, Çetinkaya-Rundel, and Grolemund [-@WickhamCetinkayaRundelGrolemund2023]
+
 ## You may also be interested in ... {data-state="hide-menubar"}
 
 :::: {.columns}
