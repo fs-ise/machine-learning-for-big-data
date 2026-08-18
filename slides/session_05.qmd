@@ -366,7 +366,7 @@ Comparing predicted vs. actual class labels allows us to evaluate the performanc
 ```{r}
 #| fig-align: center
 ggplot(df,aes(`Average response time (hours)`,Churn))+geom_point(aes(colour=truth),alpha=.7)+
-  geom_line(data=x_grid,aes(y=probability),inherit.aes=FALSE,linewidth=1)+geom_hline(yintercept=.5,linetype="dashed")+
+  geom_line(data=x_grid,aes(y=probability),linewidth=1)+geom_hline(yintercept=.5,linetype="dashed")+
   labs(title="Observed churn outcomes and logistic prediction",y="Churn / predicted probability",colour=NULL)+theme_minimal()
 ```
 :::

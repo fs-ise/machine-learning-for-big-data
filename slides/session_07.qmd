@@ -904,7 +904,7 @@ set.seed(42)
 X <- rbind(matrix(rnorm(100,4.5,.4),ncol=2),matrix(rnorm(100,6,.4),ncol=2)); y <- factor(rep(c("Successful","Unsuccessful"),each=50))
 model <- ksvm(X,y,kernel="vanilladot",C=100,scaled=FALSE)
 d <- as_tibble(X,.name_repair=~c("team_size","experience")) |> mutate(class=y)
-ggplot(d,aes(team_size,experience,shape=class))+geom_point()+
+ggplot(d,aes(team_size,experience))+geom_point(aes(shape=class))+
   stat_contour(data=expand_grid(team_size=seq(3.8,6.8,length.out=100),experience=seq(3.8,6.8,length.out=100))|>
     mutate(score=predict(model,as.matrix(pick(team_size,experience)),type="decision")),aes(z=score),breaks=c(-1,0,1))+
   theme_minimal()
@@ -1063,7 +1063,7 @@ A linear regression curve in higher dimensions becomes a non-linear regression c
 ```{r}
 #| fig-align: center
 library(tidyverse); library(kernlab); set.seed(1)
-d<-tibble(x=seq(1,15,length.out=60),y=-(x-8)^2+50+rnorm(60,0,3)); model<-ksvm(y~x,d,kernel="rbfdot",C=100,epsilon=2)
+d<-tibble(x=seq(1,15,length.out=60),y=-(x-8)^2+50+rnorm(60,0,3)); model<-ksvm(y~x,d,kernel="rbfdot",C=100,epsilon=2,scaled = FALSE)
 ggplot(d,aes(x,y))+geom_point()+geom_line(data=tibble(x=seq(1,15,length.out=200))|>mutate(y=predict(model,pick(x))))+
   labs(title="SVR captures optimal mid-size teams",x="Team size",y="Productivity")
 ```
@@ -1075,7 +1075,7 @@ ggplot(d,aes(x,y))+geom_point()+geom_line(data=tibble(x=seq(1,15,length.out=200)
 ```{r}
 #| fig-align: center
 library(tidyverse); library(kernlab); set.seed(0)
-d<-tibble(x=seq(0,10,length.out=50),y=10*log1p(x)+rnorm(50,0,.5)); model<-ksvm(y~x,d,kernel="rbfdot",C=100,epsilon=.5)
+d<-tibble(x=seq(0,10,length.out=50),y=10*log1p(x)+rnorm(50,0,.5)); model<-ksvm(y~x,d,kernel="rbfdot",C=100,epsilon=.5,scaled = FALSE)
 ggplot(d,aes(x,y))+geom_point()+geom_line(data=tibble(x=seq(0,10,length.out=200))|>mutate(y=predict(model,pick(x))))+
   labs(title="SVR captures diminishing returns",x="Advertising spend",y="Sales")
 ```
@@ -1087,7 +1087,7 @@ ggplot(d,aes(x,y))+geom_point()+geom_line(data=tibble(x=seq(0,10,length.out=200)
 ```{r}
 #| fig-align: center
 library(tidyverse); library(kernlab); set.seed(2)
-d<-tibble(x=seq(1,20,length.out=60),y=100/(x+2)+rnorm(60,0,2)); model<-ksvm(y~x,d,kernel="rbfdot",C=100,epsilon=1)
+d<-tibble(x=seq(1,20,length.out=60),y=100/(x+2)+rnorm(60,0,2)); model<-ksvm(y~x,d,kernel="rbfdot",C=100,epsilon=1,scaled = FALSE)
 ggplot(d,aes(x,y))+geom_point()+geom_line(data=tibble(x=seq(1,20,length.out=200))|>mutate(y=predict(model,pick(x))))+
   labs(title="SVR captures nonlinear demand curve",x="Price",y="Demand")
 ```
