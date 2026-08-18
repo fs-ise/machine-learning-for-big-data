@@ -12,13 +12,13 @@ format: revealjs
 <br><br><br><br><br>
 
 ::: {.learning-objectives}
-- **Explain** the growth and principal sources of large-scale data.
+- **Describe** the growth and principal sources of large-scale data.
 - **Explain** the four characteristics of big data and their business implications.
 :::
 
-# More data for the analysis {data-stack-name="Data"}
+# The growth of data {data-stack-name="Data"}
 
-## The explosion of data
+## The exponential growth of data
 
 ::: columns
 
@@ -155,9 +155,8 @@ Online banking, mobile payments, and blockchain systems generate detailed financ
 **AI-generated data**<br>
 Machine learning and generative AI create large datasets during training and operation, further accelerating global data growth.
 
+
 # Big data {data-stack-name="Big data"}
-
-
 
 ## 4V’s of big data
 

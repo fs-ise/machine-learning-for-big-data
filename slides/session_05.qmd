@@ -114,6 +114,7 @@ plt.title("Churn vs. Response Time (Continuous Predictor)")
 plt.show()
 ```
 
+. . . 
 
 Possible approach: We could use Linear Regression with a threshold at `0.5` to classify output:
 
@@ -138,7 +139,7 @@ The "marginal effects" logic of linear regression does not make sense.
 
 # Logistic regression {data-stack-name="Logistic regression"}
 
-## Classification
+## General binary classification problems
 
 Examples:
 
@@ -166,7 +167,7 @@ $$y \in \{0,1,2,3,4\}$$
 TODO: include an overview of classifiers (see paper notes): rule-based, threshold-based, area-based, GLM - logistic regression: particular link function
 -->
 
-## Logistic regression model
+## Logistic regression models
 
 <!--
 TODO: Linear regression typically gives us continuous **scores**, but for our case of binary classification, scores between 0 and 1 are needed. Probabilities would be a score ranging between 0 and 1 (with a "nice" interpretation).
@@ -915,7 +916,7 @@ It does not yet tell us whether we should intervene.
 
 We can use the expected value criterion to **translate predictions into decisions** by combining:
 
-- **Predicted churn probability** from the model
+- **Probability of churm** predicted by the model
 - **Business consequences** of the action
 
 . . .
@@ -1210,7 +1211,7 @@ It is:
 
 <br>
 
-Logistic regression is often the first model to try —  simple, transparent, and surprisingly effective.
+In many machine learning studies, logistic regression is used as a first baseline model —  simple, transparent, and surprisingly effective.
 
 <br>
 

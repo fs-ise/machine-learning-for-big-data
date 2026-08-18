@@ -481,7 +481,7 @@ Explain the intuition first before showing the algorithm.
 
 -->
 
-## k-means algorithm
+## k-means: The algorithm
 
 For a given **k**, the algorithm finds cluster centers that minimize **within-cluster sum of squares**.
 
@@ -518,7 +518,7 @@ Limitations: must choose **k**, sensitive to scaling and outliers.
 Timing: ~4 minutes.
 :::
 
-## How cluster solutions evolve
+## k-means: How cluster solutions evolve
 
 ```{python}
 
@@ -610,7 +610,7 @@ plot_k(7)
 **Note:** The plots show the final result after the algorithm has converged, i.e., once observation assignments and cluster centroids no longer change.
 :::
 
-## k-means in Python
+## k-means: Implementation in Python
 
 The following runs a k-means clustering analysis in Python:
 <br>
@@ -645,7 +645,7 @@ X = [
 ]
 ```
 
-## Choosing the number of clusters
+## k-means: Choosing the number of clusters (I)
 
 A common heuristic is the **elbow method**.
 
@@ -692,7 +692,7 @@ Key point: inertia always decreases → we look for where gains flatten out.
 Emphasize: heuristic, not a strict rule.
 :::
 
-## Choosing the number of clusters
+## k-means: Choosing the number of clusters (II)
 
 An alternative is the **silhouette score**.
 

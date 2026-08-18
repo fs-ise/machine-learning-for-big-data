@@ -345,7 +345,7 @@ TODO/TBD: add stratified sampling example and SMOTE?!
 
 **Problematic use of test data for two purposes:**
 
-<span style="color: red;">1. Optimize the model training</span>
+<span style="color: red;">1. Optimize the model training</span>  
 <span style="color: blue;">2. Select the best model via testing the model quality</span>
 
 This contradicts the idea of independent testing and results in:

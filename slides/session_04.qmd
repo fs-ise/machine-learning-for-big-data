@@ -507,9 +507,9 @@ each additional square foot is associated with **+$180** in predicted price, on 
 
 ::: {.column width="52%" .fragment}
 
-**Prediction example**
+**Prediction**
 
-> *How much would a **1,500 sq ft** house cost?*
+> Example: *How much would a **1,500 sq ft** house cost?*
 
 $$\hat{price} = 50{,}000 + 180 \times 1{,}500 = \$322{,}000$$
 ```{ojs}
@@ -629,7 +629,7 @@ RSS = \sum_{i=1}^{n} \epsilon_i^2
     = \sum_{i=1}^{n} (y_i - \beta_0 - \beta' x_i)^2
 $$
 
-![](../images/regression_epsilon.png){width="20%" fig-align="center"}
+![](../images/regression_epsilon.png){width="25%" fig-align="center"}
 
 ::: notes
 $\hat{y}$ is the fitted/predicted value (without $\epsilon$)

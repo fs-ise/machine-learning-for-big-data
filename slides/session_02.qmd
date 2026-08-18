@@ -678,7 +678,7 @@ digraph CRISPDM {
 ::::
 
 ::: aside
-Besides CRISP-DM, there are other models, such as KDD Process, SEMMA, or TDSP.
+Alternative models include [KDD Process](https://de.wikipedia.org/wiki/Knowledge_Discovery_in_Databases), [SEMMA](https://en.wikipedia.org/wiki/SEMMA), or [TDSP](https://medium.com/analytics-vidhya/tdsp-data-science-lifecycle-for-artificial-intelligence-data-science-projects-4ac6e5b82db4).
 :::
 
 ## Foundations {data-state="hide-menubar"}
