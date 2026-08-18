@@ -330,7 +330,11 @@ df <- df |> mutate(`Predicted probability`=predict(model,type="response"),
                    `Predicted class`=factor(if_else(`Predicted probability`>=.5,1,0),levels=0:1),
                    truth=factor(Churn,levels=0:1))
 cm <- conf_mat(df,truth,`Predicted class`)
-metrics_df <- metric_set(accuracy,precision,recall,f_meas)(df,truth,`Predicted class`)
+metrics_df <- metric_set(accuracy,precision,recall,f_meas)(
+  df,
+  truth = truth,
+  estimate = `Predicted class`
+)
 ```
 
 ## Predicted probabilities

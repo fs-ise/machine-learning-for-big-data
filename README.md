@@ -32,6 +32,20 @@ You can find more information on the following pages:
 - `make sync-events` regenerates session schedule data.
 - `make clean` removes generated build artifacts.
 
+## R dependencies
+
+The CRAN packages used by executable R chunks are listed in
+[`r-packages.txt`](r-packages.txt). Install any packages that are not already
+available before rendering the course materials:
+
+```sh
+Rscript scripts/install_r_dependencies.R
+```
+
+The helper leaves existing installations unchanged and installs only missing
+packages. Display-only R examples (fenced with `r` rather than `{r}`) are not
+executed during rendering and may demonstrate additional, optional packages.
+
 ## License
 
 The teaching contents are licensed under the [CC BY 4.0 License](https://creativecommons.org/licenses/by/4.0/) unless noted otherwise.

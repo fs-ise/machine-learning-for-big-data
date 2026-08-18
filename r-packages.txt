@@ -1,0 +1,13 @@
+broom
+cluster
+dplyr
+ggplot2
+kernlab
+leaflet
+osmdata
+patchwork
+quanteda
+readr
+sf
+tidyverse
+yardstick

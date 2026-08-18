@@ -57,7 +57,7 @@ names(df)
 
 model_data <- df |>
   select(price, area, Overall.Qual) |>
-  mutate(area = replace_na(area, median(area, na.rm = TRUE)))
+  mutate(area = coalesce(area, median(area, na.rm = TRUE)))
 
 model <- lm(price ~ area + Overall.Qual, data = model_data)
 tidy(model)
