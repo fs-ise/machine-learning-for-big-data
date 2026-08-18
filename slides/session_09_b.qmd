@@ -1,5 +1,6 @@
 ---
 title: "Session 9: Deployment in Organizations"
+title-slide-image: "../images/cover_slide/deployment.png"
 subtitle: "Lecture Slides"
 section_label: "Deployment in Organizations"
 session: "Session 9"

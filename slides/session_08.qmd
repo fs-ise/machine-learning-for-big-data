@@ -1,5 +1,6 @@
 ---
 title: "Session 8: ML for Non-Tabular Data (Text)"
+title-slide-image: "../images/cover_slide/ml-text.png"
 subtitle: "Lecture Slides"
 section_label: "ML for Non-Tabular Data (Text)"
 session: "Session 8"

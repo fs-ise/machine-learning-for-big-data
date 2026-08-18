@@ -1,5 +1,6 @@
 ---
 title: "Session 3: EDA"
+title-slide-image: "../images/cover_slide/eda.png"
 subtitle: "Lecture Slides"
 section_label: "EDA"
 session: "Session 3"

@@ -1,5 +1,6 @@
 ---
 title: "Session 5: ML Baselines (Classification)"
+title-slide-image: "../images/cover_slide/classification.png"
 subtitle: "Lecture Slides"
 section_label: "ML Baselines (Classification)"
 session: "Session 5"

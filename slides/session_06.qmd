@@ -1,5 +1,6 @@
 ---
 title: "Session 6: ML Foundations (Workflow)"
+title-slide-image: "../images/cover_slide/workflow.png"
 subtitle: "Lecture Slides"
 section_label: "ML Foundations (Workflow)"
 session: "Session 6"
@@ -700,7 +701,11 @@ library(sf)
 library(dplyr)
 library(leaflet)
 
-districts <- opq("Frankfurt am Main, Germany") |>
+districts <- opq(
+  "Frankfurt am Main, Germany",
+  osm_types = c("way", "relation"),
+  timeout = 90
+) |>
   add_osm_feature("boundary", "administrative") |>
   add_osm_feature("admin_level", "10") |>
   osmdata_sf()

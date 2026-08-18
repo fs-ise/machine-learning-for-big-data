@@ -1,5 +1,6 @@
 ---
 title: "Machine Learning for Big Data"
+title-slide-image: "../images/cover_slide/analytics.png"
 subtitle: "Course logistics"
 section_label: "Introduction"
 session: "Session 0"

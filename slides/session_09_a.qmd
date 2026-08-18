@@ -1,5 +1,6 @@
 ---
 title: "Session 9: ML for Non-Tabular Data (Image, Video, Audio)"
+title-slide-image: "../images/cover_slide/ml-image-audio-video.png"
 subtitle: "Lecture Slides"
 section_label: "ML for Non-Tabular Data (Image, Video, Audio)"
 session: "Session 9"

@@ -1,6 +1,8 @@
 project:
   type: website
   output-dir: _site
+  resources:
+    - "images/cover_slide/*.png"
 metadata-files:
   - course.yml
 website:
