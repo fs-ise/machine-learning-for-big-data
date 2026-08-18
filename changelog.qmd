@@ -32,7 +32,6 @@ A summary of all file-level changes is available through the [Git commit history
 - [x] Session 9: Image, Video, Audio
 - [x] Session 9: Deployment
 - [ ] Verify `course.yml` paths and session ordering
-- [ ] Commit structural recomposition
 
 **Stage 3 — Port to R**
 
