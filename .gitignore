@@ -13,3 +13,4 @@ __pycache__/
 
 site_libs/
 *.quarto_ipynb_*
+slides/cache/*
