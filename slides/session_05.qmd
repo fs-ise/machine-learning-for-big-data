@@ -74,44 +74,14 @@ where $X$ contains the observed customer characteristics and behaviors.
 
 Churn prediction is a **binary classification problem**:
 
-```{python}
-# | fig-align: center
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Reproducibility
-np.random.seed(42)
-
-n = 100
-
-# Continuous predictor: average response time (hours)
-# Faster response -> no churn
-response_no_churn = np.random.normal(loc=2, scale=0.8, size=n // 2)
-
-# Slower response -> churn
-response_churn = np.random.normal(loc=8, scale=1.5, size=n // 2)
-
-# Combine predictor
-response_time = np.concatenate([response_no_churn, response_churn])
-
-# Binary outcome
-churn = np.array([0] * (n // 2) + [1] * (n // 2))
-
-# Plot
-plt.figure()
-
-plt.scatter(response_time[churn == 0], churn[churn == 0], alpha=0.7)
-plt.scatter(response_time[churn == 1], churn[churn == 1], alpha=0.7)
-
-# Labels
-plt.xlabel("Average Response Time (hours)")
-plt.ylabel("Churn (0 = No, 1 = Yes)")
-plt.yticks([0, 1])
-plt.title("Churn vs. Response Time (Continuous Predictor)")
-
-plt.show()
+```{r}
+#| fig-align: center
+library(tidyverse)
+set.seed(42)
+d <- tibble(response_time=c(rnorm(50,2,.8),rnorm(50,8,1.5)), churn=rep(0:1,each=50))
+ggplot(d,aes(response_time,churn,colour=factor(churn)))+geom_point(alpha=.7)+
+  scale_y_continuous(breaks=0:1)+labs(title="Churn vs. Response Time (Continuous Predictor)",
+  x="Average Response Time (hours)",y="Churn (0 = No, 1 = Yes)",colour=NULL)+theme_minimal()
 ```
 
 . . . 
@@ -236,41 +206,13 @@ The sigmoid function serves as a *link function* to convert the linear predictor
 
 ## The Sigmoid function
 
-```{python}
+```{r}
 #| fig-align: center
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Sigmoid function
-def sigmoid(z):
-    return 1 / (1 + np.exp(-z))
-
-# X values
-x = np.linspace(-10, 10, 200)
-
-# Different parameter settings
-params = [
-    (0, 1, "β0=0, β1=1"),
-    (-2, 1, "β0=-2, β1=1"),
-    (2, 1, "β0=2, β1=1"),
-    (0, 0.5, "β0=0, β1=0.5"),
-    (0, 2, "β0=0, β1=2"),
-]
-
-# Plot
-plt.figure(figsize=(16, 6))
-
-for beta0, beta1, label in params:
-    z = beta0 + beta1 * x
-    plt.plot(x, sigmoid(z), label=label)
-
-plt.xlabel("x")
-plt.ylabel("P(y=1 | x)")
-plt.title("")
-plt.legend()
-plt.grid()
-
-plt.show()
+library(tidyverse)
+params <- tribble(~beta0,~beta1,~setting, 0,1,"β0=0, β1=1", -2,1,"β0=-2, β1=1",
+  2,1,"β0=2, β1=1", 0,.5,"β0=0, β1=0.5", 0,2,"β0=0, β1=2")
+crossing(x=seq(-10,10,length.out=200),params)|>mutate(p=plogis(beta0+beta1*x))|>
+  ggplot(aes(x,p,colour=setting))+geom_line()+labs(y="P(y=1 | x)",colour=NULL)+theme_minimal()
 ```
 
 :::  {.callout-note}
@@ -315,29 +257,18 @@ $$L(\beta) = \prod_{i=1}^n p_i^{y_i} (1 - p_i)^{1 - y_i}$$
 No need to memorize the formula. Understand the idea.
 :::
 
-## Logistic regression in Python
+## Logistic regression in R
 
-We estimate the model using the sklearn library:
+We estimate the model using base R's `glm()` function:
 
-```{python}
+```{r}
 #| echo: true
 #| output: true
-
-import pandas as pd
-from sklearn.linear_model import LogisticRegression
-
-df = pd.DataFrame({
-    "response_time": [1, 2, 3, 5, 7, 8, 9, 11],
-    "churn":         [0, 0, 0, 0, 1, 1, 1, 1]
-})
-X = df[["response_time"]]
-y = df["churn"]
-
-model = LogisticRegression()
-model.fit(X, y)
-
-print("Intercept (β0):", model.intercept_[0])
-print("Slope (β1):", model.coef_[0][0])
+library(tidyverse)
+library(broom)
+df <- tibble(response_time=c(1,2,3,5,7,8,9,11), churn=c(0,0,0,0,1,1,1,1))
+model <- glm(churn ~ response_time, data=df, family=binomial())
+tidy(model)
 ```
 
 ## Interpretation of coefficients
@@ -386,58 +317,20 @@ Logistic regression is linear in log-odds — but **nonlinear in probabilities**
 
 
 
-```{python}
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (
-    confusion_matrix,
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-)
-
-# Simulated churn data
-rng = np.random.default_rng(42)
-n = 140
-response_time = rng.uniform(0.5, 12.0, n)  # average response time in hours
-
-# Higher response time -> higher churn probability
-logit = -3.8 + 0.62 * response_time
-p_true = 1 / (1 + np.exp(-logit))
-churn = rng.binomial(1, p_true)
-
-df = pd.DataFrame({
-    "Average response time (hours)": response_time,
-    "Churn": churn,
-})
-
-# Fit logistic regression
-X = df[["Average response time (hours)"]]
-y = df["Churn"]
-model = LogisticRegression()
-model.fit(X, y)
-
-# Predictions
-x_grid = np.linspace(X.min().item(), X.max().item(), 300).reshape(-1, 1)
-p_grid = model.predict_proba(x_grid)[:, 1]
-df["Predicted probability"] = model.predict_proba(X)[:, 1]
-df["Predicted class"] = (df["Predicted probability"] >= 0.5).astype(int)
-
-cm = confusion_matrix(y, df["Predicted class"])
-metrics_df = pd.DataFrame(
-    {
-        "Metric": ["Accuracy", "Precision", "Recall", "F1"],
-        "Value": [
-            accuracy_score(y, df["Predicted class"]),
-            precision_score(y, df["Predicted class"]),
-            recall_score(y, df["Predicted class"]),
-            f1_score(y, df["Predicted class"]),
-        ],
-    }
-)
+```{r}
+library(tidyverse)
+library(yardstick)
+set.seed(42)
+df <- tibble(`Average response time (hours)`=runif(140,.5,12)) |>
+  mutate(Churn=rbinom(n(),1,plogis(-3.8+.62*`Average response time (hours)`)))
+model <- glm(Churn ~ `Average response time (hours)`,data=df,family=binomial())
+x_grid <- tibble(`Average response time (hours)`=seq(min(df[[1]]),max(df[[1]]),length.out=300)) |>
+  mutate(probability=predict(model,newdata=pick(everything()),type="response"))
+df <- df |> mutate(`Predicted probability`=predict(model,type="response"),
+                   `Predicted class`=factor(if_else(`Predicted probability`>=.5,1,0),levels=0:1),
+                   truth=factor(Churn,levels=0:1))
+cm <- conf_mat(df,truth,`Predicted class`)
+metrics_df <- metric_set(accuracy,precision,recall,f_meas)(df,truth,`Predicted class`)
 ```
 
 ## Predicted probabilities
@@ -466,28 +359,11 @@ Comparing predicted vs. actual class labels allows us to evaluate the performanc
 :::
 
 ::: {.column width="50%"}
-```{python}
+```{r}
 #| fig-align: center
-fig, ax = plt.subplots(figsize=(7.5, 5.2))
-ax.scatter(
-    df.loc[df["Churn"] == 0, "Average response time (hours)"],
-    df.loc[df["Churn"] == 0, "Churn"],
-    alpha=0.70,
-)
-ax.scatter(
-    df.loc[df["Churn"] == 1, "Average response time (hours)"],
-    df.loc[df["Churn"] == 1, "Churn"],
-    alpha=0.70,
-)
-ax.plot(x_grid[:, 0], p_grid, linewidth=3)
-ax.axhline(0.5, linestyle="--", linewidth=1)
-ax.set_xlabel("Average response time (hours)")
-ax.set_ylabel("Churn / predicted probability")
-ax.set_yticks([0, 0.5, 1.0])
-ax.set_ylim(-0.05, 1.05)
-ax.set_title("Observed churn outcomes and logistic prediction")
-plt.tight_layout()
-plt.show()
+ggplot(df,aes(`Average response time (hours)`,Churn))+geom_point(aes(colour=truth),alpha=.7)+
+  geom_line(data=x_grid,aes(y=probability),inherit.aes=FALSE,linewidth=1)+geom_hline(yintercept=.5,linetype="dashed")+
+  labs(title="Observed churn outcomes and logistic prediction",y="Churn / predicted probability",colour=NULL)+theme_minimal()
 ```
 :::
 :::
@@ -511,261 +387,26 @@ The confusion matrix summarizes:
 :::
 
 ::: {.column width="50%"}
-```{python}
+```{r}
 #| fig-align: center
-fig, ax = plt.subplots(figsize=(7, 5.2))
-
-# Heatmap
-im = ax.imshow(cm, cmap="Blues")
-
-# Choose contrasting text color based on cell intensity
-threshold = cm.max() / 2
-
-for i, row in enumerate(cm):
-    for j, value in enumerate(row):
-        text_color = "white" if value > threshold else "black"
-        ax.text(
-            j,
-            i,
-            f"{value}",
-            ha="center",
-            va="center",
-            fontsize=16,
-            fontweight="bold",
-            color=text_color,
-        )
-
-# Axis labels
-ax.set_xticks([0, 1], labels=["Predicted 0", "Predicted 1"])
-ax.set_yticks([0, 1], labels=["Actual 0", "Actual 1"])
-ax.set_title("Confusion matrix")
-
-# Colorbar
-fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-
-plt.tight_layout()
-plt.show()
+autoplot(cm,type="heatmap")+labs(title="Confusion matrix")
 ```
 :::
 :::
 
 ## Evaluation metrics
 
-```{python}
+```{r}
 #| fig-align: center
-import numpy as np
-import matplotlib.pyplot as plt
-
-rng = np.random.default_rng(42)
-
-# -------------------------------------------------
-# Target confusion-matrix counts
-# -------------------------------------------------
-TARGET = {
-    "TP": 59,
-    "TN": 55,
-    "FN": 14,
-    "FP": 12,
-}
-
-n_pos = TARGET["TP"] + TARGET["FN"]   # actual positives
-n_neg = TARGET["TN"] + TARGET["FP"]   # actual negatives
-
-
-# -------------------------------------------------
-# Classifier boundary
-# -------------------------------------------------
-def boundary(x):
-    return 4.6 - 0.55 * x
-
-
-# -------------------------------------------------
-# Geometry aligned with the boundary
-# -------------------------------------------------
-line_direction = np.array([1.0, -0.55])
-line_direction = line_direction / np.linalg.norm(line_direction)
-
-normal_direction = np.array([0.55, 1.0])
-normal_direction = normal_direction / np.linalg.norm(normal_direction)
-
-midpoint = np.array([3.8, boundary(3.8)])
-
-
-def aligned_to_xy(t, d):
-    """
-    Convert coordinates in the line-aligned system to x/y coordinates.
-
-    t = coordinate along the classifier line
-    d = signed distance from the classifier line
-        d > 0  -> above the line
-        d < 0  -> below the line
-    """
-    return midpoint + np.outer(t, line_direction) + np.outer(d, normal_direction)
-
-
-# -------------------------------------------------
-# Generate two base clouds
-# -------------------------------------------------
-# sd_along: spread along the classifier line
-# sd_across: spread across the classifier line
-#
-# Larger sd_across gives more overlap.
-# Larger t_shift separates the clouds more left/right.
-sd_along = 0.80
-sd_across = 0.55
-t_shift = 0.90
-
-# Fixed base draws so the search is deterministic
-pos_base = rng.normal(size=(n_pos, 2))
-neg_base = rng.normal(size=(n_neg, 2))
-
-
-def evaluate(pos_sep, neg_sep):
-    """
-    Move positive and negative clouds away from the line by pos_sep / neg_sep
-    along the normal direction and compute resulting confusion-matrix counts.
-    """
-    # Positive cloud: shifted rightward along the line and upward from the line
-    pos_t = pos_base[:, 0] * sd_along + t_shift
-    pos_d = pos_base[:, 1] * sd_across + pos_sep
-
-    # Negative cloud: shifted leftward along the line and downward from the line
-    neg_t = neg_base[:, 0] * sd_along - t_shift
-    neg_d = neg_base[:, 1] * sd_across - neg_sep
-
-    tp = int(np.sum(pos_d >= 0))
-    fn = int(np.sum(pos_d < 0))
-    fp = int(np.sum(neg_d >= 0))
-    tn = int(np.sum(neg_d < 0))
-
-    score = (
-        abs(tp - TARGET["TP"])
-        + abs(fn - TARGET["FN"])
-        + abs(tn - TARGET["TN"])
-        + abs(fp - TARGET["FP"])
-    )
-
-    return {
-        "score": score,
-        "pos_sep": pos_sep,
-        "neg_sep": neg_sep,
-        "tp": tp,
-        "fn": fn,
-        "tn": tn,
-        "fp": fp,
-        "pos_t": pos_t,
-        "pos_d": pos_d,
-        "neg_t": neg_t,
-        "neg_d": neg_d,
-    }
-
-
-# -------------------------------------------------
-# Search for cloud distances from the line
-# -------------------------------------------------
-# Among equally good solutions, prefer larger separation from the line.
-best = None
-best_key = None
-
-for pos_sep in np.linspace(0.35, 0.90, 221):
-    for neg_sep in np.linspace(0.35, 0.90, 221):
-        result = evaluate(pos_sep, neg_sep)
-        key = (result["score"], -(result["pos_sep"] + result["neg_sep"]))
-
-        if best is None or key < best_key:
-            best = result
-            best_key = key
-
-# -------------------------------------------------
-# Build final point clouds
-# -------------------------------------------------
-pos_points = aligned_to_xy(best["pos_t"], best["pos_d"])
-neg_points = aligned_to_xy(best["neg_t"], best["neg_d"])
-
-tp = pos_points[best["pos_d"] >= 0]
-fn = pos_points[best["pos_d"] < 0]
-tn = neg_points[best["neg_d"] < 0]
-fp = neg_points[best["neg_d"] >= 0]
-
-
-# -------------------------------------------------
-# Plot
-# -------------------------------------------------
-fig, ax = plt.subplots(figsize=(6, 4.5))
-
-x = np.linspace(0.2, 7.4, 400)
-ax.plot(
-    x,
-    boundary(x),
-    color="#F39A3E",
-    linewidth=4.5,
-    solid_capstyle="round",
-    zorder=2,
-)
-
-ax.scatter(
-    tp[:, 0], tp[:, 1],
-    s=65,
-    facecolor="#6FD3B6",
-    edgecolor="#2A9D78",
-    linewidth=1.5,
-    zorder=3,
-    label=f"TP = {best['tp']}",
-)
-
-ax.scatter(
-    tn[:, 0], tn[:, 1],
-    s=65,
-    facecolor="#7DB7F0",
-    edgecolor="#1F5FAF",
-    linewidth=1.5,
-    zorder=3,
-    label=f"TN = {best['tn']}",
-)
-
-ax.scatter(
-    fn[:, 0], fn[:, 1],
-    s=82,
-    facecolor="#6FD3B6",
-    edgecolor="#C73E1D",
-    linewidth=2.1,
-    zorder=4,
-    label=f"FN = {best['fn']}",
-)
-
-ax.scatter(
-    fp[:, 0], fp[:, 1],
-    s=82,
-    facecolor="#7DB7F0",
-    edgecolor="#C73E1D",
-    linewidth=2.1,
-    zorder=4,
-    label=f"FP = {best['fp']}",
-)
-
-ax.set_xlim(0, 7.5)
-ax.set_ylim(0, 5.0)
-
-for spine in ["top", "right"]:
-    ax.spines[spine].set_visible(False)
-
-for spine in ["left", "bottom"]:
-    ax.spines[spine].set_linewidth(4)
-    ax.spines[spine].set_color("#174A7A")
-
-ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
-
-ax.set_title("Classifier line (orange)")
-
-ax.legend(
-    loc="upper right",
-    frameon=True,
-    facecolor="white",
-    edgecolor="#cccccc",
-)
-
-plt.tight_layout()
-plt.show()
+library(tidyverse)
+set.seed(42)
+points <- bind_rows(
+  tibble(x=rnorm(73,4.5,.9),y=rnorm(73,3.1,.7),actual="Positive"),
+  tibble(x=rnorm(67,3.0,.9),y=rnorm(67,2.0,.7),actual="Negative")) |>
+  mutate(predicted=if_else(y>=4.6-.55*x,"Positive","Negative"),result=paste0(substr(actual,1,1),substr(predicted,1,1)))
+ggplot(points,aes(x,y,fill=actual,colour=result))+geom_point(shape=21,size=2.5)+
+  geom_abline(intercept=4.6,slope=-.55,colour="#F39A3E",linewidth=1.5)+
+  labs(title="Classifier line (orange)")+theme_minimal()
 ```
 
 . . . 
@@ -826,30 +467,10 @@ A good classifier achieves:
 
 <br><br>
 
-```{python}
+```{r}
 #| fig-align: center
-from sklearn.metrics import roc_curve, roc_auc_score
-import matplotlib.pyplot as plt
-
-y_true = df["Churn"].astype(int)                 # must be 0/1
-y_score = df["Predicted probability"].astype(float)
-
-fpr, tpr, thresholds = roc_curve(y_true, y_score)
-auc = roc_auc_score(y_true, y_score)
-
-fig, ax = plt.subplots(figsize=(8, 5.2))
-ax.plot(fpr, tpr, linewidth=3, label=f"Logistic regression (AUC = {auc:.2f})")
-ax.plot([0, 1], [0, 1], linewidth=1.5, linestyle="--", label="Random classifier")
-
-ax.set_xlabel("1 - Specificity (False Positive Rate)")
-ax.set_ylabel("Sensitivity (True Positive Rate)")
-ax.set_title("ROC curve")
-ax.set_xlim(0, 1)
-ax.set_ylim(0, 1)
-ax.legend(loc="lower right")
-
-plt.tight_layout()
-plt.show()
+roc_curve(df,truth,`Predicted probability`,event_level="second") |>
+  autoplot()+geom_abline(linetype="dashed")+labs(title="ROC curve")
 ```
 
 :::

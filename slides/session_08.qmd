@@ -142,31 +142,23 @@ line-height:1;
 
 Stopword removal:
 
-```{python}
+```{r}
 #| echo: true
-from sklearn.feature_extraction.text import CountVectorizer
-
-documents = ["Jupiter is the largest gas planet."]
-
-vectorizer = CountVectorizer(stop_words="english")
-matrix = vectorizer.fit_transform(documents)
-print(vectorizer.get_feature_names_out())
+library(quanteda)
+documents <- "Jupiter is the largest gas planet."
+tokens(documents,remove_punct=TRUE) |>
+  tokens_remove(stopwords("en")) |>
+  dfm() |>
+  featnames()
 ```
 
 <!--
 Stemming:
 
-```python
-from nltk.stem.porter import PorterStemmer
-
-stemmer = PorterStemmer()
-tokens = ["Jupiter", "is", "the", "largest", "gas", "planet"]
-
-stems = []
-for item in tokens:
-    stems.append(stemmer.stem(item))
-
-stems
+```r
+library(quanteda)
+tokens <- tokens("Jupiter is the largest gas planet",remove_punct=TRUE)
+tokens_wordstem(tokens,language="english")
 ```
 -->
 
@@ -440,26 +432,21 @@ line-height:1;
 
 ::: {.column width="80%"}
 
-The `sentence_transformers` library offers pre-trained models for dense vectors:
+The R `text` package provides access to pre-trained models for dense vectors:
 
 <br>
 
-```python
-from sentence_transformers import SentenceTransformer
-
-model = SentenceTransformer("all-MiniLM-L6-v2")
-
-text = "Customer reviews mention fast delivery and helpful support."
-
-dense_vector = model.encode(text)
-
-print(type(dense_vector))
-print(dense_vector.shape)
-print(dense_vector[:10])
+```r
+library(text)
+text_value <- "Customer reviews mention fast delivery and helpful support."
+dense_vector <- textEmbed(text_value,model="sentence-transformers/all-MiniLM-L6-v2")$texts
+class(dense_vector)
+dim(dense_vector)
+dense_vector[1,1:10]
 ```
 
-<class 'numpy.ndarray'>
-(384,)
+matrix array
+1 384
 [-0.042  0.018  0.067 ...]
 
 

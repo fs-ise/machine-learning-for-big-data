@@ -595,68 +595,39 @@ However, feature engineering does not disappear. We still need to decide:
 
 ![](../images/neural_networks_features.png){width=55% fig-align=center}
 
-## Python code example
+## R code example
 
-The `sklearn` library provides basic feedforward networks, including `MLPClassifier` and `MLPRegressor`.
-It does not offer CNNs, RNNs, or other advanced neural networks.
+The tidymodels `mlp()` specification provides a basic feedforward network for
+classification or regression. Its engine determines which architectures are available.
 
 <br>
 
-```python
-from sklearn.neural_network import MLPClassifier
-from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
-
-X_train, X_test, y_train, y_test = train_test_split(X, y)
-
-model = MLPClassifier(
-    hidden_layer_sizes=(32, 16),  # architecture (depth + width)
-    activation="relu",            # hidden activation
-    solver="adam",                # optimizer
-    learning_rate_init=0.001,     # learning rate
-    alpha=0.0001,                 # L2 regularization (weight decay)
-    max_iter=200
-)
-model.fit(X_train, y_train)
+```r
+library(tidymodels)
+set.seed(42)
+split <- initial_split(data,prop=.75,strata=outcome)
+mlp_spec <- mlp(hidden_units=32,penalty=.0001,epochs=200) |>
+  set_engine("nnet",MaxNWts=10000) |> set_mode("classification")
+model <- workflow() |> add_formula(outcome ~ .) |> add_model(mlp_spec) |>
+  fit(training(split))
 ```
 
-## PyTorch (I)
+## torch for R (I)
 
-For advanced neural networks and production environments, `pytorch` and `tensorflow` are suitable libraries.
+For advanced neural networks and production environments, the R `torch` package provides tensors, modules, and automatic differentiation.
 
 ::: {.tall-code-box}
 
-```{.python}
-import torch
-
-X = torch.randn(100, 10)
-y = torch.sum(X, dim=1, keepdim=True)  # simple target
-
-# TODO: specify MLP
-
-model = MLP(
-    input_dim=10,
-    hidden_layers=[32, 16],   # try: [8], [64, 64], [128, 64, 32]
-    output_dim=1              # regression
-)
-
-# Training setup
-criterion = nn.MSELoss()   # regression
-learning_rate = 1e-3       # try: 1e-1, 1e-4
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-
-# Training loop
-for epoch in range(100):
-
-    predictions = model(X)  # Forward pass
-    loss = criterion(predictions, y)
-
-    # Backpropagation
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-
-    print(f"Epoch {epoch}, Loss: {loss.item():.4f}")
+```r
+library(torch)
+X <- torch_randn(100,10); y <- X$sum(dim=2,keepdim=TRUE)
+model <- mlp(10,c(32,16),1)
+optimizer <- optim_adam(model$parameters,lr=1e-3)
+for(epoch in 1:100){
+  optimizer$zero_grad(); predictions <- model(X)
+  loss <- nnf_mse_loss(predictions,y); loss$backward(); optimizer$step()
+  cat("Epoch",epoch,"Loss:",loss$item(),"\n")
+}
 ```
 :::
 
@@ -664,45 +635,29 @@ for epoch in range(100):
 The architecture (whether it is a CNN/RNN/Transformer/... is not specified as a parameter, but implied by the design of layers).
 :::
 
-## PyTorch (II)
+## torch for R (II)
 
 ::: {.tall-code-box}
-```python
-import torch.nn as nn
-
-# Specify MLP
-class MLP(nn.Module):
-    def __init__(self, input_dim, hidden_layers, output_dim):
-        super().__init__()
-
-        layers = []
-        prev_dim = input_dim
-
-        # Depth and width
-        for h in hidden_layers:
-            layers.append(nn.Linear(prev_dim, h))
-            layers.append(nn.ReLU())
-            prev_dim = h
-
-        layers.append(nn.Linear(prev_dim, output_dim))
-
-        self.model = nn.Sequential(*layers)
-
-    def forward(self, x):
-        return self.model(x)
-
-# ...
-model = MLP(
-    input_dim=10,
-    hidden_layers=[32, 16],
-    output_dim=1
+```r
+library(torch)
+mlp <- nn_module(
+  initialize=function(input_dim,hidden_layers,output_dim){
+    dimensions <- c(input_dim,hidden_layers,output_dim)
+    layers <- list()
+    for(i in seq_len(length(dimensions)-1)){
+      layers <- c(layers,list(nn_linear(dimensions[i],dimensions[i+1])))
+      if(i<length(dimensions)-1) layers <- c(layers,list(nn_relu()))
+    }
+    self$model <- do.call(nn_sequential,layers)
+  },
+  forward=function(x) self$model(x)
 )
-
+model <- mlp(input_dim=10,hidden_layers=c(32,16),output_dim=1)
 ```
 :::
 
 ::: aside
-See the torch [Module](https://docs.pytorch.org/docs/2.11/generated/torch.nn.Module.html) for inherited methods.
+See the R torch documentation for `nn_module()` and its inherited methods.
 :::
 
 ## Summary {data-state="hide-menubar"}

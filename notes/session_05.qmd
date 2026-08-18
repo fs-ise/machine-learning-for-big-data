@@ -18,88 +18,35 @@ TODO
 - Use the linear-regression comparison to surface modeling tensions before introducing classification.
 - Emphasize the distinction between probability estimation and the threshold-based classification decision.
 
-```{python}
-# | echo: false
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Data
-np.random.seed(1)
-x = np.linspace(0, 10, 50)
-y = 2 * x + 3 + np.random.normal(0, 3, size=len(x))
-
-# Fit line
-coef = np.polyfit(x, y, 1)
-y_fit = np.polyval(coef, x)
-
-# Plot
-plt.figure()
-plt.scatter(x, y)
-plt.plot(x, y_fit)
-plt.xlabel("X (continuous)")
-plt.ylabel("Y (continuous)")
-plt.title("Linear Regression (Continuous Outcome)")
-plt.show()
+```{r}
+#| echo: false
+library(tidyverse)
+set.seed(1)
+d <- tibble(x = seq(0, 10, length.out = 50), y = 2*x + 3 + rnorm(50, 0, 3))
+ggplot(d, aes(x, y)) + geom_point() + geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Linear Regression (Continuous Outcome)", x = "X (continuous)", y = "Y (continuous)")
 ```
 
-```{python}
-# | echo: false
-import numpy as np
-import matplotlib.pyplot as plt
-
-np.random.seed(1)
-
-# 4 categories
-categories = np.random.choice([0, 1, 2, 3], size=80)
-
-# Assign different means per group
-means = {0: 5, 1: 7, 2: 10, 3: 6}
-y = np.array([means[c] for c in categories]) + np.random.normal(0, 1.5, size=80)
-
-# Compute group means
-group_means = [y[categories == i].mean() for i in range(4)]
-
-# Plot
-plt.figure()
-
-# Jitter for better visibility
-x_jitter = categories + np.random.normal(0, 0.05, size=len(categories))
-
-plt.scatter(x_jitter, y, alpha=0.6)
-
-# Plot group means
-plt.plot(range(4), group_means, marker="o")
-
-plt.xticks(range(4), ["A", "B", "C", "D"])
-plt.xlabel("Categorical Predictor (4 levels)")
-plt.ylabel("Y (continuous)")
-plt.title("Regression with 4-Level Categorical Predictor")
-
-plt.show()
+```{r}
+#| echo: false
+library(tidyverse)
+set.seed(1)
+d <- tibble(group = factor(sample(LETTERS[1:4], 80, replace = TRUE)),
+            y = c(A=5, B=7, C=10, D=6)[group] + rnorm(80, 0, 1.5))
+ggplot(d, aes(group, y)) + geom_jitter(width = .05, alpha = .6) +
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  labs(title = "Regression with 4-Level Categorical Predictor",
+       x = "Categorical Predictor (4 levels)", y = "Y (continuous)")
 ```
 
-```{python}
-# | echo: false
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Data
-np.random.seed(1)
-x = np.linspace(0, 10, 100)
-logits = -5 + 1 * x
-p = 1 / (1 + np.exp(-logits))
-
-# Simulated binary outcomes
-y = np.random.binomial(1, p)
-
-# Plot
-plt.figure()
-plt.scatter(x, y, alpha=0.4)
-plt.plot(x, p)
-plt.xlabel("X (continuous)")
-plt.ylabel("Probability / Outcome (0 or 1)")
-plt.title("Logistic Regression (Binary Outcome)")
-plt.show()
+```{r}
+#| echo: false
+library(tidyverse)
+set.seed(1)
+d <- tibble(x = seq(0, 10, length.out = 100), p = plogis(-5 + x), y = rbinom(100, 1, p))
+ggplot(d, aes(x)) + geom_point(aes(y = y), alpha = .4) + geom_line(aes(y = p)) +
+  labs(title = "Logistic Regression (Binary Outcome)",
+       x = "X (continuous)", y = "Probability / Outcome (0 or 1)")
 ```
 
 

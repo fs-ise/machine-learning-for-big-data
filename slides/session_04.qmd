@@ -14,11 +14,11 @@ format: revealjs
 ::: {.learning-objectives}
 - **Explain** the stages of a model-based analytics workflow using linear regression as an example.
 - **Interpret** linear regression models, including coefficients, OLS estimation, and model evaluation.
-- **Describe** how regression models are implemented in Python.
+- **Describe** how regression models are implemented in R.
 :::
 
 <!--
-, mapping conceptual components of the analytics process to their realization in `scikit-learn`
+, mapping conceptual components of the analytics process to their realization with `lm()` and the tidyverse
 -->
 
 ## Process {data-state="hide-menubar"}
@@ -198,16 +198,14 @@ This makes it well suited for **regression analysis**.
 
 ## Load the data
 
-As a first step, we retrieve the dataset and load it into our Python environment for analysis.
+As a first step, we retrieve the dataset and load it into our R environment for analysis.
 
-```{python}
-#| echo: true     # show code
-#| output: true   # show output
-
-import pandas as pd
-
-USAhousing = pd.read_csv('../exercises/data/ames.csv')
-USAhousing.head()
+```{r}
+#| echo: true
+#| output: true
+library(readr)
+ames <- read_csv("../exercises/data/ames.csv", show_col_types = FALSE)
+head(ames)
 ```
 
 . . .
@@ -677,7 +675,7 @@ In a statistics lecture, we would derive the closed form solution mathematically
 Here, we simply take away that it exists and that it can be computed efficiently.
 :::
 
-## Implementation in Python (I)
+## Implementation in R (I)
 
 <!--
     Live demo: see [notebook](TODO).
@@ -686,18 +684,14 @@ Here, we simply take away that it exists and that it can be computed efficiently
 
 <br>
 
-```python
-import pandas as pd
-from sklearn.linear_model import LinearRegression  # <1>
+```r
+library(readr)
+library(dplyr)
 
-df = pd.read_csv("../exercises/data/ames.csv")  # <2>
-
-predictors = ["squarefoot", "Overall.Qual"]      # <3>
-X = df[predictors]
-y = df["price"]
-
-model = LinearRegression()               # <4>
-model.fit(X, y)                          # <5>
+df <- read_csv("../exercises/data/ames.csv", show_col_types = FALSE) # <1>
+predictors <- c("area", "Overall.Qual")                       # <2>
+model <- lm(price ~ area + Overall.Qual, data = df)           # <3>
+model                                                                    # <4>
 ```
 1. Import relevant libraries
 2. Load the Ames housing dataset
@@ -713,19 +707,16 @@ model.fit(X, y)                          # <5>
     :::
 -->
 
-## Implementation in Python (II)
+## Implementation in R (II)
 
-```python
-print("Intercept:", model.intercept_)     # β0 (coefficient estimates)
+```r
+library(broom)
 
-coef_df = pd.DataFrame({                  # Map coefficients to variable names
-    "Predictor": predictors,
-    "Coefficient": model.coef_            # β1, β2, ...
-})
-print(coef_df)
+tidy(model) |>                          # coefficient estimates
+  select(term, estimate)
 
-r2 = model.score(X, y)                    # Model fit (R²)
-print("R^2:", r2)
+glance(model) |>
+  select(r.squared)                     # model fit (R²)
 ```
 
 . . .
@@ -734,18 +725,15 @@ print("R^2:", r2)
 Intercept: 180,921
 
 Predictor        Coefficient
-squarefoot        110.85
+area              110.85
 Overall.Qual   28,567.43
 
 R^2: 0.56
 ```
 
 ::: {.aside .fragment}
-In scikit-learn, a trailing underscore indicates that an attribute is **learned from data during model fitting**.
-This helps to prevent accidental access to values before fitting.
-
-* Attributes *without* `_` are **hyperparameters** you specify when creating the model.
-* Attributes *with* `_` are **estimated after calling `.fit()`** (e.g., `coef_`, `intercept_`).
+In R, `lm()` returns a fitted model object containing the estimated coefficients and
+diagnostics. `broom::tidy()` and `broom::glance()` expose these results as tidy tables.
 :::
 
 <!--
@@ -784,9 +772,9 @@ This convention helps distinguish clearly between inputs and learned outputs —
 
       ## Formula / visual
 
-      # Python {data-stack-name="Python"}
+      # R {data-stack-name="R"}
 
-      ## scikit learn
+      ## lm and tidymodels
 -->
 
 
@@ -947,8 +935,8 @@ Example:
 
 ::: notes
 This slide should distinguish clearly between “is there evidence of an effect?” and “does the effect matter?”
-Since you use scikit-learn, you may want to note orally that p-values are not directly provided there.
-That helps avoid confusion when students compare packages like statsmodels and sklearn.
+Because `lm()` provides inferential statistics, distinguish coefficient significance from predictive performance.
+This helps students understand why statistical inference and predictive evaluation answer different questions.
 :::
 
 <!--
@@ -997,7 +985,7 @@ A good regression model is usually not the one with the **most variables**, but 
 
 <!--
     Include a slide explaining dummy variables (needed in the exercise)
-    see https://www.datacamp.com/de/tutorial/one-hot-encoding-python-tutorial
+    see https://recipes.tidymodels.org/reference/step_dummy.html
     -> TBD: rule/checklist for regression? (nominal variables dummy-coded?)
     https://jose.theoj.org/papers/10.21105/jose.00115
     https://moderndive.com/v2/
@@ -1232,26 +1220,22 @@ $$
 -->
 
 
-## Deployment example in Python
+## Deployment example in R
 
 A fitted model can be **saved** and **loaded** for later use.
 
-```python
-import joblib
+```r
+# Save the trained model
+saveRDS(model, "house_price_model.rds")
 
-# Save trained model
-joblib.dump(model, "house_price_model.joblib")
+# Load it later
+loaded_model <- readRDS("house_price_model.rds")
 
-# Load trained model later
-loaded_model = joblib.load("house_price_model.joblib")
-
-# New data for prediction
-new_house = pd.DataFrame([{
-    "squarefoot": 1500,
-    "Overall.Qual": 7
-}])
-
-predicted_price = loaded_model.predict(new_house)
+new_house <- tibble(
+  area = 1500,
+  Overall.Qual = 7
+)
+predicted_price <- predict(loaded_model, newdata = new_house)
 ```
 
 . . .
@@ -1267,7 +1251,7 @@ Saving a model makes it possible to reuse it in applications, dashboards, script
 :::
 
 ::: notes
-You may mention that `joblib` is commonly used for scikit-learn objects.
+You may mention that `saveRDS()` preserves a fitted R model as a single file.
 Also, it is useful to note that deployment requires the same variable names and preprocessing steps as in training.
 :::
 
@@ -1329,7 +1313,7 @@ Synonyms include: Dependent variable (DV); response variable; target; label (cla
 - Linear regression models quantify relationships between variables through coefficients, estimated via optimization (OLS).
   Coefficients capture **marginal effects** (numeric variables) and **differences relative to a reference category** (categorical variables using one-hot encoding).
 
-- In practice, the analytics workflow can be implemented in Python: define a model, fit it to data, generate predictions, and evaluate performance — a pattern that extends to many other modeling approaches.
+- In practice, the analytics workflow can be implemented in R: define a model, fit it to data, generate predictions, and evaluate performance — a pattern that extends to many other modeling approaches.
 
 
 ## Survey: Session 4 {data-state="hide-menubar"}

@@ -47,43 +47,20 @@ Notebook demonstration: run regression without NA-filling and correct afterward.
 
 "Solution"
 
-```python
+```{r}
+library(readr)
+library(dplyr)
+library(broom)
 
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
+df <- read_csv("../exercises/data/ames.csv", show_col_types = FALSE)
+names(df)
 
-# Load dataset (download from Kaggle and place train.csv locally)
-df = pd.read_csv("../exercises/data/ames.csv")
+model_data <- df |>
+  select(price, area, Overall.Qual) |>
+  mutate(area = replace_na(area, median(area, na.rm = TRUE)))
 
-df.columns
-
-
-# Select numeric predictors
-features = [
-    "area",
-    "Overall.Qual",
-]
-
-X = df[features]
-y = df["price"]
-
-
-# Fit linear regression
-model = LinearRegression()
-model.fit(X, y)
-
-
-# Run, read error, add fillna before model
-X = X.fillna(X.median())
-
-# Show coefficients
-coef_df = pd.DataFrame({
-    "Feature": features,
-    "Coefficient": model.coef_
-})
-print(coef_df)
+model <- lm(price ~ area + Overall.Qual, data = model_data)
+tidy(model)
 ```
 
 ## Overall model performance
@@ -104,7 +81,7 @@ TODO: Why should we not include all levels for a categorical variable? (include 
 - Check whether they yield the same results? (did we specify the model correctly?
   Is there an error in the library?) - generally, validating results is an important skill
 - Some libraries may offer more comprehensive output (like `statsmodel`)
-- We may need to work in different environments (R or Python) in the future, so it makes sense to understand different options
+- We may need to work with different R modeling interfaces in the future, so it makes sense to understand base R and tidymodels options
 - Understand what preprocessing steps must be done manually (before the library call), e.g., `statsmodel` does the encoding of categorical variables internally (specified through the formula)
 
 For `statsmodel` output, we may need to click on **scrollable** (output is truncated for readability)
@@ -118,6 +95,6 @@ Note: always exclude unique identifiers from regression models.
 
 ## Materials
 
-- Example: https://github.com/collinprather/ISLR-Python/blob/master/Chapter%203%20Linear%20Regression.ipynb
+- Example: https://www.tidymodels.org/start/models/
 - MAFS6010u_Regression see pairwise scatter and multiple linear regression.ipynb
 - Check: https://github.com/lmarti/machine-learning/blob/master/02.%20Linear%20regression.ipynb

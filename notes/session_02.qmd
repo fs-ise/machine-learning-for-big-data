@@ -93,8 +93,8 @@ Metaphor: statisticians carefully collect their data on their own (live on their
 | Wrap-up | 10 |
 | **Overall** | **90** |
 
-- Focus on pandas `df` (not so much on other Python data types).
+- Focus on tibbles (not so much on other R data types).
 - Possible extension: financial API (code for the API call should be included).
-- Implementation in Python/pandas: level of difficulty: use the library documentation vs. use ChatGPT.
+- Implementation in R/tidyverse: level of difficulty: use the package documentation vs. use ChatGPT.
 - Possible extensions: data structuring with tables requiring transpose.
 - TODO: include an example for tidying data with different observational units (e.g., different levels like department sales vs. package deliveries to customers).

@@ -112,7 +112,7 @@ They all have to be implemented according to the same workflow.
 - https://jose.theoj.org/papers/10.21105/jose.00239
    -> slides not useful for ABD
    -> Exercises: penguin dataset, but maybe useful as an inspiration.
-- https://github.com/Cambridge-ICCS/practical-ml-with-pytorch/tree/main/exercises
+- https://torch.mlverse.org/
 
 - instructive animations on neural networks etc.:  https://www.3blue1brown.com/topics/neural-networks
 - Andrew Ng lecture:  https://www.youtube.com/watch?v=jGwO_UgTS7I
@@ -132,5 +132,5 @@ Exercises in jupyter:
 https://github.com/intro-stat-learning/ISLP_labs/
 https://harvard-iacs.github.io/2019-CS109A/labs/lab9/notebook/
 
-https://inria.github.io/scikit-learn-mooc/python_scripts/02_numerical_pipeline_cross_validation.html
+https://www.tidymodels.org/start/resampling/
 -->

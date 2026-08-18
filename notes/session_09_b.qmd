@@ -103,7 +103,7 @@ https://github.com/cs124/labs/blob/main/Lab2_LogisticRegression_Solutions.md#eth
 
 Deployment
 -> AI for generating and understanding analytical code.
-https://www.datacamp.com/de/tutorial/one-hot-encoding-python-tutorial - see "AI explain code"
+https://recipes.tidymodels.org/reference/step_dummy.html - see dummy-variable encoding
 https://www.datacamp.com/datalab
 https://www.datacamp.com/datalab/ai
 

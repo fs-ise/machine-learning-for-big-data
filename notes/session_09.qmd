@@ -31,7 +31,7 @@ Neural networks are inspired by natural systems, but an artificial neuron is onl
 - The number of layers and neurons is specified before training; weights and biases are learned.
 - Sigmoid is smooth and supports gradient-based optimization; ReLU is commonly used for efficient hidden-layer computation.
 
-The detailed derivations, gradient-descent mechanics, architecture/training choices, and original Python implementation examples remain in the core slides. `optional/session_09_neural_network_training.qmd` contains the worked external backpropagation and TensorFlow Playground activities.
+The detailed derivations, gradient-descent mechanics, architecture/training choices, and R implementation examples remain in the core slides. `optional/session_09_neural_network_training.qmd` contains the worked external backpropagation and TensorFlow Playground activities.
 
 ## Architecture and modality explanations
 
@@ -68,7 +68,7 @@ Audio is a useful case because representation changes the modeling choice. A wav
 
 ## Exercise facilitation
 
-Allow approximately 20 minutes for reading the PyTorch MLP object and 50 minutes for the NovaStream modality cases, leaving 10 minutes for synthesis. The code is intentionally preserved in Python for this structural migration; students inspect it rather than port it.
+Allow approximately 20 minutes for reading the R torch MLP object and 50 minutes for the NovaStream modality cases, leaving 10 minutes for synthesis. Students should inspect how the module, loss, optimizer, and training loop correspond to the conceptual steps.
 
 For each use case, insist on three elements: input representation, expected output, and architectural assumption. Cases such as churn should surface that an MLP is not automatically preferable to logistic regression or tree models. Subtitle generation, next-item prediction, cover-image classification, and chat moderation make the sequence/spatial distinctions concrete.
 
@@ -78,7 +78,7 @@ The original broader NovaStream quiz also included recommendation, anomaly detec
 
 - Clarify RNN and Transformer explanations after observing student questions.
 - Add a substantive video task or dataset during later content redevelopment; the imported exercise contained modality-selection scenarios but no hands-on media dataset.
-- During the later Python-to-R/framework stage, decide whether implementation examples remain useful and which framework should be authoritative.
+- Keep the R torch implementation aligned with the conceptual network diagrams when revising the session later.
 
 {{< pagebreak >}}
 

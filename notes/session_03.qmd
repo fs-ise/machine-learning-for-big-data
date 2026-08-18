@@ -43,5 +43,5 @@ TODO: Illustrate how k-means clustering works for a given k (random centroids/as
 | 0–25 | 25 | EDA: Clustering | `exercises/session_03.qmd` |
 | 25–35 | 10 | Wrap-up | |
 
-- Focus on the existing Python clustering workflow: select `profit_margin` and `rd_intensity`, inspect their distributions, standardize them, compare k-means solutions, add labels, and interpret grouped revenue box plots.
+- Focus on the existing R clustering workflow: select `profit_margin` and `rd_intensity`, inspect their distributions, standardize them, compare k-means solutions, add labels, and interpret grouped revenue box plots.
 - The imported source provides 35 minutes of dedicated EDA exercise material. Retain this gap for the later R-port and content-review stage rather than adding new tasks now.

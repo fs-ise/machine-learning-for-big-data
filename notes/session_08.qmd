@@ -121,4 +121,4 @@ TODO
 ## Materials
 
 Check for NLP assignments: https://github.com/microsoft/ai-for-beginners
-- https://github.com/iam-salma/NLP-Bootcamp-with-python
+- https://juliasilge.github.io/tidytext/
