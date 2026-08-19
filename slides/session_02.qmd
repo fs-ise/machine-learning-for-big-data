@@ -306,64 +306,22 @@ Predicting protein folding had been a major unsolved problem in biology for deca
 
 <br><br>
 
-```{python}
+```{r}
 #| echo: false
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Categories (axes)
-labels = [
-    "Knowledge",
-    "Reading & Writing",
-    "Math",
-    "Reasoning",
-    "Working Memory",
-    "Memory Storage",
-    "Memory Retrieval",
-    "Visual",
-    "Auditory",
-    "Speed"
-]
-
-# Example scores (approximate values from the illustration)
-gpt4 = [8, 6, 4, 0, 2, 0, 4, 0, 0, 3]
-gpt5 = [9, 10, 10, 7, 4, 0, 4, 4, 6, 3]
-
-# Close the polygon
-gpt4 = gpt4 + [gpt4[0]]
-gpt5 = gpt5 + [gpt5[0]]
-
-# Compute angles
-angles = np.linspace(0, 2*np.pi, len(labels), endpoint=False).tolist()
-angles += angles[:1]
-
-# Create figure
-# fig, ax = plt.subplots(figsize=(6,6), subplot_kw=dict(polar=True))
-fig, ax = plt.subplots(figsize=(6,6), subplot_kw=dict(polar=True))
-
-ax.set_theta_offset(np.pi / 2)   # rotate so first label is at top
-ax.set_theta_direction(-1)       # make axes go clockwise
-
-# Plot data
-ax.plot(angles, gpt5, linewidth=2, label="GPT-5 (2025)")
-ax.fill(angles, gpt5, alpha=0.15)
-
-ax.plot(angles, gpt4, linewidth=2, label="GPT-4 (2023)")
-ax.fill(angles, gpt4, alpha=0.15)
-
-# Axis labels
-ax.set_xticks(angles[:-1])
-ax.set_xticklabels(labels)
-
-# Radial limits
-ax.set_ylim(0, 10)
-
-# Grid and legend
-ax.set_title("AI Capabilities", pad=20)
-ax.legend(loc="upper right", bbox_to_anchor=(1.3, 1.1))
-
-plt.show()
+library(tidyverse)
+library(ggplot2)
+capabilities <- tribble(
+  ~capability, ~`GPT-4 (2023)`, ~`GPT-5 (2025)`,
+  "Knowledge", 8, 9, "Reading & Writing", 6, 10, "Math", 4, 10,
+  "Reasoning", 0, 7, "Working Memory", 2, 4, "Memory Storage", 0, 0,
+  "Memory Retrieval", 4, 4, "Visual", 0, 4, "Auditory", 0, 6, "Speed", 3, 3
+) |>
+  pivot_longer(-capability, names_to = "model", values_to = "score") |>
+  mutate(capability = factor(capability, levels = unique(capability)))
+ggplot(capabilities, aes(capability, score, group = model, colour = model, fill = model)) +
+  geom_polygon(alpha = .12) + geom_line(linewidth = 1) + geom_point() +
+  coord_polar() + ylim(0, 10) + labs(title = "AI Capabilities", x = NULL, y = NULL) +
+  theme_minimal()
 ```
 :::
 

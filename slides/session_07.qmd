@@ -896,63 +896,19 @@ $$\text{margin} = \frac{2}{|w|}$$
 So maximizing the margin = minimizing $|w|$.
 
 
-```{python}
+```{r}
 #| fig-align: center
 #| echo: false
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn import svm
-
-np.random.seed(42)
-
-n = 50
-
-# clusters closer together + lower variance
-X_success = np.random.normal(loc=[4.5, 4.5], scale=0.4, size=(n, 2))
-X_unsuccess = np.random.normal(loc=[6.0, 6.0], scale=0.4, size=(n, 2))
-
-X = np.vstack((X_success, X_unsuccess))
-y = np.hstack((np.ones(n), -np.ones(n)))
-
-# moderately large C → tight but visible margin
-model = svm.SVC(kernel="linear", C=100)
-model.fit(X, y)
-
-fig, ax = plt.subplots(figsize=(6, 5))
-
-# plot points
-ax.scatter(X_success[:, 0], X_success[:, 1], marker="o", s=35, label="Successful")
-ax.scatter(X_unsuccess[:, 0], X_unsuccess[:, 1], marker="x", s=35, label="Unsuccessful")
-
-# highlight support vectors
-ax.scatter(
-    model.support_vectors_[:, 0],
-    model.support_vectors_[:, 1],
-    s=120,
-    facecolors="none",
-    edgecolors="black",
-    linewidths=1.5,
-    label="Support vectors",
-)
-
-# decision boundary and margins
-xx = np.linspace(3.5, 7, 200)
-yy = np.linspace(3.5, 7, 200)
-YY, XX = np.meshgrid(yy, xx)
-xy = np.vstack([XX.ravel(), YY.ravel()]).T
-Z = model.decision_function(xy).reshape(XX.shape)
-
-ax.contour(XX, YY, Z, levels=[0], linewidths=2)
-ax.contour(XX, YY, Z, levels=[-1, 1], linestyles="--")
-
-# zoom in → makes margins visually closer
-ax.set_xlim(3.8, 6.8)
-ax.set_ylim(3.8, 6.8)
-
-ax.set_xlabel("Team size")
-ax.set_ylabel("Experience")
-ax.legend()
-plt.show()
+library(tidyverse)
+library(kernlab)
+set.seed(42)
+X <- rbind(matrix(rnorm(100,4.5,.4),ncol=2),matrix(rnorm(100,6,.4),ncol=2)); y <- factor(rep(c("Successful","Unsuccessful"),each=50))
+model <- ksvm(X,y,kernel="vanilladot",C=100,scaled=FALSE)
+d <- as_tibble(X,.name_repair=~c("team_size","experience")) |> mutate(class=y)
+ggplot(d,aes(team_size,experience))+geom_point(aes(shape=class))+
+  stat_contour(data=expand_grid(team_size=seq(3.8,6.8,length.out=100),experience=seq(3.8,6.8,length.out=100))|>
+    mutate(score=predict(model,as.matrix(pick(team_size,experience)),type="decision")),aes(z=score),breaks=c(-1,0,1))+
+  theme_minimal()
 ```
 
 
@@ -1105,87 +1061,36 @@ A linear regression curve in higher dimensions becomes a non-linear regression c
 
 <br>
 
-```{python}
+```{r}
 #| fig-align: center
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.svm import SVR
-
-np.random.seed(1)
-
-X = np.linspace(1, 15, 60).reshape(-1, 1)
-y = -(X.ravel() - 8)**2 + 50 + np.random.normal(0, 3, 60)
-
-model = SVR(kernel='rbf', C=100, epsilon=2)
-model.fit(X, y)
-
-X_plot = np.linspace(1, 15, 200).reshape(-1, 1)
-y_pred = model.predict(X_plot)
-
-plt.scatter(X, y)
-plt.plot(X_plot, y_pred)
-plt.xlabel("Team size")
-plt.ylabel("Productivity")
-plt.title("SVR captures optimal mid-size teams")
-plt.show()
+library(tidyverse); library(kernlab); set.seed(1)
+d<-tibble(x=seq(1,15,length.out=60),y=-(x-8)^2+50+rnorm(60,0,3)); model<-ksvm(y~x,d,kernel="rbfdot",C=100,epsilon=2,scaled = FALSE)
+ggplot(d,aes(x,y))+geom_point()+geom_line(data=tibble(x=seq(1,15,length.out=200))|>mutate(y=predict(model,pick(x))))+
+  labs(title="SVR captures optimal mid-size teams",x="Team size",y="Productivity")
 ```
 
 ## SVR examples (II)
 
 <br>
 
-```{python}
+```{r}
 #| fig-align: center
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.svm import SVR
-
-np.random.seed(0)
-
-X = np.linspace(0, 10, 50).reshape(-1, 1)
-y = 10 * np.log1p(X).ravel() + np.random.normal(0, 0.5, 50)
-
-model = SVR(kernel='rbf', C=100, epsilon=0.5)
-model.fit(X, y)
-
-X_plot = np.linspace(0, 10, 200).reshape(-1, 1)
-y_pred = model.predict(X_plot)
-
-plt.scatter(X, y)
-plt.plot(X_plot, y_pred)
-plt.xlabel("Advertising spend")
-plt.ylabel("Sales")
-plt.title("SVR captures diminishing returns")
-plt.show()
+library(tidyverse); library(kernlab); set.seed(0)
+d<-tibble(x=seq(0,10,length.out=50),y=10*log1p(x)+rnorm(50,0,.5)); model<-ksvm(y~x,d,kernel="rbfdot",C=100,epsilon=.5,scaled = FALSE)
+ggplot(d,aes(x,y))+geom_point()+geom_line(data=tibble(x=seq(0,10,length.out=200))|>mutate(y=predict(model,pick(x))))+
+  labs(title="SVR captures diminishing returns",x="Advertising spend",y="Sales")
 ```
 
 ## SVR examples (III)
 
 <br>
 
-```{python}
+```{r}
 #| fig-align: center
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.svm import SVR
-
-np.random.seed(2)
-
-X = np.linspace(1, 20, 60).reshape(-1, 1)
-y = 100 / (X.ravel() + 2) + np.random.normal(0, 2, 60)
-
-model = SVR(kernel='rbf', C=100, epsilon=1)
-model.fit(X, y)
-
-X_plot = np.linspace(1, 20, 200).reshape(-1, 1)
-y_pred = model.predict(X_plot)
-
-plt.scatter(X, y)
-plt.plot(X_plot, y_pred)
-plt.xlabel("Price")
-plt.ylabel("Demand")
-plt.title("SVR captures nonlinear demand curve")
-plt.show()
+library(tidyverse); library(kernlab); set.seed(2)
+d<-tibble(x=seq(1,20,length.out=60),y=100/(x+2)+rnorm(60,0,2)); model<-ksvm(y~x,d,kernel="rbfdot",C=100,epsilon=1,scaled = FALSE)
+ggplot(d,aes(x,y))+geom_point()+geom_line(data=tibble(x=seq(1,20,length.out=200))|>mutate(y=predict(model,pick(x))))+
+  labs(title="SVR captures nonlinear demand curve",x="Price",y="Demand")
 ```
 
 

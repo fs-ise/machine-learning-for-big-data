@@ -391,72 +391,17 @@ Example of different OLS models as a result of different samples:
 
 ::: {.column width="60%"}
 
-```{python}
-# Clear, high-variance selection bias illustration (Quarto / revealjs friendly)
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-np.random.seed(42)
-
-# --- True data generating process ---
-n = 200
-x = np.linspace(0, 10, n)
-y = 5 - 1.2 * x + np.random.normal(0, 1.0, n)
-
-# Full sample regression (reference)
-coef_full = np.polyfit(x, y, 1)
-y_full = np.polyval(coef_full, x)
-
-# --- Plot ---
-fig, ax = plt.subplots(figsize=(9, 6))
-
-# Background data
-ax.scatter(x, y, alpha=0.15)
-
-# --- Construct clearly different biased samples ---
-for _ in range(80):
-    mode = np.random.choice(["left", "right", "middle", "extremes"])
-
-    if mode == "left":
-        mask = x < np.random.uniform(3, 6)
-
-    elif mode == "right":
-        mask = x > np.random.uniform(4, 7)
-
-    elif mode == "middle":
-        center = np.random.uniform(3, 7)
-        width = np.random.uniform(0.5, 1.5)
-        mask = (x > center - width) & (x < center + width)
-
-    elif mode == "extremes":
-        # Only very low + very high x → unstable slopes
-        threshold_low = np.random.uniform(2, 4)
-        threshold_high = np.random.uniform(6, 8)
-        mask = (x < threshold_low) | (x > threshold_high)
-
-    x_sample = x[mask]
-    y_sample = y[mask]
-
-    # Keep small samples → high variance lines
-    if 5 < len(x_sample) < 60:
-        coef = np.polyfit(x_sample, y_sample, 1)
-        y_pred = np.polyval(coef, x)
-
-        ax.plot(x, y_pred, color="green", alpha=0.35, linewidth=1.5)
-
-# Full sample regression (central reference)
-ax.plot(x, y_full, color="red", linewidth=3, label="Full sample fit")
-
-# Formatting
-ax.axhline(0, linewidth=1)
-ax.set_xlabel("x")
-ax.set_ylabel("y")
-ax.set_title("Illustration of selection bias (linear regression)")
-ax.legend()
-
-plt.tight_layout()
-plt.show()
+```{r}
+library(tidyverse)
+set.seed(42)
+d <- tibble(x=seq(0,10,length.out=200),y=5-1.2*x+rnorm(200))
+p <- ggplot(d,aes(x,y))+geom_point(alpha=.15)
+for(i in 1:80){
+  cutoff <- runif(2,0,10); sample <- filter(d,x>min(cutoff),x<max(cutoff))
+  if(nrow(sample)>5 && nrow(sample)<60) p <- p+geom_smooth(data=sample,method="lm",se=FALSE,colour="green",alpha=.35)
+}
+p+geom_smooth(method="lm",se=FALSE,colour="red",linewidth=1.2)+
+  labs(title="Illustration of selection bias (linear regression)")+theme_minimal()
 ```
 
 :::
@@ -749,219 +694,33 @@ TODO: categories like "center", "industrial", "..."
 ![](../images/slides_185.png){fig-align=center}
 -->
 
-```{python}
+```{r}
 #| fig-align: center
+library(osmdata)
+library(sf)
+library(dplyr)
+library(leaflet)
 
-import geopandas as gpd
-import folium
-import osmnx as ox
-
-# ---------------------------------------------------
-# Download Frankfurt district boundaries from OSM
-# ---------------------------------------------------
-
-# administrative boundaries (boroughs / Stadtteile)
-gdf = ox.features_from_place(
-    "Frankfurt am Main, Germany",
-    tags={
-        "boundary": "administrative",
-        "admin_level": "10"
-    }
-)
-
-# ---------------------------------------------------
-# Keep relevant columns
-# ---------------------------------------------------
-
-gdf = gdf.reset_index()
-
-# Keep only polygons
-gdf = gdf[
-    gdf.geometry.type.isin(
-        ["Polygon", "MultiPolygon"]
-    )
-]
-
-# Keep only named districts
-gdf = gdf[gdf["name"].notna()]
-
-# Remove duplicates
-gdf = gdf.drop_duplicates(subset=["name"])
-
-# ---------------------------------------------------
-# Example feature engineering:
-# House-price regions
-# ---------------------------------------------------
-
-expensive = [
-    "Westend-Süd",
-    "Westend-Nord",
-    "Innenstadt",
-    "Sachsenhausen-Nord",
-]
-
-medium = [
-    "Bornheim",
-    "Bockenheim",
-    "Nordend-West",
-    "Nordend-Ost",
-]
-
-affordable = [
-    "Höchst",
-    "Fechenheim",
-    "Nied",
-    "Griesheim",
-]
-
-def assign_price_region(name):
-
-    if name in expensive:
-        return "Expensive"
-
-    elif name in medium:
-        return "Medium"
-
-    elif name in affordable:
-        return "Affordable"
-
-    return "Other"
-
-gdf["price_region"] = gdf["name"].apply(
-    assign_price_region
-)
-
-# ---------------------------------------------------
-# Colors
-# ---------------------------------------------------
-
-colors = {
-    "Expensive": "#d73027",
-    "Medium": "#fee08b",
-    "Affordable": "#4575b4",
-    "Other": "#cccccc",
-}
-
-# ---------------------------------------------------
-# Create Folium map
-# ---------------------------------------------------
-
-m = folium.Map(
-    location=[50.1109, 8.6821],
-    zoom_start=11,
-    tiles="OpenStreetMap",
-    width="100%",
-    height="650px"
-)
-
-# ---------------------------------------------------
-# Add polygons
-# ---------------------------------------------------
-
-for _, r in gdf.iterrows():
-
-    # simplify geometry for browser performance
-    sim_geo = (
-        gpd.GeoSeries(r["geometry"])
-        .simplify(tolerance=0.0002)
-        .to_json()
-    )
-
-    color = colors.get(
-        r["price_region"],
-        "#cccccc"
-    )
-
-    geo_j = folium.GeoJson(
-        data=sim_geo,
-        style_function=lambda x, color=color: {
-            "fillColor": color,
-            "color": "black",
-            "weight": 1,
-            "fillOpacity": 0.3,
-        }
-    )
-
-    folium.Popup(
-        f"""
-        <b>{r['name']}</b><br>
-        Price region: {r['price_region']}
-        """
-    ).add_to(geo_j)
-
-    geo_j.add_to(m)
-
-# ---------------------------------------------------
-# Display map
-# ---------------------------------------------------
-
-legend_html = """
-<div style="
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    left: auto;
-    bottom: auto;
-    z-index:9999;
-    font-size:14px;
-    background-color:white;
-    border:2px solid grey;
-    border-radius:6px;
-    padding: 10px;
-    opacity: 0.9;
-">
-
-<b>House Price Regions</b><br><br>
-
-<i style="
-background:#d73027;
-width:18px;
-height:18px;
-float:left;
-margin-right:8px;
-opacity:0.7;
-"></i>
-Expensive<br>
-
-<i style="
-background:#fee08b;
-width:18px;
-height:18px;
-float:left;
-margin-right:8px;
-opacity:0.7;
-"></i>
-Medium<br>
-
-<i style="
-background:#4575b4;
-width:18px;
-height:18px;
-float:left;
-margin-right:8px;
-opacity:0.7;
-"></i>
-Affordable<br>
-
-<i style="
-background:#cccccc;
-width:18px;
-height:18px;
-float:left;
-margin-right:8px;
-opacity:0.7;
-"></i>
-Other<br>
-
-</div>
-"""
-
-m.get_root().html.add_child(
-    folium.Element(legend_html)
-)
-
-m
-
+districts <- opq(
+  "Frankfurt am Main, Germany",
+  osm_types = c("way", "relation"),
+  timeout = 90
+) |>
+  add_osm_feature("boundary", "administrative") |>
+  add_osm_feature("admin_level", "10") |>
+  osmdata_sf()
+districts <- districts$osm_multipolygons |>
+  filter(!is.na(name)) |>
+  distinct(name, .keep_all=TRUE) |>
+  mutate(price_region=case_when(
+    name %in% c("Westend-Süd","Westend-Nord","Innenstadt","Sachsenhausen-Nord") ~ "Expensive",
+    name %in% c("Bornheim","Bockenheim","Nordend-West","Nordend-Ost") ~ "Medium",
+    name %in% c("Höchst","Fechenheim","Nied","Griesheim") ~ "Affordable",
+    TRUE ~ "Other"))
+pal <- colorFactor(c("#4575b4","#d73027","#fee08b","#cccccc"),districts$price_region)
+leaflet(districts)|>addProviderTiles("OpenStreetMap")|>
+  addPolygons(fillColor=~pal(price_region),fillOpacity=.3,weight=1,popup=~paste0("<b>",name,"</b><br>Price region: ",price_region))|>
+  addLegend("topright",pal=pal,values=~price_region,title="House Price Regions")
 ```
 
 ## Example of feature engineering (III)
