@@ -102,13 +102,25 @@ How to describe data (not the data type)?
 
 ::: {.column width="50%"}
 
-```{r}
-library(tidyverse)
-set.seed(42)
-years <- c(rnorm(40000, 1965, 15), rnorm(20000, 1980, 8))
-years <- years[years > 1920 & years < 2020]
-ggplot(tibble(year = years), aes(year)) + geom_histogram(bins = 20) +
-  labs(title = "Year of birth - Histogram", x = "Year of birth", y = "Frequency") + theme_minimal()
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Simulated year-of-birth data (similar distribution as in the slide)
+np.random.seed(42)
+years = np.concatenate([
+    np.random.normal(1965, 15, 40000),
+    np.random.normal(1980, 8, 20000)
+])
+
+years = years[(years > 1920) & (years < 2020)]
+
+plt.figure()
+plt.hist(years, bins=20)
+plt.title("Year of birth - Histogram")
+plt.xlabel("Year of birth")
+plt.ylabel("Frequency")
+plt.show()
 ```
 :::
 
@@ -129,13 +141,26 @@ ggplot(tibble(year = years), aes(year)) + geom_histogram(bins = 20) +
 
 ::: {.column width="50%"}
 
-```{r}
-library(tidyverse)
-tibble(field = factor(c("Computer Science", "Information Systems", "Business Administration", "Engineering"),
-                      levels = rev(c("Computer Science", "Information Systems", "Business Administration", "Engineering"))),
-       count = c(20, 25, 17, 12)) |>
-  ggplot(aes(count, field)) + geom_col() + xlim(0, 30) +
-  labs(title = "What is your background?", x = "Number of students", y = NULL) + theme_minimal()
+```{python}
+import matplotlib.pyplot as plt
+
+# Example data
+fields = [
+    "Computer Science",
+    "Information Systems",
+    "Business Administration",
+    "Engineering"
+]
+
+counts = [20, 25, 17, 12]
+
+plt.figure()
+plt.barh(fields, counts)
+plt.title("What is your background?")
+plt.xlabel("Number of students")
+plt.ylabel("")
+plt.xlim(0, 30)
+plt.show()
 ```
 :::
 
@@ -159,16 +184,34 @@ tibble(field = factor(c("Computer Science", "Information Systems", "Business Adm
 
 ::: {.column width="50%"}
 
-```{r}
-library(tidyverse)
-library(patchwork)
-set.seed(42)
-years <- c(rnorm(40000, 1965, 15), rnorm(20000, 1980, 8))
-births <- tibble(year = years[years > 1920 & years < 2020])
-p1 <- ggplot(births, aes(year)) + geom_histogram(bins = 20) +
-  labs(title = "Year of birth - Histogram", x = NULL, y = "Frequency")
-p2 <- ggplot(births, aes(year, "")) + geom_boxplot() + labs(x = "Year of birth", y = NULL)
-p1 / p2
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Simulated year-of-birth data
+np.random.seed(42)
+years = np.concatenate([
+    np.random.normal(1965, 15, 40000),
+    np.random.normal(1980, 8, 20000)
+])
+
+years = years[(years > 1920) & (years < 2020)]
+
+fig, ax = plt.subplots(2, 1, figsize=(6, 6))
+
+# Histogram
+ax[0].hist(years, bins=20)
+ax[0].set_title("Year of birth - Histogram")
+ax[0].set_xlabel("")
+ax[0].set_ylabel("Frequency")
+
+# Boxplot
+ax[1].boxplot(years, vert=False)
+ax[1].set_xlabel("Year of birth")
+ax[1].set_yticks([])
+
+plt.tight_layout()
+plt.show()
 ```
 :::
 
@@ -195,17 +238,29 @@ p1 / p2
 
 ::: {.column width="50%"}
 
-```{r}
-library(tidyverse)
-set.seed(42)
-savings <- tibble(
-  group = rep(c("1A", "1B", "2A", "2B", "control"), each = 100),
-  saving = c(rnorm(100, .6, .8), rnorm(100, .5, .9), rnorm(100, 1, 1.8),
-             rnorm(100, .9, 1), rnorm(100, .4, .7))
-)
-ggplot(savings, aes(group, saving)) + geom_boxplot() + geom_hline(yintercept = 0) +
-  labs(title = "Savings = cons. treatment - cons. baseline",
-       x = "experiment group", y = "average el. consumption (kWh) per day") + theme_minimal()
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(42)
+
+# Simulated savings data (kWh per day)
+group_1A = np.random.normal(0.6, 0.8, 100)
+group_1B = np.random.normal(0.5, 0.9, 100)
+group_2A = np.random.normal(1.0, 1.8, 100)   # higher spread
+group_2B = np.random.normal(0.9, 1.0, 100)
+control  = np.random.normal(0.4, 0.7, 100)
+
+data = [group_1A, group_1B, group_2A, group_2B, control]
+labels = ["1A", "1B", "2A", "2B", "control"]
+
+plt.figure()
+plt.boxplot(data, tick_labels=labels)
+plt.axhline(0)
+plt.ylabel("average el. consumption (kWh) per day")
+plt.xlabel("experiment group")
+plt.title("Savings = cons. treatment - cons. baseline")
+plt.show()
 ```
 :::
 
@@ -257,26 +312,43 @@ $$r =
 
 ::: {.column width="50%"}
 
-```{r}
-library(ggplot2)
-set.seed(1)
-d <- data.frame(x = rnorm(100), y = rnorm(100))
-ggplot(d, aes(x, y)) + geom_point(colour = "#002EFF", alpha = .8) +
-  labs(title = "Low correlation (r ≈ 0)") + theme_minimal()
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(1)
+x = np.random.normal(size=100)
+y = np.random.normal(size=100)
+
+plt.figure(figsize=(7,4))
+plt.scatter(x, y, color="#002EFF", s=40, alpha=0.8)
+plt.title("Low correlation (r ≈ 0)")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.show()
 ```
 
 :::
 
 ::: {.column width="50%"}
 
-```{r}
+```{python}
 #| fig-width: 4
 #| fig-height: 1
-library(ggplot2)
-set.seed(1)
-x <- rnorm(100); d <- data.frame(x, y = .8 * x + rnorm(100, sd = .3))
-ggplot(d, aes(x, y)) + geom_point(colour = "#002EFF", alpha = .8) +
-  labs(title = "High correlation (r ≈ 0.8)") + theme_minimal()
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(1)
+x = np.random.normal(size=100)
+y = 0.8*x + np.random.normal(scale=0.3, size=100)
+
+plt.figure(figsize=(7,4))
+plt.scatter(x, y, color="#002EFF", s=40, alpha=0.8)
+plt.title("High correlation (r ≈ 0.8)")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.show()
 ```
 
 :::
@@ -449,20 +521,36 @@ Timing: ~4 minutes.
 
 ## k-means: How cluster solutions evolve
 
-```{r}
-library(tidyverse)
-set.seed(42)
-centres <- matrix(c(-4, -4, -4, 4, 4, -4, 4, 4), ncol = 2, byrow = TRUE)
-X <- map_dfr(1:4, ~ tibble(x = rnorm(75, centres[.x, 1], 1.2),
-                           y = rnorm(75, centres[.x, 2], 1.2)))
-plot_k <- function(k) {
-  fit <- kmeans(X, centers = k, nstart = 25)
-  ggplot(mutate(X, cluster = factor(fit$cluster)), aes(x, y, colour = cluster)) +
-    geom_point(size = 1) +
-    geom_point(data = as.data.frame(fit$centers), aes(x, y), inherit.aes = FALSE,
-               shape = 4, colour = "red", size = 4, stroke = 1.5) +
-    labs(title = paste0("k=", k), colour = NULL) + theme_void() + theme(legend.position = "none")
-}
+```{python}
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+import ipywidgets as widgets
+
+# generate synthetic data
+X, _ = make_blobs(n_samples=300, centers=4, cluster_std=1.2, random_state=42)
+
+def plot_k(k):
+    import matplotlib.pyplot as plt
+    from sklearn.cluster import KMeans
+
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    labels = kmeans.fit_predict(X)
+
+    plt.figure(figsize=(3.6, 2.8))
+    plt.scatter(X[:, 0], X[:, 1], c=labels, s=10)
+    plt.scatter(
+        kmeans.cluster_centers_[:, 0],
+        kmeans.cluster_centers_[:, 1],
+        c='red', marker='x', s=60, linewidth=2
+    )
+    plt.title(f"k={k}", fontsize=10)
+    plt.xticks([])
+    plt.yticks([])
+    plt.tight_layout()
+    plt.show()
 ```
 
 <br>
@@ -470,43 +558,43 @@ plot_k <- function(k) {
 :::: {layout="[25,25,25,25]"}
 
 ::: {.fragment}
-```{r}
+```{python}
 plot_k(1)
 ```
 :::
 
 ::: {.fragment}
-```{r}
+```{python}
 plot_k(2)
 ```
 :::
 
 ::: {.fragment}
-```{r}
+```{python}
 plot_k(3)
 ```
 :::
 
 ::: {.fragment}
-```{r}
+```{python}
 plot_k(4)
 ```
 :::
 
 ::: {.fragment}
-```{r}
+```{python}
 plot_k(5)
 ```
 :::
 
 ::: {.fragment}
-```{r}
+```{python}
 plot_k(6)
 ```
 :::
 
 ::: {.fragment}
-```{r}
+```{python}
 plot_k(7)
 ```
 :::
@@ -570,14 +658,26 @@ A common heuristic is the **elbow method**.
 
 **Example metric:** within-cluster variance (inertia)
 
-```{r}
+```{python}
 #| fig-align: center
 #| out-width: 70%
-library(tidyverse)
-ks <- 1:9
-inertia <- map_dbl(ks, ~ kmeans(X, centers = .x, nstart = 25)$tot.withinss)
-ggplot(tibble(k = ks, inertia), aes(k, inertia)) + geom_line() + geom_point() +
-  labs(title = "Elbow method", y = "Within-cluster variance") + theme_minimal()
+
+from sklearn.cluster import KMeans
+
+ks = range(1,10)
+inertia = []
+
+for k in ks:
+    model = KMeans(n_clusters=k, random_state=42)
+    model.fit(X)
+    inertia.append(model.inertia_)
+
+plt.figure(figsize=(5,3))
+plt.plot(ks, inertia, marker="o")
+plt.xlabel("k")
+plt.ylabel("Within-cluster variance")
+plt.title("Elbow method")
+plt.show()
 ```
 . . .
 
@@ -605,18 +705,26 @@ An alternative is the **silhouette score**.
 
 Choose k that **maximizes the score**
 
-```{r}
+```{python}
 #| fig-align: center
 #| out-width: 70%
-library(cluster)
-library(tidyverse)
-ks <- 2:9
-scores <- map_dbl(ks, function(k) {
-  groups <- kmeans(X, centers = k, nstart = 25)$cluster
-  mean(silhouette(groups, dist(X))[, "sil_width"])
-})
-ggplot(tibble(k = ks, score = scores), aes(k, score)) + geom_line() + geom_point() +
-  labs(title = "Silhouette analysis", y = "Silhouette score") + theme_minimal()
+
+from sklearn.metrics import silhouette_score
+
+ks = range(2,10)
+scores = []
+
+for k in ks:
+    model = KMeans(n_clusters=k, random_state=42)
+    labels = model.fit_predict(X)
+    scores.append(silhouette_score(X, labels))
+
+plt.figure(figsize=(5,3))
+plt.plot(ks, scores, marker="o")
+plt.xlabel("k")
+plt.ylabel("Silhouette score")
+plt.title("Silhouette analysis")
+plt.show()
 ```
 
 . . .
@@ -656,11 +764,20 @@ Thus, a good cluster number might be at a point from where the width of the foll
 
 This allows us to explore clusters at **multiple levels of granularity**.
 
-```{r}
+```{python}
 #| fig-align: center
 #| out-width: 70%
-fit <- hclust(dist(X), method = "ward.D2")
-plot(fit, main = "Dendrogram", xlab = "Observations", ylab = "Distance")
+
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+Z = linkage(X, method='ward')
+
+plt.figure(figsize=(6,4))
+dendrogram(Z)
+plt.title("Dendrogram")
+plt.xlabel("Observations")
+plt.ylabel("Distance")
+plt.show()
 ```
 
 ## Measuring similarity between clusters

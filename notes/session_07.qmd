@@ -74,16 +74,28 @@ $$H = \log_2 K$$
   - $K = 8 \Rightarrow H = 3$
 
 
-#### 4) R Illustration (Entropy vs. Number of Classes)
+#### 4) Python Illustration (Entropy vs. Number of Classes)
 
-```{r}
+```{python}
 #| fig-align: center
 #| echo: false
-library(ggplot2)
-d <- data.frame(K = 1:10, entropy = log2(1:10))
-ggplot(d, aes(K, entropy)) + geom_line() + geom_point() +
-  labs(title = "Maximum Entropy as a Function of Number of Classes",
-       x = "Number of classes (K)", y = "Maximum entropy H = log2(K)") + theme_minimal()
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Number of classes
+K_values = np.arange(1, 11)
+
+# Maximum entropy H = log2(K)
+entropy_values = np.log2(K_values)
+
+plt.figure()
+plt.plot(K_values, entropy_values, marker="o")
+plt.xlabel("Number of classes (K)")
+plt.ylabel("Maximum entropy H = log2(K)")
+plt.title("Maximum Entropy as a Function of Number of Classes")
+plt.grid()
+
+plt.show()
 ```
 
 Entropy is best understood as:
@@ -112,17 +124,50 @@ Small M&A teams are **successful**, large teams **unsuccessful**.
 A simple baseline would place the threshold halfway between the **class means**.
 The maximal margin classifier instead places the threshold halfway between **the closest opposing cases** and maximizes the distance to both classes.
 
-```{r}
+```{python}
 #| label: fig-maximal-margin-1d
 #| fig-cap: "A naive midpoint between class means versus the maximal-margin threshold"
 #| echo: false
-library(tidyverse)
-d <- tibble(x = c(2:5, 8:11), class = rep(c("Successful", "Unsuccessful"), each = 4))
-ggplot(d, aes(x, 0, shape = class)) + geom_point(size = 3) +
-  geom_vline(xintercept = c(5, 6.5), linetype = c("dashed", "solid")) +
-  annotate("segment", x=5, xend=6.5, y=.12, yend=.12, arrow=arrow(ends="both")) +
-  annotate("segment", x=6.5, xend=8, y=.12, yend=.12, arrow=arrow(ends="both")) +
-  labs(x="M&A team size", y=NULL) + coord_cartesian(ylim=c(-.15,.28)) + theme_minimal()
+import matplotlib.pyplot as plt
+import numpy as np
+
+successful = np.array([2, 3, 4, 5])
+unsuccessful = np.array([8, 9, 10, 11])
+
+mean_threshold = (successful.mean() + unsuccessful.mean()) / 2
+sv_left = successful.max()
+sv_right = unsuccessful.min()
+margin_threshold = (sv_left + sv_right) / 2
+
+fig, ax = plt.subplots(figsize=(8, 2.2))
+
+# points on a line
+ax.scatter(successful, np.zeros_like(successful), marker="o", s=90, label="Successful")
+ax.scatter(unsuccessful, np.zeros_like(unsuccessful), marker="x", s=90, label="Unsuccessful")
+
+# support vectors
+ax.scatter([sv_left, sv_right], [0, 0], s=220, facecolors="none", edgecolors="black", linewidths=1.8)
+
+# thresholds
+ax.axvline(mean_threshold, linestyle="--", label="Midpoint between means")
+ax.axvline(margin_threshold, linestyle="-", label="Max-margin threshold")
+
+# margin illustration
+ax.annotate(
+    "", xy=(sv_left, 0.12), xytext=(margin_threshold, 0.12),
+    arrowprops=dict(arrowstyle="<->", lw=1.2)
+)
+ax.annotate(
+    "", xy=(margin_threshold, 0.12), xytext=(sv_right, 0.12),
+    arrowprops=dict(arrowstyle="<->", lw=1.2)
+)
+ax.text(margin_threshold, 0.18, "margin", ha="center", va="bottom")
+
+ax.set_yticks([])
+ax.set_ylim(-0.15, 0.28)
+ax.set_xlabel("M&A team size")
+ax.legend(loc="upper center", ncol=2, frameon=False)
+plt.show()
 ```
 
 **Teaching point:**
@@ -138,16 +183,51 @@ Now allow slight overlap:
 
 The support vector classifier keeps a central boundary, but also allows some points to lie **inside the margin** or even on the **wrong side of the boundary**.
 
-```{r}
+```{python}
 #| label: fig-soft-margin-1d
 #| fig-cap: "Soft-margin classifier: margin bands, an in-margin point, and a misclassified point"
 #| echo: false
-library(tidyverse)
-d <- tibble(x=c(2,3,4,9,5,8,10,11), class=rep(c("Successful","Unsuccessful"), each=4))
-ggplot(d, aes(x, 0, shape=class)) + annotate("rect", xmin=5.2,xmax=7.8,ymin=-Inf,ymax=Inf,alpha=.12) +
-  geom_point(size=3) + geom_vline(xintercept=6.5) + geom_vline(xintercept=c(5.2,7.8),linetype="dashed") +
-  annotate("text",x=5,y=.14,label="inside margin") + annotate("text",x=9,y=-.14,label="misclassified") +
-  labs(x="M&A team size",y=NULL) + coord_cartesian(ylim=c(-.22,.25)) + theme_minimal()
+import matplotlib.pyplot as plt
+import numpy as np
+
+successful = np.array([2, 3, 4, 9])
+unsuccessful = np.array([5, 8, 10, 11])
+
+boundary = 6.5
+margin_left = 5.2
+margin_right = 7.8
+
+fig, ax = plt.subplots(figsize=(8, 2.2))
+
+# points on a line
+ax.scatter(successful, np.zeros_like(successful), marker="o", s=90, label="Successful")
+ax.scatter(unsuccessful, np.zeros_like(unsuccessful), marker="x", s=90, label="Unsuccessful")
+
+# decision boundary and margins
+ax.axvline(boundary, linestyle="-", label="Decision boundary")
+ax.axvline(margin_left, linestyle="--")
+ax.axvline(margin_right, linestyle="--")
+
+# shade soft margin region
+ax.axvspan(margin_left, margin_right, alpha=0.12)
+
+# highlight example points
+inside_margin = 5   # unsuccessful, but inside the margin on the correct side
+misclassified = 9   # successful, but on the wrong side of the boundary
+
+ax.scatter([inside_margin], [0], s=220, facecolors="none", edgecolors="black", linewidths=1.8)
+ax.scatter([misclassified], [0], s=220, facecolors="none", edgecolors="black", linewidths=1.8)
+
+ax.text(inside_margin, 0.14, "inside margin", ha="center", fontsize=9)
+ax.text(misclassified, -0.14, "misclassified", ha="center", fontsize=9)
+
+ax.text(boundary, 0.18, "soft margin", ha="center", va="bottom")
+
+ax.set_yticks([])
+ax.set_ylim(-0.22, 0.25)
+ax.set_xlabel("M&A team size")
+ax.legend(loc="upper center", ncol=2, frameon=False)
+plt.show()
 ```
 
 **Teaching point:**
@@ -161,29 +241,60 @@ Change the M&A example. Assume:
 - mid-sized → successful ("sweet spot")
 - large → unsuccessful
 
-```{r}
+```{python}
 #| label: fig-nonlinear-1d
 #| fig-cap: "Nonlinear pattern: only mid-sized M&A teams are successful"
 #| echo: false
-library(tidyverse)
-d <- tibble(x=c(2,3,4,11,12,13,6,7,8,9), class=c(rep("Unsuccessful (low & high)",6),rep("Successful (mid-sized)",4)))
-ggplot(d,aes(x,0,shape=class))+geom_point(size=3)+labs(x="M&A team size",y=NULL)+theme_minimal()
+import matplotlib.pyplot as plt
+import numpy as np
+
+x_unsuccessful = np.array([2, 3, 4, 11, 12, 13])
+x_successful = np.array([6, 7, 8, 9])
+
+fig, ax = plt.subplots(figsize=(8, 2))
+
+ax.scatter(x_unsuccessful, np.zeros_like(x_unsuccessful),
+           marker="x", s=100, label="Unsuccessful (low & high)")
+ax.scatter(x_successful, np.zeros_like(x_successful),
+           marker="o", s=100, label="Successful (mid-sized)")
+
+ax.set_yticks([])
+ax.set_xlabel("M&A team size")
+ax.legend()
+
+plt.show()
 ```
 
 Note: linear separation no longer possible.
 
 Transformation (Quadratic transformation)
 
-```{r}
+```{python}
 #| label: fig-kernel-2d
 #| fig-cap: "Quadratic transformation enables linear separation"
 #| echo: false
-library(tidyverse)
-d <- tibble(x=c(2,3,4,11,12,13,6,7,8,9), class=c(rep("Unsuccessful",6),rep("Successful",4))) |>
-  mutate(z=(x-7.5)^2)
-threshold <- mean(c(max(d$z[d$class=="Successful"]), min(d$z[d$class=="Unsuccessful"])))
-ggplot(d,aes(x,z,shape=class))+geom_point(size=3)+geom_hline(yintercept=threshold)+
-  labs(x="Team size (x)",y=expression((x-7.5)^2))+theme_minimal()
+import matplotlib.pyplot as plt
+import numpy as np
+
+x_unsuccessful = np.array([2, 3, 4, 11, 12, 13])
+x_successful = np.array([6, 7, 8, 9])
+
+z_unsuccessful = (x_unsuccessful - 7.5)**2
+z_successful = (x_successful - 7.5)**2
+
+fig, ax = plt.subplots(figsize=(6, 5))
+
+ax.scatter(x_unsuccessful, z_unsuccessful, marker="x", s=100, label="Unsuccessful")
+ax.scatter(x_successful, z_successful, marker="o", s=100, label="Successful")
+
+threshold = (z_successful.max() + z_unsuccessful.min()) / 2
+x_line = np.linspace(1, 14, 100)
+ax.plot(x_line, np.ones_like(x_line)*threshold, linestyle="-", label="Linear separator")
+
+ax.set_xlabel("Team size (x)")
+ax.set_ylabel("$(x - 7.5)^2$")
+ax.legend()
+plt.show()
 ```
 
 **Teaching point:**
