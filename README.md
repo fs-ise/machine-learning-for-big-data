@@ -27,10 +27,24 @@ You can find more information on the following pages:
 ## Common commands
 
 - `make site` renders exercises and the website.
-- `make pdfs` creates slide PDFs with Decktape.
+- `make pdfs` creates every slide PDF.
+- `make _site/slides/session_03.pdf` creates one slide deck.
+- `make all` renders the complete website and all slide PDFs.
 - `make exercises` creates assignment and solution variants.
 - `make sync-events` regenerates session schedule data.
 - `make clean` removes generated build artifacts.
+
+## Slide PDF prerequisites
+
+Install [Quarto](https://quarto.org/) and Docker. Quarto renders the temporary
+Reveal.js presentation on the host; the Makefile automatically builds a Docker
+image containing the pinned Decktape version, Chromium dependencies, and
+Ghostscript. Node.js, npm, and Decktape do not need to be installed on the
+host.
+
+Build all slide PDFs with `make pdfs`, build an individual deck with
+`make _site/slides/session_03.pdf`, or build the site and every PDF together
+with `make all`. Generated PDFs are written as the current host user.
 
 ## R dependencies
 
