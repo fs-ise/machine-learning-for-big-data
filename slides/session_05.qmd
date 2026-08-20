@@ -1,7 +1,6 @@
 ---
-title: "Session 5: ML Baselines (Classification)"
+title: "Machine learning baselines: classification"
 title-slide-image: "../images/cover_slide/classification.png"
-subtitle: "Lecture Slides"
 section_label: "ML Baselines (Classification)"
 session: "Session 5"
 date: "2026-09-17"

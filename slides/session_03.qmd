@@ -1,7 +1,6 @@
 ---
-title: "Session 3: EDA"
+title: "Exploratory data analysis"
 title-slide-image: "../images/cover_slide/eda.png"
-subtitle: "Lecture Slides"
 section_label: "EDA"
 session: "Session 3"
 date: "2026-09-11"

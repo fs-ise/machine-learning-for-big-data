@@ -1,7 +1,6 @@
 ---
-title: "Session 1: Big Data"
+title: "Big data"
 title-slide-image: "../images/cover_slide/big-data.png"
-subtitle: "Lecture Slides"
 section_label: "Big Data"
 session: "Session 1"
 date: "2026-09-04"

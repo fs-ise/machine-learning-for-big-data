@@ -1,7 +1,6 @@
 ---
-title: "Session 7: ML Foundations (Algorithms)"
+title: "Machine learning foundations: algorithms"
 title-slide-image: "../images/cover_slide/ml-algorithms.png"
-subtitle: "Lecture Slides"
 section_label: "ML Foundations (Algorithms)"
 session: "Session 7"
 date: "2026-09-25"

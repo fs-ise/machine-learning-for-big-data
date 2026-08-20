@@ -1,7 +1,6 @@
 ---
-title: "Session 2: Analytics and Data Preparation"
+title: "Analytics and data preparation"
 title-slide-image: "../images/cover_slide/preparation.png"
-subtitle: "Lecture Slides"
 section_label: "Analytics and Data Preparation"
 session: "Session 2"
 date: "2026-09-04"

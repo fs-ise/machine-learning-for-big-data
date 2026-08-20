@@ -1,7 +1,6 @@
 ---
-title: "Session 6: ML Foundations (Workflow)"
+title: "Machine learning foundations: workflow"
 title-slide-image: "../images/cover_slide/workflow.png"
-subtitle: "Lecture Slides"
 section_label: "ML Foundations (Workflow)"
 session: "Session 6"
 date: "2026-09-18"

@@ -1,7 +1,6 @@
 ---
-title: "Session 4: ML Baselines (Regression)"
+title: "Machine learning baselines: regression"
 title-slide-image: "../images/cover_slide/regression.png"
-subtitle: "Lecture Slides"
 section_label: "ML Baselines (Regression)"
 session: "Session 4"
 date: "2026-09-11"

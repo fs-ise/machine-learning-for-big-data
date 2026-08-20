@@ -189,12 +189,9 @@ body,
   margin: 0 !important;
   padding: 0 !important;
   border: 0;
+  box-shadow: none;
   overflow: hidden;
   text-align: left;
-  background-image: var(--title-slide-background);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
 }
 
 .reveal section#title-slide .title-slide-content {
@@ -207,25 +204,25 @@ body,
   max-width: 10.5em;
   margin: 0 0 0.42em;
   color: #082d50;
-  font-size: clamp(1.9em, 4.1vw, 2.75em);
+  font-size: clamp(1.65em, 3.4vw, 2.3em);
   font-weight: 700;
   line-height: 1.04;
   letter-spacing: -0.035em;
   overflow-wrap: anywhere;
 }
 
-.reveal section#title-slide p.subtitle {
-  margin: 0 0 1.65em;
+.reveal section#title-slide p.course-title {
+  margin: 0 0 0.8em;
   color: #174d73;
-  font-size: 1.25em;
-  font-weight: 500;
-  line-height: 1.25;
+  font-size: 0.78em;
+  font-weight: 600;
+  letter-spacing: 0.025em;
 }
 
-.reveal section#title-slide p.date {
+.reveal section#title-slide p.session-meta {
   margin: 0;
   color: #53768e;
-  font-size: 0.88em;
+  font-size: 0.72em;
   font-weight: 400;
   letter-spacing: 0.035em;
 }
@@ -244,7 +241,7 @@ body:has(.reveal section#title-slide.present) #fs-header {
   }
 
   .reveal section#title-slide h1.title {
-    font-size: clamp(1.7em, 4.3vw, 2.35em);
+    font-size: clamp(1.5em, 3.5vw, 2em);
   }
 }
 
