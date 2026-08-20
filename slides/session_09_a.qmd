@@ -672,7 +672,7 @@ See the R torch documentation for `nn_module()` and its inherited methods.
 
 - Designing neural networks means choosing the architecture, output layer, loss function, learning rate, optimizer, and regularization strategy, then iteratively evaluating and adjusting these choices.
 
-{{< include ../_generated/surveys/session_09-slide.qmd >}}
+{{< survey session_09 slide >}}
 
 
 # References {data-state="hide-menubar"}

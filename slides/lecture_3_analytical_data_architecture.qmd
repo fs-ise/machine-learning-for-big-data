@@ -609,7 +609,7 @@ In the following example, three dimensions are displayed:
 
 
 
-{{< include ../_generated/surveys/session_03-slide.qmd >}}
+{{< survey session_03 slide >}}
 
 
 # References {data-state="hide-menubar"}

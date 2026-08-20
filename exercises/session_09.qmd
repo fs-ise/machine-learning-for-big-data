@@ -136,7 +136,7 @@ raw modality -> numerical representation -> architecture -> output -> evaluation
 Then compare it with a case whose input has a different structure. State which architectural assumption changes.
 
 ::: {.callout-tip title="Session 9 survey"}
-{{< include ../_generated/surveys/session_09-exercise.qmd >}}
+{{< survey session_09 exercise >}}
 :::
 
 :::

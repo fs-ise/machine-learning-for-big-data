@@ -1421,7 +1421,7 @@ Remember to <b>stop</b> your Codespace [here](https://github.com/codespaces).
 :::
 
 ::: {.callout-tip title="Session 2 survey"}
-{{< include ../_generated/surveys/session_02-exercise.qmd >}}
+{{< survey session_02 exercise >}}
 :::
 
 :::

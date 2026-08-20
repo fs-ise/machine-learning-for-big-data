@@ -820,7 +820,7 @@ In this notebook, we have learned to
 - Structure data for **multidimensional analysis (OLAP)**
 
 ::: {.callout-tip title="Session 3 survey"}
-{{< include ../_generated/surveys/session_03-exercise.qmd >}}
+{{< survey session_03 exercise >}}
 :::
 
 :::

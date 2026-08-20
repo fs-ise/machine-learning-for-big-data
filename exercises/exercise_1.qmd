@@ -220,7 +220,7 @@ Stopping the Codespace preserves the current state of your work and does not con
 :::
 
 ::: {.callout-tip title="Session 1 survey"}
-{{< include ../_generated/surveys/session_01-exercise.qmd >}}
+{{< survey session_01 exercise >}}
 :::
 
 # References

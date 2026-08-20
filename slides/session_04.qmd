@@ -1316,6 +1316,6 @@ Synonyms include: Dependent variable (DV); response variable; target; label (cla
 - In practice, the analytics workflow can be implemented in R: define a model, fit it to data, generate predictions, and evaluate performance — a pattern that extends to many other modeling approaches.
 
 
-{{< include ../_generated/surveys/session_04-slide.qmd >}}
+{{< survey session_04 slide >}}
 
 # References {data-state="hide-menubar"}

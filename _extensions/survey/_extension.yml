@@ -1,0 +1,6 @@
+title: Course survey
+author: Frankfurt School ISE
+version: 1.0.0
+contributes:
+  shortcodes:
+    - survey.lua

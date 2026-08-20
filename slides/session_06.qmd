@@ -1157,7 +1157,7 @@ TODO: develop/add the following
 - **Feature engineering** is a critical step that transforms raw data into meaningful representations (e.g., scaling, encoding, feature construction), often having a stronger impact on performance than the choice of model.
 
 
-{{< include ../_generated/surveys/session_06-slide.qmd >}}
+{{< survey session_06 slide >}}
 
 <!--
 TODO: add references

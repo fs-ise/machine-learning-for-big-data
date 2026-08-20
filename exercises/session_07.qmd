@@ -25,5 +25,5 @@ Develop the substantive comparative tasks and solutions during the later R migra
 :::
 
 ::: {.callout-tip title="Session 7 survey"}
-{{< include ../_generated/surveys/session_07-exercise.qmd >}}
+{{< survey session_07 exercise >}}
 :::

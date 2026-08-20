@@ -42,5 +42,5 @@ Highlight:
 
 
 ::: {.callout-tip title="Session 6 survey"}
-{{< include ../_generated/surveys/session_06-exercise.qmd >}}
+{{< survey session_06 exercise >}}
 :::

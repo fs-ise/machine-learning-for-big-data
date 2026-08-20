@@ -1209,7 +1209,7 @@ plt.show()
   illustrating different approaches to learning from data with varying assumptions, flexibility, and interpretability.
 
 
-{{< include ../_generated/surveys/session_07-slide.qmd >}}
+{{< survey session_07 slide >}}
 
 
 # References {data-state="hide-menubar"}
