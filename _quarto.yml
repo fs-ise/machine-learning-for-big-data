@@ -3,6 +3,7 @@ project:
   output-dir: _site
   resources:
     - "images/cover_slide/*.png"
+    - course.yml
 metadata-files:
   - course.yml
 website:
@@ -20,6 +21,8 @@ website:
         href: index.qmd
       - text: Syllabus
         href: syllabus.qmd
+      - text: Calendar
+        href: calendar.qmd
       - text: Group work
         href: group_work.qmd
       - text: Teaching notes
