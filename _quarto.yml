@@ -1,6 +1,7 @@
 project:
   type: website
   output-dir: _site
+  pre-render: python scripts/generate_surveys.py
   resources:
     - "images/cover_slide/*.png"
     - course.yml

@@ -1270,25 +1270,7 @@ In many machine learning studies, logistic regression is used as a first baselin
 - Model performance is evaluated using **classification metrics** such as confusion matrices, accuracy, precision, recall, F1, and ROC/AUC.
 - A **threshold** is required to convert probabilities into class labels, and should be chosen based on **business costs**, not fixed at 0.5.
 
-## Survey: Session 5 {data-state="hide-menubar"}
-
-<br><br>
-
-::: {style="display:flex; justify-content:center;"}
-
-{{< qrcode "{{< meta surveys.session_05.url >}}" width=400 height=400 >}}
-
-:::
-
-<br><br>
-
-[{{< meta surveys.session_05.url >}}]({{< meta surveys.session_05.url >}})
-
-::: aside
-Note: Responses may be analyzed and published in anonymized form.
-
-Please complete the survey before you leave today — thank you 🙏
-:::
+{{< include ../_generated/surveys/session_05-slide.qmd >}}
 
 
 # References {data-state="hide-menubar"}

@@ -750,25 +750,7 @@ Cover ML Ops pipelines, scaling (parallel architectures)
   These representations support retrieval, similarity analysis, clustering, classification, summarization, information extraction, and RAG-based systems.
 
 
-## Survey: Session 8 {data-state="hide-menubar"}
-
-<br><br>
-
-::: {style="display:flex; justify-content:center;"}
-
-{{< qrcode "{{< meta surveys.session_08.url >}}" width=400 height=400 >}}
-
-:::
-
-<br><br>
-
-[{{< meta surveys.session_08.url >}}]({{< meta surveys.session_08.url >}})
-
-::: aside
-Note: Responses may be analyzed and published in anonymized form.
-
-Please complete the survey before you leave today — thank you 🙏
-:::
+{{< include ../_generated/surveys/session_08-slide.qmd >}}
 
 
 # References {data-state="hide-menubar"}

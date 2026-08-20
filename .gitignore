@@ -16,3 +16,4 @@ site_libs/
 slides/cache/*
 
 *_files/
+_generated/

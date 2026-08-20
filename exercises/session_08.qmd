@@ -942,7 +942,7 @@ Rather, each representation supports a different analytical perspective:
 | Dense embeddings | Encode semantic relationships | Useful for similarity and generalization | Less transparent and more resource-intensive |
 
 ::: {.callout-tip title="Session 8 survey"}
-Before you wrap up, please complete the Session 8 survey here: [{{< meta surveys.session_08.url >}}]({{< meta surveys.session_08.url >}}){target="_blank"}. Thank you 🙏
+{{< include ../_generated/surveys/session_08-exercise.qmd >}}
 :::
 
 :::

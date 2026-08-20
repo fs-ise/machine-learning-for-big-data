@@ -220,7 +220,7 @@ Stopping the Codespace preserves the current state of your work and does not con
 :::
 
 ::: {.callout-tip title="Session 1 survey"}
-Before you wrap up, please complete the Session 1 survey here: [{{< meta surveys.session_01.url >}}]({{< meta surveys.session_01.url >}}){target="_blank"}. Thank you 🙏
+{{< include ../_generated/surveys/session_01-exercise.qmd >}}
 :::
 
 # References
