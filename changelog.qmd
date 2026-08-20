@@ -31,7 +31,7 @@ A summary of all file-level changes is available through the [Git commit history
 - [x] Session 8: Text
 - [x] Session 9: Image, Video, Audio
 - [x] Session 9: Deployment
-- [ ] Verify `course.yml` paths and session ordering
+- [x] Verify `course.yml` paths and session ordering
 
 **Stage 3 — Port to R**
 

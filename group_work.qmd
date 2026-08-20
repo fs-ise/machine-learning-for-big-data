@@ -2,7 +2,11 @@
 title: "Group work"
 ---
 
-**TODO: VALIDATE**
+**TODO:**  
+- Validate
+- Check submission format (notebook - qmd with executed content is not possible??)
+- Carefully compare with group-work docs of previous coursese
+- Presentation slides (PDF) and notebook (??) must be submitted the day before presentation until 20.00 (to {{< meta instructor.email >}})
 
 > In this group project, you will develop and analyze a realistic business analytics case, including data, modeling, and critical reflection.
 > The project focuses on business-relevant contexts such as management, finance, operations, or digital platforms.

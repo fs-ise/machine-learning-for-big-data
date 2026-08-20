@@ -6,7 +6,7 @@ course:
   level: Master
   language: English
   credits: 6
-  description: 'TODO: MLBD Description'
+  description: 'Machine Learning for Big Data introduces methods for analyzing large and complex datasets using R. The course covers data preparation, visualization, classification, prediction, and decision support, with an emphasis on selecting, applying, and interpreting machine learning methods in business contexts.'
 repository:
   organization: fs-ise
   name: machine-learning-for-big-data
@@ -23,29 +23,28 @@ schedule:
   timezone: Europe/Berlin
   source_path: data/events.yaml
 group_work:
-  application_deadline: "TODO"
+  application_deadline: "2026-09-10"
   presentation_date: "2026-10-02"
-  submission_date: "TODO"
-  submission_url: "TODO"
+  submission_date: "2026-11-02"
+  submission_url: "https://frankfurtschool.instructure.com/courses/20150/assignments/201951"
 events:
-  # Replace each survey_url placeholder on slide materials with the real survey URL.
   - session_id: session-01-lecture
     type: lecture
     date: 2026-09-04
     start: '10:00'
     end: '11:30'
-    location: S2.11
+    location: 'S2.11 (EDV). Room capacity: 30'
     event_id: 274990-1926698564-0@timeedit.com
     materials:
       - type: slides
         path: slides/session_01.html
-        # survey_url: https://example.com/surveys/session-01
+        survey_url: TODO
   - session_id: session-01-exercise
     type: exercise
     date: 2026-09-04
     start: '11:45'
     end: '13:15'
-    location: S2.11
+    location: 'S2.11 (EDV). Room capacity: 30'
     event_id: 274991-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -55,18 +54,18 @@ events:
     date: 2026-09-04
     start: '14:15'
     end: '15:45'
-    location: S2.11
+    location: 'S2.11 (EDV). Room capacity: 30'
     event_id: 274992-1926698564-0@timeedit.com
     materials:
       - type: slides
         path: slides/session_02.html
-        # survey_url: https://example.com/surveys/session-02
+        survey_url: TODO
   - session_id: session-02-exercise
     type: exercise
     date: 2026-09-04
     start: '16:00'
     end: '17:30'
-    location: S2.11
+    location: 'S2.11 (EDV). Room capacity: 30'
     event_id: 274993-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -76,18 +75,18 @@ events:
     date: 2026-09-11
     start: '10:00'
     end: '11:30'
-    location: S2.11
+    location: 'S2.11 (EDV). Room capacity: 30'
     event_id: 274994-1926698564-0@timeedit.com
     materials:
       - type: slides
         path: slides/session_03.html
-        # survey_url: https://example.com/surveys/session-03
+        survey_url: TODO
   - session_id: session-03-exercise
     type: exercise
     date: 2026-09-11
     start: '11:45'
     end: '13:15'
-    location: S2.11
+    location: 'S2.11 (EDV). Room capacity: 30'
     event_id: 274995-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -97,18 +96,18 @@ events:
     date: 2026-09-11
     start: '14:15'
     end: '15:45'
-    location: S2.11
+    location: 'S2.11 (EDV). Room capacity: 30'
     event_id: 274996-1926698564-0@timeedit.com
     materials:
       - type: slides
         path: slides/session_04.html
-        # survey_url: https://example.com/surveys/session-04
+        survey_url: TODO
   - session_id: session-04-exercise
     type: exercise
     date: 2026-09-11
     start: '16:00'
     end: '17:30'
-    location: S2.11
+    location: 'S2.11 (EDV). Room capacity: 30'
     event_id: 274997-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -118,18 +117,18 @@ events:
     date: 2026-09-17
     start: '10:00'
     end: '11:30'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 275000-1926698564-0@timeedit.com
     materials:
       - type: slides
         path: slides/session_05.html
-        # survey_url: https://example.com/surveys/session-05
+        survey_url: TODO
   - session_id: session-05-exercise
     type: exercise
     date: 2026-09-17
     start: '11:45'
     end: '13:15'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 275001-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -139,18 +138,18 @@ events:
     date: 2026-09-18
     start: '10:00'
     end: '11:30'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 274998-1926698564-0@timeedit.com
     materials:
       - type: slides
         path: slides/session_06.html
-        # survey_url: https://example.com/surveys/session-06
+        survey_url: TODO
   - session_id: session-06-exercise
     type: exercise
     date: 2026-09-18
     start: '11:45'
     end: '13:15'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 274999-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -160,18 +159,18 @@ events:
     date: 2026-09-25
     start: '10:00'
     end: '11:30'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 275002-1926698564-0@timeedit.com
     materials:
       - type: slides
         path: slides/session_07.html
-        # survey_url: https://example.com/surveys/session-07
+        survey_url: TODO
   - session_id: session-07-exercise
     type: exercise
     date: 2026-09-25
     start: '11:45'
     end: '13:15'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 275003-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -181,18 +180,18 @@ events:
     date: 2026-09-25
     start: '14:15'
     end: '15:45'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 275004-1926698564-0@timeedit.com
     materials:
       - type: slides
         path: slides/session_08.html
-        # survey_url: https://example.com/surveys/session-08
+        survey_url: TODO
   - session_id: session-08-exercise
     type: exercise
     date: 2026-09-25
     start: '16:00'
     end: '17:30'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 275005-1926698564-0@timeedit.com
     materials:
       - type: exercise
@@ -202,42 +201,61 @@ events:
     date: 2026-10-02
     start: '10:00'
     end: '11:30'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 275006-1926698564-0@timeedit.com
     materials:
       - type: slides
-        path: slides/session_09.html
-        # survey_url: https://example.com/surveys/session-09
+        path: slides/session_09_a.html
+        survey_url: TODO
+      - type: slides
+        path: slides/session_09_b.html
+        survey_url: TODO
   - session_id: session-09-lecture2
     type: lecture
     date: 2026-10-02
     start: '11:45'
     end: '13:15'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 275007-1926698564-0@timeedit.com
     materials:
       - type: slides
         path: slides/session_09_b.html
-        # survey_url: https://example.com/surveys/session-09-b
+        survey_url: TODO
   - session_id: session-10-presentation
     type: group presentation
     date: 2026-10-02
     start: '14:15'
     end: '15:45'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 275008-1926698564-0@timeedit.com
     materials:
       - type: slides
-        path: slides/session_10.html
-        # survey_url: https://example.com/surveys/session-10
+        path: slides/presentations.html
   - session_id: session-11-presentation
     type: group presentation
     date: 2026-10-02
     start: '16:00'
     end: '17:30'
-    location: S2.07
+    location: 'S2.07 (EDV). Room capacity: 36'
     event_id: 275009-1926698564-0@timeedit.com
     materials:
       - type: slides
-        path: slides/session_11.html
-        # survey_url: https://example.com/surveys/session-11
+        path: slides/presentations.html
+  - event_id: 275010-1926698564-0@timeedit.com
+    type: group presentation
+    date: 2026-10-09
+    start: '10:00'
+    end: '11:30'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    materials:
+      - type: slides
+        path: slides/presentations.html
+  - event_id: 275011-1926698564-0@timeedit.com
+    type: group presentation
+    date: 2026-10-09
+    start: '11:45'
+    end: '13:15'
+    location: 'S2.07 (EDV). Room capacity: 36'
+    materials:
+      - type: slides
+        path: slides/presentations.html
