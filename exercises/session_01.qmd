@@ -1,21 +1,475 @@
 ---
-title: "Session 1: Basics in R"
-session_id: session-01
+title: "Exercise: R Setup, IDE, and Basic Data Workflow"
+subtitle: "From a clean session to loading and saving data"
 format:
-  html: default
-  ipynb: default
+  html:
+    toc: true
+    code-copy: true
+    code-overflow: wrap
+execute:
+  echo: true
+  warning: false
+  message: false
 ---
 
-## Task
+::: {.callout-important}
+### Work together
 
-Work through the Session 1 exercise on Basics in R.
+Work through this exercise with the person next to you. Compare what you see in your IDEs and help each other when something behaves differently.
 
-::: {.content-visible when-profile="assign"}
-1. Review the lecture concepts.
-2. Apply the concepts to the provided data or examples.
+If you get stuck and cannot see how to move forward, **indicate that you need help** so that a TA or instructor can assist you.
 :::
 
-::: {.content-visible when-profile="solution"}
-1. Compare your solution with the discussed workflow.
-2. Reflect on assumptions, limitations, and next steps.
+## Learning goals
+
+After this exercise, you should be able to:
+
+- distinguish the **editor**, **R console**, **file browser**, and **in-memory workspace** in your IDE;
+- run R code interactively and from a Quarto (`.qmd`) document;
+- create, inspect, and remove objects in memory;
+- install and load R packages;
+- create and inspect a data frame;
+- save tabular data to disk and load it again;
+- restart R and reproduce your work from the code in this document.
+
+In this notebook, you will get started with R by running calculations, creating and inspecting variables, working with data frames, importing and exporting data, installing and loading packages, and using project-based relative file paths with the tidyverse.
+
+::: {.callout-note}
+### Files versus objects
+
+Keep these two ideas separate throughout the exercise:
+
+- **Files** live on disk, for example `exercise_01.qmd` or `data/students.csv`.
+- **Objects** live in the current R session, for example a data frame called `students`.
+
+Removing an R object does **not** delete the corresponding file from disk.
 :::
+
+## Choose and orient yourself in an IDE
+
+Start by working with your neighbor to orient yourselves in the IDE. You can complete this exercise in **RStudio**, **Positron**, or **Visual Studio Code**. You only need one of them.
+
+Open the folder containing this `.qmd` file as your project/workspace. In RStudio, use an RStudio Project for that folder; in Positron or VS Code, open the folder itself.
+
+| Task | RStudio | Positron | VS Code |
+|---|---|---|---|
+| Edit this `.qmd` file | Source pane | Editor | Editor |
+| Run R interactively | Console pane | Console | R terminal |
+| Inspect objects in memory | Environment pane | Variables pane | R Workspace viewer |
+| Browse files | Files pane | Explorer | Explorer |
+| View the rendered `.qmd` | Viewer pane | Viewer | Internal Quarto preview |
+
+### Turn on automatic preview updates
+
+Configure your IDE so that the rendered version of this document updates when you **save** the `.qmd` file. You should not need to click **Render** after every change.
+
+- **RStudio:** In the `.qmd` editor toolbar, enable **Render on Save**. In the gear/options menu, select **Preview in Viewer Pane**.
+- **Positron:** Enable **Render on Save** in the editor toolbar. If needed, open Settings, search for `quarto.render`, and make sure the preview type is **Internal** so that the result appears in the Viewer.
+- **VS Code:** Open Settings, search for `quarto.render`, and enable **Render on Save**. Keep **Quarto > Render: Preview Type** set to **Internal**. If no preview is open yet, run **Quarto: Preview** once; after that, saving the file should refresh the preview.
+
+::: {.callout-tip}
+### Exercise: find the main interface elements
+
+With your neighbor, try to locate the following parts of your IDE:
+
+1. this `.qmd` file in the editor;
+2. an interactive R console or R terminal;
+3. the file browser/explorer;
+4. the environment/variables/workspace viewer;
+5. the Viewer or internal preview showing the rendered document.
+
+For now, the goal is simply to **find these elements in the IDE**. The exercises below will use them one by one so that you can see what they do and how they relate to your R session and files.
+
+If you use VS Code, make sure the **R extension** and **Quarto extension** are installed, then start an R terminal from the Command Palette with **R: Create R terminal**. Positron includes native R support and bundles Quarto.
+:::
+
+## Test the R setup
+
+Start with the R console. Run:
+
+```{r}
+R.version.string
+```
+
+Now use R as a calculator:
+
+```{r}
+3 * 5
+7 + 2
+100 / 5
+99 - 1
+```
+
+Try a few functions:
+
+```{r}
+sqrt(144)
+log(10)
+mean(c(4, 6, 8, 10))
+```
+
+::: {.callout-tip}
+### Exercise: console versus document
+
+1. Run `2^10` directly in the **console**.
+2. Add a line below that computes `17 * 23`.
+3. Run that line from the `.qmd` document.
+4. **Save the `.qmd` file** and check whether the rendered version in the Viewer/preview updates automatically and shows your change. Do not click **Render**.
+
+```{r}
+# TODO: calculate 17 * 23
+```
+
+What is the difference between code typed only in the console and code stored in this document?
+:::
+
+## Create variables and inspect memory
+
+R stores values in named **objects**. The assignment operator is `<-`.
+
+```{r}
+a <- 3 * 5
+b <- 7 + 2
+c <- a * b
+
+c
+```
+
+Create objects of different types:
+
+```{r}
+course <- "Machine Learning for Big Data"
+session_number <- 1
+setup_complete <- TRUE
+```
+
+List the objects currently in memory:
+
+```{r}
+ls()
+```
+
+Inspect individual objects:
+
+```{r}
+class(course)
+class(session_number)
+class(setup_complete)
+```
+
+Also find these objects in your IDE's **Environment**, **Variables**, or **Workspace** view.
+
+::: {.callout-tip}
+### Exercise: create and remove an object
+
+1. Create an object called `answer` containing the result of `6 * 7`.
+2. Confirm that it appears in `ls()` and in your IDE's workspace view.
+3. Remove only `answer` with `rm()`.
+4. Confirm that it has disappeared.
+
+```{r}
+# TODO: create answer
+
+# TODO: inspect the workspace
+
+# TODO: remove answer
+
+# TODO: inspect the workspace again
+```
+:::
+
+## Install and load packages
+
+R packages add functions and datasets to R. Installation and loading are different operations:
+
+- `install.packages()` installs a package on your computer, usually **once**.
+- `library()` loads an installed package into the **current R session**.
+
+Install the tidyverse from the **R console**:
+
+```{r}
+#| eval: false
+install.packages("tidyverse")
+```
+
+Do not put package installation into code that should run every time you render an analysis. After installation, load the package in the document:
+
+```{r}
+library(tidyverse)
+```
+
+Check the installed version:
+
+```{r}
+packageVersion("tidyverse")
+```
+
+If you use **VS Code**, its R support also expects the `languageserver` package. Install it once from the console if necessary:
+
+```{r}
+#| eval: false
+install.packages("languageserver")
+```
+
+::: {.callout-tip}
+### Exercise: package help
+
+Open the help page for `read_csv()`:
+
+```{r}
+#| eval: false
+?read_csv
+```
+
+Find the argument used to specify how missing values are represented in an input file.
+:::
+
+## Work with a data frame
+
+A **data frame** represents rectangular tabular data: rows are observations and columns are variables.
+
+Create a small data frame:
+
+```{r}
+students <- data.frame(
+  name = c("Alex", "Bao", "Casey", "Dina", "Emil"),
+  study_hours = c(2.5, 4.0, 3.5, 5.5, 1.5),
+  score = c(68, 82, 76, 91, 61),
+  passed = c(TRUE, TRUE, TRUE, TRUE, FALSE)
+)
+
+students
+```
+
+Inspect its structure:
+
+```{r}
+class(students)
+str(students)
+dim(students)
+names(students)
+head(students)
+```
+
+The tidyverse can work directly with ordinary R data frames. It also commonly uses **tibbles**, which are modern data-frame subclasses.
+
+```{r}
+students_tbl <- as_tibble(students)
+
+class(students_tbl)
+is.data.frame(students_tbl)
+glimpse(students_tbl)
+```
+
+::: {.callout-tip}
+### Exercise: inspect the data
+
+Use R functions to answer the following questions:
+
+- How many rows does `students` have?
+- How many columns does it have?
+- What is the mean of `score`?
+- What are the values in the `name` column?
+
+```{r}
+# TODO: number of rows
+
+# TODO: number of columns
+
+# TODO: mean score
+
+# TODO: names of students
+```
+:::
+
+## Display a data frame in the IDE
+
+So far, you have inspected data by printing it in the console or in this document. Your IDE provides an **additional graphical data viewer**, which can be more convenient for browsing rows and columns in a table.
+
+Run this interactively rather than relying on it when rendering the document:
+
+```{r}
+#| eval: false
+View(students)
+```
+
+Depending on your IDE, you may also be able to open the data viewer by clicking the `students` object in the **Environment**, **Variables**, or **Workspace** view.
+
+Then try the following:
+
+```{r}
+head(students, 3)
+summary(students)
+glimpse(students)
+```
+
+::: {.callout-tip}
+### Exercise: compare three views
+
+Compare:
+
+1. printing `students`;
+2. `glimpse(students)`;
+3. your IDE's graphical data viewer.
+
+Which is most useful for quickly checking **values**, **column types**, and **larger tables**?
+:::
+
+## Work with files and relative paths
+
+Check the current working directory:
+
+```{r}
+getwd()
+```
+
+For this course, prefer opening the exercise folder as a project/workspace and using **relative paths** rather than changing the working directory with `setwd()`.
+
+Create a `data` directory if it does not already exist:
+
+```{r}
+dir.create("data", showWarnings = FALSE)
+```
+
+Save the data frame as a CSV file:
+
+```{r}
+write_csv(students, "data/students.csv")
+```
+
+Confirm that the file exists:
+
+```{r}
+file.exists("data/students.csv")
+```
+
+Find `students.csv` in the IDE's file browser. Open it and inspect the plain-text CSV representation.
+
+::: {.callout-tip}
+### Exercise: file versus memory
+
+At this point, `students` exists both:
+
+- as an object in the R session; and
+- as the file `data/students.csv` on disk.
+
+Remove the in-memory object:
+
+```{r}
+rm(students)
+ls()
+```
+
+Now check whether the file still exists:
+
+```{r}
+file.exists("data/students.csv")
+```
+
+Explain why the result is `TRUE` even though `students` no longer appears in `ls()`.
+:::
+
+## Load data from a file
+
+Read the CSV file back into memory with `read_csv()`:
+
+```{r}
+students <- read_csv("data/students.csv")
+```
+
+Inspect the result:
+
+```{r}
+students
+glimpse(students)
+class(students)
+is.data.frame(students)
+```
+
+Notice that `read_csv()` returns a **tibble**, and `is.data.frame(students)` is still `TRUE`.
+
+::: {.callout-tip}
+### Exercise: save a modified file
+
+Create a new object called `students_updated` in which every student receives 2 additional points. Then save it as `data/students_updated.csv`.
+
+Hints: use `mutate()` and `write_csv()`.
+
+```{r}
+# TODO: create students_updated
+
+# TODO: save it to data/students_updated.csv
+
+# TODO: confirm that the file exists
+```
+:::
+
+## Clean the workspace
+
+Remove one object:
+
+```{r}
+rm(students_tbl)
+```
+
+To remove **all user-created objects** from the current R session, you can run:
+
+```{r}
+#| eval: false
+rm(list = ls())
+```
+
+This affects objects in memory; it does not delete your `.qmd` file or CSV files.
+
+A stronger habit is to restart R regularly and verify that your analysis can be recreated from the saved code.
+
+::: {.callout-warning}
+### Do not rely on a saved workspace
+
+The durable record of your analysis should be your **code and data files**, not whatever happens to be present in memory. A clean R session helps reveal missing steps and hidden dependencies.
+:::
+
+## Final reproducibility check
+
+Complete this checkpoint at the end:
+
+1. Save this `.qmd` file.
+2. Restart the R session.
+3. Run `ls()` and confirm that your old objects are gone.
+4. Run the document again from the top.
+5. Confirm that `students` is recreated from `data/students.csv`.
+6. Confirm that your output file(s) exist in `data/`.
+7. Save the `.qmd` file and confirm that the HTML preview refreshes successfully.
+
+```{r}
+#| eval: false
+# Run interactively immediately after restarting R:
+ls()
+```
+
+::: {.callout-tip}
+### Optional challenge
+
+Without looking back at the earlier code, write the shortest sequence of commands that:
+
+1. loads the tidyverse;
+2. reads `data/students.csv`;
+3. displays the first three rows;
+4. lists the objects in memory;
+5. removes the loaded data frame again.
+
+```{r}
+# TODO
+```
+:::
+
+## Further learning and inspiration
+
+The structure and exercises above are also informed by these introductory R materials:
+
+- [RStudio User Guide: Get Started](https://docs.posit.co/ide/user/ide/get-started/) — IDE panes, packages, environment, projects, and a first analysis.
+- [Positron: First data analysis with R in a Quarto document](https://positron.posit.co/tutorial-get-started-quarto.html) — project setup, packages, Quarto, Variables pane, and Data Explorer.
+- [Visual Studio Code: R in Visual Studio Code](https://code.visualstudio.com/docs/languages/r) — R extension setup, R terminal, workspace viewer, data and plot viewers.
+- [R for Data Science (2e): Workflow — scripts and projects](https://r4ds.hadley.nz/workflow-scripts) — reproducible projects, relative paths, clean sessions, and scripts as the source of truth.
+- [Quarto: Computations with R](https://quarto.org/docs/get-started/computations/rstudio.html) — executable R code in `.qmd` documents and rendering workflows.
+- [Quarto: VS Code](https://quarto.org/docs/tools/vscode.html) — Quarto editing, preview, and code execution in VS Code.

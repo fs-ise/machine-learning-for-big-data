@@ -679,7 +679,10 @@ digraph CRISPDM {
 ::::
 
 ::: aside
-Alternative models include [KDD Process](https://de.wikipedia.org/wiki/Knowledge_Discovery_in_Databases), [SEMMA](https://en.wikipedia.org/wiki/SEMMA), or [TDSP](https://medium.com/analytics-vidhya/tdsp-data-science-lifecycle-for-artificial-intelligence-data-science-projects-4ac6e5b82db4).
+Alternative models include the [Data Science in R workflow](https://r4ds.hadley.nz/whole-game.html),
+the [KDD Process](https://de.wikipedia.org/wiki/Knowledge_Discovery_in_Databases),
+[SEMMA](https://en.wikipedia.org/wiki/SEMMA),
+or [TDSP](https://medium.com/analytics-vidhya/tdsp-data-science-lifecycle-for-artificial-intelligence-data-science-projects-4ac6e5b82db4).
 :::
 
 ## Foundations {data-state="hide-menubar"}
