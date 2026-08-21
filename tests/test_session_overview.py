@@ -28,7 +28,7 @@ class SessionOverviewTest(unittest.TestCase):
                         '    date: 2027-01-03',
                         "    start: '10:00'",
                         "    end: '11:30'",
-                        '    location: Room 1',
+                        '    location: Room 1. Room capacity: 30',
                         '    materials:',
                         '      - type: slides',
                         '        path: slides/session_01.html',
@@ -41,6 +41,8 @@ class SessionOverviewTest(unittest.TestCase):
 
         self.assertIn('[Session 1: Big Data](slides/session_01.html) <span class="event-badge event-badge-lecture">Lecture</span>', table)
         self.assertIn('| Status | Title | Date | Time | Location | Materials |', table)
+        self.assertIn('| 10:00–11:30 | Room 1 |', table)
+        self.assertNotIn('Room capacity', table)
 
 
 if __name__ == '__main__':
