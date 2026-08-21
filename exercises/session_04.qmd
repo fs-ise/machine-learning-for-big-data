@@ -47,6 +47,8 @@ Potential predictors include:
 - `manager_quality`: manager quality on a 1–5 scale
 - `department`: department (`Sales`, `IT`, `HR`)
 
+:::
+
 # Setup and dataset
 
 ## Load the dataset
@@ -89,8 +91,6 @@ This gives us a first answer to the question:
 > How is `remote_share` associated with performance when we control for other variables at the same time?
 
 This is useful because simple bivariate comparisons can be misleading. For example, employees with higher remote work shares may also differ in their department, training patterns, or salaries.
-
-:::
 
 ## Task A1: Fit a regression model with `scikit-learn`
 

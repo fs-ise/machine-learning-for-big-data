@@ -42,6 +42,30 @@ def test_variant_semantics_and_clean_wrappers() -> None:
     assert all(class_name not in text for text in variants.values() for class_name in (".direction", ".sol"))
 
 
+def test_canonical_shared_setup_survives_in_both_variants() -> None:
+    """Guard representative setup that solution chunks consume after filtering."""
+    root = Path(__file__).resolve().parents[1]
+    cases = {
+        "session_02.qmd": (
+            'customer_df = pd.read_csv("data/messy_customer_data.csv")',
+            "customer_df.describe()",
+        ),
+        "session_04.qmd": (
+            'df = pd.read_csv("data/employee_performance_data.csv")',
+            "df_model = pd.get_dummies(df",
+        ),
+    }
+
+    for filename, (setup, use) in cases.items():
+        source = (root / "exercises" / filename).read_text(encoding="utf-8")
+        for variant in VARIANTS:
+            generated = sanitize(source, variant, filename=filename)
+            assert setup in generated
+            if variant == "solution":
+                assert use in generated
+                assert generated.index(setup) < generated.index(use)
+
+
 def test_chunks_and_unrelated_nested_divs_are_preserved() -> None:
     chunk = "```{r}\n#| eval: false\nx <- c(1, 2)  # unchanged\nmean(x)\n```\n"
     assert chunk in sanitize(SOURCE, "assign")

@@ -632,8 +632,8 @@ Dataset `messy_customer_data.csv`
 #| output: false
 
 import pandas as pd
-customers_df = pd.read_csv("data/messy_customer_data.csv")
-customers_df.head()
+customer_df = pd.read_csv("data/messy_customer_data.csv")
+customer_df.head()
 ```
 
 <div class="cell-output cell-output-display">
@@ -854,7 +854,6 @@ In this part, move from **detecting problems** to **making the dataset analysis-
 ```{python}
 #| output: false
 
-customer_df = pd.read_csv("data/messy_customer_data.csv")
 customer_df.info()
 ```
 

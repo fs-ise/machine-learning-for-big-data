@@ -7,9 +7,9 @@ SLIDES_DIR := $(OUT_DIR)/slides
 SLIDES_QMD := $(shell find $(SRC_SLIDES_DIR) -type f -name '*.qmd' 2>/dev/null)
 SLIDES_HTML := $(patsubst $(SRC_SLIDES_DIR)/%.qmd,$(SLIDES_DIR)/%.html,$(SLIDES_QMD))
 SLIDES_PDF := $(SLIDES_HTML:.html=.pdf)
-.PHONY: help site site-fast pdfs decktape-image exercises exercises-generate exercises-render all sync-events clean
+.PHONY: help site site-fast pdfs decktape-image exercises exercises-generate exercises-render exercises-check all sync-events clean
 help:
-	@echo "Targets: site, pdfs, exercises-generate, exercises-render, exercises, all, sync-events, clean"
+	@echo "Targets: site, pdfs, exercises-generate, exercises-render, exercises, exercises-check, all, sync-events, clean"
 	@echo "Exercises: canonical QMD -> _generated/exercises variant QMD -> _site/exercises HTML and QMD"
 site-fast:
 	$(QUARTO) render --no-clean
@@ -25,6 +25,16 @@ exercises-render: exercises-generate
 	@cp _generated/exercises/*_assign.qmd _site/exercises/
 	@cp _generated/exercises/*_solution.qmd _site/exercises/
 exercises: exercises-render
+exercises-check: exercises-generate
+	@set -eu; \
+		cd _generated/exercises; \
+		for exercise in session_*_assign.qmd session_*_solution.qmd; do \
+			echo "Rendering $$exercise"; \
+			$(QUARTO) render "$$exercise" --to html --no-clean || { \
+				echo "Exercise render failed: $$exercise" >&2; \
+				exit 1; \
+			}; \
+		done
 pdfs: $(SLIDES_PDF)
 decktape-image: Dockerfile
 	docker build --tag $(DOCKER_IMAGE) .
