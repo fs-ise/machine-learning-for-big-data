@@ -10,7 +10,6 @@ project:
   resources:
     - "images/cover_slide/*.png"
     - course.yml
-    - data/**
 metadata-files:
   - course.yml
 website:

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Literal
@@ -13,10 +14,12 @@ VARIANTS: tuple[Variant, ...] = ("assign", "solution")
 SEMANTIC_CLASSES = frozenset({"direction", "sol"})
 PROJECT_CONFIG = """project:
   type: default
-  output-dir: ../../_site/exercises
+  output-dir: _rendered
   render:
     - "session_*_assign.qmd"
     - "session_*_solution.qmd"
+  resources:
+    - "data/**"
 
 format:
   html: default
@@ -108,6 +111,11 @@ def build(root: Path) -> list[Path]:
     exercises = root / "exercises"
     destination = root / "_generated" / "exercises"
     destination.mkdir(parents=True, exist_ok=True)
+    generated_data = destination / "data"
+    shutil.rmtree(generated_data, ignore_errors=True)
+    source_data = exercises / "data"
+    if source_data.is_dir():
+        shutil.copytree(source_data, generated_data)
     (destination / "_quarto.yml").write_text(PROJECT_CONFIG, encoding="utf-8", newline="")
     sources = sorted(exercises.glob("session_*.qmd"))
     expected: set[Path] = set()

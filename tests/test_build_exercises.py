@@ -63,39 +63,57 @@ def test_malformed_semantic_div_fails_clearly(source: str) -> None:
 def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path: Path) -> None:
     exercises = tmp_path / "exercises"
     exercises.mkdir()
+    data = exercises / "data"
+    data.mkdir()
+    fixture = data / "market_data_log.csv"
+    fixture.write_text("price\n42\n", encoding="utf-8")
     canonical = exercises / "session_01.qmd"
     canonical.write_text(SOURCE, encoding="utf-8")
     original = canonical.read_bytes()
     build(tmp_path)
     generated = tmp_path / "_generated/exercises"
     assert (generated / "_quarto.yml").read_text(encoding="utf-8") == PROJECT_CONFIG
-    first = {path.name: path.read_bytes() for path in generated.iterdir()}
+    assert "output-dir: _rendered" in PROJECT_CONFIG
+    assert (generated / "data/market_data_log.csv").read_bytes() == fixture.read_bytes()
+    first = {
+        path.relative_to(generated): path.read_bytes()
+        for path in generated.rglob("*")
+        if path.is_file()
+    }
     stale = generated / "session_99_assign.qmd"
     stale.write_text("stale")
     old_variant = generated / "session_01_old.qmd"
     old_variant.write_text("legacy")
+    (generated / "data/stale.csv").write_text("stale", encoding="utf-8")
     build(tmp_path)
-    second = {path.name: path.read_bytes() for path in generated.iterdir()}
+    second = {
+        path.relative_to(generated): path.read_bytes()
+        for path in generated.rglob("*")
+        if path.is_file()
+    }
     assert first == second
     assert canonical.read_bytes() == original
     assert not stale.exists()
     assert not old_variant.exists()
 
 
-def test_make_build_writes_variant_html_directly_to_site(tmp_path: Path) -> None:
+def test_make_build_publishes_rendered_variants_and_data(tmp_path: Path) -> None:
     """Exercise the real Make targets with a minimal Quarto stand-in."""
     root = Path(__file__).resolve().parents[1]
     (tmp_path / "scripts").mkdir()
     (tmp_path / "exercises").mkdir()
+    (tmp_path / "exercises/data").mkdir()
     shutil.copy(root / "Makefile", tmp_path / "Makefile")
     shutil.copy(root / "_quarto.yml", tmp_path / "_quarto.yml")
     shutil.copy(root / "scripts/build_exercises.py", tmp_path / "scripts/build_exercises.py")
     (tmp_path / "exercises/session_01.qmd").write_text(SOURCE, encoding="utf-8")
+    (tmp_path / "exercises/data/market_data_log.csv").write_text("price\n42\n", encoding="utf-8")
 
     quarto = tmp_path / "fake_quarto.py"
     quarto.write_text(
         """#!/usr/bin/env python3
 import sys
+import shutil
 from pathlib import Path
 
 args = sys.argv[1:]
@@ -106,10 +124,13 @@ if len(args) > 1 and args[1] == "_generated/exercises":
     assert args[args.index("--to") + 1] == "html"
     project = Path(args[1])
     assert (project / "_quarto.yml").exists()
-    output_dir = Path("_site/exercises")
+    assert "output-dir: _rendered" in (project / "_quarto.yml").read_text(encoding="utf-8")
+    assert (project / "data/market_data_log.csv").exists()
+    output_dir = project / "_rendered"
     output_dir.mkdir(parents=True, exist_ok=True)
     for source in project.glob("session_*_*.qmd"):
         (output_dir / source.with_suffix(".html").name).write_text("rendered", encoding="utf-8")
+    shutil.copytree(project / "data", output_dir / "data")
 else:
     config = Path("_quarto.yml").read_text(encoding="utf-8")
     site = Path("_site")
@@ -141,11 +162,14 @@ else:
     ]
     published = tmp_path / "_site/exercises"
     assert sorted(path.name for path in published.iterdir()) == [
+        "data",
         "session_01_assign.html",
         "session_01_assign.qmd",
         "session_01_solution.html",
         "session_01_solution.qmd",
     ]
+    assert (published / "data/market_data_log.csv").read_text(encoding="utf-8") == "price\n42\n"
+    assert (tmp_path / "_generated/exercises/_rendered/session_01_assign.html").exists()
     assert not (tmp_path / "_site/exercises/generated").exists()
     assert not (tmp_path / "_site/exercises/_quarto.yml").exists()
     assert not (tmp_path / "_site/exercises/session_01.html").exists()
@@ -164,9 +188,11 @@ def test_real_quarto_project_render_smoke(tmp_path: Path) -> None:
     root = Path(__file__).resolve().parents[1]
     (tmp_path / "scripts").mkdir()
     (tmp_path / "exercises").mkdir()
+    (tmp_path / "exercises/data").mkdir()
     shutil.copy(root / "Makefile", tmp_path / "Makefile")
     shutil.copy(root / "scripts/build_exercises.py", tmp_path / "scripts/build_exercises.py")
     (tmp_path / "exercises/session_01.qmd").write_text(SOURCE, encoding="utf-8")
+    (tmp_path / "exercises/data/market_data_log.csv").write_text("price\n42\n", encoding="utf-8")
 
     subprocess.run(
         ["make", "exercises", f"PYTHON={sys.executable}"],
@@ -174,8 +200,11 @@ def test_real_quarto_project_render_smoke(tmp_path: Path) -> None:
         check=True,
     )
     assert sorted(path.name for path in (tmp_path / "_site/exercises").iterdir()) == [
+        "data",
         "session_01_assign.html",
         "session_01_assign.qmd",
         "session_01_solution.html",
         "session_01_solution.qmd",
     ]
+    assert (tmp_path / "_generated/exercises/_rendered/session_01_assign.html").exists()
+    assert (tmp_path / "_site/exercises/data/market_data_log.csv").exists()

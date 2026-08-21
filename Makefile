@@ -21,6 +21,7 @@ exercises-generate:
 exercises-render: exercises-generate
 	$(QUARTO) render _generated/exercises --to html --no-clean
 	@mkdir -p _site/exercises
+	@cp -R _generated/exercises/_rendered/. _site/exercises/
 	@cp _generated/exercises/*_assign.qmd _site/exercises/
 	@cp _generated/exercises/*_solution.qmd _site/exercises/
 exercises: exercises-render
