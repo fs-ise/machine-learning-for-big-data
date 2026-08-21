@@ -3,7 +3,6 @@ title: "Session 8: ML for Non-Tabular Data (Text)"
 session_id: session-08
 format:
   html: default
-  ipynb: default
 ---
 
 ::: {.direction}

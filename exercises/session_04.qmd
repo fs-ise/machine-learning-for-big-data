@@ -3,7 +3,6 @@ title: "Session 4: ML Baselines (Regression)"
 session_id: session-04
 format:
   html: default
-  ipynb: default
 ---
 
 :::{.direction}

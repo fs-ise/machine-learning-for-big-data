@@ -7,6 +7,7 @@ __pycache__/
 *.py[cod]
 .server.pid
 .cache/
+_generated/
 
 /.quarto/
 **/*.quarto_ipynb

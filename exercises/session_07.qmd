@@ -3,7 +3,6 @@ title: "Session 7: ML Foundations (Algorithms)"
 session_id: session-07
 format:
   html: default
-  ipynb: default
 ---
 
 ::: {.callout-warning title="Development status"}

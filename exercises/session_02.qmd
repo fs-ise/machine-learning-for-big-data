@@ -3,7 +3,6 @@ title: "Session 2: Data Preparation"
 session_id: session-02
 format:
   html: default
-  ipynb: default
 ---
 
 :::{.direction}

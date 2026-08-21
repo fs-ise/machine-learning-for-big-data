@@ -1,9 +1,16 @@
 project:
   type: website
   output-dir: _site
+  render:
+    - "*.qmd"
+    - "slides/*.qmd"
+    - "notes/*.qmd"
+    - "optional/*.qmd"
+    - "!exercises/**"
   resources:
     - "images/cover_slide/*.png"
     - course.yml
+    - data/**
 metadata-files:
   - course.yml
 website:

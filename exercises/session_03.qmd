@@ -3,7 +3,6 @@ title: "Session 3: EDA"
 session_id: session-03
 format:
   html: default
-  ipynb: default
 ---
 
 :::{.direction}

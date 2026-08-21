@@ -167,6 +167,8 @@ Also find these objects in your IDE's **Environment**, **Variables**, or **Works
 3. Remove only `answer` with `rm()`.
 4. Confirm that it has disappeared.
 
+
+
 ```{r}
 # TODO: create answer
 
