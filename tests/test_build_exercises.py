@@ -47,12 +47,12 @@ def test_canonical_shared_setup_survives_in_both_variants() -> None:
     root = Path(__file__).resolve().parents[1]
     cases = {
         "session_02.qmd": (
-            'customer_df = pd.read_csv("data/messy_customer_data.csv")',
-            "customer_df.describe()",
+            'customer_df <- read_csv(',
+            "summary(customer_df)",
         ),
         "session_04.qmd": (
-            'df = pd.read_csv("data/employee_performance_data.csv")',
-            "df_model = pd.get_dummies(df",
+            'df <- read_csv(',
+            "model <- lm(",
         ),
     }
 

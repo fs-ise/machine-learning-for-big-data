@@ -7,7 +7,7 @@ format:
 
 :::{.direction}
 
-In this notebook, we cover:
+In this exercise, we cover:
 
 | Exercise part | Time (min) |
 |---|---:|
@@ -15,101 +15,27 @@ In this notebook, we cover:
 | [Wrap-up](#wrap-up) | 10 |
 | **Overall** | **35** |
 
-This exercise preserves the available EDA component of the imported exercise. Work through the tasks in Python and compare your work with the solution.
+Work directly in this Quarto (`.qmd`) exercise using R in RStudio, Positron, or VS Code. Work through the tasks in R and compare your work with the solution.
 
 :::
 
-# Part 4: EDA: Clustering <a id="clustering"></a>
+# EDA: Clustering <a id="clustering"></a>
 
 Now that the data is structured and cleaned, we explore whether companies group into similar patterns.
 Clustering helps us move from preparation to insight generation: instead of looking at firms one by one, we ask whether there are recurring profiles in the data.
 
 Dataset: `firm_data.csv`
 
-```{python}
+```{r}
 #| output: false
 
-import pandas as pd
-firm_data_df = pd.read_csv("data/firm_data.csv")
-firm_data_df.head()
-```
+library(tidyverse)
 
-<div class="cell-output cell-output-display">
-<div>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">company_id</th>
-<th data-quarto-table-cell-role="th">sector</th>
-<th data-quarto-table-cell-role="th">revenue</th>
-<th data-quarto-table-cell-role="th">profit_margin</th>
-<th data-quarto-table-cell-role="th">growth_rate</th>
-<th data-quarto-table-cell-role="th">debt_ratio</th>
-<th data-quarto-table-cell-role="th">market_cap</th>
-<th data-quarto-table-cell-role="th">rd_intensity</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>FIRM-0095</td>
-<td>Healthcare</td>
-<td>2117.569743</td>
-<td>13.382162</td>
-<td>6.053507</td>
-<td>0.555974</td>
-<td>12426.889897</td>
-<td>3.308879</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>FIRM-0015</td>
-<td>Healthcare</td>
-<td>457.538045</td>
-<td>10.139487</td>
-<td>21.504950</td>
-<td>0.350252</td>
-<td>5779.074618</td>
-<td>8.710809</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>FIRM-0030</td>
-<td>Industry</td>
-<td>463.847307</td>
-<td>4.131422</td>
-<td>13.237034</td>
-<td>0.356084</td>
-<td>4451.965515</td>
-<td>15.719744</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
-<td>FIRM-0158</td>
-<td>Finance</td>
-<td>347.980562</td>
-<td>9.573304</td>
-<td>16.117482</td>
-<td>0.472141</td>
-<td>3256.609038</td>
-<td>31.989645</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
-<td>FIRM-0128</td>
-<td>Tech</td>
-<td>804.239654</td>
-<td>0.165357</td>
-<td>-3.346796</td>
-<td>0.761088</td>
-<td>1825.004761</td>
-<td>2.082579</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+firm_data_df <- read_csv("data/firm_data.csv", show_col_types = FALSE)
+
+firm_data_df |>
+  slice_head(n = 5)
+```
 
 :::{.direction}
 
@@ -118,53 +44,63 @@ firm_data_df.head()
 ### 1. Prepare the data for clustering
 
 We decide to use `profit_margin` and `rd_intensity` to cluster firms.
-In a first step, create a dataframe `X` consisting of values for these two variables:
+In a first step, create a data frame `X` containing these two variables:
 
-```{python}
-import pandas as pd
+```{r}
+X <- firm_data_df |>
+  select(profit_margin, rd_intensity)
 
-df_firm_data = pd.read_csv("data/firm_data.csv")
-
-# Your solution (in Jupyter notebook)
-
-# Print X at the end
+# Print X at the end.
+X
 ```
 
 Before clustering, do a quick exploratory check so you know what kind of patterns you are looking for.
 
-```{python}
-#| eval: false
-X.describe()
+```{r}
+summary(X)
 ```
 
-```{python}
-#| eval: false
-df_firm_data[["profit_margin", "rd_intensity"]].hist(figsize=(6, 3))
+```{r}
+X |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "value"
+  ) |>
+  ggplot(aes(x = value)) +
+  geom_histogram(bins = 30) +
+  facet_wrap(~ variable, scales = "free") +
+  labs(
+    x = NULL,
+    y = "Count"
+  )
 ```
 
-Considering that k-means is sensitive to different measurement scale, we need to standardize the values.
-This ensures that they have approximately equal influence on the clusters.
+Considering that k-means is sensitive to different measurement scales, we need to standardize the values.
+This ensures that they have approximately equal influence on the clusters. Base R's `scale()` centers each variable around zero and scales it to unit standard deviation.
 
 Run the following code and observe how the scale of both variables changes:
 
-```{python}
-#| eval: false
-from sklearn.preprocessing import StandardScaler
-
-scaler = StandardScaler()
-X = scaler.fit_transform(X)
-X
+```{r}
+X_scaled <- scale(X)
+head(X_scaled)
 ```
 
-Before running a clustering algorithm, let's view the data in a scatterplot:
+Before running a clustering algorithm, view the standardized data in a scatterplot:
 
-```{python}
-#| eval: false
-import matplotlib.pyplot as plt
+```{r}
+X_scaled_df <- as.data.frame(X_scaled)
 
-plt.scatter(X[:, 0], X[:, 1], s=10)
-plt.title("Raw data (no clustering)")
-plt.show()
+ggplot(
+  X_scaled_df,
+  aes(x = profit_margin, y = rd_intensity)
+) +
+  geom_point() +
+  labs(
+    title = "Standardized data (no clustering)",
+    x = "Profit margin (scaled)",
+    y = "R&D intensity (scaled)"
+  )
 ```
 
 How many clusters would you expect?
@@ -172,61 +108,41 @@ Briefly justify your answer based on the plot.
 
 <br>
 
-
-### 2. Apply K-Means clustering
+### 2. Apply k-means clustering
 
 * Next, run the k-means clustering algorithm for different values of `k`.
 
-```{python}
-#| eval: false
-from sklearn.cluster import KMeans
-
-# Your solution (in Jupyter notebook)
-# Note: consider the names of variables and objects used in the rest of the code
-
-# Run the whole code cell to fit KMeans and plot it
-plt.figure(figsize=(3.6, 2.8))
-plt.scatter(X[:, 0], X[:, 1], c=labels, s=10)
-plt.scatter(
-    kmeans.cluster_centers_[:, 0],
-    kmeans.cluster_centers_[:, 1],
-    c='red', marker='x', s=60, linewidth=2
-)
-plt.title(f"k={k}", fontsize=10)
-plt.xticks([])
-plt.yticks([])
-plt.tight_layout()
-plt.show()
+```{r}
+# Add your solution below. Try values from 2 to 10.
+# Remember that kmeans() expects centers = k.
 ```
 
-* Try different values of K (e.g., 2–10). Which number of clusters seems appropriate?
-
+* Try different values of `k` (e.g., 2–10). Which number of clusters seems appropriate?
 
 {{< pagebreak >}}
 
 ### 3. Add cluster labels to the dataset
 
-* Assign the cluster labels returned by the k-means algorithm to the original dataframe (`df_firm_data`).
+* Assign the cluster labels returned by `kmeans()` to the original data frame (`firm_data_df`).
 
-```{python}
-# Your solution (in Jupyter notebook)
+```{r}
+# Add your solution below.
 ```
 
 ---
 
-### 4. Create grouped box plots
+### 4. Create grouped boxplots
 
-* Generate a box plot, grouped according to the clusters, to compare differences in `revenue`.
-* Try to complete the task relying only on the [documentation for box plots in pandas](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.boxplot.html).
+* Generate a boxplot, grouped according to the clusters, to compare differences in `revenue`.
+* Try to complete the task using the [`ggplot2` boxplot documentation](https://ggplot2.tidyverse.org/reference/geom_boxplot.html).
 
-```{python}
-import matplotlib.pyplot as plt
-
-# Your solution (in Jupyter notebook)
+```{r}
+# Add your solution below.
 ```
 
-:::
+* What do the revenue distributions tell you about the firm profiles represented by the clusters?
 
+:::
 
 :::{.sol}
 
@@ -236,24 +152,34 @@ import matplotlib.pyplot as plt
 
 We use only `profit_margin` and `rd_intensity` for clustering:
 
-```{python}
-import pandas as pd
+```{r}
+X <- firm_data_df |>
+  select(profit_margin, rd_intensity)
 
-df_firm_data = pd.read_csv("data/firm_data.csv")
-
-X = df_firm_data[["profit_margin", "rd_intensity"]]
-
-X.head()
+X |>
+  slice_head(n = 5)
 ```
 
 #### Exploratory check
 
-```{python}
-X.describe()
+```{r}
+summary(X)
 ```
 
-```{python}
-df_firm_data[["profit_margin", "rd_intensity"]].hist(figsize=(6, 3))
+```{r}
+X |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "value"
+  ) |>
+  ggplot(aes(x = value)) +
+  geom_histogram(bins = 30) +
+  facet_wrap(~ variable, scales = "free") +
+  labs(
+    x = NULL,
+    y = "Count"
+  )
 ```
 
 These summaries and histograms help us understand the distribution and scale of the variables.
@@ -262,26 +188,28 @@ These summaries and histograms help us understand the distribution and scale of 
 
 #### Standardization
 
-Since k-means is sensitive to scale differences, we standardize the variables:
+Since k-means is sensitive to scale differences, we standardize the variables. `scale()` centers each variable around zero and scales it to unit standard deviation.
 
-```{python}
-from sklearn.preprocessing import StandardScaler
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-X_scaled[:3]
+```{r}
+X_scaled <- scale(X)
+head(X_scaled)
 ```
 
 #### Scatterplot (before clustering)
 
-```{python}
-import matplotlib.pyplot as plt
+```{r}
+X_scaled_df <- as.data.frame(X_scaled)
 
-plt.figure(figsize=(5, 3))
-plt.scatter(X_scaled[:, 0], X_scaled[:, 1], s=10)
-plt.title("Standardized data (no clustering)")
-plt.xlabel("profit_margin (scaled)")
-plt.ylabel("rd_intensity (scaled)")
-plt.show()
+ggplot(
+  X_scaled_df,
+  aes(x = profit_margin, y = rd_intensity)
+) +
+  geom_point() +
+  labs(
+    title = "Standardized data (no clustering)",
+    x = "Profit margin (scaled)",
+    y = "R&D intensity (scaled)"
+  )
 ```
 
 **Interpretation:**
@@ -289,29 +217,50 @@ From the scatterplot, we might expect a small number of clusters (e.g., 3–5), 
 
 {{< pagebreak >}}
 
-### 2. Apply K-Means clustering
+### 2. Apply k-means clustering
 
-We try different values of `k` and visually inspect the cluster structure:
+We try different values of `k` and visually inspect the cluster structure. Setting `nstart = 25` makes the result less sensitive to a single random initialization.
 
-```{python}
-from sklearn.cluster import KMeans
+```{r}
+for (k in 2:10) {
+  set.seed(42)
+  km <- kmeans(
+    X_scaled,
+    centers = k,
+    nstart = 25
+  )
 
-for k in range(2, 7):
-    kmeans = KMeans(n_clusters=k, random_state=42)
-    labels = kmeans.fit_predict(X_scaled)
+  cluster_plot_data <- X_scaled_df |>
+    mutate(cluster = factor(km$cluster))
 
-    plt.figure(figsize=(3.6, 2.8))
-    plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=labels, s=10)
-    plt.scatter(
-        kmeans.cluster_centers_[:, 0],
-        kmeans.cluster_centers_[:, 1],
-        c="red", marker="x", s=60, linewidth=2
+  centers <- as.data.frame(km$centers)
+
+  cluster_plot <- ggplot(
+    cluster_plot_data,
+    aes(
+      x = profit_margin,
+      y = rd_intensity,
+      color = cluster
     )
-    plt.title(f"k={k}", fontsize=10)
-    plt.xticks([])
-    plt.yticks([])
-    plt.tight_layout()
-    plt.show()
+  ) +
+    geom_point() +
+    geom_point(
+      data = centers,
+      aes(x = profit_margin, y = rd_intensity),
+      inherit.aes = FALSE,
+      shape = 4,
+      size = 4,
+      stroke = 1.5
+    ) +
+    labs(
+      title = paste("k =", k),
+      x = "Profit margin (scaled)",
+      y = "R&D intensity (scaled)",
+      color = "Cluster"
+    )
+
+  print(cluster_plot)
+}
 ```
 
 **Conclusion:**
@@ -321,40 +270,48 @@ A value around **k = 4** appears to provide a reasonable balance between simplic
 
 ### 3. Add cluster labels to the dataset
 
-We now fit the final model and store the cluster labels:
+We now fit the final model reproducibly and store the cluster labels as a factor because they represent categories rather than quantities:
 
-```{python}
-k = 4
-kmeans = KMeans(n_clusters=k, random_state=42)
-labels = kmeans.fit_predict(X_scaled)
+```{r}
+set.seed(42)
 
-df_firm_data["cluster"] = labels
+k <- 4
+km <- kmeans(
+  X_scaled,
+  centers = k,
+  nstart = 25
+)
 
-df_firm_data.head()
+firm_data_df <- firm_data_df |>
+  mutate(cluster = factor(km$cluster))
+
+firm_data_df |>
+  slice_head(n = 5)
 ```
 
 {{< pagebreak >}}
 
-### 4. Create grouped box plots
+### 4. Create grouped boxplots
 
 We compare `revenue` across clusters:
 
-```{python}
-import matplotlib.pyplot as plt
-
-df_firm_data.boxplot(column="revenue", by="cluster")
-plt.title("Revenue by Cluster")
-plt.suptitle("")
-plt.xlabel("Cluster")
-plt.ylabel("Revenue")
-plt.show()
+```{r}
+ggplot(
+  firm_data_df,
+  aes(x = cluster, y = revenue)
+) +
+  geom_boxplot() +
+  labs(
+    title = "Revenue by cluster",
+    x = "Cluster",
+    y = "Revenue"
+  )
 ```
 
 **Interpretation:**
-The box plots reveal how revenue differs across clusters, helping to characterize the identified firm profiles.
+The boxplots reveal how revenue differs across clusters, helping to characterize the identified firm profiles.
 
 :::
-
 
 :::{.direction}
 
@@ -364,9 +321,9 @@ The box plots reveal how revenue differs across clusters, helping to characteriz
 
 ## Wrap-up <a id="wrap-up"></a>
 
-🎉🎈 You have completed the notebook - good work! 🎈🎉
+🎉🎈 You have completed the exercise—good work! 🎈🎉
 
-In this notebook, we have learned to
+In this exercise, we have learned to
 
 * Explore variable distributions and relationships
 * Prepare selected variables for clustering

@@ -1,10 +1,10 @@
 ---
-title: "Session 9: Deployment in Organizations"
+title: "Session 9B Supplement: Deployment in Organizations"
 session_id: session-09-deployment
 format: html
 ---
 
-In this **group-project scaffold**, your group will analyze how analytics contributes to strategic objectives in an organization. You will identify where analytics enters concrete business processes, which decisions it supports or automates, what data and systems are needed, and how the organization learns from outcomes.
+This is a **supplemental group-project scaffold**, not a separate scheduled programming exercise. It accompanies the organizational deployment component of Session 9. Your group will analyze how analytics contributes to strategic objectives in an organization. You will identify where analytics enters concrete business processes, which decisions it supports or automates, what data and systems are needed, and how the organization learns from outcomes.
 
 Your group will develop an **Analytics-Enabled Strategy Map** for one selected company. Retain the map as a scaffold for your later group-project work.
 
@@ -46,9 +46,9 @@ Official strategic metrics may not be publicly available. If necessary, infer pl
 
 ## 3. Research the deployment {#research}
 
-Use at least **three credible public sources**, such as annual reports, investor presentations, engineering or research blogs, transparency reports, product documentation, regulatory documents, high-quality journalism, or academic case studies.
+Use at least **three credible public sources**. Prioritize primary sources such as official annual reports, investor presentations, corporate engineering or research publications, transparency reports, product documentation, and regulatory filings. Complement them where necessary with regulatory documents, peer-reviewed research, academic case studies, or high-quality journalism.
 
-A useful starting point is this [overview of engineering blogs](https://medium.com/developersglobal/top-20-tech-blogs-every-developer-should-follow-598ff45b477d).
+Start with the selected company's official investor-relations, engineering/research, and transparency or governance pages. Record the publication date, authoring organization, and whether each statement is direct evidence or your group's interpretation.
 
 For each source, ask:
 

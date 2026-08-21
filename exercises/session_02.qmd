@@ -7,28 +7,24 @@ format:
 
 :::{.direction}
 
-In this notebook, we cover:
+In this exercise, we cover:
 
 | Exercise part                          | Time (min) |
 |----------------------------------------|------------|
 | [Data structuring 1](#structuring_1)   |     15     |
 | [Data structuring 2](#structuring_2)  |     20     |
 | [Data cleansing](#cleansing)           |     20     |
-| [EDA: Clustering](#clustering)         |     25     |
 | [Wrap-up](#wrap-up)                    |     10     |
-| Overall                                |     90     |
+| Overall                                |     65     |
 
 <br>
 
 > **Recommended workflow:**
 >
-> 1. ✏️ **Think & plan first:** In the **PDF**, draft your answers and outline the transformation steps before coding
-> 2. 💻 **Then code:** Implement your solution in the **Jupyter Notebook**
+> 1. ✏️ **Think & plan first:** Draft your answers and outline the transformation steps before coding.
+> 2. 💻 **Then code:** Work directly in this Quarto (`.qmd`) exercise using R in RStudio, Positron, or VS Code.
 >
-> **The Jupyter Notebook is available in the Codespace (repository) here:**
-> [https://github.com/fs-ise/analytics-and-big-data-notebooks](https://github.com/fs-ise/analytics-and-big-data-notebooks)
->
-> For the `pandas` library, refer to [this cheat sheet](https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf).
+> For data transformation guidance, refer to the [tidyr documentation](https://tidyr.tidyverse.org/).
 
 {{< pagebreak >}}
 
@@ -38,12 +34,13 @@ In this notebook, we cover:
 
 We start with the `market_data_log.csv` dataset.
 
-```{python}
+```{r}
 #| output: false
 
-import pandas as pd
-market_data_log_df = pd.read_csv("data/market_data_log.csv")
-market_data_log_df.head()
+library(tidyverse)
+
+market_data_log_df <- read_csv("data/market_data_log.csv", show_col_types = FALSE)
+market_data_log_df |> head()
 ```
 
 <div class="cell-output cell-output-display">
@@ -176,15 +173,13 @@ market_data_log_df.head()
 
 <br><br><br><br>
 
-4. **(Optional challenge)**: Implement the transformation in Python (`pandas`)
+4. **(Optional challenge)**: Implement the transformation in R (`tidyverse`)
 
-```{python}
-import pandas as pd
+```{r}
+market_data_df <- read_csv("data/market_data_log.csv", show_col_types = FALSE)
 
-market_data_df = pd.read_csv("data/market_data_log.csv")
-
-# Your solution (in Jupyter notebook)
-# Note: you may need string operations
+# Add your solution below.
+# Note: you may need string operations.
 ```
 
 {{< iconify fluent-mdl2:insights >}} If you didn’t get to this part in class, try working through it at home.
@@ -279,33 +274,25 @@ market_data_df = pd.read_csv("data/market_data_log.csv")
 
 ---
 
-### 4. (Optional challenge): Implement the transformation in Python (`pandas`)
+### 4. (Optional challenge): Implement the transformation in R (`tidyverse`)
 
-```{python}
-import pandas as pd
+```{r}
+market_data_df <- read_csv("data/market_data_log.csv", show_col_types = FALSE)
 
-# Load data
-market_data_df = pd.read_csv("data/market_data_log.csv")
+# Split the values encoded in Record into separate variables.
+market_data_long <- market_data_df |>
+  separate_wider_delim(
+    Record,
+    delim = "-",
+    names = c("Firm", "Country", "Sector", "Period", "Metric", "Value")
+  )
 
-# Split encoded column
-split_cols = market_data_df["Record"].str.split("-", expand=True)
-split_cols.columns = ["Firm", "Country", "Sector", "Period", "Metric", "Value"]
+# Give each metric its own column.
+df_wide <- market_data_long |>
+  pivot_wider(names_from = Metric, values_from = Value) |>
+  mutate(across(c(MarketCap, Revenue, EBITDA), parse_number))
 
-# Combine with original dataframe
-df = pd.concat([market_data_df, split_cols], axis=1)
-
-# Pivot to wide format
-df_wide = (
-    df.pivot_table(
-        index=["timestamp", "logger_sys", "Firm", "Country", "Sector", "Period"],
-        columns="Metric",
-        values="Value",
-        aggfunc="first"
-    )
-    .reset_index()
-)
-
-df_wide.head()
+df_wide |> head()
 ```
 
 :::
@@ -319,12 +306,11 @@ df_wide.head()
 
 Dataset `sales_data_channels_full_year.csv`
 
-```{python}
+```{r}
 #| output: false
 
-import pandas as pd
-sales_data_df = pd.read_csv("data/sales_data_channels_full_year.csv")
-sales_data_df.head()
+sales_data_df <- read_csv("data/sales_data_channels_full_year.csv", show_col_types = FALSE)
+sales_data_df |> head()
 ```
 
 <div class="cell-output cell-output-display">
@@ -552,14 +538,12 @@ sales_data_df.head()
 
 <br><br><br>
 
-4. **(Optional challenge)**: Implement the transformation in Python (`pandas`)
+4. **(Optional challenge)**: Implement the transformation in R (`tidyverse`)
 
-```{python}
-import pandas as pd
+```{r}
+sales_data_df <- read_csv("data/sales_data_channels_full_year.csv", show_col_types = FALSE)
 
-market_data_df = pd.read_csv("data/market_data_log.csv")
-
-# Your solution (in Jupyter notebook)
+# Add your solution below.
 ```
 
 {{< iconify fluent-mdl2:insights >}} In addition to the transformation, you may need string operations
@@ -593,29 +577,26 @@ market_data_df = pd.read_csv("data/market_data_log.csv")
 - Reshape (wide → long): Convert all monthly/channel columns into two columns
 - Split the combined column (Month, Channel)
 
-### 4. (Optional challenge): Implement the transformation in Python (`pandas`)
+### 4. (Optional challenge): Implement the transformation in R (`tidyverse`)
 
+```{r}
+sales_data_df <- read_csv("data/sales_data_channels_full_year.csv", show_col_types = FALSE)
 
-```{python}
-import pandas as pd
+# Step 1: reshape the month/channel columns to long format.
+tidy_df <- sales_data_df |>
+  pivot_longer(
+    cols = -c(Customer_ID, Region),
+    names_to = "Month_Channel",
+    values_to = "Sales"
+  ) |>
+  # Step 2: split the combined column into Month and Channel.
+  separate_wider_delim(
+    Month_Channel,
+    delim = "_",
+    names = c("Month", "Channel")
+  )
 
-# Load data
-sales_data_df = pd.read_csv("data/sales_data_channels_full_year.csv")
-
-# Step 1: reshape to long format
-tidy_df = sales_data_df.melt(
-    id_vars=["Customer_ID", "Region"],
-    var_name="Month_Channel",
-    value_name="Sales"
-)
-
-# Step 2: split Month and Channel
-tidy_df[["Month", "Channel"]] = tidy_df["Month_Channel"].str.split("_", expand=True)
-
-# Step 3: drop Month_Channel
-tidy_df.drop(columns=["Month_Channel"], inplace=True)
-
-tidy_df.head()
+tidy_df |> head()
 ```
 
 :::
@@ -628,12 +609,15 @@ tidy_df.head()
 
 Dataset `messy_customer_data.csv`
 
-```{python}
+```{r}
 #| output: false
 
-import pandas as pd
-customer_df = pd.read_csv("data/messy_customer_data.csv")
-customer_df.head()
+customer_df <- read_csv(
+  "data/messy_customer_data.csv",
+  na = c("", "NA", "NaN"),
+  show_col_types = FALSE
+)
+customer_df |> head()
 ```
 
 <div class="cell-output cell-output-display">
@@ -851,10 +835,10 @@ In this part, move from **detecting problems** to **making the dataset analysis-
 * What type of scale is each variable?
   Run the following and assign `nominal`, `ordinal`, `interval`, or `ratio`.
 
-```{python}
+```{r}
 #| output: false
 
-customer_df.info()
+customer_df |> glimpse()
 ```
 
 
@@ -874,8 +858,8 @@ customer_df.info()
 
 Examine the dataset `data/messy_customer_data.csv` and run the following:
 
-```{python}
-customer_df.describe()
+```{r}
+summary(customer_df)
 ```
 
 * Summarize all data quality issues you observe (open the [data/messy_customer_data.csv](data/messy_customer_data.csv)).
@@ -892,13 +876,13 @@ customer_df.describe()
 
 ---
 
-### 4. *(Optional challenge)* Implement in Python (`pandas`)
+### 4. *(Optional challenge)* Implement in R (`tidyverse`)
 
-* Implement the data preparation steps in Python.
+* Implement the data preparation steps in R.
 * Run the code after each step and inspect the results.
 
-```{python}
-# Your solution (in Jupyter notebook)
+```{r}
+# Add your solution below.
 ```
 
 Note: Check how the `customer_df` changes after each preparation step!
@@ -931,8 +915,8 @@ Note: Check how the `customer_df` changes after each preparation step!
 
 Examine the dataset `data/messy_customer_data.csv` and run the following:
 
-```{python}
-customer_df.describe()
+```{r}
+summary(customer_df)
 ```
 
 * Summarize all data quality issues you observe.
@@ -978,421 +962,85 @@ customer_df.describe()
 
 ---
 
-### 4. *(Optional challenge)* Implement in Python (`pandas`)
+### 4. *(Optional challenge)* Implement in R (`tidyverse`)
 
-```{python}
-import pandas as pd
-
-customer_df = pd.read_csv("data/messy_customer_data.csv")
-
-# --- Income: clean + numeric ---
-customer_df["income"] = (
-    customer_df["income"]
-    .astype(str)
-    .str.replace(r"\s*(USD|EUR)", "", regex=True)
+```{r}
+customer_df <- read_csv(
+  "data/messy_customer_data.csv",
+  na = c("", "NA", "NaN"),
+  show_col_types = FALSE
 )
-customer_df["income"] = pd.to_numeric(customer_df["income"], errors="coerce")
 
-# --- Missing values (income) ---
-customer_df["income"] = customer_df["income"].fillna(customer_df["income"].median())
+# --- Income: remove currency labels and parse a numeric value ---
+customer_df <- customer_df |>
+  mutate(income = parse_number(income))
 
-# --- Dates: parse ---
-customer_df["date_of_birth"] = pd.to_datetime(customer_df["date_of_birth"], errors="coerce")
-customer_df["signup_date"] = pd.to_datetime(customer_df["signup_date"], errors="coerce")
+# --- Missing income: replace with the median ---
+income_median <- median(customer_df$income, na.rm = TRUE)
+customer_df <- customer_df |>
+  mutate(income = replace_na(income, income_median))
 
-# --- Invalid / implausible values ---
-today = pd.Timestamp.today()
+# --- Dates: parse valid ISO and day/month/year values ---
+parse_customer_date <- function(x) {
+  parsed <- as.Date(rep(NA_character_, length(x)))
+  accepted_formats <- c("%Y-%m-%d", "%Y/%m/%d", "%d/%m/%Y", "%d/%m/%y")
 
-# remove future DOB and very old values
-customer_df = customer_df[
-    (customer_df["date_of_birth"] < today) &
-    (customer_df["date_of_birth"] > pd.Timestamp("1900-01-01"))
-]
+  for (date_format in accepted_formats) {
+    still_missing <- is.na(parsed)
+    parsed[still_missing] <- as.Date(x[still_missing], format = date_format)
+  }
 
-# remove invalid signup dates (future or NaT)
-customer_df = customer_df[
-    (customer_df["signup_date"] <= today)
-]
-
-# remove negative income
-customer_df = customer_df[customer_df["income"] >= 0]
-
-# --- Outliers (simple cap) ---
-upper_cap = customer_df["income"].quantile(0.99)
-customer_df["income"] = customer_df["income"].clip(upper=upper_cap)
-
-# --- Gender standardization ---
-customer_df["gender"] = customer_df["gender"].replace({
-    "M": "Male", "m": "Male",
-    "F": "Female", "f": "Female"
-})
-
-# --- Country standardization ---
-country_map = {
-    "Germany": "DE", "Ger": "DE", "DEU": "DE",
-    "USA": "US", "U.S.": "US",
-    "UK ": "UK",
-    "France": "FR",
-    "Spain": "ES",
-    "Italy": "IT",
-    "Netherlands": "NL",
-    "Switzerland": "CH",
-    "Austria": "AT",
-    "China": "CN",
-    "Japan": "JP",
-    "India": "IN",
-    "Brazil": "BR", "Brasil": "BR",
-    "Canada": "CA",
-    "Munch": "DE"
+  parsed
 }
-customer_df["country"] = customer_df["country"].replace(country_map)
 
-# --- Remove duplicates ---
-customer_df = customer_df.drop_duplicates(subset=["customer_id"])
-
-customer_df.head()
-```
-
-:::
-
-
----
-
-{{< pagebreak >}}
-
-# Part 4: EDA: Clustering <a id="clustering"></a>
-
-Now that the data is structured and cleaned, we explore whether companies group into similar patterns.
-Clustering helps us move from preparation to insight generation: instead of looking at firms one by one, we ask whether there are recurring profiles in the data.
-
-Dataset: `firm_data.csv`
-
-```{python}
-#| output: false
-
-import pandas as pd
-firm_data_df = pd.read_csv("data/firm_data.csv")
-firm_data_df.head()
-```
-
-<div class="cell-output cell-output-display">
-<div>
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">company_id</th>
-<th data-quarto-table-cell-role="th">sector</th>
-<th data-quarto-table-cell-role="th">revenue</th>
-<th data-quarto-table-cell-role="th">profit_margin</th>
-<th data-quarto-table-cell-role="th">growth_rate</th>
-<th data-quarto-table-cell-role="th">debt_ratio</th>
-<th data-quarto-table-cell-role="th">market_cap</th>
-<th data-quarto-table-cell-role="th">rd_intensity</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>FIRM-0095</td>
-<td>Healthcare</td>
-<td>2117.569743</td>
-<td>13.382162</td>
-<td>6.053507</td>
-<td>0.555974</td>
-<td>12426.889897</td>
-<td>3.308879</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>FIRM-0015</td>
-<td>Healthcare</td>
-<td>457.538045</td>
-<td>10.139487</td>
-<td>21.504950</td>
-<td>0.350252</td>
-<td>5779.074618</td>
-<td>8.710809</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>FIRM-0030</td>
-<td>Industry</td>
-<td>463.847307</td>
-<td>4.131422</td>
-<td>13.237034</td>
-<td>0.356084</td>
-<td>4451.965515</td>
-<td>15.719744</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
-<td>FIRM-0158</td>
-<td>Finance</td>
-<td>347.980562</td>
-<td>9.573304</td>
-<td>16.117482</td>
-<td>0.472141</td>
-<td>3256.609038</td>
-<td>31.989645</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
-<td>FIRM-0128</td>
-<td>Tech</td>
-<td>804.239654</td>
-<td>0.165357</td>
-<td>-3.346796</td>
-<td>0.761088</td>
-<td>1825.004761</td>
-<td>2.082579</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-
-:::{.direction}
-
-## Tasks
-
-### 1. Prepare the data for clustering
-
-We decide to use `profit_margin` and `rd_intensity` to cluster firms.
-In a first step, create a dataframe `X` consisting of values for these two variables:
-
-```{python}
-import pandas as pd
-
-df_firm_data = pd.read_csv("data/firm_data.csv")
-
-# Your solution (in Jupyter notebook)
-
-# Print X at the end
-```
-
-Before clustering, do a quick exploratory check so you know what kind of patterns you are looking for.
-
-```{python}
-#| eval: false
-X.describe()
-```
-
-```{python}
-#| eval: false
-df_firm_data[["profit_margin", "rd_intensity"]].hist(figsize=(6, 3))
-```
-
-Considering that k-means is sensitive to different measurement scale, we need to standardize the values.
-This ensures that they have approximately equal influence on the clusters.
-
-Run the following code and observe how the scale of both variables changes:
-
-```{python}
-#| eval: false
-from sklearn.preprocessing import StandardScaler
-
-scaler = StandardScaler()
-X = scaler.fit_transform(X)
-X
-```
-
-Before running a clustering algorithm, let's view the data in a scatterplot:
-
-```{python}
-#| eval: false
-import matplotlib.pyplot as plt
-
-plt.scatter(X[:, 0], X[:, 1], s=10)
-plt.title("Raw data (no clustering)")
-plt.show()
-```
-
-How many clusters would you expect?
-Briefly justify your answer based on the plot.
-
-<br>
-
-
-### 2. Apply K-Means clustering
-
-* Next, run the k-means clustering algorithm for different values of `k`.
-
-```{python}
-#| eval: false
-from sklearn.cluster import KMeans
-
-# Your solution (in Jupyter notebook)
-# Note: consider the names of variables and objects used in the rest of the code
-
-# Run the whole code cell to fit KMeans and plot it
-plt.figure(figsize=(3.6, 2.8))
-plt.scatter(X[:, 0], X[:, 1], c=labels, s=10)
-plt.scatter(
-    kmeans.cluster_centers_[:, 0],
-    kmeans.cluster_centers_[:, 1],
-    c='red', marker='x', s=60, linewidth=2
-)
-plt.title(f"k={k}", fontsize=10)
-plt.xticks([])
-plt.yticks([])
-plt.tight_layout()
-plt.show()
-```
-
-* Try different values of K (e.g., 2–10). Which number of clusters seems appropriate?
-
-
-{{< pagebreak >}}
-
-### 3. Add cluster labels to the dataset
-
-* Assign the cluster labels returned by the k-means algorithm to the original dataframe (`df_firm_data`).
-
-```{python}
-# Your solution (in Jupyter notebook)
-```
-
----
-
-### 4. Create grouped box plots
-
-* Generate a box plot, grouped according to the clusters, to compare differences in `revenue`.
-* Try to complete the task relying only on the [documentation for box plots in pandas](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.boxplot.html).
-
-```{python}
-import matplotlib.pyplot as plt
-
-# Your solution (in Jupyter notebook)
-```
-
-:::
-
-
-:::{.sol}
-
-## Solution
-
-### 1. Prepare the data for clustering
-
-We use only `profit_margin` and `rd_intensity` for clustering:
-
-```{python}
-import pandas as pd
-
-df_firm_data = pd.read_csv("data/firm_data.csv")
-
-X = df_firm_data[["profit_margin", "rd_intensity"]]
-
-X.head()
-```
-
-#### Exploratory check
-
-```{python}
-X.describe()
-```
-
-```{python}
-df_firm_data[["profit_margin", "rd_intensity"]].hist(figsize=(6, 3))
-```
-
-These summaries and histograms help us understand the distribution and scale of the variables.
-
-{{< pagebreak >}}
-
-#### Standardization
-
-Since k-means is sensitive to scale differences, we standardize the variables:
-
-```{python}
-from sklearn.preprocessing import StandardScaler
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-X_scaled[:3]
-```
-
-#### Scatterplot (before clustering)
-
-```{python}
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(5, 3))
-plt.scatter(X_scaled[:, 0], X_scaled[:, 1], s=10)
-plt.title("Standardized data (no clustering)")
-plt.xlabel("profit_margin (scaled)")
-plt.ylabel("rd_intensity (scaled)")
-plt.show()
-```
-
-**Interpretation:**
-From the scatterplot, we might expect a small number of clusters (e.g., 3–5), depending on visible groupings.
-
-{{< pagebreak >}}
-
-### 2. Apply K-Means clustering
-
-We try different values of `k` and visually inspect the cluster structure:
-
-```{python}
-from sklearn.cluster import KMeans
-
-for k in range(2, 7):
-    kmeans = KMeans(n_clusters=k, random_state=42)
-    labels = kmeans.fit_predict(X_scaled)
-
-    plt.figure(figsize=(3.6, 2.8))
-    plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=labels, s=10)
-    plt.scatter(
-        kmeans.cluster_centers_[:, 0],
-        kmeans.cluster_centers_[:, 1],
-        c="red", marker="x", s=60, linewidth=2
+customer_df <- customer_df |>
+  mutate(
+    date_of_birth = parse_customer_date(date_of_birth),
+    signup_date = parse_customer_date(signup_date)
+  )
+
+# --- Invalid or implausible values ---
+today <- Sys.Date()
+customer_df <- customer_df |>
+  filter(
+    !is.na(date_of_birth),
+    date_of_birth > as.Date("1900-01-01"),
+    date_of_birth < today,
+    !is.na(signup_date),
+    signup_date <= today,
+    income >= 0
+  )
+
+# --- Income outliers: cap values at the 99th percentile ---
+upper_cap <- quantile(customer_df$income, 0.99, na.rm = TRUE)
+customer_df <- customer_df |>
+  mutate(income = pmin(income, upper_cap))
+
+# --- Standardize categorical values ---
+customer_df <- customer_df |>
+  mutate(
+    gender = case_when(
+      str_to_lower(gender) %in% c("m", "male") ~ "Male",
+      str_to_lower(gender) %in% c("f", "female") ~ "Female",
+      TRUE ~ gender
+    ),
+    country = recode(
+      str_trim(country),
+      "Germany" = "DE", "Ger" = "DE", "DEU" = "DE", "Munch" = "DE",
+      "USA" = "US", "U.S." = "US",
+      "France" = "FR", "Spain" = "ES", "Italy" = "IT",
+      "Netherlands" = "NL", "Switzerland" = "CH", "Austria" = "AT",
+      "China" = "CN", "Japan" = "JP", "India" = "IN",
+      "Brazil" = "BR", "Brasil" = "BR", "Canada" = "CA"
     )
-    plt.title(f"k={k}", fontsize=10)
-    plt.xticks([])
-    plt.yticks([])
-    plt.tight_layout()
-    plt.show()
+  )
+
+# --- Keep the first record for each customer ID ---
+customer_df <- customer_df |>
+  distinct(customer_id, .keep_all = TRUE)
+
+customer_df |> head()
 ```
-
-**Conclusion:**
-A value around **k = 4** appears to provide a reasonable balance between simplicity and structure.
-
-{{< pagebreak >}}
-
-### 3. Add cluster labels to the dataset
-
-We now fit the final model and store the cluster labels:
-
-```{python}
-k = 4
-kmeans = KMeans(n_clusters=k, random_state=42)
-labels = kmeans.fit_predict(X_scaled)
-
-df_firm_data["cluster"] = labels
-
-df_firm_data.head()
-```
-
-{{< pagebreak >}}
-
-### 4. Create grouped box plots
-
-We compare `revenue` across clusters:
-
-```{python}
-import matplotlib.pyplot as plt
-
-df_firm_data.boxplot(column="revenue", by="cluster")
-plt.title("Revenue by Cluster")
-plt.suptitle("")
-plt.xlabel("Cluster")
-plt.ylabel("Revenue")
-plt.show()
-```
-
-**Interpretation:**
-The box plots reveal how revenue differs across clusters, helping to characterize the identified firm profiles.
 
 :::
 
@@ -1405,13 +1053,12 @@ The box plots reveal how revenue differs across clusters, helping to characteriz
 
 ## Wrap-up <a id="wrap-up"></a>
 
-🎉🎈 You have completed the notebook - good work! 🎈🎉
+🎉🎈 You have completed the exercise - good work! 🎈🎉
 
-In this notebook, we have learned to
+In this exercise, we have learned to
 
 * Structure data in a tidy format
 * Prepare and explore datasets
-* Apply clustering methods
 
 
 ::: {.callout-note title="Stop the Codespace"}

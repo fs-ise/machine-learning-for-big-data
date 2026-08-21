@@ -14,41 +14,22 @@ format:
 | [Wrap-up](#wrap-up) | 10 min |
 | **Total** | **80 min** |
 
-The optional supplement contains the source's detailed backpropagation and TensorFlow Playground activities.
-
 :::
 
 ## Part 1: Read an MLP architecture {#part-1}
 
 ::: {.direction}
 
-In `sklearn`, model structure is often specified through parameters. In PyTorch, a model commonly inherits from `nn.Module`. Inspect the original Python model below; do not execute or translate it.
+Inspect this framework-neutral architecture:
 
-```python
-import torch.nn as nn
-
-class MLP(nn.Module):
-    def __init__(self, input_dim, hidden_layers, output_dim):
-        super().__init__()
-        layers = []
-        prev_dim = input_dim
-
-        for h in hidden_layers:
-            layers.append(nn.Linear(prev_dim, h))
-            layers.append(nn.ReLU())
-            prev_dim = h
-
-        layers.append(nn.Linear(prev_dim, output_dim))
-        self.model = nn.Sequential(*layers)
-
-    def forward(self, x):
-        return self.model(x)
-
-model = MLP(input_dim=10, hidden_layers=[8, 4], output_dim=1)
-```
+| Layer | Input | Output | Activation |
+|---|---:|---:|---|
+| Dense 1 | 10 | 8 | ReLU |
+| Dense 2 | 8 | 4 | ReLU |
+| Output | 4 | 1 | — |
 
 1. Write down the sequence of layers and dimensions.
-2. How many hidden layers and trainable `Linear` layers are present?
+2. How many hidden layers and trainable dense layers are present?
 3. What changes for `hidden_layers=[32, 16, 8]`?
 4. What kind of data structure does this MLP expect? What structural information would be lost if a video were simply flattened into ten features?
 
@@ -60,15 +41,15 @@ model = MLP(input_dim=10, hidden_layers=[8, 4], output_dim=1)
 
 ```text
 Input: 10 features
-Linear: 10 -> 8
-ReLU
-Linear: 8 -> 4
-ReLU
-Linear: 4 -> 1
+Dense: 10 → 8
+Activation: ReLU
+Dense: 8 → 4
+Activation: ReLU
+Dense: 4 → 1
 Output: 1 value
 ```
 
-The model has two hidden layers and three trainable `Linear` layers. With `[32, 16, 8]`, it has three hidden layers with those widths and a final `8 -> 1` layer. It expects a fixed-length feature vector. Flattening media removes explicit spatial and temporal relationships, which CNNs and sequence architectures are designed to preserve.
+The model has two hidden layers and three trainable dense layers. With `[32, 16, 8]`, it has three hidden layers with those widths and a final `8 -> 1` layer. It expects a fixed-length feature vector. Flattening media removes explicit spatial and temporal relationships, which CNNs and sequence architectures are designed to preserve.
 
 :::
 

@@ -17,3 +17,6 @@ site_libs/
 slides/cache/*
 
 *_files/
+
+# Models generated while rendering R exercises
+exercises/data/*.rds
