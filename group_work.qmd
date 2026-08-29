@@ -93,18 +93,17 @@ Propose a concrete business problem and analytical question rather than merely s
 
 ## Project process
 
+Project work begins with the first course session, continues through the presentation phase, and concludes with the final submission.
+
 ```{mermaid}
 %%| fig-width: 6.5
+%%| fig-height: 3
 %%| fig-align: center
 
 gantt
-    title Group Project Process
     dateFormat YYYY-MM-DD
     axisFormat %d %b
     todayMarker off
-
-    section Project work
-    Project development               :active, project, 2026-09-01, 2026-11-02
 
     section Proposal
     Form group and develop proposal   :proposal, 2026-09-01, 2026-09-10
@@ -125,27 +124,22 @@ gantt
     Final submission                  :milestone, 2026-11-02, 0d
 ```
 
-### Proposal and review
+### Proposal
 
 Form your group and email the group details, proposed topic, and concrete question by **{{< meta group_work.proposal_deadline >}}**.
 Topics will be reviewed during the following week, and substantial overlap or unsuitable scope will be resolved with the affected groups.
 
-### Project work
-
-Project work begins with the first course session, continues through the presentation phase, and concludes with the final submission.
+### Analysis
 
 Develop the case, dataset, analysis, required advanced extension, and presentation iteratively.
 Your work should progress from problem framing and dataset design to analysis, modeling, evaluation, and reflection.
 
-If questions come up during the project phase, you can arrange a meeting:
-
-- Book appointments via: [Bookings]({{< meta instructor.bookings_url >}})
-- Join meetings via: [Teams]({{< meta instructor.online_meeting_url >}})
+If questions come up during the project phase, you can arrange a meeting via [Bookings]({{< meta instructor.bookings_url >}}) and join meetings via [Teams]({{< meta instructor.online_meeting_url >}}).
 
 ### Presentation
 
 - Available group-presentation dates: **{{< meta group_work.presentation_dates_display >}}**.
-- Each group will receive an individual presentation slot after groups and topics have been finalized.
+- Each group will receive an individual presentation slot.
 - Each group has **30 minutes** to present the project.
 - Up to **15 additional minutes** may be used for questions and discussion.
 - Every group member must present part of the project and contribute to the discussion.
@@ -153,11 +147,11 @@ If questions come up during the project phase, you can arrange a meeting:
 - **All groups** must submit their presentation material and the relevant analysis files by **{{< meta group_work.presentation_submission_deadline >}}**, irrespective of their own assigned presentation slot.
 - Presentation submission channel: **{{< meta group_work.presentation_submission_channel >}}**.
 
-### Final submission
+### Finalization
 
 - Final submission deadline: **{{< meta group_work.submission_date >}}**.
 - Submit via the [Canvas assignment]({{< meta group_work.submission_url >}}).
-- Submit the Quarto source file (`.qmd`), the completed rendered PDF, data files, and R script for generating the synthetic dataset.
+- Submit the report (`.qmd` and `.pdf`), data files, and R script for generating the synthetic dataset.
 
 {{< pagebreak >}}
 
