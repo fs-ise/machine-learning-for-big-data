@@ -2,6 +2,8 @@
 title: "Group Work"
 ---
 
+## Summary
+
 > In this group project, you will work in a group of 2–3 participants to develop and analyze a realistic business analytics case.
 > The project focuses on business-relevant contexts such as management, finance, operations, or digital platforms and should be grounded in appropriate and reputable references, such as academic literature and industry reports.
 > You will formulate a concrete business problem and design a synthetic dataset that reflects a realistic organizational process or decision situation.
@@ -37,6 +39,8 @@ The following are **illustrative examples**, not predefined project options:
 - **Digital Business**, such as user engagement, gig worker retention, or demand prediction
 
 Propose a concrete business problem and analytical question rather than merely selecting a generic domain.
+
+{{< pagebreak >}}
 
 ## Task
 
@@ -89,12 +93,46 @@ Propose a concrete business problem and analytical question rather than merely s
 
 ## Project process
 
+```{mermaid}
+%%| fig-width: 6.5
+%%| fig-align: center
+
+gantt
+    title Group Project Process
+    dateFormat YYYY-MM-DD
+    axisFormat %d %b
+    todayMarker off
+
+    section Project work
+    Project development               :active, project, 2026-09-01, 2026-11-02
+
+    section Proposal
+    Form group and develop proposal   :proposal, 2026-09-01, 2026-09-10
+    Proposal deadline                 :milestone, 2026-09-10, 0d
+    Topic review                      :review, 2026-09-11, 7d
+
+    section Analysis
+    Case, data, modeling & evaluation :analysis, 2026-09-18, 2026-10-01
+    Presentation submission           :milestone, 2026-10-01, 0d
+
+    section Presentation
+    Presentation period               :present, 2026-10-02, 2026-10-09
+    Presentation 1                    :milestone, 2026-10-02, 0d
+    Presentation 2                    :milestone, 2026-10-09, 0d
+
+    section Finalization
+    Revise and complete report        :revision, 2026-10-10, 2026-11-02
+    Final submission                  :milestone, 2026-11-02, 0d
+```
+
 ### Proposal and review
 
 Form your group and email the group details, proposed topic, and concrete question by **{{< meta group_work.proposal_deadline >}}**.
 Topics will be reviewed during the following week, and substantial overlap or unsuitable scope will be resolved with the affected groups.
 
 ### Project work
+
+Project work begins with the first course session, continues through the presentation phase, and concludes with the final submission.
 
 Develop the case, dataset, analysis, required advanced extension, and presentation iteratively.
 Your work should progress from problem framing and dataset design to analysis, modeling, evaluation, and reflection.
@@ -150,9 +188,10 @@ It must contain the full CRISP-DM analysis, explanatory text, R code, executed r
 Do not create a second, redundant report narrative.
 
 The **main report text is limited to 12 pages**.
-The title page, references, and appendices are excluded from this limit; appendices may provide supporting detail but must not be used to evade the limit.
+The title page, references, and appendices are excluded from this limit.
 Include enough code and results to make the work reproducible while keeping the prose focused.
 
+<!--
 To create the submitted PDF, give the document a PDF format in its YAML header (for example, `format: pdf`) and run:
 
 ```bash
@@ -160,19 +199,19 @@ quarto render your-analysis.qmd --to pdf
 ```
 
 Rendering must execute the R code (do not disable execution or rely on stale results).
+-->
+
 Check that the generated PDF contains the completed analysis and all results.
 Submit **both** the `.qmd` source and this rendered `.pdf`; the submitted source, data, and supporting files must reproduce the PDF.
 
-## Individual contributions
+::: {.callout-tip title="Individual contributions"}
 
 Each student must identify approximately **three pages of report text** for which they were the primary author.
-Thus, in a three-person group with a 12-page report, approximately three pages per student should be individually attributed.
+In a three-person group with a 12-page report, this means about three pages per student.
+Include a brief contribution statement at the end of the report indicating the sections or subsections primarily written by each group member. Sections may also be written jointly or developed collaboratively.
+Every group member must also contribute meaningfully to the analysis, presentation, and discussion.
 
-Include a brief contribution statement at the end of the report indicating which sections or subsections were primarily written by each group member.
-Not every section needs to be assigned to a single person: some parts may be written jointly or developed through contributions from several group members.
-The contribution statement should provide transparent evidence of each member’s meaningful written contribution without implying that assigned sections were produced entirely independently.
-
-Every group member must also make a meaningful contribution to the analysis, presentation, and discussion.
+:::
 
 {{< pagebreak >}}
 
