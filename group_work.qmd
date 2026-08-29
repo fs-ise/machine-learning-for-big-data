@@ -2,59 +2,60 @@
 title: "Group work"
 ---
 
-**TODO:**  
-- Validate
-- Check submission format (notebook - qmd with executed content is not possible??)
-- Carefully compare with group-work docs of previous coursese
-- Presentation slides (PDF) and notebook (??) must be submitted the day before presentation until 20.00 (to {{< meta instructor.email >}})
-
-> In this group project, you will develop and analyze a realistic business analytics case, including data, modeling, and critical reflection.
-> The project focuses on business-relevant contexts such as management, finance, operations, or digital platforms.
-> You will design and work with a synthetic dataset that reflects a realistic organizational process or decision situation.
-> This allows you to address both upstream challenges—problem framing and data design—and downstream challenges such as deployment, implementation, ethics, and risk.
-> Your work should be grounded in appropriate and reputable references, such as academic literature and industry reports.
+> In this group project, you will work in a group of 2–3 participants to develop and analyze a realistic business analytics case.
+> The project focuses on business-relevant contexts such as management, finance, operations, or digital platforms and should be grounded in appropriate and reputable references, such as academic literature and industry reports.
+> You will formulate a concrete business problem and design a synthetic dataset that reflects a realistic organizational process or decision situation.
+> You will then apply appropriate machine learning methods to analyze the data and address the business problem.
+> This allows you to engage with both upstream challenges—such as problem framing and data design—and downstream challenges such as deployment, implementation, ethics, and risk.
 
 ## Objectives
 
 - Design a realistic business analytics scenario
-- Select and apply appropriate analytical models
+- Select and apply appropriate machine learning methods
 - Communicate results using CRISP-DM as a structuring framework
 - Critically reflect on assumptions, limitations, and improvements
 
-## Group formation and project allocation
+## Group formation and topic proposal
 
-- The group size is **2–3 participants**.
-- Projects may be allocated to more than one group.
-- You may apply individually or as a group.
-- Apply by email and indicate **three project preferences**, ranked as:
+- Form your own group of **2–3 participants**.
+- One member of the group must send an **email by {{< meta group_work.proposal_deadline >}}** containing:
 
-  - Preference 1
-  - Preference 2
-  - Preference 3
+  - the names of all group members;
+  - a concise proposed project topic; and
+  - the concrete business or analytical question the group intends to address.
 
-- For a group application, one email containing the names of all group members is sufficient.
-- Based on the applications, groups will be arranged and projects assigned.
-- If one participant remains after group formation, an existing group may be expanded by one participant.
+- Proposed topics will be reviewed during the following week.
+  The instructor may request adjustments if topics overlap too strongly or the proposed scope is unsuitable.
 
 {{< pagebreak >}}
 
 ## Project topics
 
-Select a business topic and formulate a concrete analytical question. Suitable domains include:
+The following are **illustrative examples**, not predefined project options:
 
 - **Finance**, such as credit default, fraud, or customer lifetime value
-- **Marketing**, such as churn, customer segmentation, or campaign effectiveness
+- **Marketing**, such as churn, customer segmentation, or campaign response
 - **Human Resources**, such as attrition, promotion, or team productivity
-- **Digital business**, such as user engagement, gig worker retention, or pricing strategy
+- **Digital business**, such as user engagement, gig worker retention, or demand prediction
 
-Your project preference should identify a concrete business problem rather than only a general domain.
+Propose a concrete business problem and analytical question rather than merely selecting a generic domain.
 
 ## Task
 
-- Select a business topic and formulate a concrete question.
+- Define a practical business problem or decision situation and formulate a concrete analytical question.
 - Create a synthetic but realistic dataset representing internal organizational data.
   You may complement this with synthetic or real external data if appropriate.
-- Develop an analytical notebook following the CRISP-DM process:
+  Generate the synthetic data reproducibly in a separate R script.
+- Develop an integrated Quarto analysis document (`.qmd`) containing the explanation of the business context, R code, executed results, and figures or tables.
+  It must present the complete, reproducible analysis following CRISP-DM.
+- Present and critically reflect on what can be learned from the case, its connection to course content, simplifying assumptions and limitations, and opportunities for improvement.
+- Complete an advanced extension.
+  This is the primary area in which your project should differ from a straightforward reproduction of techniques practiced in class.
+  Possible extensions include an analytical technique or methodological refinement beyond classroom examples; more sophisticated or realistic data preparation; model comparison or refinement; robustness or sensitivity analysis; a realistic complication in the business setting; deployment or implementation considerations; organizational or decision-process implications; ethical, fairness, governance, or risk considerations; or interactive or otherwise improved communication of results.
+  The extension does not have to use a more complex machine-learning algorithm.
+  A realistic and thoughtful extension involving deployment, robustness, ethics, or the business process can satisfy this requirement.
+
+<!--
 
   1. **Business understanding**  
      What is the context, the concrete question, and the decision relevance? Who are the stakeholders?
@@ -74,21 +75,15 @@ Your project preference should identify a concrete business problem rather than 
   6. **Deployment**  
      How would the model be implemented? What are the requirements, risks, and ethical considerations?
 
-- Develop a report that presents and critically reflects on the case, including:
-
-  - What can be learned from the case
-  - How it connects to or extends course content
-  - Simplifying assumptions and limitations
-  - Opportunities for improvement
+-->
 
 ::: {.callout-note title="Notes"}
 
 - Support key elements of your analysis with reputable sources, particularly the relevance of the problem, typical data sources, and common modeling approaches.
-- Simplifications are acceptable if they are clearly stated and justified.
-- Advanced extensions may include advanced data preparation, model comparison or refinement, robustness checks, interactive visualizations, or more detailed deployment considerations.
-- Your code must run and reproduce your results.
+- Simplifications are acceptable and can be valuable if they are clearly stated and justified. Use the report to explain how a more realistic analysis could extend beyond these simplifications.
+- Your code must run from the submitted files and reproduce the reported results.
 - If you plan to work with a large-scale big-data scenario, consult with me in advance.
-- Real-time or streaming-data projects are strongly discouraged because they are difficult to implement and evaluate within the scope of this project.
+- Real-time or streaming-data projects require careful consideration of their additional technical complexity and whether they can be meaningfully implemented and evaluated within the scope of the project.
 
 :::
 
@@ -96,92 +91,81 @@ Your project preference should identify a concrete business problem rather than 
 
 ## Project process
 
-### Application and allocation
+### Proposal and review
 
-Submit your three ranked project preferences by **{{< meta group_work.application_deadline >}}**.
-Groups and projects will then be assigned based on the submitted preferences.
+Form your group and email the group details, proposed topic, and concrete question by **{{< meta group_work.proposal_deadline >}}**.
+Topics will be reviewed during the following week, and substantial overlap or unsuitable scope will be resolved with the affected groups.
 
 ### Project work
 
-Develop the case, dataset, analysis, and presentation iteratively.
+Develop the case, dataset, analysis, required advanced extension, and presentation iteratively.
 Your work should progress from problem framing and dataset design to analysis, modeling, evaluation, and reflection.
 
 ### Presentation
 
-- Presentation date: **{{< meta group_work.presentation_date >}}**
+- Available group-presentation dates: **{{< meta group_work.presentation_dates_display >}}**.
+- Each group will receive an individual presentation slot after groups and topics have been finalized.
 - Each group has **30 minutes** to present the project.
 - Up to **15 additional minutes** may be used for questions and discussion.
 - Every group member must present part of the project and contribute to the discussion.
 - Attendance is required for all project presentations.
-- Submit the presentation file and the corresponding analysis files by the presentation deadline.
+- **All groups** must submit their presentation material and the relevant analysis files by **{{< meta group_work.presentation_submission_deadline >}}**, irrespective of their own assigned presentation slot.
+- Presentation submission channel: **{{< meta group_work.presentation_submission_channel >}}**.
 
 ### Final submission
 
-- Final report deadline: **{{< meta group_work.submission_date >}}**
-- Submit the final text document via the [Canvas assignment]({{< meta group_work.submission_url >}}).
-- Submit the report as a **PDF**, not as a Word document.
-- The analytical notebook must be executed before submission.
-
-{{< pagebreak >}}
+- Final submission deadline: **{{< meta group_work.submission_date >}}**.
+- Submit via the [Canvas assignment]({{< meta group_work.submission_url >}}).
+- Submit the Quarto source file (`.qmd`), the completed rendered PDF, data files, and R script for generating the synthetic dataset.
 
 ## Deliverables
 
-### Synthetic dataset generation script
+### Quarto analysis document and rendered PDF
 
-A Python script that:
+The `.qmd` is the central analytical artifact and integrates the report and analytical work in one narrative.
+It must contain the full CRISP-DM analysis, explanatory text, R code, executed results, and the figures and tables needed to support the argument.
+Do not create a second, redundant report narrative.
 
-- Clearly documents the business context and purpose in the module docstring
-- Defines the data schema and variables
-- Implements data generation logic, including distributions and relationships
-- Includes realism features, such as noise, missing values, or duplicates where appropriate
-- States key assumptions and provides justification where possible
-- Produces reproducible output using a fixed random seed
-- Exports the generated dataset
+The **main report text is limited to 12 pages**.
+The title page, references, and appendices are excluded from this limit; appendices may provide supporting detail but must not be used to evade the limit.
+Include enough code and results to make the work reproducible while keeping the prose focused.
 
-### Dataset
+To create the submitted PDF, give the document a PDF format in its YAML header (for example, `format: pdf`) and run:
 
-- CSV file or files containing the simulated data
+```bash
+quarto render your-analysis.qmd --to pdf
+```
 
-### Analytical notebook
+Rendering must execute the R code (do not disable execution or rely on stale results).
+Check that the generated PDF contains the completed analysis and all results.
+Submit **both** the `.qmd` source and this rendered `.pdf`; the submitted source, data, and supporting files must reproduce the PDF.
 
-A Jupyter Notebook that:
+### Synthetic dataset and supporting files
 
-- Covers the full CRISP-DM process
-- Includes explanations in Markdown
-- Is fully executable and reproducible
+- Provide the generated dataset, normally as one or more CSV files.
+- Clearly document the business purpose, schema, generation logic, assumptions, distributions, relationships, and realism features such as noise or missing values where appropriate.
+- Use a fixed random seed and reproducible R code.
+- The generation code may be in the main `.qmd` or a separate R script when that produces a cleaner project structure.
 
 ### Presentation
 
-A slide deck that:
+The presentation material should:
 
-- Clearly introduces the business problem and decision context
-- Explains the analytical approach and key modeling decisions
-- Communicates the most important findings and their practical relevance
-- Critically discusses limitations, risks, and potential improvements
+- Clearly introduce the business problem and decision context
+- Explain the analytical approach and key modeling decisions
+- Communicate the most important findings and their practical relevance
+- Critically discuss limitations, risks, the required advanced extension, and potential improvements
 
-### Report
+## Individual contributions
 
-Maximum length: **15 pages**, including title page and references.
+Each student must identify approximately **three pages of report text** for which they were the primary author.
+Thus, in a three-person group with a 12-page report, approximately three pages per student should be individually attributed.
 
-**Section 1: Case package**
+Include a brief contribution statement at the end of the report indicating which sections or subsections were primarily written by each group member.
+Not every section needs to be assigned to a single person: some parts may be written jointly or developed through contributions from several group members.
+The contribution statement should provide transparent evidence of each member’s meaningful written contribution without implying that assigned sections were produced entirely independently.
 
-- Business context and motivation
-- Problem statement and objectives
-- Stakeholders and decision relevance
-- Positioning in practice, supported by references
-
-**Section 2: Analytical approach and key findings**
-
-- Overview and justification of the analytical approach
-- Selected key results without duplicating the notebook
-- Key business insights
-
-**Section 3: Reflection**
-
-- Assumptions
-- Limitations of the dataset and analytical approach
-- Ethical and deployment considerations
-- Potential improvements and extensions
+Every group member must also make a meaningful contribution to the analysis, presentation, and discussion.
 
 ## Evaluation
 
@@ -190,24 +174,25 @@ The evaluation is based on the submitted materials, the presentation, and the di
 
 Each group receives a group evaluation.
 For the final evaluation of individual participants, supplements or deductions from the group grade may be made based on the individual's contribution to the project, presentation, and discussion.
-You are therefore expected to contribute equally and to document your individual contributions clearly and transparently.
+You are therefore expected to contribute meaningfully and to document individual written contributions clearly and transparently.
 
 ::: {.small}
 
 | Category | Points | Criteria |
-|---|---:|---|
+|------|---:|---------------------|
 | **A. Case and dataset design** | 30 pts | Clarity and relevance of the problem; realism of the dataset; transparency of data generation |
 | **B. Analysis quality** | 40 pts | Method justification; correctness; CRISP-DM use; insightfulness |
 | **C. Communication** | 40 pts | Structure; visualization; clean code; argument quality; use of references; reflection; presentation and discussion |
-| **D. Advanced extension** | 10 pts | Meaningful additional feature beyond the core requirements |
+| **D. Advanced extension** | 10 pts | Meaningful differentiation beyond straightforward reproduction of classroom examples |
 
 :::
 
-**Note:** The applied methodology and reasoning are more important than achieving the highest possible model performance.
+The required advanced extension remains part of the **120-point total**.
+The applied methodology and reasoning are more important than achieving the highest possible model performance.
 
 ### AI policy
 
-- Allowed: generating dataset scripts, debugging code, and documentation support
+- Allowed: debugging code and to create the R script for synthetic dataset creation
 - Not allowed: generating complete end-to-end solutions
 - You must be able to explain and defend your work at any time
 - All outputs must be validated
@@ -217,10 +202,6 @@ You are therefore expected to contribute equally and to document your individual
 - Book appointments via: [Bookings]({{< meta instructor.bookings_url >}})
 - Join meetings via: [Teams]({{< meta instructor.online_meeting_url >}})
 
-### Submission
-
-Submit all required files via the [Canvas assignment]({{< meta group_work.submission_url >}}).
-
 ::: {.callout-note title="Note"}
 High-quality project work may contribute to future course development, for example by extending teaching materials or informing teaching cases.
 In such cases, we will discuss how contributions are acknowledged.
@@ -228,53 +209,23 @@ In such cases, we will discuss how contributions are acknowledged.
 
 {{< pagebreak >}}
 
-## Example: Synthetic data generation script
+## Example: Synthetic data generation in R
 
-```python
-"""
-Purpose:
-- Simulate [business scenario]
+```{r}
+#| eval: false
 
-Data schema:
-- age: numeric (years)
-- income: numeric (annual income in EUR)
+set.seed(42)
+n <- 1000
 
-Generation logic:
-- Age is drawn from a normal distribution (mean=40, sd=10)
-- Income depends linearly on age with added noise
+# Generate related variables and add realistic noise.
+age <- rnorm(n, mean = 40, sd = 10)
+income <- age * 1000 + rnorm(n, mean = 0, sd = 5000)
 
-Assumptions and justification:
-- Age distribution approximates working population demographics
-- Income increases with age due to experience (human capital theory)
-- Noise reflects unobserved heterogeneity in earnings
+# Add missing values where they are appropriate to the scenario.
+income[runif(n) < 0.05] <- NA_real_
 
-References (if applicable):
-- [Add source, e.g., industry report or academic literature]
-"""
-
-import numpy as np
-import pandas as pd
-
-np.random.seed(42)  # Reproducibility
-
-# 1. Define dataset size
-n = 1000
-
-# 2. Generate base variables
-age = np.random.normal(loc=40, scale=10, size=n)
-
-# 3. Define relationships
-income = age * 1000 + np.random.normal(loc=0, scale=5000, size=n)
-
-# 4. Add realism, such as missing values
-missing_mask = np.random.rand(n) < 0.05
-income[missing_mask] = np.nan
-
-# 5. Create dataframe and export
-df = pd.DataFrame({
-    "age": age,
-    "income": income,
-})
-
-df.to_csv("dataset.csv", index=False)
+dataset <- data.frame(age, income)
+write.csv(dataset, "dataset.csv", row.names = FALSE)
 ```
+
+Adapt and document the generation logic for your own business context.

@@ -23,8 +23,13 @@ schedule:
   timezone: Europe/Berlin
   source_path: data/events.yaml
 group_work:
-  application_deadline: "2026-09-10"
-  presentation_date: "2026-10-02"
+  proposal_deadline: "2026-09-10"
+  presentation_submission_deadline: "2026-10-01 20:00"
+  presentation_submission_channel: "via email"
+  presentation_dates:
+    - "2026-10-02"
+    - "2026-10-09"
+  presentation_dates_display: "2026-10-02 and 2026-10-09"
   submission_date: "2026-11-02"
   submission_url: "https://frankfurtschool.instructure.com/courses/20150/assignments/201951"
 events:
