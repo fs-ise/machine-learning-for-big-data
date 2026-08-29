@@ -171,12 +171,11 @@ Every group member must also make a meaningful contribution to the analysis, pre
 
 ## Evaluation
 
-The group project is an **ongoing assessment worth 120 performance points**.
-The evaluation is based on the submitted materials, the presentation, and the discussion.
+The final group evaluation is **primarily based on the submitted project materials and is worth 120 performance points**.
 
-Each group receives a group evaluation.
-For the final evaluation of individual participants, supplements or deductions from the group grade may be made based on the individual's contribution to the project, presentation, and discussion.
-You are therefore expected to contribute meaningfully and to document individual written contributions clearly and transparently.
+The presentation is a **mandatory formative milestone** rather than a separately graded component. Use the presentation and subsequent discussion to test your argument, identify weaknesses, and obtain feedback that should inform and improve the final report.
+
+Participation in the presentation and discussion may additionally be considered when assessing individual contributions.
 
 ::: {.small}
 
@@ -184,13 +183,10 @@ You are therefore expected to contribute meaningfully and to document individual
 |------|---:|---------------------|
 | **A. Case and dataset design** | 30 pts | Clarity and relevance of the problem; realism of the dataset; transparency of data generation |
 | **B. Analysis quality** | 40 pts | Method justification; correctness; CRISP-DM use; insightfulness |
-| **C. Communication** | 40 pts | Structure; visualization; clean code; argument quality; use of references; reflection; presentation and discussion |
+| **C. Communication** | 40 pts | Structure; visualization; clean code; argument quality; use of references; reflection |
 | **D. Advanced extension** | 10 pts | Meaningful differentiation beyond straightforward reproduction of classroom examples |
 
 :::
-
-The required advanced extension remains part of the **120-point total**.
-The applied methodology and reasoning are more important than achieving the highest possible model performance.
 
 ### AI policy
 
