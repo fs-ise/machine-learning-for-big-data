@@ -7,9 +7,9 @@ SLIDES_DIR := $(OUT_DIR)/slides
 SLIDES_QMD := $(shell find $(SRC_SLIDES_DIR) -type f -name '*.qmd' 2>/dev/null)
 SLIDES_HTML := $(patsubst $(SRC_SLIDES_DIR)/%.qmd,$(SLIDES_DIR)/%.html,$(SLIDES_QMD))
 SLIDES_PDF := $(SLIDES_HTML:.html=.pdf)
-.PHONY: help site site-fast pdfs decktape-image exercises exercises-generate exercises-render exercises-check all sync-events clean
+.PHONY: help site site-fast pdfs group-work-pdf decktape-image exercises exercises-generate exercises-render exercises-check all sync-events clean
 help:
-	@echo "Targets: site, pdfs, exercises-generate, exercises-render, exercises, exercises-check, all, sync-events, clean"
+	@echo "Targets: site, pdfs, group-work-pdf, exercises-generate, exercises-render, exercises, exercises-check, all, sync-events, clean"
 	@echo "Exercises: canonical QMD -> _generated/exercises variant QMD -> _site/exercises HTML and QMD"
 site-fast:
 	$(QUARTO) render --no-clean
@@ -36,6 +36,9 @@ exercises-check: exercises-generate
 			}; \
 		done
 pdfs: $(SLIDES_PDF)
+# Standalone A4 handout; output: _site/handouts/group_work.pdf
+group-work-pdf:
+	$(QUARTO) render group_work.qmd --profile group-work-pdf --to pdf
 decktape-image: Dockerfile
 	docker build --tag $(DOCKER_IMAGE) .
 $(SLIDES_DIR)/%.pdf: $(SRC_SLIDES_DIR)/%.qmd _quarto.yml _quarto-pdf.yml scripts/decktape.sh | decktape-image

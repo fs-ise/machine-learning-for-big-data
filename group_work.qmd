@@ -1,5 +1,5 @@
 ---
-title: "Group work"
+title: "Group Work"
 ---
 
 > In this group project, you will work in a group of 2–3 participants to develop and analyze a realistic business analytics case.
