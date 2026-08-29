@@ -57,7 +57,10 @@ Takeaway - why analytics matters:
 Analytics is not just about data.
 It changes **how decisions are made, how organizations compete, and who wins.**
 
-## Architecture
+## Course structure
+
+- Highlight that the report submission will be approx. one month after the presentations.
+
 
 ## Objectives
 
