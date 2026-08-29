@@ -18,7 +18,7 @@ title: "Group work"
 ## Group formation and topic proposal
 
 - Form your own group of **2–3 participants**.
-- One member of the group must send an **email by {{< meta group_work.proposal_deadline >}}** containing:
+- One member of the group must send an **email to [{{< meta instructor.email >}}](mailto:{{< meta instructor.email >}}) by {{< meta group_work.proposal_deadline >}}** containing:
 
   - the names of all group members;
   - a concise proposed project topic; and
@@ -120,7 +120,25 @@ Your work should progress from problem framing and dataset design to analysis, m
 
 ## Deliverables
 
-### Quarto analysis document and rendered PDF
+### Presentation
+
+Submit the presentation as a PDF. The presentation should:
+
+- Clearly introduce the business problem and decision context
+- Explain the analytical approach and key modeling decisions
+- Communicate the most important findings and their practical relevance
+- Critically discuss limitations, risks, the required advanced extension, and potential improvements
+
+### Synthetic dataset and generation script
+
+Submit the **R script used to generate the synthetic dataset** together with the resulting **dataset file(s)**, normally as CSV files.
+The generation script should document the business purpose, schema, generation logic, assumptions, distributions, relationships, and realism features such as noise or missing values where appropriate.
+Use a fixed random seed so that the dataset can be reproduced from the script.
+Keep the generation logic in a separate R script rather than embedding it in the main `.qmd`.
+
+### Main report
+
+Submit your analysis as a Quarto document (.qmd) together with its rendered PDF.
 
 The `.qmd` is the central analytical artifact and integrates the report and analytical work in one narrative.
 It must contain the full CRISP-DM analysis, explanatory text, R code, executed results, and the figures and tables needed to support the argument.
@@ -139,22 +157,6 @@ quarto render your-analysis.qmd --to pdf
 Rendering must execute the R code (do not disable execution or rely on stale results).
 Check that the generated PDF contains the completed analysis and all results.
 Submit **both** the `.qmd` source and this rendered `.pdf`; the submitted source, data, and supporting files must reproduce the PDF.
-
-### Synthetic dataset and supporting files
-
-- Provide the generated dataset, normally as one or more CSV files.
-- Clearly document the business purpose, schema, generation logic, assumptions, distributions, relationships, and realism features such as noise or missing values where appropriate.
-- Use a fixed random seed and reproducible R code.
-- The generation code may be in the main `.qmd` or a separate R script when that produces a cleaner project structure.
-
-### Presentation
-
-The presentation material should:
-
-- Clearly introduce the business problem and decision context
-- Explain the analytical approach and key modeling decisions
-- Communicate the most important findings and their practical relevance
-- Critically discuss limitations, risks, the required advanced extension, and potential improvements
 
 ## Individual contributions
 
