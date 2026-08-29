@@ -27,8 +27,6 @@ title: "Group Work"
 - Proposed topics will be reviewed during the following week.
   The instructor may request adjustments if topics overlap too strongly or the proposed scope is unsuitable.
 
-{{< pagebreak >}}
-
 ## Project topics
 
 The following are **illustrative examples**, not predefined project options:
@@ -36,7 +34,7 @@ The following are **illustrative examples**, not predefined project options:
 - **Finance**, such as credit default, fraud, or customer lifetime value
 - **Marketing**, such as churn, customer segmentation, or campaign response
 - **Human Resources**, such as attrition, promotion, or team productivity
-- **Digital business**, such as user engagement, gig worker retention, or demand prediction
+- **Digital Business**, such as user engagement, gig worker retention, or demand prediction
 
 Propose a concrete business problem and analytical question rather than merely selecting a generic domain.
 
@@ -101,6 +99,11 @@ Topics will be reviewed during the following week, and substantial overlap or un
 Develop the case, dataset, analysis, required advanced extension, and presentation iteratively.
 Your work should progress from problem framing and dataset design to analysis, modeling, evaluation, and reflection.
 
+If questions come up during the project phase, you can arrange a meeting:
+
+- Book appointments via: [Bookings]({{< meta instructor.bookings_url >}})
+- Join meetings via: [Teams]({{< meta instructor.online_meeting_url >}})
+
 ### Presentation
 
 - Available group-presentation dates: **{{< meta group_work.presentation_dates_display >}}**.
@@ -117,6 +120,8 @@ Your work should progress from problem framing and dataset design to analysis, m
 - Final submission deadline: **{{< meta group_work.submission_date >}}**.
 - Submit via the [Canvas assignment]({{< meta group_work.submission_url >}}).
 - Submit the Quarto source file (`.qmd`), the completed rendered PDF, data files, and R script for generating the synthetic dataset.
+
+{{< pagebreak >}}
 
 ## Deliverables
 
@@ -169,6 +174,8 @@ The contribution statement should provide transparent evidence of each member’
 
 Every group member must also make a meaningful contribution to the analysis, presentation, and discussion.
 
+{{< pagebreak >}}
+
 ## Evaluation
 
 The final group evaluation is **primarily based on the submitted project materials and is worth 120 performance points**.
@@ -180,7 +187,7 @@ Participation in the presentation and discussion may additionally be considered 
 ::: {.small}
 
 | Category | Points | Criteria |
-|------|---:|---------------------|
+|---------|---:|------------------|
 | **A. Case and dataset design** | 30 pts | Clarity and relevance of the problem; realism of the dataset; transparency of data generation |
 | **B. Analysis quality** | 40 pts | Method justification; correctness; CRISP-DM use; insightfulness |
 | **C. Communication** | 40 pts | Structure; visualization; clean code; argument quality; use of references; reflection |
@@ -194,16 +201,6 @@ Participation in the presentation and discussion may additionally be considered 
 - Not allowed: generating complete end-to-end solutions
 - You must be able to explain and defend your work at any time
 - All outputs must be validated
-
-### Consultation and support
-
-- Book appointments via: [Bookings]({{< meta instructor.bookings_url >}})
-- Join meetings via: [Teams]({{< meta instructor.online_meeting_url >}})
-
-::: {.callout-note title="Note"}
-High-quality project work may contribute to future course development, for example by extending teaching materials or informing teaching cases.
-In such cases, we will discuss how contributions are acknowledged.
-:::
 
 {{< pagebreak >}}
 
@@ -227,3 +224,8 @@ write.csv(dataset, "dataset.csv", row.names = FALSE)
 ```
 
 Adapt and document the generation logic for your own business context.
+
+::: {.callout-note title="Note"}
+High-quality project work may contribute to future course development, for example by extending teaching materials or informing teaching cases.
+In such cases, we will discuss how contributions are acknowledged.
+:::
