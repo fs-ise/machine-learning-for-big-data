@@ -10,47 +10,7 @@ title: "Group Work"
 > The project should critically reflect on assumptions, limitations, and opportunities for improvement, and—where relevant to the chosen case—consider issues such as deployment, organizational implications, ethics, governance, or risk.
 
 
-## Task
-
-- Define a practical business problem or decision situation and formulate a concrete analytical question.
-- Create a synthetic but realistic dataset representing internal organizational data. You may complement it with synthetic or real external data where appropriate. Generate the synthetic data reproducibly in a separate R script.
-- Develop an integrated Quarto analysis document (`.qmd`) that presents the complete CRISP-DM analysis, including explanatory text, R code, executed results, and necessary figures or tables.
-- Present and critically reflect on the findings, their connection to course content, simplifying assumptions and limitations, and opportunities for improvement.
-- Complete one meaningful **advanced extension** beyond a straightforward reproduction of classroom techniques. This may concern methods, data preparation, model comparison or robustness, deployment, organizational implications, ethics or governance, or communication. It does not need to involve a more complex machine-learning algorithm.
-
-<!--
-
-  1. **Business understanding**  
-     What is the context, the concrete question, and the decision relevance? Who are the stakeholders?
-
-  2. **Data understanding**  
-     What does the dataset contain? How does it reflect a realistic business setting? What insights emerge from exploratory data analysis?
-
-  3. **Data preparation**  
-     How is the data cleaned, transformed, and enriched?
-
-  4. **Modeling**  
-     Which model is used and why? How is it trained and tuned?
-
-  5. **Evaluation**  
-     Which metrics are used? How should the results be interpreted in practice?
-
-  6. **Deployment**  
-     How would the model be implemented? What are the requirements, risks, and ethical considerations?
-
--->
-
-::: {.callout-note title="Notes"}
-
-- Support key elements of your analysis with reputable sources, particularly the relevance of the problem, typical data sources, and common modeling approaches.
-- Simplifications are acceptable if they are clearly stated and justified. Explain how a more realistic analysis could extend beyond them.
-- If you plan to work with a large-scale big-data, real-time, or streaming-data scenario, consult with me in advance because of the additional technical complexity.
-
-:::
-
-{{< pagebreak >}}
-
-## Project process
+## Schedule
 
 Project work begins with the first course session, continues through the presentation phase, and concludes with the final submission.
 
@@ -83,11 +43,12 @@ gantt
     Final submission                  :milestone, 2026-11-02, 0d
 ```
 
+{{< pagebreak >}}
 
 ## Group formation and topic proposal
 
-- Form your own group of **2–3 participants**.
-- One member of the group must send an **email to [{{< meta instructor.email >}}](mailto:{{< meta instructor.email >}}) by {{< meta group_work.proposal_deadline >}}** containing:
+- Form your own group of 2–3 participants.
+- The group must send an email to [{{< meta instructor.email >}}](mailto:{{< meta instructor.email >}}) by {{< meta group_work.proposal_deadline >}} containing:
 
   - the names of all group members;
   - a concise proposed project topic; and
@@ -95,7 +56,7 @@ gantt
 
 - Proposed topics will be reviewed during the following week. The instructor may request adjustments if topics overlap too strongly or the proposed scope is unsuitable.
 
-The following are **illustrative examples**, not predefined project options:
+The following are illustrative examples, not predefined project options:
 
 - **Finance**, such as credit default, fraud, or customer lifetime value
 - **Marketing**, such as churn, customer segmentation, or campaign response
@@ -105,47 +66,80 @@ The following are **illustrative examples**, not predefined project options:
 Propose a concrete business problem and analytical question rather than merely selecting a generic domain.
 
 
-## Analysis
+## Analysis task
 
-If questions come up during the project phase, you can arrange a meeting via [Bookings]({{< meta instructor.bookings_url >}}) and join meetings via [Teams]({{< meta instructor.online_meeting_url >}}).
+- Define a practical business problem or decision situation and formulate a concrete analytical question.
+- Create a synthetic but realistic dataset representing internal organizational data. You may complement it with synthetic or real external data where appropriate.
+  Generate the synthetic data reproducibly in a separate R script.
+- Develop an integrated Quarto analysis document (`.qmd`) that presents the complete CRISP-DM analysis, including explanatory text, R code, executed results, and necessary figures or tables.
+- Present and critically reflect on the findings, their connection to course content, simplifying assumptions and limitations, and opportunities for improvement.
+- Complete one meaningful extension beyond a straightforward reproduction of classroom techniques.
+  This may concern methods, data preparation, model comparison or robustness, deployment, organizational implications, ethics or governance, or communication.
+  It does not need to involve a more complex machine-learning algorithm.
 
-### Presentation
+<!--
 
-Presentations take place on **{{< meta group_work.presentation_dates_display >}}**. Each group receives a **30-minute** presentation slot followed by up to **15 minutes** for questions and discussion. Every group member must present part of the project and contribute to the discussion; attendance is required for all project presentations.
+  1. **Business understanding**  
+     What is the context, the concrete question, and the decision relevance? Who are the stakeholders?
 
-**All groups** must submit their presentation PDF and relevant analysis files by **{{< meta group_work.presentation_submission_deadline >}}**, irrespective of their assigned presentation slot. Submit them **{{< meta group_work.presentation_submission_channel >}}**.
+  2. **Data understanding**  
+     What does the dataset contain? How does it reflect a realistic business setting? What insights emerge from exploratory data analysis?
 
-### Final submission
+  3. **Data preparation**  
+     How is the data cleaned, transformed, and enriched?
 
-Submit the final project by **{{< meta group_work.submission_date >}}** via the [Canvas assignment]({{< meta group_work.submission_url >}}). The required files are specified below.
+  4. **Modeling**  
+     Which model is used and why? How is it trained and tuned?
+
+  5. **Evaluation**  
+     Which metrics are used? How should the results be interpreted in practice?
+
+  6. **Deployment**  
+     How would the model be implemented? What are the requirements, risks, and ethical considerations?
+
+-->
+
+::: {.callout-note title="Notes"}
+
+- Support key elements of your analysis with reputable sources, particularly the relevance of the problem, typical data sources, and common modeling approaches.
+- Simplifications are acceptable if they are clearly stated and justified. Explain how a more realistic analysis could extend beyond them.
+- If you plan to work with a large-scale big-data, real-time, or streaming-data scenario, consult with me in advance because of the additional technical complexity.
+- If questions come up during the project phase, you can arrange a meeting via [Bookings]({{< meta instructor.bookings_url >}}) and join meetings via [Teams]({{< meta instructor.online_meeting_url >}}).
+
+:::
 
 {{< pagebreak >}}
 
-## Deliverables
-
 ### Presentation
 
-Submit the presentation as a **PDF** that:
+Presentations take place on {{< meta group_work.presentation_dates_display >}}.
+Each group receives a 30-minute presentation slot followed by up to 15 minutes for questions and discussion.
+Every group member must present part of the project and contribute to the discussion; attendance is required for all project presentations.
+
+All groups must submit their presentation PDF and relevant analysis files by {{< meta group_work.presentation_submission_deadline >}}, irrespective of their assigned presentation slot.
+Submit them {{< meta group_work.presentation_submission_channel >}}.
+
+Submit the presentation as a PDF that:
 
 - clearly introduces the business problem and decision context;
 - explains the analytical approach and key modeling decisions;
 - communicates the most important findings and their practical relevance; and
-- critically discusses limitations, risks, the required advanced extension, and potential improvements.
+- critically discusses limitations, risks, the extension, and potential improvements.
 
-### Synthetic dataset and generation script
+### Final submission
 
-Submit the **R script used to generate the synthetic dataset** together with the resulting **dataset file(s)**, normally as CSV files.
-The script should document the business purpose, schema, generation logic, assumptions, distributions, relationships, and realism features such as noise or missing values where appropriate.
-Use a fixed random seed so that the dataset can be reproduced from the script, and keep the generation logic separate from the main `.qmd`.
+Submit the final project by {{< meta group_work.submission_date >}} via the [Canvas assignment]({{< meta group_work.submission_url >}}).
+The required files are specified below:
 
-### Main report
+- The R script used to generate the synthetic dataset together with the resulting dataset file(s), normally as CSV files.
+  The script should document the business purpose, schema, generation logic, assumptions, distributions, relationships, and realism features such as noise or missing values where appropriate.
+  Use a fixed random seed so that the dataset can be reproduced from the script, and keep the generation logic separate from the main `.qmd`.
 
-Submit the analysis as a Quarto document (`.qmd`) together with its rendered PDF.
-The `.qmd` is the central analytical artifact and must contain the complete CRISP-DM analysis, explanatory text, R code, executed results, and the figures and tables needed to support the argument. Do not create a second, redundant report narrative.
-
-The **main report text is limited to 12 pages**. The title page, references, and appendices are excluded from this limit. Include enough code and results to make the work reproducible while keeping the prose focused.
-
-Submit **both** the `.qmd` and rendered PDF. The submitted source, data, and supporting files must reproduce the PDF.
+- The main report as a Quarto document (`.qmd`) together with its rendered PDF.
+  The `.qmd` is the central analytical artifact and must contain the complete CRISP-DM analysis, explanatory text, R code, executed results, and the figures and tables needed to support the argument. Do not create a second, redundant report narrative.
+  The main report text is limited to 12 pages.
+  The title page, references, and appendices are excluded from this limit. Include enough code and results to make the work reproducible while keeping the prose focused.
+  Submit both the `.qmd` and rendered PDF. The submitted source, data, and supporting files must reproduce the PDF.
 
 <!--
 To create the submitted PDF, give the document a PDF format in its YAML header (for example, `format: pdf`) and run:
@@ -159,7 +153,8 @@ Rendering must execute the R code (do not disable execution or rely on stale res
 
 ::: {.callout-tip title="Individual contributions"}
 
-Each student should be the primary author of approximately **three pages of report text**. The remaining material may be written jointly or developed collaboratively.
+Each student should be the primary author of approximately three pages of report text.
+The remaining material may be written jointly or developed collaboratively.
 Include a brief contribution statement at the end of the report identifying the sections or subsections primarily written by each group member.
 Every group member must also contribute meaningfully to the analysis, presentation, and discussion.
 
@@ -169,9 +164,10 @@ Every group member must also contribute meaningfully to the analysis, presentati
 
 ## Evaluation
 
-The final group evaluation is **primarily based on the submitted project materials and is worth 120 performance points**.
+The final group evaluation is primarily based on the submitted project materials and is worth 120 performance points.
 
-The presentation is a **mandatory formative milestone** rather than a separately graded component. Use the presentation and discussion to test your argument, identify weaknesses, and obtain feedback for improving the final report.
+The presentation is a mandatory formative milestone rather than a separately graded component.
+Use the presentation and discussion to test your argument, identify weaknesses, and obtain feedback for improving the final report.
 
 Participation in the presentation and discussion may additionally be considered when assessing individual contributions.
 
@@ -180,9 +176,9 @@ Participation in the presentation and discussion may additionally be considered 
 | Category | Points | Criteria |
 |---------|---:|------------------|
 | **A. Case and dataset design** | 30 pts | Clarity and relevance of the problem; realism of the dataset; transparency of data generation |
-| **B. Analysis quality** | 40 pts | Method justification; correctness; CRISP-DM use; insightfulness |
-| **C. Communication** | 40 pts | Structure; visualization; clean code; argument quality; use of references; reflection |
-| **D. Advanced extension** | 10 pts | Meaningful differentiation beyond straightforward reproduction of classroom examples |
+| **B. Analysis quality**        | 40 pts | Method justification; correctness; CRISP-DM use; insightfulness |
+| **C. Communication**           | 40 pts | Structure; visualization; clean code; argument quality; use of references; reflection |
+| **D. Extension**               | 10 pts | Meaningful differentiation beyond straightforward reproduction of classroom examples |
 
 :::
 
