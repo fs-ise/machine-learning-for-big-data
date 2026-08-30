@@ -157,9 +157,9 @@ and **R-based analysis in Quarto documents**.
 
 ## Group work brief
 
-![](../images/group_work_brief.png){fig-align="center" width="30%"}
+![](../images/group_work_brief.png){.paper-preview fig-align="center" width="30%"}
 
-Available on Canvas.
+Available on [Canvas](https://frankfurtschool.instructure.com/courses/20150).
 
 # Course logistics  {data-stack-name="Course logistics"}
 
@@ -195,7 +195,7 @@ Slides and materials
 
 Short surveys at the end of each session
 
-- If you notice anything that could benefit from further clarification or improvement, please take a note and let me know there.
+- If you notice anything that could benefit from further clarification or improvement, please take a note and let me know.
 
 Your input makes a real difference 🙏
 
