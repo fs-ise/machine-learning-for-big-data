@@ -13,6 +13,9 @@ session_id: session-02
 | 45–75      | 30       | Analytics capabilities and purposes | |
 | 75–90      | 15       | CRISP-DM | |
 
+
+**Start by revisiting the topic ideas of students (as announced in session 0). Discuss ideas, provide guidance on analytical focus and scope, answer questions.**
+
 ::: objective
 Explain why modern machine learning and AI for big data became powerful through more computing power, new algorithms, and maturing analytics processes.
 :::

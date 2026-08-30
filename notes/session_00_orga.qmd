@@ -61,20 +61,21 @@ It changes **how decisions are made, how organizations compete, and who wins.**
 
 - Highlight that the report submission will be approx. one month after the presentations.
 
-
-## Objectives
-
-- Python implementation: we will acquire some technical skills.
-  Python was selected deliberately. I know there are many graphical, low-code/no-code tools out there.
-  But they have their limitations. If we learn Python, that is more useful to understand other tools as well.
-  In addition, using LLMs on Python code is much easier, and you can clearly see and control what is suggested.
-
 ## Not covered
 
 - Engineering: "building the system"
 - Statistical theory: "explaining the WHY"
 - Mathematical models: "building more specialized models"
 - Autonomous systems: "Implementing the decisions"
+
+## Group work brief
+
+Ask students to review the document (Canvas), discuss
+
+- Dates/logistics suitable?
+- Preferences for group formation?
+- Anything to clarify? Questions?
+- Take notes on topioc ideas and discuss them over the break. We will revisit them in the afternoon.
 
 ## Logistics
 

@@ -155,6 +155,12 @@ For each question, I’ll invite a few of you to briefly share your thoughts.
 {{< iconify fluent-mdl2:insights >}} We will *touch* these areas where needed, but our focus is on **analytical reasoning for business decisions**<br>
 and **R-based analysis in Quarto documents**.
 
+## Group work brief
+
+![](../images/group_work_brief.png){fig-align="center" width="30%"}
+
+Available on Canvas.
+
 # Course logistics  {data-stack-name="Course logistics"}
 
 ## Course logistics
@@ -179,8 +185,6 @@ Individual circumstances
 
 If you have family responsibilities, religious holidays, health-related matters, or other individual circumstances that may affect your participation or performance, please reach out early.
 We will work together to find a fair and workable solution.
-
-# TODO: `group-projects/Guidelines for the GroupProjects.pdf`
 
 
 ## Materials
