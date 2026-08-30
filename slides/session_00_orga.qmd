@@ -12,19 +12,19 @@ session: "Session 0"
 ::: {.columns}
 ::: {.column width="70%"}
 
-Academic background
+**Academic background**
 
 - Universität Regensburg: Doctoral Student
 - HEC Montréal: Postdoctoral Fellowship
 - Otto-Friedrich-Universität Bamberg: Assistant Professor
 - Frankfurt School of Finance & Management: Full Professor
 
-Research interests
+**Research interests**
 
 - Open, agentic, and boundary-spanning work
 - AI-supported knowledge synthesis
 
-Teaching interests
+**Teaching interests**
 
 - Analytics and big data
 - IT security
@@ -165,23 +165,23 @@ Available on [Canvas](https://frankfurtschool.instructure.com/courses/20150).
 
 ## Course logistics
 
-Workload:
+**Workload**
 
 * 150 h total
 * 44 academic teaching hours (45 minutes each)
 * Remaining workload: self-study, including lesson preparation and follow-up, reading, assessment preparation, and take-home assignments
 
-Assessment:
+**Assessment**
 
 * Group project: ongoing, submitted as a text document at the end of the module
 * 120 performance points
 
-Contact:
+**Contact**
 
 - Instructor: [{{< meta instructor.name >}}]({{< meta instructor.url >}}){target="_blank"} ([{{< meta instructor.email >}}](mailto:{{< meta instructor.email >}}))
 - Office hours: see [bookings]({{< meta instructor.bookings_url >}}){target="_blank"}
 
-Individual circumstances
+**Individual circumstances**
 
 If you have family responsibilities, religious holidays, health-related matters, or other individual circumstances that may affect your participation or performance, please reach out early.
 We will work together to find a fair and workable solution.
@@ -189,11 +189,11 @@ We will work together to find a fair and workable solution.
 
 ## Materials
 
-Slides and materials
+**Slides and materials**
 
 - Presentation slides and documents will be made available for download.
 
-Short surveys at the end of each session
+**Short surveys at the end of each session**
 
 - If you notice anything that could benefit from further clarification or improvement, please take a note and let me know.
 
