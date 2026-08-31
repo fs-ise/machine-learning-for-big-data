@@ -157,9 +157,31 @@ and **R-based analysis in Quarto documents**.
 
 ## Group work brief
 
-![](../images/group_work_brief.png){.paper-preview fig-align="center" width="30%"}
+:::: {.columns}
 
-Available on [Canvas](https://frankfurtschool.instructure.com/courses/20150).
+::: {.column width="40%"}
+
+{{< iconify mdi:file-document-outline >}} **Read the group work brief, which is linked on the [Canvas course page](https://frankfurtschool.instructure.com/courses/20150).**
+
+{{< iconify mdi:calendar-check-outline >}} **Check the modalities and dates**  
+Do they work for you?
+
+{{< iconify mdi:notebook-edit-outline >}} **Take notes on questions or unclear points**
+
+We will discuss your questions together afterwards.
+
+:::
+
+::: {.column width="60%"}
+![](../images/group_work_brief.png){.paper-preview fig-align="center" width="40%"}
+:::
+
+::::
+
+
+::: aside
+Note: The document may be updated in the coming days.
+:::
 
 # Course logistics  {data-stack-name="Course logistics"}
 
