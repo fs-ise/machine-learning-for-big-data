@@ -383,9 +383,96 @@ References for data and claims:
 - Useful source search terms: "IAB ad fraud invalid traffic impressions clicks conversions", "DoubleVerify 8.3 trillion media transactions", "Juniper ad fraud 172 billion 2028", "HUMAN 2.5 billion daily bid requests 100 million".
 :::
 
-## TODO
 
-Are all Vs necessary for Big Data?
+## Metadata: Location intelligence
+
+::: columns
+::: {.column width="55%"}
+
+**Analytical question**
+
+How can organizations reconstruct **where devices have been, when, and with whom they co-located** from billions of metadata observations?
+
+**Key data facts**
+
+- Persistent device or advertising identifier
+- **Timestamp + latitude + longitude**
+- Continuous streams create detailed movement histories
+- Billions of small observations can accumulate rapidly
+- Metadata can reveal routines and relationships **without recording content**
+
+**Models:** spatio-temporal indexing · geofencing · trajectory analysis · clustering · network analysis<br>
+**Outcomes:** recommend location-specific products and services · personalize offers · optimize site selection · analyze mobility patterns · support real-time decisions
+
+:::
+
+::: {.column width="45%"}
+
+![](../images/location_intelligence.jpg){fig-alt="Map showing time-stamped device locations and movement trajectories" width=450px}
+
+:::
+:::
+
+::: notes
+Rationale and key points to cover:
+
+This example illustrates that big data does not necessarily mean large individual files. Location metadata records can be extremely small: an identifier, a timestamp, and geographical coordinates. At scale, however, continuously collecting these observations produces enormous datasets.
+
+For businesses, these data support applications such as recommending location-specific products and services, personalizing offers, analyzing customer mobility, selecting store locations, estimating foot traffic, optimizing logistics, and adapting services in real time.
+
+The analytical value comes from combining geography and time. A sequence of observations can reconstruct movement trajectories, recurring locations, routines, and co-location with other devices. Importantly, such inferences can often be made without accessing communication content.
+
+This creates distinctive storage and processing challenges. Systems need to support queries combining both space and time across billions of observations. Specialized data structures and techniques therefore become important, including spatial indexes such as R-trees, geographical partitioning using geohashes or H3 cells, time partitioning, columnar storage, compression, and distributed stream processing.
+
+The broader industry spans several overlapping areas. Firms such as Palantir provide platforms for integrating and analyzing large heterogeneous datasets, while companies such as Fog Data Science, Babel Street, Venntel, and Gravy Analytics have offered more specialized location- or device-data capabilities.
+
+These markets overlap with what is sometimes critically described as the **surveillance industry**. The same general capabilities—combining location data, identifiers, temporal histories, and other metadata—can be used for commercial location analytics, but also for intelligence, law-enforcement, and other government applications.
+
+The important distinction is therefore often not the underlying data structure or analytical technique, but the purpose, customer, governance regime, and consequences of its use.
+
+The broader teaching point is that metadata can become "big data" through granularity, temporal depth, and scale. The individual observation contains little information, but billions of interconnected observations can reveal highly detailed behavioral patterns.
+:::
+
+
+# Defining big data {data-stack-name="Clarifying the 4V model"}
+
+## Critically analyzing examples of Big Data
+
+{{< iconify fluent:people-chat-24-regular >}} **Discuss with your neighbor (3–4 min)**
+
+Revisit the examples from the previous slides and add **one or two examples of your own**.
+
+For each case, consider:
+
+- Which of the **four V dimensions** does it exhibit?
+- Which dimensions are particularly **strong or weak**?
+- Are there examples that clearly exhibit **all four Vs**?
+- **Do Big Data need to satisfy all four Vs?**
+
+{{< iconify fluent:note-edit-24-regular >}} Be prepared to share **one interesting or ambiguous case**.
+
+
+## Are all Vs necessary for Big Data?
+
+@kitchin_big_2016 examined **26 datasets** commonly described as Big Data across seven domains.
+
+. . .
+
+Their findings challenge a simple V-based checklist:
+
+- Only a **handful** of datasets exhibited all of the characteristics they examined.
+- Even **volume and variety were not necessary conditions**.
+- **Velocity and exhaustivity** emerged as the strongest boundary markers distinguishing Big Data from small data.
+
+. . .
+
+::: {.callout-tip}
+## Key takeaway
+
+**Big Data is not simply "very large data."**
+
+It is better understood as a **combination of characteristics** rather than as data that must satisfy every V.
+:::
 
 <!--
 
@@ -405,29 +492,23 @@ Their stronger conclusion is particularly useful for teaching:
 
 See: https://journals.sagepub.com/doi/10.1177/2053951716631130 "What makes Big Data, Big Data? Exploring the ontological characteristics of 26 datasets - Rob Kitchin, Gavin McArdle, 2016"
 
-
 -->
-
-## Turning big data into value
-
-<br>
-
-![](../images/slides_86_new.png){fig-align="center" width="65%"}
-
-::: aside
-— Source: http://de.slideshare.net/BernardMarr/140228-big-data-slide-share/3-The_basic_idea_behind_the
-:::
 
 ## Summary {data-state="hide-menubar"}
 
 - Data volumes and sources have expanded rapidly, creating new analytical opportunities.
 - Volume, velocity, variety, and veracity create distinct analytical and managerial challenges.
-- Big-data applications combine data, models, and operational decisions to create business value.
+- Big-data applications combine different forms of data and machine learning models to create business value.
 
+. . . 
 
+![](../images/Big-Data-ML-Value.png){fig-align="center" width="65%"}
+
+<!--
+based on : http://de.slideshare.net/BernardMarr/140228-big-data-slide-share/3-The_basic_idea_behind_the
+-->
 
 # Analytical setup {data-stack-name="Analytical setup"}
-
 
 ## Setup for the practical exercises 
 
