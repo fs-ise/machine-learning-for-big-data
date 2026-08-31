@@ -16,7 +16,7 @@ format: revealjs
 - **Explain** the four characteristics of big data and their business implications.
 :::
 
-# The growth of data {data-stack-name="Data"}
+# The growth of data {data-stack-name="Growth of data"}
 
 ## The exponential growth of data
 
@@ -156,9 +156,9 @@ Online banking, mobile payments, and blockchain systems generate detailed financ
 Machine learning and generative AI create large datasets during training and operation, further accelerating global data growth.
 
 
-# Big data {data-stack-name="Big data"}
+# Defining big data {data-stack-name="The 4V Model of big data"}
 
-## 4V’s of big data
+## The 4 V’s of big data
 
 Big data matters when the **properties of the data** change what managers can decide, automate, or compete on.
 
@@ -180,12 +180,14 @@ Use this as the conceptual frame for the four business examples that follow.
 :::
 
 
+# Examples of big data in different industries {data-stack-name="Industry examples"}
+
 ## Volume: UPS route optimization
 
 ::: columns
 ::: {.column width="55%"}
 
-**Managerial dilemma**
+**Analytical question**
 
 How do you optimize millions of delivery decisions when every route has thousands of possible variants?
 
@@ -233,7 +235,7 @@ References for data and claims:
 ::: columns
 ::: {.column width="55%"}
 
-**Managerial dilemma**
+**Analytical question**
 
 Can fraud be detected **before** the transaction is approved?
 
@@ -286,7 +288,7 @@ References for data and claims:
 ::: columns
 ::: {.column width="55%"}
 
-**Managerial dilemma**
+**Analytical question**
 
 How do you coordinate inventory when the relevant data comes from many different worlds?
 
@@ -336,7 +338,7 @@ References for data and claims:
 ::: columns
 ::: {.column width="55%"}
 
-**Managerial dilemma**
+**Analytical question**
 
 The dashboard says there were clicks and impressions — but were they real?
 
@@ -419,17 +421,15 @@ See: https://journals.sagepub.com/doi/10.1177/2053951716631130 "What makes Big D
 ## Summary {data-state="hide-menubar"}
 
 - Data volumes and sources have expanded rapidly, creating new analytical opportunities.
-- Volume, velocity, variety, and veracity create distinct managerial and analytical challenges.
+- Volume, velocity, variety, and veracity create distinct analytical and managerial challenges.
 - Big-data applications combine data, models, and operational decisions to create business value.
 
 
 
+# Analytical setup {data-stack-name="Analytical setup"}
 
 
-
-
-
-## Setup for the practical exercises  {data-state="hide-menubar"}
+## Setup for the practical exercises 
 
 :::: {.columns}
 ::: {.column width="40%"}
