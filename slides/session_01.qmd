@@ -510,20 +510,21 @@ based on : http://de.slideshare.net/BernardMarr/140228-big-data-slide-share/3-Th
 
 # Analytical setup {data-stack-name="Analytical setup"}
 
-## Setup for the practical exercises 
+## Setup for the practical exercises
 
 :::: {.columns}
+
 ::: {.column width="40%"}
 
 **Options**
 
 - Microsoft Excel
-- RapidMiner
-- RStudio
-- IBM SPSS Statistics
-- **Jupyter Notebooks**
-- Tableau
 - Microsoft Power BI
+- IBM SPSS Statistics
+- RapidMiner
+- Tableau
+- Python
+- **R + RStudio + Quarto**
 
 :::
 
@@ -531,254 +532,121 @@ based on : http://de.slideshare.net/BernardMarr/140228-big-data-slide-share/3-Th
 
 **Why this setup?**
 
-We use **Jupyter Notebooks and Python** because
+We use **R, RStudio, and Quarto** because
 
-- it supports **advanced analytics**, including data analysis, visualization, machine learning, and big data analytics
-- it is a **more demanding environment to learn**, which helps us build skills that transfer easily to simpler analytics tools and interfaces
-- it is **widely used in research and large organizations**, making it a valuable and relevant skillset
-- it allows us to combine **context, code, explanations, and results in a single document**
-
-<!-- **GitHub Codespaces** provides a browser-based virtual environment with a common setup for everyone. -->
+- they support **advanced analytics**, including data preparation, visualization, statistical modeling, and machine learning
+- working with code provides a **transparent and reproducible analytical workflow**
+- R is **widely used in analytics and research**
+- Quarto combines **context, code, explanations, results, and implications in a single document**
+- the skills transfer well to other analytical tools and programming environments
 
 :::
+
 ::::
 
-## A Jupyter notebook  {data-state="hide-menubar"}
+
+## Our analytical environment
 
 :::: {.columns}
-::: {.column width="60%"}
 
-Jupyter Notebooks combine **context, code, output, and implications** in one interactive document.
+::: {.column width="35%"}
 
-**Cells**
+**R**
 
-* **Markdown cells** → text, explanations, documentation
-* **Code cells** → Python code for analysis
+Executes the analytical code.
 
-**Output**
+**RStudio**
 
-Running a code cell produces results directly below it (text, tables, charts, etc.).
+Provides the development environment for
 
-**Execution environment**
+- writing and running R code
+- inspecting data and objects
+- managing files and projects
+- working with Quarto documents
 
-* **Kernel** → executes the code (Python in this course)
-* **Virtual machine (VM)** → the computer where the kernel runs
-* In this course: provided through **GitHub Codespaces**
+**Quarto**
 
-{{< iconify fluent-mdl2:insights >}} The analysis runs on a **remote machine with Python and libraries already installed**.
-:::
+Combines text, code, results, tables, and visualizations into a reproducible analytical document.
 
-::: {.column width="40%"}
-
-![](../images/notebook-example.png){width=70% .boxed-image fig-align=center}
+{{< iconify fluent-mdl2:insights >}} In this course, the Quarto document is the central analytical artifact.
 
 :::
+
+::: {.column width="64%"}
+
+![](../images/rstudio.png){width=100% .boxed-image fig-align=center}
+
+:::
+
 ::::
 
-## Starting GitHub Codespaces  {data-state="hide-menubar"}
+::: notes
+A Quarto document combines context, code, output, and implications in one reproducible analysis.
 
-- Create a GitHub account and sign in: [https://github.com/signup](https://github.com/signup)
-- Open [https://github.com/fs-ise/analytics-and-big-data-notebooks](https://github.com/fs-ise/analytics-and-big-data-notebooks)
-- Start a Codespace:
+Document elements
 
-<br>
-
-![](../images/codespace-start.png){width=50% fig-align=center .boxed-image}
-
-
-::: aside
-A local setup may also be possible after this session, depending on your machine. If you run into setup issues or have tips to share, please post them in this repository's issues:  
-[github.com/fs-ise/analytics-and-big-data-notebooks/issues](https://github.com/fs-ise/analytics-and-big-data-notebooks/issues).
+Markdown → explanations, documentation, and interpretation
+R code chunks → data preparation and analysis
+Output → tables, statistics, and visualizations
 :::
 
+## Local setup
 
-::: {.content-hidden when-profile="pdf"}
+Please install **RStudio Desktop** on your computer.
 
-## ☕ Short Break {data-state="hide-menubar"}
+Then verify your setup:
 
-Take 5–10 minutes
+1. Open RStudio.
+2. Create a new Quarto document.
+3. Select **R** as the computation engine.
+4. Add and execute an R code chunk.
+5. Render the document.
 
-Stretch, grab a coffee, or chat with others.
 
-We’ll continue shortly
+{{< iconify fluent-mdl2:insights >}} If the code executes and the document renders successfully, your analytical environment is ready.
 
+::: aside
 
-## Group split  {data-state="hide-menubar"}
+You may need to install `rmarkdown`:
 
-Each section is 30 min.
-Work in pairs of two.
-
-<br><br><br>
-
-```{dot}
-digraph learning_flow {
-    rankdir=LR;
-
-    node [shape=box];
-
-    B [label="Split", shape=diamond];
-
-    C [label="Group 1\nJupyter Notebook", width=2.6, height=0.9, fixedsize=true];
-    D [label="Group 2\nReading", width=2.6, height=0.9, fixedsize=true];
-
-    E [label="Switch"];
-
-    F [label="Group 1\nReading", width=2.6, height=0.9, fixedsize=true];
-    G [label="Group 2\nJupyter Notebook", width=2.6, height=0.9, fixedsize=true];
-
-    H [label="Discussion"];
-
-    B -> C;
-    B -> D;
-
-    C -> E;
-    D -> E;
-
-    E -> F;
-    E -> G;
-
-    F -> H;
-    G -> H;
-}
+```r
+install.packages("rmarkdown")
 ```
 
-<!--
-  - Github advice: https://docs.github.com/en/codespaces/developing-in-a-codespace/getting-started-with-github-codespaces-for-machine-learning
-  
-  - Working example (setup time seems to be fast!): https://github.com/github/codespaces-jupyter
-  - https://github.com/devcontainers-community/templates-jupyter-datascience-notebooks
-  - https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html
-
-    Start codespace, go to https://github.com/codespaces -> open in jupyterlab
-    https://github.blog/changelog/2022-11-09-using-codespaces-with-jupyterlab-public-beta/
-    can select jupyterlab as default editor in github/settings/codespaces/editor preferences
-    BUT: VSCode seems to be the better supported/more popular and reliable version...
-    Note: pin the image version (to enable caching and prevent re-loading)
-
-    Note: only Microsoft is cached.
-    -> TODO: test whether pip-install through devcontainer setup works.
-    -> Microsoft does not seem to be stashed... -> reverting to Jupyter/scipy-notebook
--->
-
 :::
 
-## Group 1: Read _Competing on Analytics_ {data-state="hide-menubar"}
+## Practical exercise: Start your Quarto analysis
 
-Read the _Competing on Analytics_ paper by @Davenport2006.
-Prepare to discuss the following questions:
+Work in pairs.
 
-1. **What does it mean for a company to “compete on analytics”?**  
-   How is this different from simply using data or reports in decision-making?
+This exercise can also serve as a **first exploration of a possible group project topic**.
 
-2. **What organizational capabilities are required to compete on analytics?**  
-   Consider aspects such as leadership, culture, people, and technology.
+**Base task**
 
-3. **Which companies or industries today seem to compete on analytics?**  
-   Give examples and explain how analytics creates their competitive advantage.
+- Create a Quarto document called `report.qmd`.
+- Select a suitable dataset from [Kaggle](https://www.kaggle.com/datasets) and download it as CSV.
+- Add a short **analytical or business question** to your document.
+- Import the CSV file into R.
+- Display the first rows using `head()`.
+- Briefly describe:
+  - which analytical methods could be applied,
+  - which variables would be relevant,
+  - and what kinds of insights the analysis could potentially produce.
+- Render the document as **HTML**.
 
-
-
-## Group 2: Developing an analytical notebook {data-state="hide-menubar"}
-
-Find a dataset on [https://www.kaggle.com/datasets](https://www.kaggle.com/datasets) and a corresponding business problem you could address with the data.
-
-Create a notebook `report.ipynb` and draft an **analysis structure based on CRISP-DM**:
-
-- Add Markdown sections describing what you would do in each phase
-- Add Python code sections for the analyses you intend to run
-- Indicate which parts of the analysis are **descriptive**, **predictive**, or **prescriptive**
-
-Then:
-
-- Download a suitable dataset (CSV)
-- Import it into your notebook
-- Start exploring the data and implement the analyses as far as you get
-
-The goal is **not to complete the analysis**, but to begin working with the data.
-
-. . . 
-
-<br><br>
-
-Meeting link: [{{< meta instructor.online_meeting_url >}}]({{< meta instructor.online_meeting_url >}})
-
+{{< iconify fluent-mdl2:insights >}} The goal is to create a **small but complete reproducible analysis document**, not to perform the full analysis.
 
 ::: aside
+
 If you have a question, put up the **help-needed** tag and I will come by.
-:::
-
-
-## Jupyter Notebook {data-state="hide-menubar"}
-
-:::: {.columns}
-::: {.column width="50%"}
-
-**Modes**
-
-- Edit mode: `Enter`
-- Command mode: `Esc`
-
-**Navigating cells**
-
-- Move between cells: `↑` / `↓`
-- Create new cell: `a` (above) / `b` (below)
-
-**Cell types**
-
-- Markdown cell: `m`
-- Code cell: `y`
-
-**Run cells**
-
-- Run cell: `Ctrl + Enter` or  `Shift + Enter`
 
 :::
 
-::: {.column width="50%"}
+## Optional extensions
 
-![](../images/codespace-new-notebook.png){width=100%}
-
-
-**Steps to get started:**
-
-- Create a new notebook: `notebook.ipynb`
-- Kernel selection → choose Python environments / ``/opt/conda/bin/python``.
-- Create a Markdown cell explaining that this is a test notebook
-- Create a code cell to print "Hello world"
-- Run both cells
-
-:::
-
-::::
-
-
-## GitHub Codespaces: Stop, resume, and download your work {data-state="hide-menubar"}
-
-**Stopping and resuming a Codespace**
-
-- **Stop a Codespace** when you finish working  
-  - This **pauses the environment** but keeps your files and setup.
-  - You can **resume later** and continue where you left off.
-
-- **Resume a Codespace**
-  - Open the repository on GitHub.
-  - Navigate to **Code → Codespaces → Resume**.
-
-**Deleting a Codespace**
-
-- **Deleting a Codespace permanently removes the environment and all files stored in the Codespace.**
-- **Before deleting**: Download notebooks or files that you want to keep for your own reference.
-
-**Recommendation**
-
-- Prefer **Stop / Resume** if you plan to continue working later.
-- If you **delete a Codespace**, make sure you **download important notebooks** or **push your changes to GitHub** first.
-
-::: aside
-As a student, you can apply for the [GitHub Student Developer Pack](https://education.github.com/pack), which includes **free or extended GitHub Codespaces usage**.
-:::
-
-
-
+- Create a **scatterplot** with `ggplot2` and hide the code in the rendered document.
+- Add at least **one citation** and a bibliography.
+- Render the document as **PDF**.
+- Consult the [Quarto documentation](https://quarto.org/docs/) to implement additional feature(s) of your choice.
 
 # References {data-state="hide-menubar"}
