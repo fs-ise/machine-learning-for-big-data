@@ -37,12 +37,12 @@ A summary of all file-level changes is available through the [Git commit history
 
 For each session:
 
-- [ ] Port Python examples to R
-- [ ] Port exercises and solutions
-- [ ] Update teaching notes
-- [ ] Check datasets and asset paths
-- [ ] Render slides and exercises
+- [x] Port Python examples to R
+- [x] Port exercises and solutions
+- [x] Check datasets and asset paths
+- [x] Render slides and exercises
 - [ ] Review rendered output
+- [ ] Update teaching notes
 - [ ] Commit completed session
 
 **Stage 4 — Standardize and finalize**
