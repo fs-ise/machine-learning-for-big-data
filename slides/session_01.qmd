@@ -16,6 +16,7 @@ nocite: |
 ::: {.learning-objectives}
 - **Describe** the growth and principal sources of large-scale data.
 - **Explain** the four characteristics of big data and their business implications.
+- **Use** RStudio and Quarto to import, inspect, and analyze data in a reproducible analytical workflow.
 :::
 
 # The growth of data {data-stack-name="Growth of data"}
