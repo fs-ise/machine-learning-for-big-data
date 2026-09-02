@@ -51,7 +51,7 @@ Load the local data, inspect its columns, and count sentiment labels.
 
 ```{r}
 df <- read_csv(
-  "data/imdb_reviews_sample.csv",
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/imdb_reviews_sample.csv",
   show_col_types = FALSE
 ) |>
   mutate(review_id = row_number())

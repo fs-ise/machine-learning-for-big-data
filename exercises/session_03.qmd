@@ -31,7 +31,10 @@ Dataset: `firm_data.csv`
 
 library(tidyverse)
 
-firm_data_df <- read_csv("data/firm_data.csv", show_col_types = FALSE)
+firm_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/firm_data.csv",
+  show_col_types = FALSE
+)
 
 firm_data_df |>
   slice_head(n = 5)

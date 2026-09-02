@@ -61,7 +61,7 @@ library(tidyverse)
 library(pROC)
 
 df <- read_csv(
-  "data/credit_default.csv",
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/credit_default.csv",
   show_col_types = FALSE
 )
 

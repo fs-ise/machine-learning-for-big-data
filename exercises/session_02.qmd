@@ -39,7 +39,10 @@ We start with the `market_data_log.csv` dataset.
 
 library(tidyverse)
 
-market_data_log_df <- read_csv("data/market_data_log.csv", show_col_types = FALSE)
+market_data_log_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/market_data_log.csv",
+  show_col_types = FALSE
+)
 market_data_log_df |> head()
 ```
 
@@ -176,7 +179,10 @@ market_data_log_df |> head()
 4. **(Optional challenge)**: Implement the transformation in R (`tidyverse`)
 
 ```{r}
-market_data_df <- read_csv("data/market_data_log.csv", show_col_types = FALSE)
+market_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/market_data_log.csv",
+  show_col_types = FALSE
+)
 
 # Add your solution below.
 # Note: you may need string operations.
@@ -277,7 +283,10 @@ market_data_df <- read_csv("data/market_data_log.csv", show_col_types = FALSE)
 ### 4. (Optional challenge): Implement the transformation in R (`tidyverse`)
 
 ```{r}
-market_data_df <- read_csv("data/market_data_log.csv", show_col_types = FALSE)
+market_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/market_data_log.csv",
+  show_col_types = FALSE
+)
 
 # Split the values encoded in Record into separate variables.
 market_data_long <- market_data_df |>
@@ -309,7 +318,10 @@ Dataset `sales_data_channels_full_year.csv`
 ```{r}
 #| output: false
 
-sales_data_df <- read_csv("data/sales_data_channels_full_year.csv", show_col_types = FALSE)
+sales_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/sales_data_channels_full_year.csv",
+  show_col_types = FALSE
+)
 sales_data_df |> head()
 ```
 
@@ -541,7 +553,10 @@ sales_data_df |> head()
 4. **(Optional challenge)**: Implement the transformation in R (`tidyverse`)
 
 ```{r}
-sales_data_df <- read_csv("data/sales_data_channels_full_year.csv", show_col_types = FALSE)
+sales_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/sales_data_channels_full_year.csv",
+  show_col_types = FALSE
+)
 
 # Add your solution below.
 ```
@@ -580,7 +595,10 @@ sales_data_df <- read_csv("data/sales_data_channels_full_year.csv", show_col_typ
 ### 4. (Optional challenge): Implement the transformation in R (`tidyverse`)
 
 ```{r}
-sales_data_df <- read_csv("data/sales_data_channels_full_year.csv", show_col_types = FALSE)
+sales_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/sales_data_channels_full_year.csv",
+  show_col_types = FALSE
+)
 
 # Step 1: reshape the month/channel columns to long format.
 tidy_df <- sales_data_df |>
@@ -613,7 +631,7 @@ Dataset `messy_customer_data.csv`
 #| output: false
 
 customer_df <- read_csv(
-  "data/messy_customer_data.csv",
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/messy_customer_data.csv",
   na = c("", "NA", "NaN"),
   show_col_types = FALSE
 )
@@ -966,7 +984,7 @@ summary(customer_df)
 
 ```{r}
 customer_df <- read_csv(
-  "data/messy_customer_data.csv",
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/messy_customer_data.csv",
   na = c("", "NA", "NaN"),
   show_col_types = FALSE
 )

@@ -56,7 +56,7 @@ Potential predictors include:
 library(tidyverse)
 
 df <- read_csv(
-  "data/employee_performance_data.csv",
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/employee_performance_data.csv",
   show_col_types = FALSE
 ) |>
   mutate(
