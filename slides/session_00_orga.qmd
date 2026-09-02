@@ -14,23 +14,22 @@ session: "Session 0"
 
 **Academic background**
 
-- Universität Regensburg: Doctoral Student
-- HEC Montréal: Postdoctoral Fellowship
-- Otto-Friedrich-Universität Bamberg: Assistant Professor
-- Frankfurt School of Finance & Management: Full Professor
+- 2009-2018: Universität Regensburg (Bachelor/Master/Doctoral Student)
+- 2014: University of Oulu (ERASMUS)
+- 2019-2022: HEC Montréal (Postdoctoral Fellowship)
+- 2022-2026: Otto-Friedrich-Universität Bamberg (Assistant Professor)
+- Since 2026: Frankfurt School of Finance & Management (Full Professor)
 
-**Research interests**
+**My teaching and research interests**
 
-- Open, agentic, and boundary-spanning work
-- AI-supported knowledge synthesis
+- Programming (on <a href="https://github.com/geritwagner" target="_blank">GitHub</a>)
+- AI for knowledge work, health, and literature reviews
 
-**Teaching interests**
+**Things I do outside of work**
 
-- Analytics and big data
-- IT security
-- Programming and software engineering
-- Digital knowledge-intensive and platform-based work
-- Literature review methods
+- Running and working out in the gym
+- Hiking, skiing, sailing with friends
+- Contribute to OpenStreetMap using the <a href="https://streetcomplete.app/" target="_blank" rel="noopener noreferrer">StreetComplete</a> app
 
 :::
 
