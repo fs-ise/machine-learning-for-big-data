@@ -23,6 +23,7 @@ Emphasize that big data is not simply “lots of data.” Each V presents a dist
 
 Use the UPS, Visa, Walmart, and digital-advertising cases to connect each characteristic to models, operational decisions, and business outcomes.
 
+{{< pagebreak >}}
 
 ## Analytical environment
 
@@ -38,37 +39,85 @@ Base task: simple Kaggle
 
 Next: students build their own report/test
 
-Extensions ():
+Extensions:
 
 - Bibliography: add ``bibliography: references.bib`` to the yaml header + include ``@cit-key``, add explicit ``# References`` at the end.
 - PDF rendering: add ``pdf: default`` in the format section, use the Render dropdown.
   **Note:** The default PDF template and citation style will be accepted for submissions.
 
-- ggplot:
+
+{{< pagebreak >}}
+
+## Report.qmd exercise
+
+- On Kaggle, search for ``Advertising`` and download the ``Sales Prediction (Simple Linear Regression)`` dataset (by ``ASHISH``).
+- Add an R block using the interface
+- Run simple ``read_csv()`` and inspect results, then add the assignment, run again, and add the ``show_col_types = FALSE`` based on the message
+- Inspect the environment
+- Render the html, show the "display output only" option in the R code chunk
+- For ggplot, start with ``ggplot() + geom_point()`` - run and interpret errors. Add aesthetics based on docs
+- Beautify: ``head(advertising) |> knitr::kable()``
+
+````markdown
+---
+title: "Advertising and Sales"
+format: html
+------------
+
+## Business question
+
+Is higher TV advertising expenditure associated with higher sales?
+
+## Data
+
+The dataset contains advertising expenditures for different channels and sales.
+
+```{{r}}
+#| warning: false
+library(tidyverse)
+advertising <- read_csv(
+  "advertising.csv",
+  show_col_types = FALSE
+)
+head(advertising)
+```
+
+## Analysis
+
+```{{r}}
+ggplot(advertising, aes(x = TV, y = Sales)) +
+  geom_point()
+```
+
+## Interpretation
+
+There is a positive relationship between TV advertising expenditure and sales:
+observations with higher TV advertising expenditure tend to have higher sales.
+````
+
+{{< pagebreak >}}
+
+## Output
 
 ```{r}
+#| message: false
 library(tidyverse)
 
-# Load CSV directly from the web
-url <- "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/main/inst/extdata/penguins.csv"
-
-penguins <- read_csv(url)
-
-# Inspect first rows
-head(penguins)
+advertising <- read_csv(
+  "https://raw.githubusercontent.com/JWarmenhoven/ISLR-python/master/Notebooks/Data/Advertising.csv",
+  show_col_types = FALSE
+)
+head(advertising)
 ```
+
 
 ```{r}
-# Scatterplot
-ggplot(penguins, aes(x = flipper_length_mm,
-                     y = body_mass_g,
-                     color = species)) +
+#| echo: false
+
+ggplot(advertising, aes(x = TV, y = Sales)) +
   geom_point() +
   labs(
-    x = "Flipper length (mm)",
-    y = "Body mass (g)",
-    color = "Species"
+    x = "TV advertising",
+    y = "Sales"
   )
 ```
-
-Show the "display output only" option in the R code chunk
