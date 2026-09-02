@@ -20,13 +20,14 @@ format: revealjs
 - **Explain** tidy-data principles and select appropriate data types.
 :::
 
-## Why did machine learning for big data become powerful?
+## Why did machine learning become so powerful?
 
 Modern machine learning and AI for big data became powerful through three mutually reinforcing developments:
 
-1. **More computing power** made it possible to process large datasets and train more demanding models.
-2. **New algorithms** enabled more powerful analytical models and new application areas.
-3. **New analytics processes** made analytical work more mature, pervasive, and standardized.
+1. **More computing power** make it possible to process large datasets and train more demanding models.
+2. **New algorithms** enable more powerful analytical models and new application areas.
+3. **New architectures** optimize data processing and computation.
+4. **New analytics processes** make analytical work more mature, pervasive, and standardized.
 
 # Computing power {data-stack-name="Computing power"}
 
@@ -59,126 +60,6 @@ Advances such as extreme ultraviolet (EUV) lithography are required to continue 
 See how $400 million machines are constructed to build modern chips: [https://www.youtube.com/watch?v=MiUHjLxm3V0](https://www.youtube.com/watch?v=MiUHjLxm3V0).
 :::
 
-# Architecture {data-stack-name="Architecture"}
-
-## TODO: revise the following
-
-The "data warehouse" concept does not exist as a point of reference.
-
-## Limitations of the data warehouse approach
-
-Traditional DWH solutions are designed to provide a single point of truth. Important aspects are:
-
-- Merge and unify data from multiple data sources
-- High data quality
-- Proper historization of the data
-- Data Governance and Compliance
-
-This results in the following problem areas in today's world:
-
-- **Lack of flexibility** due to high effort for changes
-- **Time expenditure** due to transfer from the operational sources and the aggregations
-- **Past orientation** of data (snapshot of the past); there is an increasing need for ad hoc and real-time analyses
-- **Partial knowledge**, as only structured data is stored, with increasing need for social media data, etc.
-- **Patchwork**: due to gradual introduction of data warehouses, many isolated solutions exist and are operated separately both technically and methodologically
-
-
-## The four layers of big data \(I\)
-
-Data Source Layer
-
-This is where the data arrives at the organization.
-It includes everything from sales records, customer database, feedback, social media channels, marketing list, email archives etc.
-
-![](../images/slides_87_new.png){fig-align="center" width="300px"}
-
-::: aside
-— Source: http://de.slideshare.net/BernardMarr/140228-big-data-slide-share/3-The_basic_idea_behind_the
-:::
-
-
-## Identify and prioritize data sources
-
-![](../images/slides_88_new.png){fig-align="center" width="60%"}
-
-::: aside
-— Source: @Schmarzo2016, p. 49
-:::
-
-
-## The four layers of big data (II)
-
-![](../images/slides_89_new.png){fig-align="center" width="50%"}
-
-::: aside
-— Source: http://de.slideshare.net/BernardMarr/140228-big-data-slide-share/3-The_basic_idea_behind_the
-:::
-
-
-## The four layers of big data (III)
-
-![](../images/slides_90_new.png){fig-align="center" width="50%"}
-
-::: aside
-— Source: http://de.slideshare.net/BernardMarr/140228-big-data-slide-share/3-The_basic_idea_behind_the
-:::
-
-
-## The four layers of big data (IV)
-
-![](../images/slides_91_new.png){fig-align="center" width="50%"}
-
-::: aside
-— Source: http://de.slideshare.net/BernardMarr/140228-big-data-slide-share/3-The_basic_idea_behind_the
-:::
-
-
-## From data warehouse to data lake
-
-Instead of recording millions of transactions, today's organizations are recording billions of interactions. Companies are capturing more and more data that can open business opportunities and unlock new sources of value for organizations.
-
-Companies are not able to store this data in data warehouses because it is of high volume, mostly raw and often not structured. As consequence, data lakes have emerged as an alternative approach. The intent is to capture enterprise data and load it in its raw form into a centralized, large, and inexpensive storage system.
-
-In shifting from data warehouses to data lakes, it became important to decouple data movement from data transformation. Data movement (the "E" and "L" of ETL) is an operational task. Data transformation (the "T" of ETL) is a content-based, analytic-facing task that requires an understanding both of the data and how it's to be used.
-
-A clean separation between data movement and data transformation has the benefits of less friction because the instance loading the data isn't responsible for transforming it.
-
-::: aside
-— Source: Trifacta: EOL for
-:::
-
-
-## The data lake
-
-A data lake is a method of storing data within a system in its natural format, that facilitates the collocation of data in various schemata and structural forms. The idea of data lake is to have a single store of all data in the enterprise ranging from raw data to transformed data which is used for various tasks including reporting, visualization, analytics and machine learning.
-
-![](../images/slides_93_new.png){fig-align="center" width="50%"}
-
-::: aside
-— Source: https://www.pmone.com/fileadmin/user_upload/pics/other/Data_lake.jpg
-:::
-
-
-## Modern data analytics architecture
-
-![](../images/slides_94_new.png){fig-align="center" width="70%"}
-
-
-## Logical data warehouse
-
-A "logical data warehouse" provides analytical company data without first physically moving it to a physical data warehouse.
-
-As in a classic data warehouse, uniform views are provided for analysis purposes.
-
-While the data in the classic data warehouse comes from a "well-defined" physically uniform database, the "logical data warehouse" pulls data together from the data lake at the time of the query.
-
-Aggregation is done just in time. Thus, the schema of the data warehouse is just virtual.
-
-![](../images/slides_95_new.png){fig-align="center" width="40%"}
-
-::: aside
-— Source: http://www.datavirtualizationblog.com/emergence-logical-data-warehouse/
-:::
 
 # New algorithms {data-stack-name="Algorithms"}
 
@@ -235,6 +116,30 @@ Neural Network
 
 :::
 
+
+## Algorithmic and analytical models across disciplines
+
+There is a broad repertoire of models and methods from multiple disciplines, each with its own assumptions, data preparation steps, and modeling processes.
+While these fields often focus on methodological development, business analytics emphasizes applying these approaches to support understanding and decision-making in organizational contexts.
+
+<br>
+
+| Discipline          | Model culture           | Typical models            |
+| ------------------- | ----------------------- | ------------------------- |
+| Statistics          | Probabilistic inference | Regression, GLM, Bayesian |
+| Econometrics        | Causal modeling         | IV, panel models          |
+| Computer Science    | Algorithmic learning    | Trees, SVM, NN            |
+| Operations Research | Optimization            | Linear programming, Non-linear optimization                   |
+| Management Science  | Decision modeling       | Stochastic optimization   |
+| Complex Systems     | Simulation              | Agent-Based/Discrete Event Simulation                  |
+
+<!--
+    Oftentimes, the goal may also be to understand and explain, not to decide (prescribe).
+
+    Statistics vs. Data Analytics
+
+    ![](../images/slides_133_new.png)
+-->
 
 ## Algorithmic breakthroughs drive AI progress
 
@@ -395,6 +300,61 @@ https://www.youtube.com/watch?v=d95J8yzvjbQ
 Figure based on the work of @HendrycksEtAl2025 on *Artificial General Intelligence*.
 :::
 
+
+
+# Architecture {data-stack-name="Architecture"}
+
+
+## Evolution of data architectures
+
+Data architectures have evolved as organizations seek to support **more diverse data and increasingly advanced analytics**.
+
+:::: {.columns}
+
+::: {.column width="25%"}
+**Data warehouse**
+
+- Integrated, structured data
+- High quality and consistency
+- Reporting and BI
+- **Focus:** single source of truth
+:::
+
+::: {.column width="25%"}
+**Data lake / lakehouse**
+
+- Structured + unstructured data
+- Raw data retained at scale
+- Supports exploration and ML
+- **Focus:** flexibility
+:::
+
+::: {.column width="25%"}
+**Federated architectures**
+
+- Data remains across domains
+- Shared access and standards
+- Data products / data mesh
+- **Focus:** distributed ownership
+:::
+
+::: {.column width="25%"}
+**AI-ready architecture**
+
+- Data + models + AI services
+- Real-time and unstructured data
+- ML pipelines, vectors, RAG
+- **Focus:** operationalizing AI
+:::
+
+::::
+
+. . .
+
+➡ **Architectural evolution reflects changing business trade-offs:**  
+**consistency → flexibility → decentralization → AI integration**
+
+
 # Analytics processes {data-stack-name="Analytics processes"}
 
 ## Maturing analytical capabilities
@@ -435,6 +395,8 @@ Figure based on the work of @HendrycksEtAl2025 on *Artificial General Intelligen
 :::
 
 ::::
+
+{{< iconify fluent-mdl2:insights >}} A particular method, such as regression or machine learning, can serve multiple purposes.
 
 <!--
       https://medium.com/aimonks/key-types-of-analytics-according-to-gartner-9dd5861debe2
@@ -488,36 +450,6 @@ Figure based on the work of @HendrycksEtAl2025 on *Artificial General Intelligen
 
 -->
 
-## Analytical purposes
-
-<br><br>
-
-<div class="smaller">
-
-| What happened? (descriptive )    | What will happen? (predictive analytics) | What should I do? (prescriptive analytics) |
-|----------------------------------|------------------------------------------|--------------------------------------------|
-| How many widgets did I sell last month? | How many widgets will I sell next month? | Order **5,000** units of Component Z to support widget sales for next month. |
-| What were sales by zip code for Christmas last year? | What will be sales by zip code over this Christmas season? | Hire **Y** new sales reps by these zip codes to handle projected Christmas sales. |
-| How many of Product X were returned last month? | How many of Product X will be returned next month? | Set aside **$125K** in financial reserve to cover Product X returns. |
-| What were company revenues and profits for the past quarter? | What are projected company revenues and profits for next quarter? | Sell the following product mix to achieve quarterly revenue and margin goals. |
-| How many employees did I hire last year? | How many employees will I need to hire next year? | Increase hiring pipeline by **35%** to achieve hiring goals. |
-
-</div>
-
-<br><br>
-
-{{< iconify fluent-mdl2:insights >}} A particular method, such as regression or machine learning, can serve multiple purposes.
-
-<!--
-- What happened in the past?
-- Find patterns and relationships in data and use them for prediction.
-- Use the predictions to make decisions.
--->
-
-::: aside
-Source: @Schmarzo2016, p. 13
-:::
-
 ## Example: Descriptive analytics
 
 <br>
@@ -565,28 +497,29 @@ Source: http://www.bvl.de/misc/filePush.php?mimeType=application/pdf&fullPath=/f
         4. Optimization of inventory management based on customers' current purchasing preferences
 -->
 
-## Analytical models
+## Exercise: Identify the analytical purpose
 
-There is a broad repertoire of models and methods from multiple disciplines, each with its own assumptions, data preparation steps, and modeling processes.
-While these fields often focus on methodological development, business analytics emphasizes applying these approaches to support understanding and decision-making in organizational contexts.
+Classify each question or statement as **descriptive**, **predictive**, or **prescriptive** analytics.
 
 <br>
 
-| Discipline          | Model culture           | Typical models            |
-| ------------------- | ----------------------- | ------------------------- |
-| Statistics          | Probabilistic inference | Regression, GLM, Bayesian |
-| Econometrics        | Causal modeling         | IV, panel models          |
-| Computer Science    | Algorithmic learning    | Trees, SVM, NN            |
-| Operations Research | Optimization            | Linear programming, Non-linear optimization                   |
-| Management Science  | Decision modeling       | Stochastic optimization   |
-| Complex Systems     | Simulation              | Agent-Based/Discrete Event Simulation                  |
+| Business question / statement | Analytical purpose |
+|-------------|---|
+| How many customers cancelled their subscriptions last month? | |
+| Which customers are likely to cancel their subscriptions next month? | |
+| Offer a 15% discount to customers with a high predicted churn risk. | |
+| What were our highest-selling products last quarter? | |
+| How much demand should we expect for each product next month? | |
+| Reorder 5,000 units to minimize the risk of stock-outs. | |
+| Which regions had the highest employee turnover last year? | |
+| How many employees are likely to leave during the next 12 months? | |
+| Increase recruiting capacity by 20% to maintain required staffing levels. | |
 
 <!--
-    Oftentimes, the goal may also be to understand and explain, not to decide (prescribe).
-
-    Statistics vs. Data Analytics
-
-    ![](../images/slides_133_new.png)
+**Solution:**  
+Descriptive → Predictive → Prescriptive →  
+Descriptive → Predictive → Prescriptive →  
+Descriptive → Predictive → Prescriptive
 -->
 
 ## Cross-Industry Standard Process for Data Mining (CRISP-DM)
@@ -684,6 +617,9 @@ the [KDD Process](https://de.wikipedia.org/wiki/Knowledge_Discovery_in_Databases
 or [TDSP](https://medium.com/analytics-vidhya/tdsp-data-science-lifecycle-for-artificial-intelligence-data-science-projects-4ac6e5b82db4).
 :::
 
+
+# Data preparation {data-stack-name="Data preparation"}
+
 ## Foundations {data-state="hide-menubar"}
 
 Before building analytical models, analysts typically engage in **data preparation and exploratory data analysis (EDA)**.
@@ -699,9 +635,6 @@ Typical activities include:
 
 **Goal:**
 develop an initial understanding of the data, detect patterns or anomalies, and ensure that the data is suitable for further analysis or modeling.
-
-
-# Data preparation {data-stack-name="Data preparation"}
 
 ## Data types
 

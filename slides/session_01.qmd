@@ -155,7 +155,6 @@ Online banking, mobile payments, and blockchain systems generate detailed financ
 **AI-generated data**<br>
 Machine learning and generative AI create large datasets during training and operation, further accelerating global data growth.
 
-
 # Defining big data {data-stack-name="The 4V Model of big data"}
 
 ## The 4 V’s of big data

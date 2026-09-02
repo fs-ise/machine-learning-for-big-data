@@ -38,6 +38,10 @@ TODO/TBD: illustrations for the algorithms?
 - Gradient boosting: combining different algorithms to solve challenging problems.
 - Transformer models: complex NN architectures that are able to process unstructured data well and also generate output (useful for principal data, but also for analytical code)
 
+## Architectures
+
+Emphasize that these are not clean replacement stages: modern firms often combine warehouses, lakes, federated sources, and AI infrastructure.
+
 ## Analytical processes
 
 Key trends of improvement:
@@ -67,6 +71,8 @@ Data preparation:
 - Data preparation (manual correction or the use of synthetic data) are even discarded as a questionable research practice
 
 ## Data structuring
+
+Note: `|>` was introduced in Base R in 2021. Preferred over `%>%`.
 
 - Need to develop the intuition and clear understanding of how data should be structured.
 - Go back to the examples: and highlight values, variables, observations. Define observational unit. The wide format is an output in a report, not an input.

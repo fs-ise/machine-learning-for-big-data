@@ -15,6 +15,10 @@ event_id: null
 Explain why the growth and changing characteristics of data matter for business analytics.
 :::
 
+## Data production
+
+- highlight progression, note user-generated/crowdsourced content, new devices, ..., AI-generated content
+
 Emphasize that big data is not simply “lots of data.” Each V presents a distinct managerial dilemma: decision complexity (volume), decisions while events unfold (velocity), integration of previously separate data worlds (variety), and whether apparent signals can be trusted (veracity).
 
 Use the UPS, Visa, Walmart, and digital-advertising cases to connect each characteristic to models, operational decisions, and business outcomes.
