@@ -1,6 +1,15 @@
 project:
   type: website
   output-dir: _site
+  render:
+    - "*.qmd"
+    - "slides/*.qmd"
+    - "notes/*.qmd"
+    - "optional/*.qmd"
+    - "!exercises/**"
+  resources:
+    - "images/cover_slide/*.png"
+    - course.yml
 metadata-files:
   - course.yml
 website:
@@ -18,12 +27,16 @@ website:
         href: index.qmd
       - text: Syllabus
         href: syllabus.qmd
+      - text: Calendar
+        href: calendar.qmd
       - text: Group work
         href: group_work.qmd
       - text: Teaching notes
         href: teaching_notes.qmd
       - text: Resources
         href: resources.qmd
+      - text: Changelog
+        href: changelog.qmd
 
 format:
   html:

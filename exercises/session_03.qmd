@@ -3,19 +3,338 @@ title: "Session 3: EDA"
 session_id: session-03
 format:
   html: default
-  ipynb: default
 ---
 
-## Task
+:::{.direction}
 
-Work through the Session 3 exercise on EDA.
+In this exercise, we cover:
 
-::: {.content-visible when-profile="assign"}
-1. Review the lecture concepts.
-2. Apply the concepts to the provided data or examples.
+| Exercise part | Time (min) |
+|---|---:|
+| [EDA: Clustering](#clustering) | 25 |
+| [Wrap-up](#wrap-up) | 10 |
+| **Overall** | **35** |
+
+Work directly in this Quarto (`.qmd`) exercise using R in RStudio, Positron, or VS Code. Work through the tasks in R and compare your work with the solution.
+
 :::
 
-::: {.content-visible when-profile="solution"}
-1. Compare your solution with the discussed workflow.
-2. Reflect on assumptions, limitations, and next steps.
+# EDA: Clustering <a id="clustering"></a>
+
+Now that the data is structured and cleaned, we explore whether companies group into similar patterns.
+Clustering helps us move from preparation to insight generation: instead of looking at firms one by one, we ask whether there are recurring profiles in the data.
+
+Dataset: `firm_data.csv`
+
+```{r}
+#| output: false
+
+library(tidyverse)
+
+firm_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/firm_data.csv",
+  show_col_types = FALSE
+)
+
+firm_data_df |>
+  slice_head(n = 5)
+```
+
+:::{.direction}
+
+## Tasks
+
+### 1. Prepare the data for clustering
+
+We decide to use `profit_margin` and `rd_intensity` to cluster firms.
+In a first step, create a data frame `X` containing these two variables:
+
+```{r}
+X <- firm_data_df |>
+  select(profit_margin, rd_intensity)
+
+# Print X at the end.
+X
+```
+
+Before clustering, do a quick exploratory check so you know what kind of patterns you are looking for.
+
+```{r}
+summary(X)
+```
+
+```{r}
+X |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "value"
+  ) |>
+  ggplot(aes(x = value)) +
+  geom_histogram(bins = 30) +
+  facet_wrap(~ variable, scales = "free") +
+  labs(
+    x = NULL,
+    y = "Count"
+  )
+```
+
+Considering that k-means is sensitive to different measurement scales, we need to standardize the values.
+This ensures that they have approximately equal influence on the clusters. Base R's `scale()` centers each variable around zero and scales it to unit standard deviation.
+
+Run the following code and observe how the scale of both variables changes:
+
+```{r}
+X_scaled <- scale(X)
+head(X_scaled)
+```
+
+Before running a clustering algorithm, view the standardized data in a scatterplot:
+
+```{r}
+X_scaled_df <- as.data.frame(X_scaled)
+
+ggplot(
+  X_scaled_df,
+  aes(x = profit_margin, y = rd_intensity)
+) +
+  geom_point() +
+  labs(
+    title = "Standardized data (no clustering)",
+    x = "Profit margin (scaled)",
+    y = "R&D intensity (scaled)"
+  )
+```
+
+How many clusters would you expect?
+Briefly justify your answer based on the plot.
+
+<br>
+
+### 2. Apply k-means clustering
+
+* Next, run the k-means clustering algorithm for different values of `k`.
+
+```{r}
+# Add your solution below. Try values from 2 to 10.
+# Remember that kmeans() expects centers = k.
+```
+
+* Try different values of `k` (e.g., 2–10). Which number of clusters seems appropriate?
+
+{{< pagebreak >}}
+
+### 3. Add cluster labels to the dataset
+
+* Assign the cluster labels returned by `kmeans()` to the original data frame (`firm_data_df`).
+
+```{r}
+# Add your solution below.
+```
+
+---
+
+### 4. Create grouped boxplots
+
+* Generate a boxplot, grouped according to the clusters, to compare differences in `revenue`.
+* Try to complete the task using the [`ggplot2` boxplot documentation](https://ggplot2.tidyverse.org/reference/geom_boxplot.html).
+
+```{r}
+# Add your solution below.
+```
+
+* What do the revenue distributions tell you about the firm profiles represented by the clusters?
+
+:::
+
+:::{.sol}
+
+## Solution
+
+### 1. Prepare the data for clustering
+
+We use only `profit_margin` and `rd_intensity` for clustering:
+
+```{r}
+X <- firm_data_df |>
+  select(profit_margin, rd_intensity)
+
+X |>
+  slice_head(n = 5)
+```
+
+#### Exploratory check
+
+```{r}
+summary(X)
+```
+
+```{r}
+X |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "value"
+  ) |>
+  ggplot(aes(x = value)) +
+  geom_histogram(bins = 30) +
+  facet_wrap(~ variable, scales = "free") +
+  labs(
+    x = NULL,
+    y = "Count"
+  )
+```
+
+These summaries and histograms help us understand the distribution and scale of the variables.
+
+{{< pagebreak >}}
+
+#### Standardization
+
+Since k-means is sensitive to scale differences, we standardize the variables. `scale()` centers each variable around zero and scales it to unit standard deviation.
+
+```{r}
+X_scaled <- scale(X)
+head(X_scaled)
+```
+
+#### Scatterplot (before clustering)
+
+```{r}
+X_scaled_df <- as.data.frame(X_scaled)
+
+ggplot(
+  X_scaled_df,
+  aes(x = profit_margin, y = rd_intensity)
+) +
+  geom_point() +
+  labs(
+    title = "Standardized data (no clustering)",
+    x = "Profit margin (scaled)",
+    y = "R&D intensity (scaled)"
+  )
+```
+
+**Interpretation:**
+From the scatterplot, we might expect a small number of clusters (e.g., 3–5), depending on visible groupings.
+
+{{< pagebreak >}}
+
+### 2. Apply k-means clustering
+
+We try different values of `k` and visually inspect the cluster structure. Setting `nstart = 25` makes the result less sensitive to a single random initialization.
+
+```{r}
+for (k in 2:10) {
+  set.seed(42)
+  km <- kmeans(
+    X_scaled,
+    centers = k,
+    nstart = 25
+  )
+
+  cluster_plot_data <- X_scaled_df |>
+    mutate(cluster = factor(km$cluster))
+
+  centers <- as.data.frame(km$centers)
+
+  cluster_plot <- ggplot(
+    cluster_plot_data,
+    aes(
+      x = profit_margin,
+      y = rd_intensity,
+      color = cluster
+    )
+  ) +
+    geom_point() +
+    geom_point(
+      data = centers,
+      aes(x = profit_margin, y = rd_intensity),
+      inherit.aes = FALSE,
+      shape = 4,
+      size = 4,
+      stroke = 1.5
+    ) +
+    labs(
+      title = paste("k =", k),
+      x = "Profit margin (scaled)",
+      y = "R&D intensity (scaled)",
+      color = "Cluster"
+    )
+
+  print(cluster_plot)
+}
+```
+
+**Conclusion:**
+A value around **k = 4** appears to provide a reasonable balance between simplicity and structure.
+
+{{< pagebreak >}}
+
+### 3. Add cluster labels to the dataset
+
+We now fit the final model reproducibly and store the cluster labels as a factor because they represent categories rather than quantities:
+
+```{r}
+set.seed(42)
+
+k <- 4
+km <- kmeans(
+  X_scaled,
+  centers = k,
+  nstart = 25
+)
+
+firm_data_df <- firm_data_df |>
+  mutate(cluster = factor(km$cluster))
+
+firm_data_df |>
+  slice_head(n = 5)
+```
+
+{{< pagebreak >}}
+
+### 4. Create grouped boxplots
+
+We compare `revenue` across clusters:
+
+```{r}
+ggplot(
+  firm_data_df,
+  aes(x = cluster, y = revenue)
+) +
+  geom_boxplot() +
+  labs(
+    title = "Revenue by cluster",
+    x = "Cluster",
+    y = "Revenue"
+  )
+```
+
+**Interpretation:**
+The boxplots reveal how revenue differs across clusters, helping to characterize the identified firm profiles.
+
+:::
+
+:::{.direction}
+
+---
+
+{{< pagebreak >}}
+
+## Wrap-up <a id="wrap-up"></a>
+
+🎉🎈 You have completed the exercise—good work! 🎈🎉
+
+In this exercise, we have learned to
+
+* Explore variable distributions and relationships
+* Prepare selected variables for clustering
+* Apply and interpret k-means clustering
+
+
+::: {.callout-note title="Stop the Codespace"}
+Remember to <b>stop</b> your Codespace [here](https://github.com/codespaces).
+:::
+
 :::

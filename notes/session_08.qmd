@@ -1,0 +1,124 @@
+---
+title: "Notes: Session 8: ML for Non-Tabular Data (Text)"
+session_id: session-08
+format: html
+---
+
+TODO: after the Big-Data/Architectures slides were removed (compared to analytics-and-big-data), this session may need to be expanded.
+
+| Time (min) | Duration | Topic | Additional materials |
+|------------|----------|-------|----------------------|
+| 0–40       | 40       | Text analytics | |
+
+TODO:
+
+- Extend text analytics slides to illustrate "Relevance today" (moving towards a system perspective; used in LLMs (as input); RAG (explain), information retrieval (e.g., obsidian))
+- Explain how big data environments reshape model development, validation, and deployment. This creates continuity with: Generalization problem, Overfitting, Model evaluation
+
+## Text analytics: Sparse vectors
+
+Aka. first-generation / bag of words models
+
+**TF-IDF:**
+
+Explain how $idf_i$ changes:
+
+- when $\frac{N}{df_i}$ gets smaller and approaches 1, the log approaches 0 and the $tf_{ij}$ will have low weights in the TF-IDF
+- if the term is very rare, the $\frac{N}{df_i}$ gets large and the terms will have more weight in the TF-IDF (at the same time, `log` ensures that outliers/very rare terms do not have an excessive influence on TF-IDF)
+
+**Example with a mini corpus after preprocessing**
+
+<div class="smaller">
+
+| Document | Tokens                              |
+| -------- | ----------------------------------- |
+| D1       | `service helpful quick experience`  |
+| D2       | `service experience delay shipping` |
+| D3       | `service rude refund`    |
+
+</div>
+
+<br>
+
+Vocabulary:
+
+<div style="font-family: monospace; font-size: 0.75em;">
+[delay, experience, helpful, quick, refund, rude, service, shipping]
+</div>
+
+<br>
+
+Sparse vector for **D1**:
+
+<div style="
+display: grid;
+grid-template-columns: repeat(8, 1fr);
+gap: 0.35em;
+font-family: monospace;
+font-size: 0.7em;
+text-align: center;
+">
+
+<div>delay</div>
+<div>experience</div>
+<div>helpful</div>
+<div>quick</div>
+<div>refund</div>
+<div>rude</div>
+<div>service</div>
+<div>shipping</div>
+
+<div style="background:#eeeeee; padding:0.35em; border-radius:6px;">0</div>
+<div style="background:#cfe8d6; padding:0.35em; border-radius:6px;">1</div>
+<div style="background:#cfe8d6; padding:0.35em; border-radius:6px;">1</div>
+<div style="background:#cfe8d6; padding:0.35em; border-radius:6px;">1</div>
+<div style="background:#eeeeee; padding:0.35em; border-radius:6px;">0</div>
+<div style="background:#eeeeee; padding:0.35em; border-radius:6px;">0</div>
+<div style="background:#cfe8d6; padding:0.35em; border-radius:6px;">1</div>
+<div style="background:#eeeeee; padding:0.35em; border-radius:6px;">0</div>
+
+</div>
+
+<br>
+
+<div class="smaller">
+
+| Representation    | Vector for D1                      |
+| ----------------- | ---------------------------------- |
+| Binary occurrence | `[0, 1, 1, 1, 0, 0, 1, 0]`         |
+| Term occurrence   | `[0, 1, 1, 1, 0, 0, 1, 0]`         |
+| Term frequency    | `[0, .25, .25, .25, 0, 0, .25, 0]` |
+| TF-IDF            | `[0, 0.18, .48, .48, 0, 0, 0, 0]`     |
+
+</div>
+
+Note: using $log_{10}$ for ease of calculation; libraries often use the natural logarithm.
+
+* $w_{Experience;D1} = 1\times log(\frac{3}{2}) = 0.18$
+* $w_{Helpful;D1} = 1\times log(\frac{3}{1}) = 0.48$
+* $w_{Quick;D1} = 1\times log(\frac{3}{1}) = 0.48$
+* $w_{Service;D1} = 1\times log(\frac{3}{3}) = 0$
+
+Note: `Service` has $idf=0$ and will be eliminated from TF-IDF.
+
+Most entries are zero because each document only uses a small part of the full vocabulary.
+
+## Dense representations
+
+Highlight that dense representations allow us to determine semantic similarity based on mathematical operations.
+
+
+## Exercises
+
+2026-05-04: 70 min
+
+TODO
+
+- Reduce the IMDB dataset to 1500 or 2000 ? (faster computations of the dense vectors)
+
+{{< pagebreak >}}
+
+## Materials
+
+Check for NLP assignments: https://github.com/microsoft/ai-for-beginners
+- https://juliasilge.github.io/tidytext/

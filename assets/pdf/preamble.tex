@@ -1,0 +1,54 @@
+% Frankfurt School course-handout styling. Kept separate from the web theme.
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{scrlayer-scrpage}
+\usepackage{enumitem}
+\usepackage{needspace}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{etoolbox}
+
+\definecolor{FSOrange}{HTML}{F5A623}
+\definecolor{FSOrangeDark}{HTML}{B86400}
+\definecolor{FSCharcoal}{HTML}{242424}
+\definecolor{FSMidGray}{HTML}{666666}
+\definecolor{FSLightGray}{HTML}{E7E4DF}
+
+\defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}[Scale=0.90]
+
+\setlength{\emergencystretch}{2em}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em plus 0.15em minus 0.1em}
+\setlist{topsep=0.35em,itemsep=0.18em,parsep=0pt,partopsep=0pt}
+\setlist[itemize]{leftmargin=1.55em,label=\textcolor{FSOrangeDark}{\small\textbullet}}
+\setlist[enumerate]{leftmargin=1.75em}
+
+\addtokomafont{section}{\sffamily\bfseries\color{FSCharcoal}}
+\addtokomafont{subsection}{\sffamily\bfseries\color{FSCharcoal}}
+\addtokomafont{subsubsection}{\sffamily\bfseries\color{FSMidGray}}
+\RedeclareSectionCommand[beforeskip=1.5em plus .25em minus .15em,afterskip=.55em]{section}
+\RedeclareSectionCommand[beforeskip=1.25em plus .2em minus .1em,afterskip=.4em]{subsection}
+\RedeclareSectionCommand[beforeskip=1em plus .15em minus .1em,afterskip=.3em]{subsubsection}
+\pretocmd{\section}{\Needspace{5\baselineskip}}{}{}
+\pretocmd{\subsection}{\Needspace{4\baselineskip}}{}{}
+\pretocmd{\subsubsection}{\Needspace{3\baselineskip}}{}{}
+
+\clearpairofpagestyles
+\ihead{Machine Learning for Big Data}
+\ohead{Group Work}
+\ifoot{Frankfurt School of Finance \& Management}
+\ofoot{\pagemark}
+\setkomafont{pageheadfoot}{\footnotesize\sffamily\color{FSMidGray}}
+\setkomafont{pagefoot}{\footnotesize\sffamily\color{FSMidGray}}
+\KOMAoptions{headsepline=0.3pt}
+\setkomafont{headsepline}{\color{FSLightGray}}
+\pagestyle{scrheadings}
+
+\AtBeginEnvironment{longtable}{\small\setlength{\tabcolsep}{5pt}\renewcommand{\arraystretch}{1.15}}
+\AtBeginEnvironment{table}{\small\renewcommand{\arraystretch}{1.15}}

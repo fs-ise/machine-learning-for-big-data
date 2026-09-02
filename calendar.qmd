@@ -1,0 +1,22 @@
+---
+title: Calendar
+format:
+  html:
+    include-in-header: assets/calendar/calendar-head.html
+    css: assets/calendar/calendar.css
+---
+
+This calendar is generated directly from the course schedule in `course.yml`.
+
+<div id="calendar-status" role="status" aria-live="polite">Loading the course schedule…</div>
+<div id="ec" aria-label="Machine Learning for Big Data course calendar"></div>
+
+<dialog id="event-details" class="calendar-dialog" aria-labelledby="event-details-title">
+  <div class="calendar-dialog-header">
+    <h2 id="event-details-title"></h2>
+    <button type="button" class="calendar-dialog-close" aria-label="Close event details">×</button>
+  </div>
+  <div id="event-details-body"></div>
+</dialog>
+
+<script src="assets/calendar/calendar.js"></script>

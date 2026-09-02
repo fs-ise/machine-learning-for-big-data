@@ -1,21 +1,714 @@
 ---
-title: "Session 7: ML Foundations (Algorithms)"
+title: "Session 7: Machine Learning Foundations — Algorithms"
 session_id: session-07
 format:
   html: default
-  ipynb: default
 ---
 
-## Task
+::: {.direction}
 
-Work through the Session 7 exercise on ML Foundations (Algorithms).
+In this exercise, we cover:
 
-::: {.content-visible when-profile="assign"}
-1. Review the lecture concepts.
-2. Apply the concepts to the provided data or examples.
+| Part | Topic | Time (min) |
+|---|---|---:|
+| 1 | Common evaluation setup | 10 |
+| 2 | Regularized logistic regression | 12 |
+| 3 | k-nearest neighbors | 10 |
+| 4 | Decision tree | 10 |
+| 5 | Random forest | 12 |
+| 6 | RBF support vector machine | 10 |
+| 7 | Validation comparison and recommendation | 14 |
+| 8 | Final held-out evaluation | 7 |
+| Wrap-up | Reflection | 5 |
+| **Overall** | | **90** |
+
+## Learning objectives
+
+After this exercise, you should be able to:
+
+- apply selected machine-learning algorithms in R;
+- explain how their main tuning parameters control model flexibility;
+- compare regularized logistic regression, k-NN, decision trees, random forests, and SVMs;
+- compare algorithms using a common validation procedure;
+- consider interpretability, computational cost, preprocessing requirements, and predictive performance;
+- recommend an appropriate model for a business prediction task.
+
+> In Session 6, we learned that models must be compared using the same training data and validation procedure. Here, we keep that workflow fixed and vary the algorithm.
+
 :::
 
-::: {.content-visible when-profile="solution"}
-1. Compare your solution with the discussed workflow.
-2. Reflect on assumptions, limitations, and next steps.
+```{r}
+library(tidyverse)
+library(tidymodels)
+```
+
+# Part 1 — Establish the common evaluation setup <a id="setup"></a>
+
+We continue the LendWise default-classification task from Sessions 5 and 6. Every algorithm receives the same training observations and five cross-validation folds. The held-out test set remains unused until a recommendation has been made from validation results.
+
+::: {.direction}
+
+### Task 1.1 — Recreate the Session 6 setup
+
+Run the common setup and verify:
+
+- `default` is the first factor level and therefore the event for sensitivity and ROC AUC;
+- the split is stratified and reproducible;
+- all five folds come only from `train_data`.
+
+```{r}
+df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/credit_default.csv",
+  show_col_types = FALSE
+) |>
+  mutate(
+    default = factor(
+      default,
+      levels = c(1, 0),
+      labels = c("default", "no_default")
+    )
+  )
+
+set.seed(42)
+
+data_split <- initial_split(
+  df,
+  prop = 0.8,
+  strata = default
+)
+
+train_data <- training(data_split)
+test_data <- testing(data_split)
+
+set.seed(42)
+
+folds <- vfold_cv(
+  train_data,
+  v = 5,
+  strata = default
+)
+
+classification_metrics <- metric_set(
+  roc_auc,
+  accuracy,
+  sens
+)
+
+levels(train_data$default)
+nrow(train_data)
+nrow(test_data)
+folds
+```
+
+Why must every algorithm use these same folds? Why must `test_data` remain outside model comparison?
+:::
+
+::: {.sol}
+Using identical folds makes performance differences attributable to algorithms and tuning choices rather than different validation samples. The test set remains independent so that it can provide one final estimate of generalization after all model choices are fixed. Consulting it during comparison would introduce selection bias.
+:::
+
+### Task 1.2 — Define algorithm-specific preprocessing
+
+Some algorithms depend directly on distances or coefficient penalties, while tree splits are largely insensitive to predictor scale.
+
+::: {.direction}
+Complete two recipes:
+
+- `scaled_recipe` dummy-encodes nominal predictors and normalizes numeric predictors;
+- `tree_recipe` keeps the original predictors without normalization.
+
+Which model families should use each recipe?
+
+```{r}
+# Add your solution below.
+```
+:::
+
+::: {.sol}
+
+```{r}
+scaled_recipe <- recipe(
+  default ~ .,
+  data = train_data
+) |>
+  step_dummy(all_nominal_predictors()) |>
+  step_normalize(all_numeric_predictors())
+
+tree_recipe <- recipe(
+  default ~ .,
+  data = train_data
+)
+
+scaled_recipe
+tree_recipe
+```
+
+Regularized regression, k-NN, and the SVM use `scaled_recipe`. The decision tree and random forest use `tree_recipe`. Scaling is essential for distance-based k-NN and helpful for penalty- and margin-based models. Tree-based predictions depend on ordered split points, so rescaling adds no useful information.
+:::
+
+{{< pagebreak >}}
+
+# Part 2 — Regularized logistic regression <a id="regularized"></a>
+
+Regularization balances fit and simplicity. `penalty` controls its strength: larger values shrink coefficients more. `mixture = 0` gives ridge, `mixture = 1` gives lasso, and intermediate values give elastic net.
+
+::: {.direction}
+
+### Task 2.1 — Specify and tune the model
+
+Complete the specification and workflow, then tune the nine explicit combinations in `regularized_grid` on the shared folds.
+
+```{r}
+regularized_grid <- expand_grid(
+  penalty = c(0.0001, 0.01, 0.1),
+  mixture = c(0, 0.5, 1)
+)
+
+# Add regularized_spec and regularized_workflow.
+# Then call tune_grid() with folds, regularized_grid,
+# and classification_metrics.
+```
+
+How does increasing `penalty` change model flexibility? Why is normalization appropriate here?
+:::
+
+::: {.sol}
+
+```{r}
+regularized_spec <- logistic_reg(
+  penalty = tune(),
+  mixture = tune()
+) |>
+  set_engine("glmnet") |>
+  set_mode("classification")
+
+regularized_workflow <- workflow() |>
+  add_recipe(scaled_recipe) |>
+  add_model(regularized_spec)
+
+regularized_grid <- expand_grid(
+  penalty = c(0.0001, 0.01, 0.1),
+  mixture = c(0, 0.5, 1)
+)
+
+set.seed(42)
+
+regularized_results <- tune_grid(
+  regularized_workflow,
+  resamples = folds,
+  grid = regularized_grid,
+  metrics = classification_metrics
+)
+
+best_regularized <- select_best(
+  regularized_results,
+  metric = "roc_auc"
+)
+
+best_regularized
+show_best(regularized_results, metric = "roc_auc", n = 5)
+```
+
+A larger penalty constrains coefficients more strongly and reduces flexibility. Normalization makes the penalty comparable across predictors measured in euros, counts, months, and proportions.
+:::
+
+# Part 3 — k-nearest neighbors <a id="knn"></a>
+
+k-NN predicts from nearby labeled observations. Small `k` produces flexible, high-variance boundaries; large `k` smooths over more observations and increases bias.
+
+::: {.direction}
+
+### Task 3.1 — Tune the number of neighbors
+
+Use Euclidean distance, rectangular neighbor weights, and candidate values 3, 5, 9, 15, and 25.
+
+```{r}
+knn_grid <- tibble(
+  neighbors = c(3L, 5L, 9L, 15L, 25L)
+)
+
+# Complete knn_spec, knn_workflow, and knn_results.
+```
+
+Why would unscaled `income` dominate predictors that range between 0 and 1?
+:::
+
+::: {.sol}
+
+```{r}
+knn_spec <- nearest_neighbor(
+  neighbors = tune(),
+  weight_func = "rectangular",
+  dist_power = 2
+) |>
+  set_engine("kknn") |>
+  set_mode("classification")
+
+knn_workflow <- workflow() |>
+  add_recipe(scaled_recipe) |>
+  add_model(knn_spec)
+
+knn_grid <- tibble(
+  neighbors = c(3L, 5L, 9L, 15L, 25L)
+)
+
+set.seed(42)
+
+knn_results <- tune_grid(
+  knn_workflow,
+  resamples = folds,
+  grid = knn_grid,
+  metrics = classification_metrics
+)
+
+best_knn <- select_best(knn_results, metric = "roc_auc")
+
+best_knn
+show_best(knn_results, metric = "roc_auc", n = 5)
+```
+
+Distance calculations use numerical differences. Without scaling, a difference of hundreds of euros can overwhelm meaningful differences in utilization or debt ratios merely because of units.
+:::
+
+{{< pagebreak >}}
+
+# Part 4 — Decision tree <a id="tree"></a>
+
+A tree recursively partitions predictor space. Greater depth and smaller terminal-node requirements increase flexibility, while a larger `cost_complexity` encourages pruning.
+
+::: {.direction}
+
+### Task 4.1 — Tune tree complexity
+
+Use eight combinations: cost complexity 0.001 or 0.01, depth 3 or 6, and minimum node size 10 or 25.
+
+```{r}
+# Complete the tree specification, workflow, grid, and tuning call.
+```
+:::
+
+::: {.sol}
+
+```{r}
+tree_spec <- decision_tree(
+  cost_complexity = tune(),
+  tree_depth = tune(),
+  min_n = tune()
+) |>
+  set_engine("rpart") |>
+  set_mode("classification")
+
+tree_workflow <- workflow() |>
+  add_recipe(tree_recipe) |>
+  add_model(tree_spec)
+
+tree_grid <- expand_grid(
+  cost_complexity = c(0.001, 0.01),
+  tree_depth = c(3L, 6L),
+  min_n = c(10L, 25L)
+)
+
+set.seed(42)
+
+tree_results <- tune_grid(
+  tree_workflow,
+  resamples = folds,
+  grid = tree_grid,
+  metrics = classification_metrics
+)
+
+best_tree <- select_best(tree_results, metric = "roc_auc")
+
+best_tree
+show_best(tree_results, metric = "roc_auc", n = 5)
+```
+
+A single tree is often easy to explain as decision paths, but small changes in data can produce different splits. Complexity controls help limit overfitting.
+:::
+
+# Part 5 — Random forest <a id="forest"></a>
+
+A random forest aggregates trees trained on bootstrap samples while considering random predictor subsets. Aggregation generally reduces the instability of one tree, but the ensemble is harder to explain as a single decision path.
+
+::: {.direction}
+
+### Task 5.1 — Tune the forest
+
+Keep `trees = 500` fixed. Tune `mtry` over 2, 4, and 6 predictors and `min_n` over 10 and 25.
+
+```{r}
+# Complete rf_spec, rf_workflow, rf_grid, and rf_results.
+```
+
+Why might a forest predict better than one tree? What interpretability is lost?
+:::
+
+::: {.sol}
+
+```{r}
+rf_spec <- rand_forest(
+  mtry = tune(),
+  min_n = tune(),
+  trees = 500
+) |>
+  set_engine("ranger") |>
+  set_mode("classification")
+
+rf_workflow <- workflow() |>
+  add_recipe(tree_recipe) |>
+  add_model(rf_spec)
+
+rf_grid <- expand_grid(
+  mtry = c(2L, 4L, 6L),
+  min_n = c(10L, 25L)
+)
+
+set.seed(42)
+
+rf_results <- tune_grid(
+  rf_workflow,
+  resamples = folds,
+  grid = rf_grid,
+  metrics = classification_metrics
+)
+
+best_rf <- select_best(rf_results, metric = "roc_auc")
+
+best_rf
+show_best(rf_results, metric = "roc_auc", n = 5)
+```
+
+Averaging many decorrelated trees can reduce variance and improve generalization. Unlike one tree, however, a forest cannot be summarized by one transparent set of decision paths.
+:::
+
+{{< pagebreak >}}
+
+# Part 6 — RBF support vector machine <a id="svm"></a>
+
+An SVM seeks a decision boundary with a wide margin. `cost` controls how strongly classification errors are penalized. The RBF kernel permits nonlinear boundaries, while `rbf_sigma` controls how locally the kernel responds and therefore affects flexibility.
+
+::: {.direction}
+
+### Task 6.1 — Tune cost and kernel scale
+
+Tune six combinations: cost 0.25, 1, or 4 and RBF sigma 0.01 or 0.1. Use normalized predictors.
+
+```{r}
+# Complete svm_spec, svm_workflow, svm_grid, and svm_results.
+```
+:::
+
+::: {.sol}
+
+```{r}
+svm_spec <- svm_rbf(
+  cost = tune(),
+  rbf_sigma = tune()
+) |>
+  set_engine("kernlab") |>
+  set_mode("classification")
+
+svm_workflow <- workflow() |>
+  add_recipe(scaled_recipe) |>
+  add_model(svm_spec)
+
+svm_grid <- expand_grid(
+  cost = c(0.25, 1, 4),
+  rbf_sigma = c(0.01, 0.1)
+)
+
+set.seed(42)
+
+svm_results <- tune_grid(
+  svm_workflow,
+  resamples = folds,
+  grid = svm_grid,
+  metrics = classification_metrics
+)
+
+best_svm <- select_best(svm_results, metric = "roc_auc")
+
+best_svm
+show_best(svm_results, metric = "roc_auc", n = 5)
+```
+
+Scaling prevents the margin and RBF distances from being dominated by predictors with numerically large units.
+:::
+
+# Part 7 — Compare validation performance and recommend a model <a id="comparison"></a>
+
+All five algorithms have now been evaluated using the same folds. ROC AUC is the primary selection metric, while accuracy, sensitivity, uncertainty, and organizational requirements provide additional context.
+
+### Task 7.1 — Collect each model's best metrics
+
+::: {.direction}
+Run the supplied helper and comparison code. It retrieves ROC AUC, accuracy, and sensitivity at each model's ROC-AUC-optimal configuration.
+
+```{r}
+# The complete helper is provided in the solution.
+```
+:::
+
+::: {.sol}
+
+```{r}
+collect_best_metrics <- function(results, best_parameters, model_name) {
+  all_metrics <- collect_metrics(results)
+  parameter_names <- intersect(
+    names(best_parameters),
+    names(all_metrics)
+  ) |>
+    setdiff(".config")
+
+  all_metrics |>
+    inner_join(
+      best_parameters,
+      by = parameter_names
+    ) |>
+    mutate(model = model_name) |>
+    select(
+      model,
+      .metric,
+      mean,
+      std_err,
+      any_of(parameter_names)
+    )
+}
+
+validation_comparison <- bind_rows(
+  collect_best_metrics(
+    regularized_results,
+    best_regularized,
+    "Regularized logistic"
+  ),
+  collect_best_metrics(
+    knn_results,
+    best_knn,
+    "k-NN"
+  ),
+  collect_best_metrics(
+    tree_results,
+    best_tree,
+    "Decision tree"
+  ),
+  collect_best_metrics(
+    rf_results,
+    best_rf,
+    "Random forest"
+  ),
+  collect_best_metrics(
+    svm_results,
+    best_svm,
+    "RBF SVM"
+  )
+)
+
+validation_comparison |>
+  arrange(.metric, desc(mean))
+```
+:::
+
+### Task 7.2 — Visualize the comparison
+
+::: {.sol}
+
+```{r}
+validation_comparison |>
+  ggplot(
+    aes(
+      x = reorder(model, mean),
+      y = mean,
+      color = .metric
+    )
+  ) +
+  geom_point(
+    position = position_dodge(width = 0.5),
+    size = 2
+  ) +
+  geom_errorbar(
+    aes(
+      ymin = mean - 1.96 * std_err,
+      ymax = mean + 1.96 * std_err
+    ),
+    position = position_dodge(width = 0.5),
+    width = 0.2
+  ) +
+  coord_flip() +
+  labs(
+    title = "Cross-validation performance by algorithm",
+    x = NULL,
+    y = "Mean validation metric",
+    color = "Metric"
+  )
+```
+:::
+
+### Task 7.3 — Interpretability and predictive power
+
+Typical properties—not absolute rules—include:
+
+| Model | Typical strength | Typical limitation | Scaling needed here? |
+|---|---|---|---|
+| Regularized logistic | interpretable and stable | mostly linear decision boundary | yes |
+| k-NN | simple and locally flexible | scaling and dimensionality sensitive | yes |
+| Decision tree | transparent decision paths | unstable and can overfit | no |
+| Random forest | strong flexible predictions | less directly interpretable | no |
+| RBF SVM | powerful nonlinear boundaries | harder to interpret and tune | yes |
+
+::: {.direction}
+Answer:
+
+1. Which model has the strongest mean validation ROC AUC?
+2. Are differences large relative to their standard errors?
+3. Which models naturally capture nonlinear relationships?
+4. Is the most flexible model necessarily best here?
+5. What matters for LendWise besides the highest score?
+:::
+
+::: {.sol}
+The output determines the numerical ranking. Treat small differences relative to fold uncertainty cautiously. Trees, forests, k-NN, and the RBF SVM can capture nonlinear structure in different ways, but flexibility does not guarantee better generalization. LendWise should also consider sensitivity to actual defaults, stability, computation, transparent explanations for credit decisions, preprocessing requirements, and governance.
+:::
+
+### Task 7.4 — Lock the recommendation using validation only
+
+::: {.direction}
+The code below identifies the highest mean validation ROC AUC. Before running the final evaluation, write a short recommendation that also considers stability and interpretability.
+:::
+
+::: {.sol}
+
+```{r}
+roc_auc_comparison <- validation_comparison |>
+  filter(.metric == "roc_auc") |>
+  arrange(desc(mean))
+
+selected_model <- roc_auc_comparison |>
+  slice_head(n = 1) |>
+  pull(model)
+
+selected_model
+```
+
+For this exercise, the quantitative rule selects the strongest mean validation ROC AUC. A business recommendation may reasonably prefer a nearly equivalent, more interpretable model when score differences are small and regulated credit decisions require clear explanations. The choice is locked before any test outcome is inspected.
+:::
+
+{{< pagebreak >}}
+
+# Part 8 — Final held-out test evaluation <a id="final-test"></a>
+
+We now use the test set once. This is not another opportunity to tune the winner.
+
+::: {.direction}
+
+### Task 8.1 — Finalize the selected workflow
+
+Run the selection map, finalize the chosen workflow with its best parameters, and evaluate it with `last_fit()`.
+:::
+
+::: {.sol}
+
+```{r}
+workflow_lookup <- list(
+  "Regularized logistic" = regularized_workflow,
+  "k-NN" = knn_workflow,
+  "Decision tree" = tree_workflow,
+  "Random forest" = rf_workflow,
+  "RBF SVM" = svm_workflow
+)
+
+parameter_lookup <- list(
+  "Regularized logistic" = best_regularized,
+  "k-NN" = best_knn,
+  "Decision tree" = best_tree,
+  "Random forest" = best_rf,
+  "RBF SVM" = best_svm
+)
+
+selected_workflow <- workflow_lookup[[selected_model]]
+best_parameters <- parameter_lookup[[selected_model]]
+
+final_workflow <- finalize_workflow(
+  selected_workflow,
+  best_parameters
+)
+
+set.seed(42)
+
+final_fit <- last_fit(
+  final_workflow,
+  split = data_split,
+  metrics = classification_metrics
+)
+
+final_test_metrics <- collect_metrics(final_fit)
+final_test_metrics
+```
+:::
+
+### Task 8.2 — Compare validation and test performance
+
+::: {.sol}
+
+```{r}
+selected_cv_metrics <- validation_comparison |>
+  filter(model == selected_model) |>
+  select(.metric, cv_mean = mean, cv_std_err = std_err)
+
+performance_comparison <- selected_cv_metrics |>
+  left_join(
+    final_test_metrics |>
+      select(.metric, test_estimate = .estimate),
+    by = ".metric"
+  )
+
+performance_comparison
+
+final_predictions <- collect_predictions(final_fit)
+
+final_predictions |>
+  conf_mat(
+    truth = default,
+    estimate = .pred_class
+  )
+
+final_predictions |>
+  roc_curve(
+    truth = default,
+    .pred_default,
+    event_level = "first"
+  ) |>
+  autoplot() +
+  geom_abline(
+    intercept = 0,
+    slope = 1,
+    linetype = "dashed"
+  ) +
+  coord_equal() +
+  labs(title = paste("Held-out ROC curve:", selected_model))
+```
+
+Does the test result broadly support the validation-based recommendation? A difference is expected because both estimates vary by sample. The held-out result should be reported honestly, not used to reopen the tuning grids.
+:::
+
+::: {.direction}
+
+{{< pagebreak >}}
+
+## Wrap-up
+
+🎉🎈 You have completed the exercise—good work! 🎈🎉
+
+You have learned to:
+
+- apply regularized logistic regression, k-NN, decision trees, random forests, and RBF SVMs;
+- connect tuning parameters to model flexibility;
+- recognize algorithm-specific preprocessing requirements;
+- compare algorithms under one cross-validation framework;
+- balance predictive performance, stability, computation, and interpretability;
+- select and evaluate a final model on unseen data.
+
+::: {.callout-tip title="Session 7 survey"}
+{{< survey session_07 exercise >}}
+:::
+
 :::

@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="877" height="239" viewBox="0 0 877 239" role="img" aria-labelledby="title desc">
+  <title id="title">Data and analytics maturity model</title>
+  <desc id="desc">Five colored maturity areas with bullet points: organizational, resource, data infrastructure, analytics, and governance maturity.</desc>
+
+  <!-- Font styles are applied inline to avoid class-name collisions with Quarto/reveal.js CSS. -->
+
+  <!-- Column 1 -->
+  <g transform="translate(28 16)">
+    <rect width="159" height="44" fill="#E3192B"/>
+    <rect y="44" width="159" height="165" fill="#F7CCD2"/>
+    <text text-anchor="middle" x="79.5" y="17" style="font-family: Arial, Helvetica, sans-serif; font-weight: 400; font-size: 15px; fill: #000000;">
+      <tspan x="79.5">Organizational</tspan>
+      <tspan x="79.5" dy="17">Maturity</tspan>
+    </text>
+    <text x="28" y="77" style="font-family: Arial, Helvetica, sans-serif; font-weight: 400; font-size: 14px; fill: #111111;">
+      <tspan x="28" dy="0">• Leadership</tspan>
+      <tspan x="28" dy="22">• Culture</tspan>
+      <tspan x="28" dy="22">• Impact</tspan>
+      <tspan x="28" dy="22">• Strategy</tspan>
+    </text>
+  </g>
+
+  <!-- Column 2 -->
+  <g transform="translate(195 16)">
+    <rect width="159" height="44" fill="#FF9700"/>
+    <rect y="44" width="159" height="165" fill="#FFE9CC"/>
+    <text text-anchor="middle" x="79.5" y="17" style="font-family: Arial, Helvetica, sans-serif; font-weight: 400; font-size: 15px; fill: #000000;">
+      <tspan x="79.5">Resource</tspan>
+      <tspan x="79.5" dy="17">Maturity</tspan>
+    </text>
+    <text x="14" y="77" style="font-family: Arial, Helvetica, sans-serif; font-weight: 400; font-size: 14px; fill: #111111;">
+      <tspan x="14" dy="0">• Funding</tspan>
+      <tspan x="14" dy="22">• Talent/skills</tspan>
+      <tspan x="14" dy="22">• Roles/</tspan>
+      <tspan x="28" dy="17">responsibilities</tspan>
+      <tspan x="14" dy="22">• Training</tspan>
+    </text>
+  </g>
+
+  <!-- Column 3 -->
+  <g transform="translate(362 16)">
+    <rect width="159" height="44" fill="#A3633B"/>
+    <rect y="44" width="159" height="165" fill="#E7D8D2"/>
+    <text text-anchor="middle" x="79.5" y="17" style="font-family: Arial, Helvetica, sans-serif; font-weight: 400; font-size: 15px; fill: #000000;">
+      <tspan x="79.5">Data Infrastructure</tspan>
+      <tspan x="79.5" dy="17">Maturity</tspan>
+    </text>
+    <text x="11" y="77" style="font-family: Arial, Helvetica, sans-serif; font-weight: 400; font-size: 14px; fill: #111111;">
+      <tspan x="11" dy="0">• Diversity, volume,</tspan>
+      <tspan x="25" dy="17">and speed</tspan>
+      <tspan x="11" dy="22">• Data access</tspan>
+      <tspan x="11" dy="22">• Data integration and</tspan>
+      <tspan x="25" dy="17">management</tspan>
+      <tspan x="11" dy="22">• Data architecture</tspan>
+    </text>
+  </g>
+
+  <!-- Column 4 -->
+  <g transform="translate(529 16)">
+    <rect width="159" height="44" fill="#55C51E"/>
+    <rect y="44" width="159" height="165" fill="#DFF1D5"/>
+    <text text-anchor="middle" x="79.5" y="17" style="font-family: Arial, Helvetica, sans-serif; font-weight: 400; font-size: 15px; fill: #000000;">
+      <tspan x="79.5">Analytics</tspan>
+      <tspan x="79.5" dy="17">Maturity</tspan>
+    </text>
+    <text x="11" y="77" style="font-family: Arial, Helvetica, sans-serif; font-weight: 400; font-size: 14px; fill: #111111;">
+      <tspan x="11" dy="0">• Scope of</tspan>
+      <tspan x="25" dy="17">capabilities</tspan>
+      <tspan x="11" dy="22">• Automation/</tspan>
+      <tspan x="25" dy="17">augmented</tspan>
+      <tspan x="11" dy="22">• Deployment and</tspan>
+      <tspan x="25" dy="17">delivery approaches</tspan>
+      <tspan x="11" dy="22">• Innovation</tspan>
+    </text>
+  </g>
+
+  <!-- Column 5 -->
+  <g transform="translate(696 16)">
+    <rect width="159" height="44" fill="#00B953"/>
+    <rect y="44" width="159" height="165" fill="#CBECD9"/>
+    <text text-anchor="middle" x="79.5" y="17" style="font-family: Arial, Helvetica, sans-serif; font-weight: 400; font-size: 15px; fill: #000000;">
+      <tspan x="79.5">Governance</tspan>
+      <tspan x="79.5" dy="17">Maturity</tspan>
+    </text>
+    <text x="11" y="76" style="font-family: Arial, Helvetica, sans-serif; font-weight: 400; font-size: 14px; fill: #111111;">
+      <tspan x="11" dy="0">• Data governance</tspan>
+      <tspan x="25" dy="15">processes and</tspan>
+      <tspan x="25" dy="15">tooling</tspan>
+      <tspan x="11" dy="19">• Model governance</tspan>
+      <tspan x="25" dy="15">processes and</tspan>
+      <tspan x="25" dy="15">tooling</tspan>
+      <tspan x="11" dy="19">• Governance roles</tspan>
+      <tspan x="11" dy="19">• Security/privacy</tspan>
+    </text>
+  </g>
+</svg>

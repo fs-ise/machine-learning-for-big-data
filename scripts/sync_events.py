@@ -8,6 +8,8 @@ import urllib.request
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 try:
     from scripts import simple_yaml as yaml
@@ -16,12 +18,6 @@ except ModuleNotFoundError:
 
 
 ROOT = Path(__file__).resolve().parents[1]
-
-DEFAULT_URL = (
-    "https://raw.githubusercontent.com/fs-ise/handbook/"
-    "main/data/events.yaml"
-)
-
 
 def load_yaml(path: Path) -> Any:
     return yaml.safe_load(
@@ -169,33 +165,57 @@ def parse_semester(
     )
 
 
-def get_title_match(
+def get_schedule_config(
     course_config: dict[str, Any],
-) -> str:
-    match = (
-        course_config
-        .get("schedule", {})
-        .get("handbook_event_match")
-    )
+) -> tuple[str, str, ZoneInfo]:
+    schedule = course_config.get("schedule")
+    if not isinstance(schedule, dict):
+        raise SystemExit("Missing schedule configuration in course.yml.")
 
-    if isinstance(match, str) and match.strip():
-        return match.strip()
+    source = schedule.get("source")
+    if not isinstance(source, dict):
+        raise SystemExit("Missing schedule.source configuration in course.yml.")
+    source_type = source.get("type")
+    if source_type != "yaml":
+        raise SystemExit(
+            "Invalid schedule.source.type: expected 'yaml', "
+            f"got {source_type!r}."
+        )
+    url = source.get("url")
+    if not isinstance(url, str) or not url.strip():
+        raise SystemExit("Missing schedule.source.url in course.yml.")
+    parsed_url = urlparse(url.strip())
+    if parsed_url.scheme not in {"http", "https"} or not parsed_url.netloc:
+        raise SystemExit("Invalid schedule.source.url: expected an HTTP(S) URL.")
 
-    if isinstance(match, dict):
-        title_contains = match.get(
-            "title_contains"
+    match = schedule.get("event_match")
+    title_contains = match.get("title_contains") if isinstance(match, dict) else None
+    if not isinstance(title_contains, str) or not title_contains.strip():
+        raise SystemExit(
+            "Missing schedule.event_match.title_contains in course.yml."
         )
 
-        if (
-            isinstance(title_contains, str)
-            and title_contains.strip()
-        ):
-            return title_contains.strip()
+    timezone_name = schedule.get("timezone")
+    if not isinstance(timezone_name, str) or not timezone_name.strip():
+        raise SystemExit("Missing schedule.timezone in course.yml.")
+    try:
+        timezone = ZoneInfo(timezone_name.strip())
+    except ZoneInfoNotFoundError as exc:
+        raise SystemExit(
+            f"Invalid schedule.timezone: {timezone_name!r}."
+        ) from exc
 
-    raise SystemExit(
-        "Configure schedule.handbook_event_match "
-        "as a title substring."
-    )
+    return url.strip(), title_contains.strip(), timezone
+
+
+def event_datetime(value: Any, timezone: ZoneInfo) -> datetime:
+    try:
+        parsed = datetime.fromisoformat(str(value))
+    except ValueError as exc:
+        raise ValueError(f"invalid datetime {value!r}") from exc
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone)
+    return parsed.astimezone(timezone)
 
 
 def select_events(
@@ -204,6 +224,7 @@ def select_events(
     title_match: str,
     semester_start: date,
     semester_end: date,
+    timezone: ZoneInfo,
 ) -> list[dict[str, Any]]:
     title_match_folded = title_match.casefold()
 
@@ -221,13 +242,8 @@ def select_events(
             continue
 
         try:
-            start = datetime.fromisoformat(
-                str(event["start"])
-            )
-
-            datetime.fromisoformat(
-                str(event["end"])
-            )
+            start = event_datetime(event["start"], timezone)
+            event_datetime(event["end"], timezone)
 
         except (KeyError, ValueError) as exc:
             raise SystemExit(
@@ -252,12 +268,8 @@ def select_events(
 
     selected.sort(
         key=lambda event: (
-            datetime.fromisoformat(
-                str(event["start"])
-            ),
-            datetime.fromisoformat(
-                str(event["end"])
-            ),
+            event_datetime(event["start"], timezone),
+            event_datetime(event["end"], timezone),
             str(event.get("source_uid", "")),
         )
     )
@@ -267,14 +279,10 @@ def select_events(
 
 def normalize_event(
     event: dict[str, Any],
+    timezone: ZoneInfo = ZoneInfo("Europe/Berlin"),
 ) -> dict[str, Any]:
-    start = datetime.fromisoformat(
-        str(event["start"])
-    )
-
-    end = datetime.fromisoformat(
-        str(event["end"])
-    )
+    start = event_datetime(event["start"], timezone)
+    end = event_datetime(event["end"], timezone)
 
     source_uid = event.get("source_uid")
 
@@ -406,6 +414,7 @@ def get_next_event_number(
 def merge_events(
     handbook_events: list[dict[str, Any]],
     existing_events: list[dict[str, Any]],
+    timezone: ZoneInfo = ZoneInfo("Europe/Berlin"),
 ) -> tuple[
     list[dict[str, Any]],
     int,
@@ -453,7 +462,7 @@ def merge_events(
     seen_source_uids: set[str] = set()
 
     for handbook_event in handbook_events:
-        event_data = normalize_event(handbook_event)
+        event_data = normalize_event(handbook_event, timezone)
 
         event_id = str(
             event_data["event_id"]
@@ -720,85 +729,12 @@ def replace_events_blocks(
     return "\n".join(result) + "\n"
 
 
-def load_events(
-    *,
-    source: Path,
-    url: str,
-    cache_path: Path,
-) -> tuple[list[dict[str, Any]], str]:
-    if source.exists():
-        events = load_yaml(source)
-
-        try:
-            source_label = str(
-                source.relative_to(ROOT)
-            )
-
-        except ValueError:
-            source_label = str(source)
-
-        return events, source_label
-
-    events = load_remote_yaml(
-        url,
-        cache_path=cache_path,
-    )
-
-    return events, url
-
-
-
-# Backward-compatible aliases for older tests and helper scripts.
-merge_sessions = merge_events
-render_sessions = render_events
-find_top_level_sessions_blocks = find_top_level_events_blocks
-replace_sessions_blocks = replace_events_blocks
-
-
-def select(
-    events: list[dict[str, Any]],
-    match: dict[str, Any],
-) -> list[dict[str, Any]]:
-    title_contains = str(match.get("title_contains", ""))
-
-    return [
-        event
-        for event in events
-        if title_contains.casefold() in str(event.get("title", "")).casefold()
-    ]
-
-
-def normalize(event: dict[str, Any]) -> dict[str, Any]:
-    event = dict(event)
-
-    if not event.get("source_uid"):
-        event["source_uid"] = (
-            "generated-"
-            f"{event.get('title', 'event')}-"
-            f"{event.get('start', '')}"
-        )
-
-    return normalize_event(event)
-
 def main(
     argv: list[str] | None = None,
 ) -> None:
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--events",
-        help=(
-            "Optional path to a local events.yaml. "
-            "Defaults to schedule.source_path."
-        ),
-    )
-
-    parser.add_argument(
-        "--url",
-        default=DEFAULT_URL,
-    )
-
-    args = parser.parse_args(argv)
+    parser.parse_args(argv)
 
     course_path = ROOT / "course.yml"
 
@@ -826,34 +762,15 @@ def main(
         parse_semester(semester)
     )
 
-    title_match = get_title_match(
-        course_config
-    )
-
-    source_path_value = (
-        args.events
-        or course_config
-        .get("schedule", {})
-        .get(
-            "source_path",
-            "data/events.yaml",
-        )
-    )
-
-    source = Path(source_path_value)
-
-    if not source.is_absolute():
-        source = ROOT / source
+    source_url, title_match, timezone = get_schedule_config(course_config)
 
     cache_path = (
         ROOT
         / ".cache"
-        / "handbook-events.yaml"
+        / "schedule-events.yaml"
     )
-
-    events, source_label = load_events(
-        source=source,
-        url=args.url,
+    events = load_remote_yaml(
+        source_url,
         cache_path=cache_path,
     )
 
@@ -868,6 +785,7 @@ def main(
         title_match=title_match,
         semester_start=semester_start,
         semester_end=semester_end,
+        timezone=timezone,
     )
 
     existing_events = (
@@ -892,6 +810,7 @@ def main(
     ) = merge_events(
         selected_events,
         existing_events,
+        timezone,
     )
 
     updated_course_text = replace_events_blocks(
@@ -912,7 +831,7 @@ def main(
     )
 
     print(
-        f"Event source: {source_label}"
+        f"Event source: {source_url}"
     )
 
 

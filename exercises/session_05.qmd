@@ -3,19 +3,700 @@ title: "Session 5: ML Baselines (Classification)"
 session_id: session-05
 format:
   html: default
-  ipynb: default
 ---
 
-## Task
+::: {.direction}
 
-Work through the Session 5 exercise on ML Baselines (Classification).
+In this exercise, we cover:
 
-::: {.content-visible when-profile="assign"}
-1. Review the lecture concepts.
-2. Apply the concepts to the provided data or examples.
+| Part | Topic | Time |
+|---|---|---:|
+| 1 | Case understanding and first model | 15 min |
+| 2 | Probabilities and thresholds | 10 min |
+| 3 | Confusion matrix and metrics | 10 min |
+| 4 | ROC and AUC | 10 min |
+| 5 | Comparing customer categories | 10 min |
+| Wrap-up | Reflection | 5 min |
+| **Overall** | | **60 min** |
+
+Work directly in this Quarto (`.qmd`) exercise using R in RStudio, Positron, or VS Code.
+
+# Case: Rising defaults at LendWise
+
+You are a business analyst working for LendWise, a fintech company that offers fast digital consumer loans.
+Over the last six months, LendWise has seen a noticeable spike in credit defaults in two customer categories:
+
+- **Early-career urban borrowers:** typically younger customers, often with lower savings, moderate income, and irregular repayment histories.
+- **Self-employed platform workers:** customers with fluctuating income, often higher short-term debt exposure, and less predictable monthly cash flows.
+
+The risk team wants to understand whether default risk follows the same logic in both categories, or whether the predictors and model quality differ substantially.
+
+You first focus on early-career urban borrowers and build a logistic regression model to predict default. Afterward, you compare the results with platform workers.
+
+LendWise is interested in questions such as:
+
+- Which factors are associated with a higher probability of default in early-career urban borrowers?
+- How can predicted probabilities be translated into default/non-default classifications?
+- How well does the model perform, and how informative are the ROC curve and AUC?
+- Does a model work equally well across customer categories?
+
+## Data description
+
+- `customer_category`: customer segment
+- `income`: monthly income in EUR
+- `debt_to_income`: debt-to-income ratio
+- `missed_payments_12m`: number of missed payments in the last 12 months
+- `credit_utilization`: share of available credit currently used (between 0 and 1)
+- `months_with_company`: months since first activity with LendWise
+- `default`: whether the customer defaulted
+
+Throughout the exercise, **`default = 1` means default** and **`default = 0` means no default**. This convention determines how predicted classes, confusion matrices, and business decisions are interpreted.
+
+The dataset was curated by the company's Risk Analytics Department and has already been cleaned, validated, and prepared for modeling.
+
 :::
 
-::: {.content-visible when-profile="solution"}
-1. Compare your solution with the discussed workflow.
-2. Reflect on assumptions, limitations, and next steps.
+```{r}
+library(tidyverse)
+library(pROC)
+
+df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/credit_default.csv",
+  show_col_types = FALSE
+)
+
+glimpse(df)
+```
+
+# Part 1 — Analyze early-career urban borrowers with logistic regression
+
+::: {.direction}
+In this first part, focus only on early-career urban borrowers.
+:::
+
+### Task 1.1 — Prepare the subset
+
+Create a filtered data frame containing only early-career urban borrowers.
+
+::: {.direction}
+
+```{r}
+# Add your solution below.
+```
+
+{{< pagebreak >}}
+:::
+
+::: {.sol}
+
+## Solution
+
+```{r}
+df_ec_urban <- df |>
+  filter(customer_category == "early_career_urban")
+
+glimpse(df_ec_urban)
+```
+:::
+
+### Task 1.2 — Estimate the model
+
+Estimate a logistic regression model for credit default.
+
+::: {.direction}
+
+- Use `default` as the outcome.
+- Use `income`, `debt_to_income`, `missed_payments_12m`, `credit_utilization`, and `months_with_company` as predictors.
+- Fit the model with `glm(..., family = binomial)`.
+- Inspect `coef(model)` and `summary(model)`.
+
+```{r}
+# Add your solution below.
+```
+:::
+
+::: {.sol}
+
+## Solution
+
+```{r}
+model <- glm(
+  default ~
+    income +
+    debt_to_income +
+    missed_payments_12m +
+    credit_utilization +
+    months_with_company,
+  data = df_ec_urban,
+  family = binomial
+)
+
+coef(model)
+summary(model)
+```
+
+`glm()` estimates the unregularized maximum-likelihood logistic model. Its summary includes coefficient estimates, standard errors, z-statistics, and p-values.
+:::
+
+### Task 1.3 — Interpret the model
+
+Logistic-regression coefficients describe changes in **log-odds**, holding the other predictors constant. Exponentiating them produces **odds ratios**: the factor by which a one-unit increase multiplies the odds of default.
+
+::: {.sol}
+
+```{r}
+coefficient_table <- tibble(
+  predictor = names(coef(model)),
+  estimate = coef(model),
+  odds_ratio = exp(coef(model))
+)
+
+coefficient_table
+```
+:::
+
+- Which variables have positive associations with default?
+
+::: {.sol}
+::: {.callout-tip title="Solution"}
+`missed_payments_12m` and `credit_utilization` have positive coefficients. Holding the other predictors constant:
+
+- one additional missed payment multiplies the estimated odds of default by about **3.06** (coefficient 1.119, p < 0.001);
+- a one-unit increase in credit utilization—from 0 to 1—multiplies the estimated odds by about **6.47** (coefficient 1.867, p ≈ 0.019). A smaller change, such as 0.10, has a more realistic interpretation.
+:::
+:::
+
+- Which variables have negative associations with default?
+
+::: {.sol}
+::: {.callout-tip title="Solution"}
+`income`, `debt_to_income`, and `months_with_company` have negative estimates. The evidence is weak at the 5% level for these three predictors: income is close (p ≈ 0.067), while debt-to-income and tenure have larger p-values. The debt-to-income estimate is very close to zero relative to its uncertainty.
+:::
+:::
+
+- Can the largest raw coefficient automatically be called the most important predictor?
+
+::: {.sol}
+::: {.callout-tip title="Solution"}
+No. Predictors use different units: income is measured in euros, missed payments as a count, and utilization as a proportion. Raw coefficient magnitudes are therefore not directly comparable. Interpret directions, uncertainty, odds ratios, and changes in substantively meaningful units instead.
+:::
+:::
+
+### Task 1.4 — From coefficients to classification
+
+Explain how the model moves from a linear combination of predictors to a predicted probability and then a default/non-default class.
+
+::: {.sol}
+
+## Solution
+
+The sequence is:
+
+1. predictor values are combined into a linear predictor, or log-odds;
+2. `plogis()` transforms log-odds into a probability;
+3. a chosen threshold converts the probability into a class.
+
+```{r}
+z <- predict(
+  model,
+  newdata = df_ec_urban[1, ],
+  type = "link"
+)
+
+p <- plogis(z)
+y_class <- if_else(p >= 0.5, 1L, 0L)
+
+z
+p
+y_class
+```
+
+The first observation's predicted default probability is approximately **48.1%**, so it is classified as no default at a 50% threshold.
+:::
+
+{{< pagebreak >}}
+
+# Part 2 — Probabilities and thresholds
+
+::: {.direction}
+Logistic regression produces probabilities. A classification is a separate decision created by comparing those probabilities with a threshold.
+
+Because the modeled event is `default = 1`, the returned values estimate **P(default = 1)**.
+:::
+
+### Task 2.1 — Understanding outputs
+
+Run the code and compare the probabilities with the classes.
+
+```{r}
+y_prob <- predict(
+  model,
+  type = "response"
+)
+
+threshold <- 0.5
+
+y_pred <- if_else(
+  y_prob >= threshold,
+  1L,
+  0L
+)
+
+head(y_prob)
+head(y_pred)
+```
+
+- What is the difference between `y_prob` and `y_pred`?
+- Why is it useful to define the threshold explicitly?
+
+::: {.sol}
+
+- `y_prob` contains estimated probabilities of default.
+- `y_pred` contains decisions based on the chosen 0.5 threshold.
+- Writing the threshold explicitly makes clear that the fitted model estimates risk while the organization chooses how that risk becomes a decision.
+:::
+
+### Task 2.2 — Manual thresholding
+
+::: {.direction}
+Try thresholds of 0.2, 0.4, 0.6, and 0.7:
+
+```{r}
+t <- 0.4
+
+y_pred_t <- if_else(
+  y_prob >= t,
+  1L,
+  0L
+)
+
+sum(y_pred_t)
+```
+
+- How does the number classified as high default risk change?
+- What pattern appears as the threshold increases?
+
+Then identify the 20% riskiest and 20% safest customers using `quantile()`.
+
+```{r}
+# Add your solution below.
+```
+:::
+
+::: {.sol}
+
+## Solution
+
+At thresholds 0.2, 0.4, 0.6, and 0.7, respectively, the model flags **138, 86, 52, and 31** customers as risky.
+
+- A **lower threshold** flags more customers as risky.
+- A **higher threshold** flags fewer customers as risky.
+
+```{r}
+threshold_risky <- quantile(
+  y_prob,
+  probs = 0.80
+)
+
+risky_20 <- y_prob >= threshold_risky
+
+threshold_safe <- quantile(
+  y_prob,
+  probs = 0.20
+)
+
+safe_20 <- y_prob <= threshold_safe
+
+risky_customers <- df_ec_urban |>
+  mutate(
+    predicted_default_probability = y_prob,
+    risky_20 = risky_20
+  ) |>
+  filter(risky_20)
+
+safe_customers <- df_ec_urban |>
+  mutate(
+    predicted_default_probability = y_prob,
+    safe_20 = safe_20
+  ) |>
+  filter(safe_20)
+
+threshold_risky
+threshold_safe
+risky_customers |> slice_head(n = 5)
+safe_customers |> slice_head(n = 5)
+```
+
+The 80th-percentile risk threshold is approximately **0.652**, and the 20th-percentile threshold is approximately **0.151**.
+:::
+
+::: {.callout-important title="Threshold and approval logic"}
+Assume customers classified as likely defaults are not automatically approved:
+
+- **Lower risk threshold** → more customers flagged as risky → fewer approvals and lower default exposure.
+- **Higher risk threshold** → fewer customers flagged as risky → more approvals and potentially more defaults.
+
+Changing the threshold does not change estimated probabilities; it changes how the organization acts on them.
+:::
+
+# Part 3 — Confusion matrix and metrics
+
+::: {.callout-note}
+For simplicity, predictions are evaluated on the same observations used for estimation. This deliberately optimistic in-sample evaluation is sufficient for introducing metrics. Train/test splits, cross-validation, and out-of-sample evaluation follow in the machine-learning workflow session.
+:::
+
+### Task 3.1 — Create and interpret the matrix
+
+::: {.direction}
+Create a labeled 2 × 2 table. Rows should be actual outcomes and columns predicted outcomes.
+
+```{r}
+# Add your solution below.
+```
+
+Identify true negatives, false positives, false negatives, and true positives.
+:::
+
+::: {.sol}
+
+```{r}
+cm <- table(
+  actual = df_ec_urban$default,
+  predicted = y_pred
+)
+
+cm
+
+tn <- cm["0", "0"]
+fp <- cm["0", "1"]
+fn <- cm["1", "0"]
+tp <- cm["1", "1"]
+
+c(tn = tn, fp = fp, fn = fn, tp = tp)
+```
+
+At the 0.5 threshold:
+
+- TN: **91**
+- FP: **22**
+- FN: **32**
+- TP: **48**
+
+A false positive is a customer predicted to default who does not; this could mean rejecting or intervening on a good customer. A false negative is predicted not to default but actually defaults; this could mean approving a risky loan.
+:::
+
+### Task 3.2 — Compute key metrics
+
+::: {.direction}
+Compute and interpret accuracy, precision, and recall. Recall is also called sensitivity or the true-positive rate.
+:::
+
+::: {.sol}
+
+```{r}
+accuracy <- (tp + tn) / sum(cm)
+precision <- tp / (tp + fp)
+recall <- tp / (tp + fn)
+
+c(
+  accuracy = accuracy,
+  precision = precision,
+  recall = recall
+)
+```
+
+- Accuracy: approximately **0.720**—72.0% of classifications are correct.
+- Precision: approximately **0.686**—68.6% of customers flagged as risky actually default.
+- Recall/sensitivity/TPR: **0.600**—60.0% of actual defaults are flagged.
+:::
+
+### Task 3.3 — Business reflection
+
+LendWise is trying to grow its customer base aggressively.
+
+- Why might the company accept more false negatives temporarily?
+
+::: {.sol}
+::: {.callout-tip title="Solution"}
+An aggressive growth strategy may use a **higher default-risk threshold**. Fewer customers are flagged, so more may be approved, but more actual defaults can be missed. The resulting growth comes with greater credit risk.
+:::
+:::
+
+- Why might LendWise lower the threshold during an economic downturn?
+
+::: {.sol}
+::: {.callout-tip title="Solution"}
+A risk-control strategy may use a **lower threshold**. More customers are flagged, reducing false negatives and default exposure, at the cost of more false positives and potentially fewer approvals.
+:::
+:::
+
+# Part 4 — ROC curve and AUC
+
+::: {.direction}
+Use `pROC` to evaluate discrimination across all possible thresholds. Here, higher predicted probabilities should correspond to `default = 1`, so `direction = "<"` states that controls tend to have lower scores than cases.
+
+```{r}
+# Add your solution below.
+```
+:::
+
+::: {.sol}
+
+```{r}
+roc_ec <- roc(
+  response = df_ec_urban$default,
+  predictor = y_prob,
+  levels = c(0, 1),
+  direction = "<",
+  quiet = TRUE
+)
+
+auc_ec <- auc(roc_ec)
+
+roc_ec_df <- tibble(
+  false_positive_rate = 1 - roc_ec$specificities,
+  true_positive_rate = roc_ec$sensitivities
+)
+
+ggplot(
+  roc_ec_df,
+  aes(
+    x = false_positive_rate,
+    y = true_positive_rate
+  )
+) +
+  geom_path() +
+  geom_abline(
+    intercept = 0,
+    slope = 1,
+    linetype = "dashed"
+  ) +
+  coord_equal() +
+  labs(
+    title = "ROC curve: early-career urban borrowers",
+    subtitle = paste("AUC =", round(as.numeric(auc_ec), 3)),
+    x = "False-positive rate",
+    y = "True-positive rate"
+  )
+
+auc_ec
+```
+
+The AUC is approximately **0.801**.
+:::
+
+### Task 4.1 — Understanding ROC
+
+- What does the ROC curve represent?
+- What are TPR and FPR?
+
+::: {.sol}
+
+- The ROC curve shows the trade-off between the true-positive rate and false-positive rate across thresholds.
+- TPR, or recall/sensitivity, is `TP / (TP + FN)`.
+- FPR is `FP / (FP + TN)`.
+:::
+
+### Task 4.2 — Interpreting AUC
+
+- What does AUC represent?
+- What would values near 0.5, 0.7, and 1.0 suggest?
+
+::: {.sol}
+
+AUC summarizes how well predicted scores rank defaults above non-defaults across thresholds.
+
+- 0.5 indicates no discrimination beyond random ranking.
+- Around 0.7 indicates moderate discrimination.
+- 1.0 indicates perfect discrimination on the evaluated data.
+
+AUC is not a complete measure of business utility and does not determine the operating threshold.
+:::
+
+### Task 4.3 — Threshold perspective
+
+- Why is ROC/AUC useful before the company fixes one decision threshold?
+
+::: {.sol}
+ROC/AUC evaluates ranking performance across thresholds and supports model comparison before selecting a cutoff. The eventual threshold must still reflect the unequal business costs of false positives and false negatives.
+:::
+
+{{< pagebreak >}}
+
+# Part 5 — Compare early-career urban borrowers and platform workers
+
+Repeat the same model specification for platform workers, then compare coefficients and discrimination.
+
+### Task 5.1 — Fit the second model
+
+::: {.direction}
+
+```{r}
+# Add your solution below.
+```
+:::
+
+::: {.sol}
+
+## Solution
+
+```{r}
+df_platform <- df |>
+  filter(customer_category == "platform_worker")
+
+model_platform <- glm(
+  default ~
+    income +
+    debt_to_income +
+    missed_payments_12m +
+    credit_utilization +
+    months_with_company,
+  data = df_platform,
+  family = binomial
+)
+
+coef(model_platform)
+summary(model_platform)
+```
+:::
+
+### Task 5.2 — Compare coefficients
+
+- Are directions and statistical evidence the same in both groups?
+- How do meaningful unit changes or odds ratios differ?
+
+::: {.direction}
+
+```{r}
+# Add your solution below.
+```
+:::
+
+::: {.sol}
+
+```{r}
+comparison <- tibble(
+  predictor = names(coef(model)),
+  early_career_urban_estimate = coef(model),
+  platform_worker_estimate = coef(model_platform),
+  early_career_urban_odds_ratio = exp(coef(model)),
+  platform_worker_odds_ratio = exp(coef(model_platform))
+)
+
+comparison
+```
+
+For both segments, `credit_utilization` and `missed_payments_12m` have positive, statistically significant associations with default. Their exact estimates differ:
+
+- credit utilization: **1.87** for early-career urban borrowers and **2.10** for platform workers;
+- missed payments: **1.12** for early-career urban borrowers and **0.40** for platform workers.
+
+Debt-to-income differs particularly strongly: it is near zero and not significant for early-career urban borrowers (**-0.05**, p ≈ 0.968), but positive and significant for platform workers (**2.18**, p ≈ 0.004).
+
+Income and months with company are negative in both models but do not reach the 5% significance level. Because predictors use different units, raw coefficient size alone is not a valid measure of importance.
+:::
+
+### Task 5.3 — Compare ROC and AUC
+
+- Which category has the higher in-sample AUC?
+- What might explain the difference?
+
+::: {.direction}
+
+```{r}
+# Add your solution below.
+```
+:::
+
+::: {.sol}
+
+```{r}
+y_prob_platform <- predict(
+  model_platform,
+  type = "response"
+)
+
+roc_platform <- roc(
+  response = df_platform$default,
+  predictor = y_prob_platform,
+  levels = c(0, 1),
+  direction = "<",
+  quiet = TRUE
+)
+
+auc_platform <- auc(roc_platform)
+
+roc_comparison_df <- bind_rows(
+  tibble(
+    false_positive_rate = 1 - roc_ec$specificities,
+    true_positive_rate = roc_ec$sensitivities,
+    segment = "Early-career urban"
+  ),
+  tibble(
+    false_positive_rate = 1 - roc_platform$specificities,
+    true_positive_rate = roc_platform$sensitivities,
+    segment = "Platform worker"
+  )
+)
+
+ggplot(
+  roc_comparison_df,
+  aes(
+    x = false_positive_rate,
+    y = true_positive_rate,
+    color = segment
+  )
+) +
+  geom_path() +
+  geom_abline(
+    intercept = 0,
+    slope = 1,
+    linetype = "dashed"
+  ) +
+  coord_equal() +
+  labs(
+    title = "ROC curves by customer segment",
+    subtitle = paste(
+      "AUC: early-career urban =",
+      round(as.numeric(auc_ec), 3),
+      "; platform worker =",
+      round(as.numeric(auc_platform), 3)
+    ),
+    x = "False-positive rate",
+    y = "True-positive rate",
+    color = "Segment"
+  )
+
+c(
+  early_career_urban = as.numeric(auc_ec),
+  platform_worker = as.numeric(auc_platform)
+)
+```
+
+The early-career urban model has the higher in-sample AUC: approximately **0.801**, compared with **0.718** for platform workers. One possible explanation is that the available predictors separate defaults more consistently in the early-career segment. AUC alone does not establish why the difference exists or whether it will persist out of sample.
+:::
+
+::: {.direction}
+
+{{< pagebreak >}}
+
+# 🧩 Wrap-up <a id="wrap-up"></a>
+
+🎉🎈 You have completed the exercise—good work! 🎈🎉
+
+In this exercise, we have learned to:
+
+- Fit and interpret logistic regression models in R with `glm()`
+- Interpret log-odds coefficients and odds ratios
+- Generate predicted probabilities with `predict()`
+- Convert probabilities into decisions using explicit thresholds
+- Understand threshold trade-offs and their business costs
+- Interpret confusion matrices and compute accuracy, precision, and recall
+- Understand ROC curves and AUC
+- Compare model behavior across customer segments
+
+::: {.callout-tip title="Session 5 survey"}
+{{< survey session_05 exercise >}}
+:::
+
 :::

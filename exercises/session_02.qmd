@@ -3,19 +3,1088 @@ title: "Session 2: Data Preparation"
 session_id: session-02
 format:
   html: default
-  ipynb: default
 ---
 
-## Task
+:::{.direction}
 
-Work through the Session 2 exercise on Data Preparation.
+In this exercise, we cover:
 
-::: {.content-visible when-profile="assign"}
-1. Review the lecture concepts.
-2. Apply the concepts to the provided data or examples.
+| Exercise part                          | Time (min) |
+|----------------------------------------|------------|
+| [Data structuring 1](#structuring_1)   |     15     |
+| [Data structuring 2](#structuring_2)  |     20     |
+| [Data cleansing](#cleansing)           |     20     |
+| [Wrap-up](#wrap-up)                    |     10     |
+| Overall                                |     65     |
+
+<br>
+
+> **Recommended workflow:**
+>
+> 1. ✏️ **Think & plan first:** Draft your answers and outline the transformation steps before coding.
+> 2. 💻 **Then code:** Work directly in this Quarto (`.qmd`) exercise using R in RStudio, Positron, or VS Code.
+>
+> For data transformation guidance, refer to the [tidyr documentation](https://tidyr.tidyverse.org/).
+
+{{< pagebreak >}}
+
 :::
 
-::: {.content-visible when-profile="solution"}
-1. Compare your solution with the discussed workflow.
-2. Reflect on assumptions, limitations, and next steps.
+# Part 1: Data structuring 1 <a id="structuring_1"></a>
+
+We start with the `market_data_log.csv` dataset.
+
+```{r}
+#| output: false
+
+library(tidyverse)
+
+market_data_log_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/market_data_log.csv",
+  show_col_types = FALSE
+)
+market_data_log_df |> head()
+```
+
+<div class="cell-output cell-output-display">
+<div>
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">timestamp</th>
+<th data-quarto-table-cell-role="th">logger_sys</th>
+<th data-quarto-table-cell-role="th">Record</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2024-10-16 00:00:00</td>
+<td>FIN-PIPE-V1</td>
+<td>SAP-DE-Tech-2023Q1-MarketCap-1154.9B</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>2023-04-25 00:00:00</td>
+<td>FIN-PIPE-V1</td>
+<td>SAP-DE-Tech-2023Q1-Revenue-475.6B</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>2023-01-26 00:00:00</td>
+<td>FIN-PIPE-V1</td>
+<td>SAP-DE-Tech-2023Q1-EBITDA-146.7B</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>2023-10-09 00:00:00</td>
+<td>FIN-PIPE-V1</td>
+<td>SAP-DE-Tech-2023Q2-MarketCap-1816.0B</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>2023-09-08 00:00:00</td>
+<td>FIN-PIPE-V1</td>
+<td>SAP-DE-Tech-2023Q2-Revenue-82.2B</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+
+:::{.direction}
+
+### Tasks
+
+1. Identify:
+
+   * Values: ________________
+   * Observations: ________________
+   * Variables: ________________
+   * Units of observation: ________________
+
+2. Draft the **tidy structure** of the dataset:
+
+   * Fill in the column names and at least 3 example rows.
+
+<div class="cell-output cell-output-display">
+<div>
+<table style="width:100%; border-collapse:collapse; font-family:Arial, sans-serif; color:#222;">
+  <thead>
+    <tr>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+    </tr>
+    <tr>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+    </tr>
+    <tr>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+
+3. Describe how the dataset should be transformed.
+
+<br><br><br><br>
+
+4. **(Optional challenge)**: Implement the transformation in R (`tidyverse`)
+
+```{r}
+market_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/market_data_log.csv",
+  show_col_types = FALSE
+)
+
+# Add your solution below.
+# Note: you may need string operations.
+```
+
+{{< iconify fluent-mdl2:insights >}} If you didn’t get to this part in class, try working through it at home.
+
+
+::: {.callout-note title="Expectations in the exam"}
+<br>
+
+<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;">
+  <thead>
+    <tr style="background-color: #f2f2f2;">
+      <th style="border: 1px solid #ccc; padding: 8px;">Grade</th>
+      <th style="border: 1px solid #ccc; padding: 8px;">Expectations</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;"><strong>1 (Best)</strong></td>
+      <td style="border: 1px solid #ccc; padding: 8px;">
+        <strong>Recommend</strong> how to fix the dataset using appropriate transformations, e.g., describe restructuring steps, select the correct method from examples, or provide pseudocode.
+      </td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;"><strong>2</strong></td>
+      <td style="border: 1px solid #ccc; padding: 8px;">
+        <strong>Evaluate</strong> and justify the decision using tidy data principles, e.g., "This is not tidy because column 2 contains two variables instead of one."
+      </td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;"><strong>3</strong></td>
+      <td style="border: 1px solid #ccc; padding: 8px;">
+        <strong>Apply</strong> tidy data principles to evaluate a dataset (correctly identify whether it is tidy or not).
+      </td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 8px;"><strong>4 (Pass)</strong></td>
+      <td style="border: 1px solid #ccc; padding: 8px;">
+        <strong>Understand</strong> and reproduce the principles of tidy data (e.g., each variable in a column, each observation in a row).
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-family: Arial, sans-serif; margin-top: 10px;">
+  <strong>Note:</strong> Even for the best grade, you are not expected to write fully functional code from memory. Still, practicing with code will help you build a deeper conceptual understanding.
+</p>
+
+:::
+
+:::
+
+
+::: {.sol}
+
+## Solution
+
+### 1. Identify:
+
+* **Values:** Examples: 2024-10-16 00:00:00, FIN-PIPE-V1, SAP, DE, 2023Q1, 1154.9
+* **Observations:** Individual logged measurements for a specific firm and period
+* **Variables:** Timestamp, Logger system, Firm, Country, Sector, Period, MarketCap, Revenue, EBITDA
+* **Units of observation:** One logged **firm–period** record (aggregating multiple metrics)
+
+---
+
+### 2. Draft the **tidy structure** of the dataset (wide format):
+
+| timestamp           | logger_sys  | Firm | Country | Sector | Period | MarketCap | Revenue | EBITDA |
+| ------------------- | ----------- | ---- | ------- | ------ | ------ | --------- | ------- | ------ |
+| 2024-10-16 00:00:00 | FIN-PIPE-V1 | SAP  | DE      | Tech   | 2023Q1 | 1154.9B   | 475.6B  | 146.7B |
+| 2023-10-09 00:00:00 | FIN-PIPE-V1 | SAP  | DE      | Tech   | 2023Q2 | 1816.0B   | 82.2B   |        |
+| ...                 | ...         | ...  | ...     | ...    | ...    | ...       | ...     | ...    |
+
+---
+
+### 3. Describe how the dataset should be transformed.
+
+* **Parse encoded column:**
+
+  * The `Record` column contains multiple variables concatenated with `-`
+  * Split into: `Firm`, `Country`, `Sector`, `Period`, `Metric`, `Value`
+
+* **Reshape (long → wide):**
+
+  * Pivot the `Metric` column into separate columns (`MarketCap`, `Revenue`, `EBITDA`, …)
+  * Use `Value` as cell entries
+
+* **Optional refinement:**
+
+  * Convert `Value` into numeric format (e.g., remove `B` and cast to float)
+  * Keep or drop `timestamp` depending on whether it represents data collection or observation time
+
+---
+
+### 4. (Optional challenge): Implement the transformation in R (`tidyverse`)
+
+```{r}
+market_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/market_data_log.csv",
+  show_col_types = FALSE
+)
+
+# Split the values encoded in Record into separate variables.
+market_data_long <- market_data_df |>
+  separate_wider_delim(
+    Record,
+    delim = "-",
+    names = c("Firm", "Country", "Sector", "Period", "Metric", "Value")
+  )
+
+# Give each metric its own column.
+df_wide <- market_data_long |>
+  pivot_wider(names_from = Metric, values_from = Value) |>
+  mutate(across(c(MarketCap, Revenue, EBITDA), parse_number))
+
+df_wide |> head()
+```
+
+:::
+
+
+---
+
+{{< pagebreak >}}
+
+# Part 2: Data structuring 2 <a id="structuring_2"></a>
+
+Dataset `sales_data_channels_full_year.csv`
+
+```{r}
+#| output: false
+
+sales_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/sales_data_channels_full_year.csv",
+  show_col_types = FALSE
+)
+sales_data_df |> head()
+```
+
+<div class="cell-output cell-output-display">
+<div>
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Customer_ID</th>
+<th data-quarto-table-cell-role="th">Region</th>
+<th data-quarto-table-cell-role="th">Jan_Online</th>
+<th data-quarto-table-cell-role="th">Jan_Store</th>
+<th data-quarto-table-cell-role="th">Feb_Online</th>
+<th data-quarto-table-cell-role="th">Feb_Store</th>
+<th data-quarto-table-cell-role="th">Mar_Online</th>
+<th data-quarto-table-cell-role="th">Mar_Store</th>
+<th data-quarto-table-cell-role="th">Apr_Online</th>
+<th data-quarto-table-cell-role="th">Apr_Store</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">Aug_Online</th>
+<th data-quarto-table-cell-role="th">Aug_Store</th>
+<th data-quarto-table-cell-role="th">Sep_Online</th>
+<th data-quarto-table-cell-role="th">Sep_Store</th>
+<th data-quarto-table-cell-role="th">Oct_Online</th>
+<th data-quarto-table-cell-role="th">Oct_Store</th>
+<th data-quarto-table-cell-role="th">Nov_Online</th>
+<th data-quarto-table-cell-role="th">Nov_Store</th>
+<th data-quarto-table-cell-role="th">Dec_Online</th>
+<th data-quarto-table-cell-role="th">Dec_Store</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>ACC-E0IFD0</td>
+<td>APAC</td>
+<td>215</td>
+<td>201</td>
+<td>240</td>
+<td>73</td>
+<td>80</td>
+<td>184</td>
+<td>224</td>
+<td>240</td>
+<td>...</td>
+<td>182</td>
+<td>180</td>
+<td>108</td>
+<td>154</td>
+<td>278</td>
+<td>76</td>
+<td>85</td>
+<td>211</td>
+<td>148</td>
+<td>132</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>ACC-DPBHSA</td>
+<td>EU</td>
+<td>315</td>
+<td>108</td>
+<td>251</td>
+<td>163</td>
+<td>133</td>
+<td>245</td>
+<td>170</td>
+<td>194</td>
+<td>...</td>
+<td>300</td>
+<td>157</td>
+<td>289</td>
+<td>233</td>
+<td>173</td>
+<td>121</td>
+<td>172</td>
+<td>213</td>
+<td>260</td>
+<td>158</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>CUST-ZZPQK5</td>
+<td>APAC</td>
+<td>142</td>
+<td>167</td>
+<td>195</td>
+<td>81</td>
+<td>175</td>
+<td>107</td>
+<td>296</td>
+<td>210</td>
+<td>...</td>
+<td>101</td>
+<td>221</td>
+<td>141</td>
+<td>116</td>
+<td>142</td>
+<td>109</td>
+<td>182</td>
+<td>55</td>
+<td>258</td>
+<td>124</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>CUST-ZMF8MD</td>
+<td>APAC</td>
+<td>218</td>
+<td>209</td>
+<td>154</td>
+<td>224</td>
+<td>205</td>
+<td>163</td>
+<td>124</td>
+<td>206</td>
+<td>...</td>
+<td>83</td>
+<td>228</td>
+<td>264</td>
+<td>172</td>
+<td>235</td>
+<td>223</td>
+<td>239</td>
+<td>88</td>
+<td>285</td>
+<td>178</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>CUST-MMJBQE</td>
+<td>EU</td>
+<td>180</td>
+<td>145</td>
+<td>212</td>
+<td>135</td>
+<td>217</td>
+<td>124</td>
+<td>231</td>
+<td>190</td>
+<td>...</td>
+<td>253</td>
+<td>151</td>
+<td>115</td>
+<td>78</td>
+<td>159</td>
+<td>194</td>
+<td>140</td>
+<td>219</td>
+<td>111</td>
+<td>137</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 26 columns</p>
+</div>
+</div>
+
+:::{.direction}
+
+### Tasks
+
+1. Identify:
+
+   * Values: ________________
+   * Observations: ________________
+   * Variables: ________________
+   * Units of observation: ________________
+
+2. Draft the **tidy structure** of the dataset:
+
+
+<div class="cell-output cell-output-display">
+<div>
+<table style="width:100%; border-collapse:collapse; font-family:Arial, sans-serif; color:#222;">
+  <thead>
+    <tr>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+
+3. Describe how the dataset should be transformed.
+
+<br><br><br>
+
+4. **(Optional challenge)**: Implement the transformation in R (`tidyverse`)
+
+```{r}
+sales_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/sales_data_channels_full_year.csv",
+  show_col_types = FALSE
+)
+
+# Add your solution below.
+```
+
+{{< iconify fluent-mdl2:insights >}} In addition to the transformation, you may need string operations
+
+:::
+
+:::{.sol}
+
+## Solution
+
+### 1. Identify:
+
+   * Values: Numerical sales values (215, 201, 240, ...)
+   * Observations: Individual sales measurements for a specific customer, month, and channel
+   * Variables: CustomerID, Region, Month, Channel, Sales
+   * Units of observation: A customer–month–channel combination
+
+### 2. Draft the **tidy structure** of the dataset:
+
+| Customer_ID | Region | Month | Channel | Sales |
+| ----------- | ------ | ----- | ------- | ----- |
+| CUST-AB12CD | EU     | Jan   | Online  | 120   |
+| CUST-AB12CD | EU     | Jan   | Store   | 95    |
+| CUST-AB12CD | EU     | Feb   | Online  | 135   |
+
+
+{{< pagebreak >}}
+
+### 3. Describe how the dataset should be transformed.
+
+- Reshape (wide → long): Convert all monthly/channel columns into two columns
+- Split the combined column (Month, Channel)
+
+### 4. (Optional challenge): Implement the transformation in R (`tidyverse`)
+
+```{r}
+sales_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/sales_data_channels_full_year.csv",
+  show_col_types = FALSE
+)
+
+# Step 1: reshape the month/channel columns to long format.
+tidy_df <- sales_data_df |>
+  pivot_longer(
+    cols = -c(Customer_ID, Region),
+    names_to = "Month_Channel",
+    values_to = "Sales"
+  ) |>
+  # Step 2: split the combined column into Month and Channel.
+  separate_wider_delim(
+    Month_Channel,
+    delim = "_",
+    names = c("Month", "Channel")
+  )
+
+tidy_df |> head()
+```
+
+:::
+
+---
+
+{{< pagebreak >}}
+
+# Part 3: Data cleansing <a id="cleansing"></a>
+
+Dataset `messy_customer_data.csv`
+
+```{r}
+#| output: false
+
+customer_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/messy_customer_data.csv",
+  na = c("", "NA", "NaN"),
+  show_col_types = FALSE
+)
+customer_df |> head()
+```
+
+<div class="cell-output cell-output-display">
+<div>
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">customer_id</th>
+<th data-quarto-table-cell-role="th">date_of_birth</th>
+<th data-quarto-table-cell-role="th">income</th>
+<th data-quarto-table-cell-role="th">gender</th>
+<th data-quarto-table-cell-role="th">signup_date</th>
+<th data-quarto-table-cell-role="th">country</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>CUST_00000001809</td>
+<td>1980-04-09</td>
+<td>4896 USD</td>
+<td>M</td>
+<td>2026-12-14</td>
+<td>USA</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>CUST_00000000695</td>
+<td>1945-08-02</td>
+<td>7029</td>
+<td>F</td>
+<td>2023-11-26</td>
+<td>BR</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>CUST_00000000907</td>
+<td>1971-07-25</td>
+<td>6432</td>
+<td>F</td>
+<td>2024-06-25</td>
+<td>Austria</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>CUST_00000000545</td>
+<td>2000-03-01</td>
+<td>6107</td>
+<td>M</td>
+<td>2023-06-29</td>
+<td>JP</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>CUST_00000001848</td>
+<td>1943-09-06</td>
+<td>7655</td>
+<td>F</td>
+<td>2027-01-22</td>
+<td>Italy</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>CUST_00000001567</td>
+<td>1980-09-14</td>
+<td>2244</td>
+<td>F</td>
+<td>2026-04-16</td>
+<td>CH</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>CUST_00000001573</td>
+<td>1950-04-07</td>
+<td>3262</td>
+<td>F</td>
+<td>2026-04-22</td>
+<td>India</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>CUST_00000000945</td>
+<td>1989-08-23</td>
+<td>3976</td>
+<td>M</td>
+<td>2024-08-02</td>
+<td>BR</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>CUST_00000000819</td>
+<td>1946-03-09</td>
+<td>3077 USD</td>
+<td>F</td>
+<td>2024-03-29</td>
+<td>NL</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>CUST_00000000830</td>
+<td>1981-03-30</td>
+<td>NaN</td>
+<td>M</td>
+<td>2024-04-09</td>
+<td>BR</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10</td>
+<td>CUST_00000001531</td>
+<td>1995-03-08</td>
+<td>4667</td>
+<td>F</td>
+<td>2026-03-11</td>
+<td>DE</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">11</td>
+<td>CUST_00000000979</td>
+<td>1990-01-24</td>
+<td>NaN</td>
+<td>F</td>
+<td>2024-09-05</td>
+<td>Switzerland</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">12</td>
+<td>CUST_00000001576</td>
+<td>1989-06-18</td>
+<td>2920</td>
+<td>F</td>
+<td>2026-04-25</td>
+<td>Brazil</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">13</td>
+<td>CUST_00000000786</td>
+<td>1994-06-24</td>
+<td>6613</td>
+<td>F</td>
+<td>2024-02-25</td>
+<td>IT</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">14</td>
+<td>CUST_00000000071</td>
+<td>1960-11-19</td>
+<td>4613</td>
+<td>F</td>
+<td>2022-03-12</td>
+<td>FR</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">15</td>
+<td>CUST_00000001007</td>
+<td>1989-07-09</td>
+<td>4551</td>
+<td>F</td>
+<td>2024-10-03</td>
+<td>BR</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">16</td>
+<td>CUST_00000000189</td>
+<td>1969-01-29</td>
+<td>6779</td>
+<td>M</td>
+<td>2022-07-08</td>
+<td>China</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">17</td>
+<td>CUST_00000001670</td>
+<td>1987-08-04</td>
+<td>7295</td>
+<td>M</td>
+<td>2026-07-28</td>
+<td>Munch</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">18</td>
+<td>CUST_00000001270</td>
+<td>1969-02-06</td>
+<td>4717</td>
+<td>F</td>
+<td>2025-06-23</td>
+<td>USA</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">19</td>
+<td>CUST_00000001305</td>
+<td>1989-01-13</td>
+<td>7954</td>
+<td>F</td>
+<td>2025-07-28</td>
+<td>ES</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+
+{{< pagebreak >}}
+
+:::{.direction}
+
+
+## Tasks
+
+In this part, move from **detecting problems** to **making the dataset analysis-ready**. The goal is not only to spot errors, but also to document a reproducible cleaning strategy.
+
+### 1. Identify scales of variables
+
+* What type of scale is each variable?
+  Run the following and assign `nominal`, `ordinal`, `interval`, or `ratio`.
+
+```{r}
+#| output: false
+
+customer_df |> glimpse()
+```
+
+
+* What type of scale should each variable be?
+  Assign `nominal`, `ordinal`, `interval`, or `ratio`.
+
+  - customer_id: ________________
+  - date_of_birth: ________________
+  - income: ________________
+  - gender: ________________
+  - signup_date: ________________
+  - country: ________________
+
+{{< pagebreak >}}
+
+### 2. Analyze data quality
+
+Examine the dataset `data/messy_customer_data.csv` and run the following:
+
+```{r}
+summary(customer_df)
+```
+
+* Summarize all data quality issues you observe (open the [data/messy_customer_data.csv](data/messy_customer_data.csv)).
+
+<br><br><br><br><br><br><br>
+
+{{< pagebreak >}}
+
+### 3. Propose data preparation steps
+
+* For each data quality issue, suggest how you would address it.
+
+<br><br><br><br><br><br><br>
+
+---
+
+### 4. *(Optional challenge)* Implement in R (`tidyverse`)
+
+* Implement the data preparation steps in R.
+* Run the code after each step and inspect the results.
+
+```{r}
+# Add your solution below.
+```
+
+Note: Check how the `customer_df` changes after each preparation step!
+
+:::
+
+
+:::{.sol}
+
+## Solution
+
+### 1. Identify scales of variables
+
+* What type of scale is each variable?
+
+  All are `nominal` (strings).
+
+
+* What type of scale should each variable be?
+  Assign `nominal`, `ordinal`, `interval`, or `ratio`.
+
+  - customer_id: **nominal**
+  - date_of_birth: **interval**
+  - income: **ratio**
+  - gender: **nominal**
+  - signup_date: **interval**
+  - country: **nominal**
+
+### 2. Analyze data quality
+
+Examine the dataset `data/messy_customer_data.csv` and run the following:
+
+```{r}
+summary(customer_df)
+```
+
+* Summarize all data quality issues you observe.
+
+- **Missing values**
+  - `date_of_birth`
+  - `income`
+  - `signup_date`
+
+- **Implausible / invalid values**
+  - `date_of_birth` (e.g., 1890, future dates like 2030)
+  - `signup_date` (e.g., invalid dates like 2023-13-01)
+  - `income` (e.g., negative values)
+
+{{< pagebreak >}}
+
+- **Inconsistent formats**
+  - `income` (e.g., "5000", "5000 EUR", "5000 USD")
+  - `signup_date` (multiple date formats)
+
+- **Outliers**
+  - `income` (e.g., very high values like 200000)
+
+- **Inconsistent categorical values**
+  - `gender` (M, F, Male, Female, m, f)
+  - `country` (codes, names, typos: DE, Germany, Ger, U.S., Brasil, etc.)
+
+- **Duplicates**
+  - Duplicate records identifiable via repeated `customer_id` (high frequency)
+
+---
+
+### 3. Propose data preparation steps
+
+* For each data quality issue, suggest how you would address it.
+
+* **Missing values:** impute (e.g., median for income) or remove rows
+* **Implausible / invalid values:** filter out or correct (e.g., negative income, invalid dates)
+* **Inconsistent formats:** standardize (convert income to numeric, parse dates to datetime)
+* **Outliers:** inspect and cap or remove extreme values
+* **Inconsistent categorical values:** unify categories (e.g., gender labels, country formats)
+* **Duplicates:** remove duplicates based on `customer_id`
+
+---
+
+### 4. *(Optional challenge)* Implement in R (`tidyverse`)
+
+```{r}
+customer_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/messy_customer_data.csv",
+  na = c("", "NA", "NaN"),
+  show_col_types = FALSE
+)
+
+# --- Income: remove currency labels and parse a numeric value ---
+customer_df <- customer_df |>
+  mutate(income = parse_number(income))
+
+# --- Missing income: replace with the median ---
+income_median <- median(customer_df$income, na.rm = TRUE)
+customer_df <- customer_df |>
+  mutate(income = replace_na(income, income_median))
+
+# --- Dates: parse valid ISO and day/month/year values ---
+parse_customer_date <- function(x) {
+  parsed <- as.Date(rep(NA_character_, length(x)))
+  accepted_formats <- c("%Y-%m-%d", "%Y/%m/%d", "%d/%m/%Y", "%d/%m/%y")
+
+  for (date_format in accepted_formats) {
+    still_missing <- is.na(parsed)
+    parsed[still_missing] <- as.Date(x[still_missing], format = date_format)
+  }
+
+  parsed
+}
+
+customer_df <- customer_df |>
+  mutate(
+    date_of_birth = parse_customer_date(date_of_birth),
+    signup_date = parse_customer_date(signup_date)
+  )
+
+# --- Invalid or implausible values ---
+today <- Sys.Date()
+customer_df <- customer_df |>
+  filter(
+    !is.na(date_of_birth),
+    date_of_birth > as.Date("1900-01-01"),
+    date_of_birth < today,
+    !is.na(signup_date),
+    signup_date <= today,
+    income >= 0
+  )
+
+# --- Income outliers: cap values at the 99th percentile ---
+upper_cap <- quantile(customer_df$income, 0.99, na.rm = TRUE)
+customer_df <- customer_df |>
+  mutate(income = pmin(income, upper_cap))
+
+# --- Standardize categorical values ---
+customer_df <- customer_df |>
+  mutate(
+    gender = case_when(
+      str_to_lower(gender) %in% c("m", "male") ~ "Male",
+      str_to_lower(gender) %in% c("f", "female") ~ "Female",
+      TRUE ~ gender
+    ),
+    country = recode(
+      str_trim(country),
+      "Germany" = "DE", "Ger" = "DE", "DEU" = "DE", "Munch" = "DE",
+      "USA" = "US", "U.S." = "US",
+      "France" = "FR", "Spain" = "ES", "Italy" = "IT",
+      "Netherlands" = "NL", "Switzerland" = "CH", "Austria" = "AT",
+      "China" = "CN", "Japan" = "JP", "India" = "IN",
+      "Brazil" = "BR", "Brasil" = "BR", "Canada" = "CA"
+    )
+  )
+
+# --- Keep the first record for each customer ID ---
+customer_df <- customer_df |>
+  distinct(customer_id, .keep_all = TRUE)
+
+customer_df |> head()
+```
+
+:::
+
+
+:::{.direction}
+
+---
+
+{{< pagebreak >}}
+
+## Wrap-up <a id="wrap-up"></a>
+
+🎉🎈 You have completed the exercise - good work! 🎈🎉
+
+In this exercise, we have learned to
+
+* Structure data in a tidy format
+* Prepare and explore datasets
+
+
+::: {.callout-note title="Stop the Codespace"}
+Remember to <b>stop</b> your Codespace [here](https://github.com/codespaces).
+:::
+
+::: {.callout-tip title="Session 2 survey"}
+{{< survey session_02 exercise >}}
+:::
+
 :::

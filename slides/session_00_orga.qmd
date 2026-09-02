@@ -1,11 +1,9 @@
 ---
-title: "Machine Learning for Big Data"
-subtitle: "Course logistics"
+title: "Course logistics"
+title-slide-image: "../images/cover_slide/analytics.png"
 section_label: "Introduction"
 session: "Session 0"
 ---
-
-
 
 # Welcome {data-stack-name="Welcome"}
 
@@ -14,25 +12,24 @@ session: "Session 0"
 ::: {.columns}
 ::: {.column width="70%"}
 
-Academic background
+**Academic background**
 
-- Universität Regensburg: Doctoral Student
-- HEC Montréal: Postdoctoral Fellowship
-- Otto-Friedrich-Universität Bamberg: Assistant Professor
-- Frankfurt School of Finance & Management: Full Professor
+- 2009-2018: Universität Regensburg (Bachelor/Master/Doctoral Student)
+- 2014: University of Oulu (ERASMUS)
+- 2019-2022: HEC Montréal (Postdoctoral Fellowship)
+- 2022-2026: Otto-Friedrich-Universität Bamberg (Assistant Professor)
+- Since 2026: Frankfurt School of Finance & Management (Full Professor)
 
-Research interests
+**My teaching and research interests**
 
-- Open, agentic, and boundary-spanning work
-- AI-supported knowledge synthesis
+- Programming (on <a href="https://github.com/geritwagner" target="_blank">GitHub</a>)
+- AI for knowledge work, health, and literature reviews
 
-Teaching interests
+**Things I do outside of work**
 
-- Analytics and big data
-- IT security
-- Programming and software engineering
-- Digital knowledge-intensive and platform-based work
-- Literature review methods
+- Running and working out in the gym
+- Hiking, skiing, sailing with friends
+- Contribute to OpenStreetMap using the <a href="https://streetcomplete.app/" target="_blank" rel="noopener noreferrer">StreetComplete</a> app
 
 :::
 
@@ -77,12 +74,46 @@ For each question, I’ll invite a few of you to briefly share your thoughts.
 
 # Machine Learning for Big Data {data-stack-name="Machine Learning for Big Data"}
 
-## Machine Learning for Big Data in the curriculum
+## Machine Learning for Big Data in the curriculum {#mlbd-curriculum}
 
-![](../images/mim_mlbd_curriculum.png){.absolute top=200 left=300 width="800" }
+![](../images/mim_mlbd_curriculum.png){.absolute top=100 left=250 width="1100"}
+
+::: {.mlbd-highlight .fragment}
+:::
+
+<style>
+#mlbd-curriculum .mlbd-highlight {
+  position: absolute;
+  top: 520px;
+  left: 1090px;
+  width: 250px;
+  height: 48px;
+
+  border: 4px solid #0d3df5;
+  border-radius: 6px;
+
+  box-shadow:
+    0 0 0 9999px rgba(255, 255, 255, 0.45),
+    0 0 18px rgba(13, 61, 245, 0.7);
+
+  z-index: 10;
+}
+
+#mlbd-curriculum .mlbd-highlight.visible {
+  animation: mlbd-pulse 1s ease-in-out 3;
+}
+
+@keyframes mlbd-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+</style>
 
 ## Course architecture
 
+![](../images/course_structure.png){.absolute top=100 left=320 width="1000"}
+
+<!--
 **1. Introduction to Big Data**
 
 **2. Data Foundations**
@@ -94,6 +125,7 @@ For each question, I’ll invite a few of you to briefly share your thoughts.
 - Machine Learning for Unstructured Data
 
 **4. Deployment in Organizations**
+-->
 
 ## What this course does *not* cover
 
@@ -119,50 +151,72 @@ For each question, I’ll invite a few of you to briefly share your thoughts.
   - Robots/agents acting on decisions
   - Reinforcement learning
 
-{{< iconify fluent-mdl2:insights >}} We will *touch* these areas where needed, but our focus is on **analytical reasoning for business decisions**<br> and **notebook-based implementations**.
+{{< iconify fluent-mdl2:insights >}} We will *touch* these areas where needed, but our focus is on **analytical reasoning for business decisions**<br>
+and **R-based analysis in Quarto documents**.
 
+## Group work brief
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+{{< iconify mdi:file-document-outline >}} **Read the group work brief, which is linked on the [Canvas course page](https://frankfurtschool.instructure.com/courses/20150).**
+
+{{< iconify mdi:calendar-check-outline >}} **Check the modalities and dates**  
+Do they work for you?
+
+{{< iconify mdi:notebook-edit-outline >}} **Take notes on questions or unclear points**
+
+We will discuss your questions together afterwards.
+
+:::
+
+::: {.column width="60%"}
+![](../images/group_work_brief.png){.paper-preview fig-align="center" width="40%"}
+:::
+
+::::
+
+
+::: aside
+Note: The document may be updated in the coming days.
+:::
 
 # Course logistics  {data-stack-name="Course logistics"}
 
 ## Course logistics
 
-Workload:
+**Workload**
 
 * 150 h total
 * 44 academic teaching hours (45 minutes each)
 * Remaining workload: self-study, including lesson preparation and follow-up, reading, assessment preparation, and take-home assignments
 
-Assessment:
+**Assessment**
 
 * Group project: ongoing, submitted as a text document at the end of the module
 * 120 performance points
 
-Sessions:
-
-* See overview in Canvas
-
-Contact:
+**Contact**
 
 - Instructor: [{{< meta instructor.name >}}]({{< meta instructor.url >}}){target="_blank"} ([{{< meta instructor.email >}}](mailto:{{< meta instructor.email >}}))
 - Office hours: see [bookings]({{< meta instructor.bookings_url >}}){target="_blank"}
 
-Individual circumstances
+**Individual circumstances**
 
 If you have family responsibilities, religious holidays, health-related matters, or other individual circumstances that may affect your participation or performance, please reach out early.
 We will work together to find a fair and workable solution.
 
-# TODO: `group-projects/Guidelines for the GroupProjects.pdf`
-
 
 ## Materials
 
-Slides and materials
+**Slides and materials**
 
-- Presentation slides and notebooks will be made available for download.
+- Presentation slides and documents will be made available for download.
 
-Short surveys at the end of each session
+**Short surveys at the end of each session**
 
-- If you notice anything that could benefit from further clarification or improvement, please take a note and let me know there.
+- If you notice anything that could benefit from further clarification or improvement, please take a note and let me know.
 
 Your input makes a real difference 🙏
 
@@ -170,29 +224,19 @@ Your input makes a real difference 🙏
 
 <br>
 
-Learning markers
-
-- Facilitate learning and exam preparation.
-- Help distinguish between illustrative material and key concepts and skills to prioritize.
-
 ::: {.highlight_must_learn}
 
-**Key concepts**
+**Key concept markers**
 
-These markers highlight key skills and knowledge areas that you should prioritize when preparing for the exam.
+These markers identify slides that cover concepts, methods, or skills that are particularly important for the course.
+They help distinguish core material from supporting examples and illustrations.
+
 <br>
-*Note*: This does not mean that other contents are excluded—they remain relevant for a complete understanding.
+
+*Note*: Other content still contributes to a complete understanding.
 
 :::
 
-
-::: {.learning_note}
-
-**Learning focus**
-
-These notes indicate how the content may be addressed in the exam and how you can prepare effectively.
-
-:::
 
 ## Literature
 
@@ -214,6 +258,10 @@ These notes indicate how the content may be addressed in the exam and how you ca
 - Alpaydin [-@Alpaydin2016IntroML]
 - Hastie, Tibshirani, and Friedman [-@HastieTibshiraniFriedman2009]
 - James et al. [-@JamesWittenHastieTibshirani2013]
+
+**R and Data Analysis**
+
+- Wickham, Çetinkaya-Rundel, and Grolemund [-@WickhamCetinkayaRundelGrolemund2023]
 
 ## You may also be interested in ... {data-state="hide-menubar"}
 

@@ -1,0 +1,31 @@
+$if(title)$
+\begin{titlepage}
+\thispagestyle{empty}
+\sffamily
+
+\noindent\includegraphics[width=0.70\textwidth]{assets/mlbd-logo-long.png}
+
+\vspace{1.1cm}
+\noindent{\color{FSOrange}\rule{\textwidth}{2.2pt}}
+
+\vspace*{2.5cm}
+{\fontsize{34}{40}\selectfont\bfseries\color{FSCharcoal}$title$\par}
+\vspace{0.65cm}
+{\Large\color{FSMidGray}$course.title$\par}
+
+\vfill
+\begin{minipage}{0.68\textwidth}
+{\color{FSOrange}\rule{22mm}{1.8pt}}\\[0.8em]
+{\large\bfseries Frankfurt School of Finance \& Management\par}
+\vspace{0.4em}
+{\normalsize $course.level$ course · $course.credits$ ECTS\par}
+{\normalsize Semester $course.semester$\par}
+\vspace{0.9em}
+{\normalsize\bfseries Instructor\par}
+{\normalsize $instructor.name$\par}
+\end{minipage}
+
+\end{titlepage}
+\setcounter{page}{1}
+\normalfont
+$endif$

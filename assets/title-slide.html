@@ -1,12 +1,18 @@
-<section id="$idprefix$title-slide" $for(title-slide-attributes/pairs)$ $it.key$="$it.value$"$endfor$>
-  <h1 class="title">$title$</h1>
-$if(subtitle)$
-  <p class="subtitle">$subtitle$</p>
+<section
+  id="$idprefix$title-slide"
+  data-background-image="$title-slide-image$"
+  data-background-size="cover"
+  data-background-position="center"
+  data-background-repeat="no-repeat"
+  $for(title-slide-attributes/pairs)$
+  $it.key$="$it.value$"
+  $endfor$
+>
+  <div class="title-slide-content">
+    <p class="course-title">$course.title$</p>
+    <h1 class="title">$title$</h1>
+$if(session)$
+    <p class="session-meta">$session$$if(date)$ | $date$$endif$</p>
 $endif$
-$if(author)$
-  <p class="author">$for(author)$$author$$sep$, $endfor$</p>
-$endif$
-$if(date)$
-  <p class="date">$date$</p>
-$endif$
+  </div>
 </section>

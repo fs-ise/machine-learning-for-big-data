@@ -1,0 +1,199 @@
+```{=html}
+<div class="diagram-container">
+  <style>
+    .diagram-container svg {
+      width: 100%;
+      height: 560px;
+      overflow: visible;
+      font-family: Arial, sans-serif;
+    }
+
+    .box {
+      fill: white;
+      stroke: black;
+      stroke-width: 1.8;
+    }
+
+    .group-box {
+      fill: none;
+      stroke: black;
+      stroke-width: 2.2;
+      stroke-dasharray: 10 6;
+    }
+
+    .arrow {
+      fill: none;
+      stroke: black;
+      stroke-width: 2.2;
+      marker-end: url(#arrow);
+    }
+
+    .thin-arrow {
+      fill: none;
+      stroke: black;
+      stroke-width: 1.8;
+      marker-end: url(#arrowSmall);
+    }
+
+    .connector {
+      fill: none;
+      stroke: black;
+      stroke-width: 2.2;
+    }
+
+    .label-bg {
+      fill: white;
+    }
+
+    .main-label {
+      font-size: 20px;
+    }
+
+    .small-label {
+      font-size: 16px;
+    }
+
+    .tiny-label {
+      font-size: 14px;
+    }
+
+    .reveal .diagram-container svg .fragment {
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .reveal .diagram-container svg .fragment.visible {
+      opacity: 1;
+    }
+  </style>
+
+  <svg viewBox="0 0 1200 560" xmlns="http://www.w3.org/2000/svg" aria-label="Business analytics diagram">
+    <defs>
+      <!-- Smaller arrowheads -->
+      <marker id="arrow"
+              viewBox="0 0 10 10"
+              markerWidth="6"
+              markerHeight="6"
+              refX="10"
+              refY="5"
+              orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="black"></path>
+      </marker>
+
+      <marker id="arrowSmall"
+              viewBox="0 0 10 10"
+              markerWidth="5"
+              markerHeight="5"
+              refX="10"
+              refY="5"
+              orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="black"></path>
+      </marker>
+    </defs>
+
+    <!-- Main boxes -->
+    <rect class="box" x="40" y="245" width="110" height="55"></rect>
+    <text x="95" y="272" text-anchor="middle" dominant-baseline="middle" class="main-label">Data</text>
+
+    <rect class="box" x="190" y="185" width="135" height="165"></rect>
+    <text x="257.5" y="230" text-anchor="middle" class="main-label">
+      <tspan x="257.5" dy="0">Business</tspan>
+      <tspan x="257.5" dy="24">Analytics</tspan>
+      <tspan x="257.5" dy="24">system</tspan>
+    </text>
+
+    <rect class="box" x="380" y="245" width="125" height="55"></rect>
+    <text x="442.5" y="272" text-anchor="middle" dominant-baseline="middle" class="main-label">Information</text>
+
+    <rect class="box" x="550" y="245" width="125" height="55"></rect>
+    <text x="612.5" y="272" text-anchor="middle" dominant-baseline="middle" class="main-label">Knowledge</text>
+
+    <rect class="box" x="735" y="245" width="110" height="55"></rect>
+    <text x="790" y="272" text-anchor="middle" dominant-baseline="middle" class="main-label">Decision</text>
+
+    <rect class="box" x="895" y="245" width="110" height="55"></rect>
+    <text x="950" y="272" text-anchor="middle" dominant-baseline="middle" class="main-label">Action</text>
+
+    <rect class="box" x="1060" y="245" width="110" height="55"></rect>
+    <text x="1115" y="272" text-anchor="middle" dominant-baseline="middle" class="main-label">Value</text>
+
+    <!-- Main flow arrows -->
+    <line class="arrow" x1="150" y1="272" x2="190" y2="272"></line>
+    <line class="arrow" x1="325" y1="272" x2="380" y2="272"></line>
+    <line class="arrow" x1="505" y1="272" x2="550" y2="272"></line>
+    <line class="arrow" x1="675" y1="272" x2="735" y2="272"></line>
+    <line class="arrow" x1="845" y1="272" x2="895" y2="272"></line>
+    <line class="arrow" x1="1005" y1="272" x2="1060" y2="272"></line>
+
+    <!-- Stage 1: supported / other processes -->
+    <g class="fragment" data-fragment-index="1">
+      <rect class="group-box" x="705" y="90" width="335" height="230"></rect>
+      <rect class="label-bg" x="730" y="78" width="145" height="22"></rect>
+      <text x="735" y="94" class="small-label">Other processes</text>
+
+      <rect class="group-box" x="720" y="120" width="310" height="195"></rect>
+      <rect class="label-bg" x="745" y="108" width="150" height="22"></rect>
+      <text x="750" y="124" class="small-label">Supported process</text>
+
+      <!-- Interrelated decisions/actions -->
+      <rect class="box" x="730" y="160" width="120" height="50"></rect>
+      <text x="790" y="178" text-anchor="middle" class="tiny-label">
+        <tspan x="790" dy="0">Interrelated</tspan>
+        <tspan x="790" dy="16">decisions</tspan>
+      </text>
+
+      <rect class="box" x="890" y="160" width="120" height="50"></rect>
+      <text x="950" y="178" text-anchor="middle" class="tiny-label">
+        <tspan x="950" dy="0">Interrelated</tspan>
+        <tspan x="950" dy="16">actions</tspan>
+      </text>
+
+      <!-- Internal links -->
+      <line class="thin-arrow" x1="850" y1="185" x2="890" y2="185"></line>
+      <line class="thin-arrow" x1="790" y1="210" x2="790" y2="245"></line>
+      <line class="thin-arrow" x1="950" y1="210" x2="950" y2="245"></line>
+
+      <!-- Cross links -->
+      <line class="thin-arrow" x1="850" y1="210" x2="950" y2="245"></line>
+      <line class="thin-arrow" x1="890" y1="210" x2="790" y2="245"></line>
+    </g>
+
+    <!-- Stage 2: decision automation path -->
+    <g class="fragment" data-fragment-index="2">
+      <path class="arrow" d="M442.5,300 V350 H950 V300"></path>
+      <text x="700" y="378" text-anchor="middle" class="small-label">
+        Decision augmentation and automation
+      </text>
+    </g>
+
+    <!-- Stage 3: knowledge transfer path -->
+    <g class="fragment" data-fragment-index="3">
+      <rect class="label-bg" x="600" y="42" width="190" height="22"></rect>
+      <text x="605" y="58" class="small-label">Knowledge accumulation and transfer</text>
+
+      <!-- Path goes up from knowledge, then across, then down to the process boxes -->
+      <path class="connector" d="M612.5,245 V70 H935"></path>
+
+      <!-- Downward arrows into the process boxes -->
+      <path class="arrow" d="M865,70 V90"></path>
+      <path class="arrow" d="M935,70 V120"></path>
+    </g>
+
+    <!-- Stage 4: feedback path -->
+    <g class="fragment" data-fragment-index="4">
+      <rect class="label-bg" x="340" y="0" width="120" height="22"></rect>
+      <text x="345" y="16" class="small-label">Feedback</text>
+
+      <!-- Main feedback connector starts slightly left of the knowledge-transfer path -->
+      <path class="connector" d="M585,245 V28 H95"></path>
+
+      <!-- Downward connections to Data and Business Analytics system -->
+      <path class="arrow" d="M95,28 V245"></path>
+      <path class="arrow" d="M257.5,28 V185"></path>
+
+      <!-- Clean connection from Other processes into the feedback path -->
+      <path class="connector" d="M980,90 V28 H585"></path>
+    </g>
+  </svg>
+</div>
+```

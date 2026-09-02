@@ -7,9 +7,17 @@ __pycache__/
 *.py[cod]
 .server.pid
 .cache/
+_generated/
 
 /.quarto/
 **/*.quarto_ipynb
 
 site_libs/
 *.quarto_ipynb_*
+slides/cache/*
+
+*_files/
+group_work.tex
+
+# Models generated while rendering R exercises
+exercises/data/*.rds

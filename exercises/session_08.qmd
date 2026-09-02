@@ -1,21 +1,715 @@
 ---
-title: "Session 8: ML for Non-Tabular Data (Text)"
+title: "Session 8: ML for Non-Tabular Data — Text"
 session_id: session-08
 format:
   html: default
-  ipynb: default
 ---
 
-## Task
+::: {.direction}
 
-Work through the Session 8 exercise on ML for Non-Tabular Data (Text).
+In this exercise, we cover:
 
-::: {.content-visible when-profile="assign"}
-1. Review the lecture concepts.
-2. Apply the concepts to the provided data or examples.
+| Part | Topic | Time (min) |
+|---|---|---:|
+| 1 | Case, cleaning, and train/test split | 10 |
+| 2 | Bag-of-Words, TF-IDF, and lexical similarity | 20 |
+| 3 | Dense latent-semantic representations | 25 |
+| 4 | Sentiment classification | 20 |
+| 5 | Edge cases and reflection | 10 |
+| Wrap-up | Representation trade-offs | 5 |
+| **Overall** | | **90** |
+
+Work directly in this Quarto (`.qmd`) exercise. The learning goal is how text **representations** change similarity, visualization, and prediction—not another tour of model families.
+
+# Case: Understanding movie reviews
+
+You are a data analyst for **ReviewSense**, a fictional analytics team supporting a streaming platform. Management wants to classify reviews as positive or negative and retrieve reviews with related meaning.
+
+We use the local prepared sample `data/imdb_reviews_sample.csv`; rendering never downloads the full IMDB dataset or a language model.
+
 :::
 
-::: {.content-visible when-profile="solution"}
-1. Compare your solution with the discussed workflow.
-2. Reflect on assumptions, limitations, and next steps.
+```{r}
+library(tidyverse)
+library(quanteda)
+library(tidymodels)
+```
+
+# Part 1 — Load, clean, and split text <a id="part-1"></a>
+
+## Task 1.1 — Load and inspect
+
+::: {.direction}
+Load the local data, inspect its columns, and count sentiment labels.
+
+```{r}
+# Add your solution below.
+```
+:::
+
+::: {.sol}
+
+```{r}
+df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/imdb_reviews_sample.csv",
+  show_col_types = FALSE
+) |>
+  mutate(review_id = row_number())
+
+glimpse(df)
+count(df, sentiment)
+```
+:::
+
+## Task 1.2 — Clean and split
+
+::: {.direction}
+
+1. Remove missing reviews or labels.
+2. Replace HTML line-break tags with spaces and collapse repeated whitespace.
+3. Store sentiment as a factor ordered `negative`, then `positive`.
+4. Create a reproducible stratified 75/25 split.
+
+```{r}
+# Add your solution below.
+```
+
+Why must vocabulary, document-frequency weights, and later dimensionality reduction be learned only from training text?
+:::
+
+::: {.sol}
+
+```{r}
+df <- df |>
+  drop_na(review, sentiment) |>
+  mutate(
+    clean_review = review |>
+      str_replace_all("<br\\s*/?>", " ") |>
+      str_squish(),
+    sentiment = factor(
+      sentiment,
+      levels = c("negative", "positive")
+    )
+  )
+
+set.seed(42)
+
+data_split <- initial_split(
+  df,
+  prop = 0.75,
+  strata = sentiment
+)
+
+train_data <- training(data_split)
+test_data <- testing(data_split)
+
+split_summary <- tibble(
+  partition = c("Training", "Test"),
+  rows = c(nrow(train_data), nrow(test_data)),
+  positive_share = c(
+    mean(train_data$sentiment == "positive"),
+    mean(test_data$sentiment == "positive")
+  )
+)
+
+split_summary
+```
+
+Learning representation parameters from test reviews would leak information about the final evaluation corpus. The correct order is split first, learn every representation from training text, and only transform the test text with the already learned vocabulary, weights, and rotations.
+:::
+
+{{< pagebreak >}}
+
+# Part 2 — Sparse text representations <a id="part-2"></a>
+
+Bag-of-Words records token counts. TF-IDF retains a sparse lexical representation but downweights ubiquitous features and emphasizes features characteristic of fewer documents.
+
+## Task 2.1 — Build training vocabulary and sparse matrices
+
+::: {.direction}
+Use `quanteda` to tokenize training reviews, remove punctuation, numbers, and English stopwords, and create unigrams and bigrams. Trim the **training** vocabulary to at most 5,000 features. Then match test features to that fixed vocabulary.
+
+```{r}
+# Add your solution below.
+```
+:::
+
+::: {.sol}
+
+```{r}
+tokenize_reviews <- function(text) {
+  tokens(
+    text,
+    remove_punct = TRUE,
+    remove_numbers = TRUE
+  ) |>
+    tokens_tolower() |>
+    tokens_remove(stopwords("en")) |>
+    tokens_ngrams(n = 1:2)
+}
+
+train_tokens <- tokenize_reviews(train_data$clean_review)
+test_tokens <- tokenize_reviews(test_data$clean_review)
+
+train_bow <- dfm(train_tokens) |>
+  dfm_trim(
+    min_docfreq = 2,
+    docfreq_type = "count"
+  ) |>
+  dfm_trim(
+    max_docfreq = 0.95,
+    docfreq_type = "prop",
+    max_nfeat = 5000
+  )
+
+test_bow <- dfm(test_tokens) |>
+  dfm_match(features = featnames(train_bow))
+
+c(
+  training_documents = nrow(train_bow),
+  test_documents = nrow(test_bow),
+  retained_features = ncol(train_bow)
+)
+```
+
+`dfm_match()` is essential: test reviews are represented with the training vocabulary rather than defining a new feature space.
+:::
+
+### Construct compatible TF-IDF weights
+
+::: {.sol}
+
+```{r}
+idf_weights <- log(
+  (nrow(train_bow) + 1) /
+    (docfreq(train_bow) + 1)
+) + 1
+
+normalize_sparse_rows <- function(x) {
+  row_norms <- sqrt(Matrix::rowSums(x ^ 2))
+  Matrix::Diagonal(
+    x = 1 / pmax(row_norms, .Machine$double.eps)
+  ) %*% x
+}
+
+train_tfidf <- train_bow %*%
+  Matrix::Diagonal(x = idf_weights) |>
+  normalize_sparse_rows()
+
+test_tfidf <- test_bow %*%
+  Matrix::Diagonal(x = idf_weights) |>
+  normalize_sparse_rows()
+```
+
+The IDF vector is calculated once from training document frequencies and reused for test reviews.
+:::
+
+## Task 2.2 — Inspect dimensions and sparsity
+
+::: {.direction}
+Calculate the fraction of zero cells without converting the full matrix to a dense object. Explain what rows, columns, and high sparsity mean.
+:::
+
+::: {.sol}
+
+```{r}
+tfidf_sparsity <- 1 -
+  Matrix::nnzero(train_tfidf) /
+    (nrow(train_tfidf) * ncol(train_tfidf))
+
+c(
+  documents = nrow(train_tfidf),
+  features = ncol(train_tfidf),
+  sparsity = tfidf_sparsity
+)
+```
+
+Rows are training reviews and columns are retained tokens or bigrams. High sparsity means that most review-feature combinations are zero, which is normal because each review uses only a small part of the vocabulary.
+:::
+
+## Task 2.3 — Inspect one review's strongest features
+
+::: {.direction}
+For the first training review, retrieve non-zero TF-IDF values and show the 15 largest.
+:::
+
+::: {.sol}
+
+```{r}
+review_id <- 1
+
+nonzero_features <- Matrix::summary(
+  train_tfidf[review_id, , drop = FALSE]
+) |>
+  as_tibble() |>
+  transmute(
+    feature = featnames(train_bow)[j],
+    tfidf = x
+  ) |>
+  slice_max(tfidf, n = 15)
+
+train_data$clean_review[review_id]
+nonzero_features
+```
+
+Sparse features are relatively interpretable because they reveal words and phrases. They remain lexical, however, and do not fully encode context, irony, negation, or paraphrase.
+:::
+
+{{< pagebreak >}}
+
+## Task 2.4 — Retrieve similar reviews with TF-IDF
+
+::: {.direction}
+Use cosine similarity to retrieve the five training reviews closest to review 1. Exclude the query itself and display similarity, sentiment, and text.
+:::
+
+::: {.sol}
+
+```{r}
+query_id <- 1
+
+sparse_similarity <- as.numeric(
+  train_tfidf[query_id, , drop = FALSE] %*%
+    Matrix::t(train_tfidf)
+)
+sparse_similarity[query_id] <- -Inf
+
+top_sparse_ids <- order(
+  sparse_similarity,
+  decreasing = TRUE
+)[1:5]
+
+similar_reviews_tfidf <- train_data |>
+  slice(top_sparse_ids) |>
+  transmute(
+    similarity = sparse_similarity[top_sparse_ids],
+    sentiment,
+    review = clean_review
+  )
+
+train_data$clean_review[query_id]
+train_data$sentiment[query_id]
+similar_reviews_tfidf
+```
+
+Discuss whether neighbors share meaning, exact wording, topic, or sentiment. Lexical overlap can be useful, but reviews expressing similar ideas with different words may remain far apart.
+:::
+
+# Part 3 — Dense latent-semantic representations <a id="part-3"></a>
+
+A local pretrained sentence-embedding artifact is not available in this repository, and the exercise must not download a model at runtime. We therefore use a transparent, fully R-native **latent semantic analysis (LSA)** representation: truncated singular-value decomposition learns dense latent dimensions from the training TF-IDF matrix.
+
+LSA is less context-aware than a modern pretrained language model, but it preserves the intended contrast:
+
+- sparse dimensions correspond to explicit lexical features;
+- dense learned dimensions summarize patterns of feature co-occurrence.
+
+The training corpus alone determines the latent space; test reviews are projected into that fixed space.
+
+## Task 3.1 — Learn and apply dense embeddings
+
+::: {.direction}
+Use `irlba()` to learn 100 latent dimensions from `train_tfidf`. Create dense training embeddings and project test TF-IDF rows using the training right-singular vectors.
+:::
+
+::: {.sol}
+
+```{r}
+set.seed(42)
+
+lsa_fit <- irlba::irlba(
+  train_tfidf,
+  nv = 100,
+  nu = 100
+)
+
+train_embeddings <- lsa_fit$u %*%
+  diag(lsa_fit$d)
+
+test_embeddings <- as.matrix(
+  test_tfidf %*% lsa_fit$v
+)
+
+normalize_dense_rows <- function(x) {
+  row_norms <- sqrt(rowSums(x ^ 2))
+  x / pmax(row_norms, .Machine$double.eps)
+}
+
+train_embeddings <- normalize_dense_rows(train_embeddings)
+test_embeddings <- normalize_dense_rows(test_embeddings)
+
+c(
+  training_documents = nrow(train_embeddings),
+  embedding_dimensions = ncol(train_embeddings),
+  test_documents = nrow(test_embeddings)
+)
+```
+
+The matrices are dense because most latent coordinates are non-zero. Unlike TF-IDF columns, individual dimensions do not have simple word labels.
+:::
+
+## Task 3.2 — Dense cosine similarity
+
+::: {.direction}
+Repeat the nearest-review search using normalized dense vectors. Compare the retrieved reviews with TF-IDF results.
+:::
+
+::: {.sol}
+
+```{r}
+dense_similarity <- as.numeric(
+  train_embeddings %*% train_embeddings[query_id, ]
+)
+dense_similarity[query_id] <- -Inf
+
+top_dense_ids <- order(
+  dense_similarity,
+  decreasing = TRUE
+)[1:5]
+
+similar_reviews_dense <- train_data |>
+  slice(top_dense_ids) |>
+  transmute(
+    similarity = dense_similarity[top_dense_ids],
+    sentiment,
+    review = clean_review
+  )
+
+similar_reviews_dense
+```
+
+Dense neighbors can reflect shared co-occurrence patterns even without exact word matches. Still, semantic similarity is not sentiment similarity: reviews may discuss the same genre, actor, or plot element while evaluating it differently.
+:::
+
+## Task 3.3 — Visualize the latent space
+
+::: {.direction}
+Fit PCA using training embeddings only and plot the first two components by sentiment. Why is this only a partial view?
+:::
+
+::: {.sol}
+
+```{r}
+embedding_pca <- prcomp(
+  train_embeddings,
+  center = TRUE,
+  scale. = FALSE
+)
+
+pca_plot_data <- as_tibble(
+  embedding_pca$x[, 1:2],
+  .name_repair = ~ c("PC1", "PC2")
+) |>
+  mutate(sentiment = train_data$sentiment)
+
+ggplot(
+  pca_plot_data,
+  aes(x = PC1, y = PC2, color = sentiment)
+) +
+  geom_point(alpha = 0.5, size = 1) +
+  labs(
+    title = "Training-review LSA embeddings",
+    subtitle = "First two principal components",
+    color = "Sentiment"
+  )
+```
+
+Two principal components retain only part of a 100-dimensional representation. Apparent overlap does not imply that the full space contains no useful sentiment information, and apparent clusters may reflect topic or writing style rather than sentiment.
+:::
+
+{{< pagebreak >}}
+
+# Part 4 — Classification with two representations <a id="part-4"></a>
+
+We hold the classifier family fixed—a ridge logistic model—and vary only the representation. This isolates the representational comparison. `glmnet` accepts sparse TF-IDF matrices directly and avoids expanding them into a dense data frame.
+
+## Task 4.1 — Fit the TF-IDF classifier
+
+::: {.direction}
+Fit cross-validated ridge logistic regression on sparse training TF-IDF features, predict test probabilities, apply a 0.5 threshold, and report accuracy, positive-class sensitivity, and a confusion matrix.
+:::
+
+::: {.sol}
+
+```{r}
+train_outcome <- as.integer(
+  train_data$sentiment == "positive"
+)
+
+set.seed(42)
+
+tfidf_timing <- system.time({
+  tfidf_model <- glmnet::cv.glmnet(
+    x = train_tfidf,
+    y = train_outcome,
+    family = "binomial",
+    alpha = 0,
+    standardize = FALSE
+  )
+})
+
+tfidf_probability <- as.numeric(
+  predict(
+    tfidf_model,
+    newx = test_tfidf,
+    s = "lambda.min",
+    type = "response"
+  )
+)
+
+tfidf_prediction <- factor(
+  if_else(
+    tfidf_probability >= 0.5,
+    "positive",
+    "negative"
+  ),
+  levels = levels(test_data$sentiment)
+)
+
+tfidf_results <- tibble(
+  truth = test_data$sentiment,
+  estimate = tfidf_prediction,
+  .pred_positive = tfidf_probability
+)
+
+accuracy(tfidf_results, truth, estimate)
+sens(
+  tfidf_results,
+  truth,
+  estimate,
+  event_level = "second"
+)
+conf_mat(tfidf_results, truth, estimate)
+tfidf_timing["elapsed"]
+```
+:::
+
+## Task 4.2 — Fit the dense classifier
+
+::: {.direction}
+Fit the same ridge logistic family on dense LSA embeddings and report the same outputs.
+:::
+
+::: {.sol}
+
+```{r}
+set.seed(42)
+
+dense_timing <- system.time({
+  dense_model <- glmnet::cv.glmnet(
+    x = train_embeddings,
+    y = train_outcome,
+    family = "binomial",
+    alpha = 0,
+    standardize = FALSE
+  )
+})
+
+dense_probability <- as.numeric(
+  predict(
+    dense_model,
+    newx = test_embeddings,
+    s = "lambda.min",
+    type = "response"
+  )
+)
+
+dense_prediction <- factor(
+  if_else(
+    dense_probability >= 0.5,
+    "positive",
+    "negative"
+  ),
+  levels = levels(test_data$sentiment)
+)
+
+dense_results <- tibble(
+  truth = test_data$sentiment,
+  estimate = dense_prediction,
+  .pred_positive = dense_probability
+)
+
+accuracy(dense_results, truth, estimate)
+sens(
+  dense_results,
+  truth,
+  estimate,
+  event_level = "second"
+)
+conf_mat(dense_results, truth, estimate)
+dense_timing["elapsed"]
+```
+:::
+
+## Task 4.3 — Compare sparse and dense pipelines
+
+::: {.sol}
+
+```{r}
+model_comparison <- bind_rows(
+  tibble(
+    representation = "TF-IDF",
+    accuracy = accuracy(
+      tfidf_results,
+      truth,
+      estimate
+    )$.estimate,
+    sensitivity = sens(
+      tfidf_results,
+      truth,
+      estimate,
+      event_level = "second"
+    )$.estimate,
+    classifier_seconds = unname(
+      tfidf_timing["elapsed"]
+    )
+  ),
+  tibble(
+    representation = "Dense LSA",
+    accuracy = accuracy(
+      dense_results,
+      truth,
+      estimate
+    )$.estimate,
+    sensitivity = sens(
+      dense_results,
+      truth,
+      estimate,
+      event_level = "second"
+    )$.estimate,
+    classifier_seconds = unname(
+      dense_timing["elapsed"]
+    )
+  )
+)
+
+model_comparison
+```
+:::
+
+| Criterion | TF-IDF + logistic model | Dense LSA + logistic model |
+|---|---|---|
+| Predictive performance | Strong lexical baseline; inspect results | May be better, worse, or similar |
+| Representation cost | Tokenization and sparse weighting | Adds truncated SVD |
+| Feature interpretability | Named words and phrases | Latent dimensions are less transparent |
+| Exact lexical matching | Strong | Indirect |
+| Semantic relationships | Limited to lexical co-occurrence | Captures broader co-occurrence structure |
+
+Do not assume dense representations win. Compare measured performance with representation cost and analytical purpose.
+
+{{< pagebreak >}}
+
+# Part 5 — Qualitative edge-case analysis <a id="part-5"></a>
+
+Synthetic difficult examples are useful for discussing failures, not measuring general performance.
+
+::: {.direction}
+Apply both already-fitted pipelines to examples involving slang, negation, irony, understatement, and ambiguity.
+:::
+
+::: {.sol}
+
+```{r}
+edge_cases <- tibble(
+  review = c(
+    "This movie was sick in the best possible way.",
+    "This movie made me sick.",
+    "Not bad at all.",
+    "A masterpiece? Not really.",
+    "The acting was fine, but the story went nowhere.",
+    "I expected more.",
+    "The plot was unpredictable and surprisingly moving.",
+    "I would not say it is a bad movie."
+  ),
+  expected_sentiment = c(
+    "positive",
+    "negative",
+    "positive",
+    "negative",
+    "negative",
+    "negative",
+    "positive",
+    "positive_or_ambiguous"
+  )
+) |>
+  mutate(
+    clean_review = review |>
+      str_replace_all("<br\\s*/?>", " ") |>
+      str_squish()
+  )
+
+edge_bow <- dfm(
+  tokenize_reviews(edge_cases$clean_review)
+) |>
+  dfm_match(features = featnames(train_bow))
+
+edge_tfidf <- edge_bow %*%
+  Matrix::Diagonal(x = idf_weights) |>
+  normalize_sparse_rows()
+
+edge_embeddings <- as.matrix(
+  edge_tfidf %*% lsa_fit$v
+) |>
+  normalize_dense_rows()
+
+edge_tfidf_probability <- as.numeric(
+  predict(
+    tfidf_model,
+    newx = edge_tfidf,
+    s = "lambda.min",
+    type = "response"
+  )
+)
+
+edge_dense_probability <- as.numeric(
+  predict(
+    dense_model,
+    newx = edge_embeddings,
+    s = "lambda.min",
+    type = "response"
+  )
+)
+
+edge_cases |>
+  mutate(
+    tfidf_prediction = if_else(
+      edge_tfidf_probability >= 0.5,
+      "positive",
+      "negative"
+    ),
+    dense_prediction = if_else(
+      edge_dense_probability >= 0.5,
+      "positive",
+      "negative"
+    )
+  ) |>
+  select(
+    review,
+    expected_sentiment,
+    tfidf_prediction,
+    dense_prediction
+  )
+```
+
+Discuss which examples fail and why. TF-IDF may overreact to visible words such as “bad,” “sick,” or “masterpiece.” LSA can connect co-occurring language but still lacks the contextual understanding needed for short irony, compositional negation, and ambiguous intent.
+:::
+
+::: {.direction}
+
+{{< pagebreak >}}
+
+# Wrap-up <a id="wrap-up"></a>
+
+| Representation | Main idea | Strength | Limitation |
+|---|---|---|---|
+| Bag-of-Words | Count lexical features | Simple and transparent | Ignores weighting and context |
+| TF-IDF | Weight characteristic features | Strong interpretable baseline | Mostly lexical |
+| Dense LSA | Learn latent co-occurrence dimensions | Dense similarity and compression | Less transparent and less contextual than pretrained language models |
+
+The key lesson is not that one representation is universally best. Representation choice changes what “similar” means, what a classifier can learn, what can be explained, and how much computation is required.
+
+::: {.callout-tip title="Session 8 survey"}
+{{< survey session_08 exercise >}}
+:::
+
 :::

@@ -1,0 +1,41 @@
+project:
+  type: default
+  output-dir: _site/handouts
+  render:
+    - group_work.qmd
+
+metadata-files:
+  - course.yml
+
+format:
+  pdf:
+    output-file: group_work.pdf
+    pdf-engine: lualatex
+    documentclass: scrartcl
+    classoption:
+      - 11pt
+      - headings=small
+      - parskip=half
+    papersize: a4
+    geometry:
+      - top=27mm
+      - bottom=25mm
+      - left=28mm
+      - right=28mm
+      - headheight=15pt
+      - headsep=8mm
+      - footskip=12mm
+    colorlinks: true
+    linkcolor: FSCharcoal
+    urlcolor: FSOrangeDark
+    citecolor: FSCharcoal
+    toc: false
+    number-sections: false
+    keep-tex: true
+    template-partials:
+      - assets/pdf/before-body.tex
+    include-in-header:
+      - assets/pdf/preamble.tex
+
+execute:
+  freeze: auto

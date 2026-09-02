@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from pathlib import Path
+import re
 from typing import Any
 
 try:
@@ -179,6 +180,11 @@ def material_links(session: dict[str, Any]) -> str:
     return " · ".join(links)
 
 
+def display_location(location: Any) -> str:
+    """Return a location without the room-capacity annotation."""
+    return re.sub(r"\. Room capacity:.*$", "", str(location))
+
+
 def markdown_table(
     root: Path = ROOT,
     today: date | None = None,
@@ -209,7 +215,7 @@ def markdown_table(
             or "TBD"
         )
 
-        location = event.get("location") or "TBD"
+        location = display_location(event.get("location") or "TBD")
         materials = material_links(event)
 
         rows.append(

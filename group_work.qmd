@@ -1,56 +1,83 @@
 ---
-title: "Group work"
+title: "Group Work Brief"
 ---
 
-**TODO: VALIDATE**
+## Summary
 
-> In this group project, you will develop and analyze a realistic business analytics case, including data, modeling, and critical reflection.
-> The project focuses on business-relevant contexts such as management, finance, operations, or digital platforms.
-> You will design and work with a synthetic dataset that reflects a realistic organizational process or decision situation.
-> This allows you to address both upstream challenges—problem framing and data design—and downstream challenges such as deployment, implementation, ethics, and risk.
-> Your work should be grounded in appropriate and reputable references, such as academic literature and industry reports.
+> In groups of 2–3, you will develop and analyze a realistic business analytics case grounded in reputable academic or industry sources.
+> You will formulate a concrete business problem, generate a reproducible synthetic dataset, and select and apply appropriate machine learning methods.
+> You will structure and communicate the analysis using CRISP-DM.
+> The project should critically reflect on assumptions, limitations, and opportunities for improvement, and—where relevant to the chosen case—consider issues such as deployment, organizational implications, ethics, governance, or risk.
 
-## Objectives
 
-- Design a realistic business analytics scenario
-- Select and apply appropriate analytical models
-- Communicate results using CRISP-DM as a structuring framework
-- Critically reflect on assumptions, limitations, and improvements
+## Schedule
 
-## Group formation and project allocation
+Project work begins with the first course session, continues through the presentation phase, and concludes with the final submission.
 
-- The group size is **2–3 participants**.
-- Projects may be allocated to more than one group.
-- You may apply individually or as a group.
-- Apply by email and indicate **three project preferences**, ranked as:
+```{mermaid}
+%%| fig-width: 6.5
+%%| fig-height: 3
+%%| fig-align: center
 
-  - Preference 1
-  - Preference 2
-  - Preference 3
+gantt
+    dateFormat YYYY-MM-DD
+    axisFormat %d %b
+    todayMarker off
 
-- For a group application, one email containing the names of all group members is sufficient.
-- Based on the applications, groups will be arranged and projects assigned.
-- If one participant remains after group formation, an existing group may be expanded by one participant.
+    section Proposal
+    Form group and develop proposal   :proposal, 2026-09-01, 2026-09-10
+    Proposal deadline                 :milestone, 2026-09-10, 0d
+    Topic review                      :review, 2026-09-11, 7d
+
+    section Analysis
+    Case, data, modeling & evaluation :analysis, 2026-09-18, 2026-10-01
+    Presentation submission           :milestone, 2026-10-01, 0d
+
+    section Presentation
+    Presentation period               :present, 2026-10-02, 2026-10-09
+    Presentation 1                    :milestone, 2026-10-02, 0d
+    Presentation 2                    :milestone, 2026-10-09, 0d
+
+    section Finalization
+    Revise and complete report        :revision, 2026-10-10, 2026-11-02
+    Final submission                  :milestone, 2026-11-02, 0d
+```
 
 {{< pagebreak >}}
 
-## Project topics
+## Group formation and topic proposal
 
-Select a business topic and formulate a concrete analytical question. Suitable domains include:
+- Form your own group of 2–3 participants.
+- The group must send an email to [{{< meta instructor.email >}}](mailto:{{< meta instructor.email >}}) by {{< meta group_work.proposal_deadline >}} containing:
+
+  - the names of all group members;
+  - a concise proposed project topic; and
+  - the concrete business or analytical question the group intends to address.
+
+- Proposed topics will be reviewed during the following week. The instructor may request adjustments if topics overlap too strongly or the proposed scope is unsuitable.
+
+The following are illustrative examples, not predefined project options:
 
 - **Finance**, such as credit default, fraud, or customer lifetime value
-- **Marketing**, such as churn, customer segmentation, or campaign effectiveness
+- **Marketing**, such as churn, customer segmentation, or campaign response
 - **Human Resources**, such as attrition, promotion, or team productivity
-- **Digital business**, such as user engagement, gig worker retention, or pricing strategy
+- **Digital Business**, such as user engagement, gig worker retention, or demand prediction
 
-Your project preference should identify a concrete business problem rather than only a general domain.
+Propose a concrete business problem and analytical question rather than merely selecting a generic domain.
 
-## Task
 
-- Select a business topic and formulate a concrete question.
-- Create a synthetic but realistic dataset representing internal organizational data.
-  You may complement this with synthetic or real external data if appropriate.
-- Develop an analytical notebook following the CRISP-DM process:
+## Analysis task
+
+- Define a practical business problem or decision situation and formulate a concrete analytical question.
+- Create a synthetic but realistic dataset representing internal organizational data. You may complement it with synthetic or real external data where appropriate.
+  Generate the synthetic data reproducibly in a separate R script.
+- Develop an integrated Quarto analysis document (`.qmd`) that presents the complete CRISP-DM analysis, including explanatory text, R code, executed results, and necessary figures or tables.
+- Present and critically reflect on the findings, their connection to course content, simplifying assumptions and limitations, and opportunities for improvement.
+- Complete one meaningful extension beyond a straightforward reproduction of classroom techniques.
+  This may concern methods, data preparation, model comparison or robustness, deployment, organizational implications, ethics or governance, or communication.
+  It does not need to involve a more complex machine-learning algorithm.
+
+<!--
 
   1. **Business understanding**  
      What is the context, the concrete question, and the decision relevance? Who are the stakeholders?
@@ -70,207 +97,122 @@ Your project preference should identify a concrete business problem rather than 
   6. **Deployment**  
      How would the model be implemented? What are the requirements, risks, and ethical considerations?
 
-- Develop a report that presents and critically reflects on the case, including:
-
-  - What can be learned from the case
-  - How it connects to or extends course content
-  - Simplifying assumptions and limitations
-  - Opportunities for improvement
+-->
 
 ::: {.callout-note title="Notes"}
 
 - Support key elements of your analysis with reputable sources, particularly the relevance of the problem, typical data sources, and common modeling approaches.
-- Simplifications are acceptable if they are clearly stated and justified.
-- Advanced extensions may include advanced data preparation, model comparison or refinement, robustness checks, interactive visualizations, or more detailed deployment considerations.
-- Your code must run and reproduce your results.
-- If you plan to work with a large-scale big-data scenario, consult with me in advance.
-- Real-time or streaming-data projects are strongly discouraged because they are difficult to implement and evaluate within the scope of this project.
+- Simplifications are acceptable if they are clearly stated and justified. Explain how a more realistic analysis could extend beyond them.
+- If you plan to work with a large-scale big-data, real-time, or streaming-data scenario, consult with me in advance because of the additional technical complexity.
+- If questions come up during the project phase, you can arrange a meeting via [Bookings]({{< meta instructor.bookings_url >}}) and join meetings via [Teams]({{< meta instructor.online_meeting_url >}}).
 
 :::
 
 {{< pagebreak >}}
 
-## Project process
-
-### Application and allocation
-
-Submit your three ranked project preferences by **{{< meta group_work.application_deadline >}}**.
-Groups and projects will then be assigned based on the submitted preferences.
-
-### Project work
-
-Develop the case, dataset, analysis, and presentation iteratively.
-Your work should progress from problem framing and dataset design to analysis, modeling, evaluation, and reflection.
-
 ### Presentation
 
-- Presentation date: **{{< meta group_work.presentation_date >}}**
-- Each group has **30 minutes** to present the project.
-- Up to **15 additional minutes** may be used for questions and discussion.
-- Every group member must present part of the project and contribute to the discussion.
-- Attendance is required for all project presentations.
-- Submit the presentation file and the corresponding analysis files by the presentation deadline.
+Presentations take place on {{< meta group_work.presentation_dates_display >}}.
+Each group receives a 30-minute presentation slot followed by up to 15 minutes for questions and discussion.
+Every group member must present part of the project and contribute to the discussion; attendance is required for all project presentations.
+
+All groups must submit their presentation PDF and relevant analysis files by {{< meta group_work.presentation_submission_deadline >}}, irrespective of their assigned presentation slot.
+Submit them {{< meta group_work.presentation_submission_channel >}}.
+
+Submit the presentation as a PDF that:
+
+- clearly introduces the business problem and decision context;
+- explains the analytical approach and key modeling decisions;
+- communicates the most important findings and their practical relevance; and
+- critically discusses limitations, risks, the extension, and potential improvements.
 
 ### Final submission
 
-- Final report deadline: **{{< meta group_work.submission_date >}}**
-- Submit the final text document via the [Canvas assignment]({{< meta group_work.submission_url >}}).
-- Submit the report as a **PDF**, not as a Word document.
-- The analytical notebook must be executed before submission.
+Submit the final project by {{< meta group_work.submission_date >}} via the [Canvas assignment]({{< meta group_work.submission_url >}}).
+The required files are specified below:
+
+- The R script used to generate the synthetic dataset together with the resulting dataset file(s), normally as CSV files.
+  The script should document the business purpose, schema, generation logic, assumptions, distributions, relationships, and realism features such as noise or missing values where appropriate.
+  Use a fixed random seed so that the dataset can be reproduced from the script, and keep the generation logic separate from the main `.qmd`.
+
+- The main report as a Quarto document (`.qmd`) together with its rendered PDF.
+  The `.qmd` is the central analytical artifact and must contain the complete CRISP-DM analysis, explanatory text, R code, executed results, and the figures and tables needed to support the argument. Do not create a second, redundant report narrative.
+  The main report text is limited to 12 pages.
+  The title page, references, and appendices are excluded from this limit. Include enough code and results to make the work reproducible while keeping the prose focused.
+  Submit both the `.qmd` and rendered PDF. The submitted source, data, and supporting files must reproduce the PDF.
+
+<!--
+To create the submitted PDF, give the document a PDF format in its YAML header (for example, `format: pdf`) and run:
+
+```bash
+quarto render your-analysis.qmd --to pdf
+```
+
+Rendering must execute the R code (do not disable execution or rely on stale results).
+-->
+
+::: {.callout-tip title="Individual contributions"}
+
+Each student should be the primary author of approximately three pages of report text.
+The remaining material may be written jointly or developed collaboratively.
+Include a brief contribution statement at the end of the report identifying the sections or subsections primarily written by each group member.
+Every group member must also contribute meaningfully to the analysis, presentation, and discussion.
+
+:::
 
 {{< pagebreak >}}
 
-## Deliverables
-
-### Synthetic dataset generation script
-
-A Python script that:
-
-- Clearly documents the business context and purpose in the module docstring
-- Defines the data schema and variables
-- Implements data generation logic, including distributions and relationships
-- Includes realism features, such as noise, missing values, or duplicates where appropriate
-- States key assumptions and provides justification where possible
-- Produces reproducible output using a fixed random seed
-- Exports the generated dataset
-
-### Dataset
-
-- CSV file or files containing the simulated data
-
-### Analytical notebook
-
-A Jupyter Notebook that:
-
-- Covers the full CRISP-DM process
-- Includes explanations in Markdown
-- Is fully executable and reproducible
-
-### Presentation
-
-A slide deck that:
-
-- Clearly introduces the business problem and decision context
-- Explains the analytical approach and key modeling decisions
-- Communicates the most important findings and their practical relevance
-- Critically discusses limitations, risks, and potential improvements
-
-### Report
-
-Maximum length: **15 pages**, including title page and references.
-
-**Section 1: Case package**
-
-- Business context and motivation
-- Problem statement and objectives
-- Stakeholders and decision relevance
-- Positioning in practice, supported by references
-
-**Section 2: Analytical approach and key findings**
-
-- Overview and justification of the analytical approach
-- Selected key results without duplicating the notebook
-- Key business insights
-
-**Section 3: Reflection**
-
-- Assumptions
-- Limitations of the dataset and analytical approach
-- Ethical and deployment considerations
-- Potential improvements and extensions
-
 ## Evaluation
 
-The group project is an **ongoing assessment worth 120 performance points**.
-The evaluation is based on the submitted materials, the presentation, and the discussion.
+The final group evaluation is primarily based on the submitted project materials and is worth 120 performance points.
 
-Each group receives a group evaluation.
-For the final evaluation of individual participants, supplements or deductions from the group grade may be made based on the individual's contribution to the project, presentation, and discussion.
-You are therefore expected to contribute equally and to document your individual contributions clearly and transparently.
+The presentation is a mandatory formative milestone rather than a separately graded component.
+Use the presentation and discussion to test your argument, identify weaknesses, and obtain feedback for improving the final report.
+
+Participation in the presentation and discussion may additionally be considered when assessing individual contributions.
 
 ::: {.small}
 
 | Category | Points | Criteria |
-|---|---:|---|
+|---------|---:|------------------|
 | **A. Case and dataset design** | 30 pts | Clarity and relevance of the problem; realism of the dataset; transparency of data generation |
-| **B. Analysis quality** | 40 pts | Method justification; correctness; CRISP-DM use; insightfulness |
-| **C. Communication** | 40 pts | Structure; visualization; clean code; argument quality; use of references; reflection; presentation and discussion |
-| **D. Advanced extension** | 10 pts | Meaningful additional feature beyond the core requirements |
+| **B. Analysis quality**        | 40 pts | Method justification; correctness; CRISP-DM use; insightfulness |
+| **C. Communication**           | 40 pts | Structure; visualization; clean code; argument quality; use of references; reflection |
+| **D. Extension**               | 10 pts | Meaningful differentiation beyond straightforward reproduction of classroom examples |
 
 :::
 
-**Note:** The applied methodology and reasoning are more important than achieving the highest possible model performance.
-
 ### AI policy
 
-- Allowed: generating dataset scripts, debugging code, and documentation support
+- Allowed: debugging code and creating the R script for synthetic dataset generation
 - Not allowed: generating complete end-to-end solutions
 - You must be able to explain and defend your work at any time
 - All outputs must be validated
 
-### Consultation and support
+{{< pagebreak >}}
 
-- Book appointments via: [Bookings]({{< meta instructor.bookings_url >}})
-- Join meetings via: [Teams]({{< meta instructor.online_meeting_url >}})
+## Example: Synthetic data generation in R
 
-### Submission
+```{r}
+#| eval: false
 
-Submit all required files via the [Canvas assignment]({{< meta group_work.submission_url >}}).
+set.seed(42)
+n <- 1000
+
+# Generate related variables and add realistic noise.
+age <- rnorm(n, mean = 40, sd = 10)
+income <- age * 1000 + rnorm(n, mean = 0, sd = 5000)
+
+# Add missing values where they are appropriate to the scenario.
+income[runif(n) < 0.05] <- NA_real_
+
+dataset <- data.frame(age, income)
+write.csv(dataset, "dataset.csv", row.names = FALSE)
+```
+
+Adapt and document the generation logic for your own business context.
 
 ::: {.callout-note title="Note"}
 High-quality project work may contribute to future course development, for example by extending teaching materials or informing teaching cases.
 In such cases, we will discuss how contributions are acknowledged.
 :::
-
-{{< pagebreak >}}
-
-## Example: Synthetic data generation script
-
-```python
-"""
-Purpose:
-- Simulate [business scenario]
-
-Data schema:
-- age: numeric (years)
-- income: numeric (annual income in EUR)
-
-Generation logic:
-- Age is drawn from a normal distribution (mean=40, sd=10)
-- Income depends linearly on age with added noise
-
-Assumptions and justification:
-- Age distribution approximates working population demographics
-- Income increases with age due to experience (human capital theory)
-- Noise reflects unobserved heterogeneity in earnings
-
-References (if applicable):
-- [Add source, e.g., industry report or academic literature]
-"""
-
-import numpy as np
-import pandas as pd
-
-np.random.seed(42)  # Reproducibility
-
-# 1. Define dataset size
-n = 1000
-
-# 2. Generate base variables
-age = np.random.normal(loc=40, scale=10, size=n)
-
-# 3. Define relationships
-income = age * 1000 + np.random.normal(loc=0, scale=5000, size=n)
-
-# 4. Add realism, such as missing values
-missing_mask = np.random.rand(n) < 0.05
-income[missing_mask] = np.nan
-
-# 5. Create dataframe and export
-df = pd.DataFrame({
-    "age": age,
-    "income": income,
-})
-
-df.to_csv("dataset.csv", index=False)
-```

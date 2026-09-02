@@ -1,13 +1,47 @@
 ---
-title: Example session notes
+title: "Notes: Session 3: Exploratory data analysis"
 session_id: session-03
 ---
 
-::: {.callout-note}
-## Session objective {#session-objective}
+| Time (min) | Duration | Topic                                      | Additional materials |
+|------------|----------|--------------------------------------------|----------------------|
+| 0–20       | 20       | Univariate exploratory data analysis       |                      |
+| 20–40      | 20       | Multivariate exploratory data analysis     |                      |
+| 40–90      | 50       | Clustering in EDA                          |                      |
 
-TODO
-:::
+TODO:
 
-https://srathinagiri.github.io/PowerBI/pages/OLAPDataCube.html
--> but the slides only focus on slicing!!!
+- think how the second part of clustering should be presented (hierarchical; distance measures). It was covered (too) quickly in the last session.
+
+But: Sometimes it is better to know/predict something even if we cannot explain it instead of doing nothing! Examples:
+
+- Recommendation systems: Which movie are you likely to watch next? Thousands of variables may be available; we may never know why exactly a particular recommendation works, but recommendations generally improve engagement/revenue. ("We don't know/don't give a recommendation" is the worst option)
+ -> Business decision to recommend anything is always better than no recommendation at all
+- Fraud detection: prediction of irregular and fraudulent transactions can be very accurate, but the attackers' goal is to behave in a way that is hard to anticipate. Prediction may focus on identifying cases that are "not behaving regularly" (rather than identifying generalizable patterns)
+
+## EDA/Clustering
+
+TODO: Illustrate how k-means clustering works for a given k (random centroids/assignments, recalculation of centroids), using different colors
+
+## Survey
+
+- Generally: indicate when notes on learning focus or expectations would be helpful.
+
+{{< pagebreak >}}
+
+## Materials
+
+
+- check/include overview: https://ds100.org/course-notes/visualization-2/
+- for EDA/best practices in visualization: https://harvard-iacs.github.io/2019-CS109A/lectures/lecture9/presentation/Lecture9a_Visualization.pdf
+- https://proceedings.scipy.org/articles/tyyd7356
+
+## Exercise
+
+| Time (min) | Duration | Topic | Additional materials |
+|------------|----------|-------|----------------------|
+| 0–25 | 25 | EDA: Clustering | `exercises/session_03.qmd` |
+| 25–35 | 10 | Wrap-up | |
+
+- Focus on the existing R clustering workflow: select `profit_margin` and `rd_intensity`, inspect their distributions, standardize them, compare k-means solutions, add labels, and interpret grouped revenue box plots.
+- The imported source provides 35 minutes of dedicated EDA exercise material. Retain this gap for the later R-port and content-review stage rather than adding new tasks now.

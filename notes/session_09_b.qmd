@@ -1,0 +1,119 @@
+---
+title: "Notes: Session 9: Deployment in Organizations"
+session_id: session-09-deployment
+format: html
+---
+
+Source delivery: 85–90 minutes for the lecture and approximately 75–80 minutes for group work.
+
+| Time (min) | Duration | Topic | Teaching emphasis |
+|---:|---:|---|---|
+| 0–20 | 20 | Business value and industry evidence | Müller et al. (2018); Oesterreich et al. (2022); distinguish analytics assets from complementary capabilities. |
+| 20–45 | 25 | Organizational value-creation paths | Kunz et al. (2025); decisions, actions, outcomes, feedback, and analytics maturity. |
+| 45–60 | 15 | Augmentation, automation, and people | Compare the hospital examples and discuss appropriate human involvement. |
+| 60–82 | 22 | Governance, boundaries, and explainability | Accountability, optimization boundaries, stakeholder-specific explanations, and contestability. |
+| 82–90 | 8 | Risk and regulatory frameworks | NIST AI RMF, GDPR, EU AI Act, and closing synthesis. |
+
+## Business value and organizational capabilities
+
+The firm-performance studies establish that analytics can contribute to value but that analytics assets alone are insufficient. Explain the Cobb–Douglas-style production model as a log-linear model, not logistic regression. Fixed effects give each firm its own intercept and help address omitted-variable bias. The high $R^2$ should not be read as “BDA explains 97.7% of sales.”
+
+Contrast the two evidence perspectives. Müller et al. examine objective live BDA assets and productivity in panel data; Oesterreich et al. synthesize firm-level studies of technical resources, human resources, management capabilities, data quality, culture, and external pressure. Emphasize the substantial heterogeneity and the implication that context matters.
+
+Use the TDWI maturity model to show that an analytics portfolio is not merely a set of techniques or software. It depends on organizational processes, culture, skills, leadership, funding, data management, and governance aligned with strategy.
+
+## Organizational value creation
+
+Kunz, Spohrer, and Heinzl shift from variance explanations to sequences connecting data, information, knowledge, decisions, actions, and process outcomes. Ask: **How would you expect machine learning to affect this value-creation process?**
+
+Use the emergency-department examples in the slide notes:
+
+- the dashboard supports the canonical information-processing path;
+- the deterioration-risk score augments a physician’s decision;
+- automatic diversion when congestion crosses a threshold illustrates decision automation;
+- delayed-discharge insights accumulate organizational knowledge;
+- sharing bottleneck insights transfers knowledge across units;
+- clinician reports and model retraining form a feedback path.
+
+ML adds **autonomy**, **dynamism**, and **opacity**. Autonomy strengthens reliance on analytical information and enables automation; dynamism strengthens feedback; opacity can restrict understanding, learning, and process improvement.
+
+## Augmentation, automation, and human involvement
+
+Do not frame “human in the loop” as an automatic solution. Ask which human role is suitable for which task, under which conditions, and with which safeguards. Human involvement can provide judgment, contextual knowledge, intervention, and recourse, but people may also overtrust, undertrust, game, or inappropriately override systems.
+
+Use the people slides to discuss workflow redesign, incentives, culture, professional identity, hiring, and upskilling. The intended conclusion is that AI deployment is a people-and-process transformation: human and technical resources are complements. Treat the BCG figures as source-period survey findings, not timeless forecasts.
+
+## Governance, boundaries, and explainability
+
+Responsible deployment asks both “Can this be optimized?” and “Should it be optimized?” Use the examples to distinguish unlawful or unacceptable objectives, vulnerable populations, proxy targets, autonomy and dignity concerns, and externalities. Governance should define system and decision ownership, accountability, monitoring, escalation, incident response, human intervention, and contestability.
+
+For opacity, distinguish lack of access from lack of comprehensibility. Proprietary systems and trade secrets can create access opacity; complex models can remain difficult to understand even with full access. Explainability is stakeholder-specific:
+
+- engineers may need debugging evidence;
+- affected persons need reasons and possible recourse;
+- managers need limitations and oversight rules;
+- auditors need logs and evidence.
+
+Present the taxonomy as a map, not a technical deep dive. Feature importance may be global or local and should not be interpreted causally. Counterfactual explanations are action-oriented. Interactive explanations support what-if probing. Ask which explanation allows each stakeholder to understand, contest, improve, or govern a system.
+
+## NIST AI RMF and regulatory context
+
+Use the four NIST AI RMF functions as a portable vocabulary:
+
+- **Govern:** roles, policies, and accountability;
+- **Map:** context, stakeholders, and intended use;
+- **Measure:** performance, bias, robustness, and risk;
+- **Manage:** mitigation, monitoring, and incident response.
+
+Connect these functions to the deployment questions: Who is affected? What decision is supported or automated? What can go wrong? Who is accountable? How will the organization know when to stop or intervene?
+
+The slides retain the source treatment of GDPR Articles 15 and 22 and EU AI Act Articles 27 and 86. Present these as regulatory context for meaningful information, intervention, contestability, transparency, oversight, logging, and fundamental-rights assessment—not as legal advice. The article-specific claims and implementation timelines are time-sensitive and should receive a later substantive/legal review rather than being expanded during this migration.
+
+## Group-project scaffold facilitation
+
+Allow approximately 5 minutes for case choice, 15 for organizational context, 20 for research, 30 for the map, and 10 for peer explanation and refinement. Facilitate small-group formation at the start.
+
+The activity is a **group-project scaffold**, not an isolated worksheet. Groups should retain the strategy map and use it to connect their chosen organizational problem to the later project narrative. Insist on a concrete analytics-enabled decision and a traceable chain from objective and KPI through data, decision, action, outcome, and feedback.
+
+The strategy-map approach follows the source guidance associated with Peppard, Ward, and Daniel (2007). Public company engineering blogs, annual reports, transparency reports, and credible external reporting can provide starting evidence. Useful examples in the source notes include Netflix personalization, Airbnb, Uber, Spotify, LinkedIn, Meta, DoorDash, and Shopify. Capital One was intentionally excluded because lending decisions were already covered in the lecture.
+
+During debriefing, ask:
+
+- Is the claimed value tied to an observable process and plausible KPI?
+- Which organizational capabilities are prerequisites rather than outcomes?
+- Is the application augmenting or automating a decision, and is the human role credible?
+- Who bears risk and who is accountable?
+- What explanation is useful to each stakeholder?
+- Which NIST, GDPR, or EU AI Act questions require later verification?
+- What evidence is reported, and what did the group infer?
+
+## Follow-up review
+
+- Verify time-sensitive GDPR and EU AI Act article interpretations and application dates during substantive review.
+- Recheck the 2025 BCG workforce survey examples before future reuse.
+- Decide later whether to distribute a separate editable strategy-map template; the authoritative exercise now contains the complete scaffold and no longer depends on an external source-repository `.docx`.
+
+{{< pagebreak >}}
+
+## Additional materials
+
+Ethics/Fairness: https://developers.google.com/machine-learning/crash-course/fairness
+
+https://github.com/cs124/labs/blob/main/Lab2_LogisticRegression_Solutions.md#ethics-discussion
+
+Deployment
+-> AI for generating and understanding analytical code.
+https://recipes.tidymodels.org/reference/step_dummy.html - see dummy-variable encoding
+https://www.datacamp.com/datalab
+https://www.datacamp.com/datalab/ai
+
+-> connect to AGI debates (jagged frontier...), which unlocks generation, but places new burdens on validation and testing
+
+Reliability: monitoring/ensuring that the data input remains stable/in-line with the model (e.g., one-hot encoded variables with the specific levels for regression)
+
+Fairness: https://developers.google.com/machine-learning/crash-course/fairness
+https://rodneybrooks.com/rodney-brooks-three-laws-of-artificial-intelligence
+
+{{< pagebreak >}}
+
+## Materials

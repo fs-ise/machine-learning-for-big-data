@@ -1,10 +1,109 @@
 ---
-title: Example session notes
+title: "Notes: Session 2: Analytics"
 session_id: session-02
 ---
 
-::: {.callout-note}
-## Session objective {#session-objective}
+## Lecture
 
-TODO
+| Time (min) | Duration | Topic | Additional materials |
+|------------|----------|-------|----------------------|
+| 0–15       | 15       | More computing power | |
+| 15–30      | 15       | Analytical data architectures | |
+| 30–45      | 15       | New algorithms | |
+| 45–75      | 30       | Analytics capabilities and purposes | |
+| 75–90      | 15       | CRISP-DM | |
+
+
+**Start by revisiting the topic ideas of students (as announced in session 0). Discuss ideas, provide guidance on analytical focus and scope, answer questions.**
+
+::: objective
+Explain why modern machine learning and AI for big data became powerful through more computing power, new algorithms, and maturing analytics processes.
 :::
+
+The opening argument is deliberately organized around these three mutually reinforcing developments. More data motivates Session 1 Big Data; this session starts with the capabilities that made it possible to process that data and derive value from it.
+
+After the evolution of computing power, connect infrastructure to analytical data architectures. Contrast the governance and consistency advantages of traditional data warehouses with their limitations for flexible, real-time, and unstructured data. Explain how data lakes separate data movement from transformation, and how a logical data warehouse provides uniform analytical views through query-time integration.
+
+Focus on algorithms as enablers of more elaborate models and analyses. AlphaFold also illustrates how science and algorithmic competitions drive progress and enables commercial applications in pharmaceutical and biotech industries.
+
+## Algorithms
+
+TODO/TBD: illustrations for the algorithms?
+
+- Shortest path/routing: these are still the algorithms that solve this type of problem most efficiently. Not ChatGPT (example: Joyce Hübner and the route for hundreds of marathons connecting all major cities in Germany)
+- Evolutionary algorithms: sometimes, finding the optimal solution is not feasible, but good approximations may be sufficient. Also, principles from nature are used as an inspiration.
+- Scheduling: Operating Systems themselves improve, benefitting multiple analytical problems
+- PageRank: Ask students whether they know the purpose.
+- Deep learning: human brain as the inspiration for the algorithm design (will revisit it later in the lecture)
+- Gradient boosting: combining different algorithms to solve challenging problems.
+- Transformer models: complex NN architectures that are able to process unstructured data well and also generate output (useful for principal data, but also for analytical code)
+
+## Architectures
+
+Emphasize that these are not clean replacement stages: modern firms often combine warehouses, lakes, federated sources, and AI infrastructure.
+
+## Analytical processes
+
+Key trends of improvement:
+
+- **Maturing:** from descriptive to predictive and prescriptive, reducing ambiguity and the need for human involvement in business decisions.
+- **Pervasive:** extending analytics to more areas and departments, with disciplines refining specialized models.
+- **Standardized:** sharing algorithms, software environments, and governance models such as CRISP-DM across organizations and industries.
+
+CRISP-DM is a well-established model for data analytics and provides a useful structure for the course. Emphasize that analytics is iterative rather than a linear pipeline.
+
+# Data Preparation lecture
+
+| Time (min) | Duration | Topic | Additional materials |
+|------------|----------|-------|----------------------|
+| 0–10       | 10       | Foundations and data types | |
+| 10–40      | 30       | Data preparation: structuring, cleansing, integration, and transformation | |
+
+Badly formatted data blocks analysis — data preparation unlocks it.
+
+Data quality: never trust data blindly. Always evaluate data you receive as an input
+
+Data preparation:
+
+- Statistics traditionally relies on a controlled mode of data collection
+- Repurposing of data, analyzing transactional data is not a typical setting
+- Data quality measures are relatively limited (focused on outliers)
+- Data preparation (manual correction or the use of synthetic data) are even discarded as a questionable research practice
+
+## Data structuring
+
+Note: `|>` was introduced in Base R in 2021. Preferred over `%>%`.
+
+- Need to develop the intuition and clear understanding of how data should be structured.
+- Go back to the examples: and highlight values, variables, observations. Define observational unit. The wide format is an output in a report, not an input.
+Observational unit: **Quarterly sales per region** (implicitly: across years)
+
+**Key learning**: Data structures for analytics may tolerate redundancies!
+-> Illustrate this on the whiteboard: ERD/ERM: different rationale (ACID): preventing inconsistent states in operational databases
+-> analytical data: often extracted (copied), will not be changed by operational systems. May not even be persisted (just used in-memory for the analysis)
+-> in *tidy data*, there is no need for assigning unique IDs. Duplicates are a concern, but unique IDs are not enough to conclude that there are not duplicates.
+
+## Data integration
+
+Remember the @Davenport2006 case: competing on analytics means pooling data that was generated in-house and data acquired from outside data sources.
+
+Question: what does the "merge()" method correspond to in SQL?
+
+Metaphor: statisticians carefully collect their data on their own (live on their own island) - business analysts have to work with existing data (which can be very messy)
+
+# Data Preparation exercise
+
+| Exercise part | Time (min) |
+|---------------|------------|
+| Data structuring 1 | 15 |
+| Data structuring 2 | 20 |
+| Data cleansing | 20 |
+| EDA: Clustering | 25 |
+| Wrap-up | 10 |
+| **Overall** | **90** |
+
+- Focus on tibbles (not so much on other R data types).
+- Possible extension: financial API (code for the API call should be included).
+- Implementation in R/tidyverse: level of difficulty: use the package documentation vs. use ChatGPT.
+- Possible extensions: data structuring with tables requiring transpose.
+- TODO: include an example for tidying data with different observational units (e.g., different levels like department sales vs. package deliveries to customers).
