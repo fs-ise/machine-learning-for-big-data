@@ -22,3 +22,51 @@ Explain why the growth and changing characteristics of data matter for business 
 Emphasize that big data is not simply “lots of data.” Each V presents a distinct managerial dilemma: decision complexity (volume), decisions while events unfold (velocity), integration of previously separate data worlds (variety), and whether apparent signals can be trusted (veracity).
 
 Use the UPS, Visa, Walmart, and digital-advertising cases to connect each characteristic to models, operational decisions, and business outcomes.
+
+
+## Analytical environment
+
+- Ask students: Who has RStudio installed?
+- Who is familiar with qmd documents?
+- Step-by-step: create qmd (header, context), activate render on save, create an R codeblock (with/out curly parentheses for execution), show ctrl+Enter execution, show environment
+
+Work in pairs.
+
+Base task: simple Kaggle
+
+Next: students build their own report/test
+
+Extensions ():
+
+- Bibliography: add ``bibliography: references.bib`` to the yaml header + include ``@cit-key``, add explicit ``# References`` at the end.
+- PDF rendering: add ``pdf: default`` in the format section, use the Render dropdown.
+  **Note:** The default PDF template and citation style will be accepted for submissions.
+
+- ggplot:
+
+```{r}
+library(tidyverse)
+
+# Load CSV directly from the web
+url <- "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/main/inst/extdata/penguins.csv"
+
+penguins <- read_csv(url)
+
+# Inspect first rows
+head(penguins)
+```
+
+```{r}
+# Scatterplot
+ggplot(penguins, aes(x = flipper_length_mm,
+                     y = body_mass_g,
+                     color = species)) +
+  geom_point() +
+  labs(
+    x = "Flipper length (mm)",
+    y = "Body mass (g)",
+    color = "Species"
+  )
+```
+
+Show the "display output only" option in the R code chunk

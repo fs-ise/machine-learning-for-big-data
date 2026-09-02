@@ -5,6 +5,8 @@ section_label: "Big Data"
 session: "Session 1"
 date: "2026-09-04"
 format: revealjs
+nocite: |
+  @wickham_welcome_2019
 ---
 
 ## {data-menu-title="Learning objectives" data-state="hide-menubar"}
@@ -614,38 +616,49 @@ install.packages("rmarkdown")
 
 :::
 
-## Practical exercise: Start your Quarto analysis
-
-Work in pairs.
-
-This exercise can also serve as a **first exploration of a possible group project topic**.
+## Practical exercise: A first Quarto report
 
 **Base task**
 
 - Create a Quarto document called `report.qmd`.
-- Select a suitable dataset from [Kaggle](https://www.kaggle.com/datasets) and download it as CSV.
-- Add a short **analytical or business question** to your document.
-- Import the CSV file into R.
-- Display the first rows using `head()`.
-- Briefly describe:
-  - which analytical methods could be applied,
-  - which variables would be relevant,
-  - and what kinds of insights the analysis could potentially produce.
+- Select a suitable dataset from <a href="https://www.kaggle.com/datasets" target=_blank>Kaggle</a> and download it as CSV.
+- Create an R codeblock to import the CSV and display the first rows using `head()`.
+- Add a short **analytical question** that could be investigated using the dataset.
 - Render the document as **HTML**.
 
-{{< iconify fluent-mdl2:insights >}} The goal is to create a **small but complete reproducible analysis document**, not to perform the full analysis.
+. . . 
 
-::: aside
+<div style="height: 0.4em;"></div>
 
-If you have a question, put up the **help-needed** tag and I will come by.
+:::: {layout="[40,-2 ,50]"}
 
+::: {.layout-cell}
+**Optional extensions**
+
+Consult the documentation of [Quarto](https://quarto.org/docs/) or the [Tidyverse](https://tidyverse.org/packages/) and implement additional feature(s) of your choice:
+
+- Create a scatterplot with `ggplot2` and hide the code in the rendered document.
+- Add a citation and a bibliography.
+- Render the document as **PDF**.
 :::
 
-## Optional extensions
+::: {.layout-cell}
+**Take-home exercise: Develop a potential group project topic**
 
-- Create a **scatterplot** with `ggplot2` and hide the code in the rendered document.
-- Add at least **one citation** and a bibliography.
-- Render the document as **PDF**.
-- Consult the [Quarto documentation](https://quarto.org/docs/) to implement additional feature(s) of your choice.
+Use your document as a starting point for a **potential group project topic**.
+
+- Formulate a **business or analytical question**.
+- Describe the **business context** and why the question is relevant.
+- Identify the **data and variables** that would be needed.
+- Describe suitable **analytical methods**.
+- Explain which **business decisions** the analysis could support.
+:::
+
+::::
+
+::: aside
+If you have a question, put up the **help-needed** tag and I will come by.
+:::
+
 
 # References {data-state="hide-menubar"}
