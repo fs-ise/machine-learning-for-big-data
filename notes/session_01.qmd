@@ -30,6 +30,8 @@ Use the UPS, Visa, Walmart, and digital-advertising cases to connect each charac
 - Who is familiar with qmd documents?
 - Step-by-step: create qmd (header, context), activate render on save, create an R codeblock (with/out curly parentheses for execution), show ctrl+Enter execution, show environment
 
+**Important**: Download the qmd files. do not work in the repository (html rendering fails due to `_quarto.yml` settings)
+
 Work in pairs.
 
 Base task: simple Kaggle

@@ -661,5 +661,13 @@ Use your document as a starting point for a **potential group project topic**.
 If you have a question, put up the **help-needed** tag and I will come by.
 :::
 
+## Summary {data-state="hide-menubar"}
+
+In the practical part, we learned how to:
+
+- create and structure a Quarto (`.qmd`) document,
+- import and inspect data with R,
+- combine text, code, and analytical output in one document,
+- and render the analysis as HTML or PDF.
 
 # References {data-state="hide-menubar"}
