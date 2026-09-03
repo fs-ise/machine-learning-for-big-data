@@ -27,6 +27,7 @@ Use the UPS, Visa, Walmart, and digital-advertising cases to connect each charac
 
 ## Analytical environment
 
+- Briefly highlight the importance or R in the industry (R or Python) - see [survey](https://xebia.com/de/blog/data-survey-2018-2019-data-50/)
 - Ask students: Who has RStudio installed?
 - Who is familiar with qmd documents?
 - Step-by-step: create qmd (header, context), activate render on save, create an R codeblock (with/out curly parentheses for execution), show ctrl+Enter execution, show environment
@@ -121,3 +122,5 @@ ggplot(advertising, aes(x = TV, y = Sales)) +
     y = "Sales"
   )
 ```
+
+At the end: highlight that one goal is to get a good understanding of well-structured and contextualized analytical reports.
