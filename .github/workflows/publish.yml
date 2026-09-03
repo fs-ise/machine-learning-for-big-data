@@ -27,8 +27,13 @@ jobs:
           mkdir -p "$HOME/R/library"
           export R_LIBS_USER="$HOME/R/library"
           echo "R_LIBS_USER=$R_LIBS_USER" >> "$GITHUB_ENV"
+          Rscript -e 'install.packages(c("knitr", "rmarkdown"), repos = "https://cloud.r-project.org")'
           Rscript scripts/install_r_dependencies.R
       - uses: quarto-dev/quarto-actions/setup@v2
+      - name: Check R rendering dependencies
+        run: |
+          Rscript -e 'cat("knitr:", as.character(packageVersion("knitr")), "\n")'
+          Rscript -e 'cat("rmarkdown:", as.character(packageVersion("rmarkdown")), "\n")'
       - name: Validate all generated exercise variants
         run: make exercises-check
       - run: make site-fast
