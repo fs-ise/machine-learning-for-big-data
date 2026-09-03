@@ -46,15 +46,15 @@ library(tidymodels)
 
 We continue the LendWise default-classification task from Sessions 5 and 6. Every algorithm receives the same training observations and five cross-validation folds. The held-out test set remains unused until a recommendation has been made from validation results.
 
+### Task 1.1 — Re-establish the Session 6 setup
+
 ::: {.direction}
-
-### Task 1.1 — Recreate the Session 6 setup
-
 Run the common setup and verify:
 
 - `default` is the first factor level and therefore the event for sensitivity and ROC AUC;
 - the split is stratified and reproducible;
 - all five folds come only from `train_data`.
+:::
 
 ```{r}
 df <- read_csv(
@@ -100,6 +100,7 @@ nrow(test_data)
 folds
 ```
 
+::: {.direction}
 Why must every algorithm use these same folds? Why must `test_data` remain outside model comparison?
 :::
 
@@ -145,14 +146,15 @@ tree_recipe
 
 Regularized regression, k-NN, and the SVM use `scaled_recipe`. The decision tree and random forest use `tree_recipe`. Scaling is essential for distance-based k-NN and helpful for penalty- and margin-based models. Tree-based predictions depend on ordered split points, so rescaling adds no useful information.
 :::
+
+
 # Part 2 — Regularized logistic regression <a id="regularized"></a>
 
 Regularization balances fit and simplicity. `penalty` controls its strength: larger values shrink coefficients more. `mixture = 0` gives ridge, `mixture = 1` gives lasso, and intermediate values give elastic net.
 
-::: {.direction}
-
 ### Task 2.1 — Specify and tune the model
 
+::: {.direction}
 Complete the specification and workflow, then tune the nine explicit combinations in `regularized_grid` on the shared folds.
 
 ```{r}
@@ -213,10 +215,9 @@ A larger penalty constrains coefficients more strongly and reduces flexibility. 
 
 k-NN predicts from nearby labeled observations. Small `k` produces flexible, high-variance boundaries; large `k` smooths over more observations and increases bias.
 
-::: {.direction}
-
 ### Task 3.1 — Tune the number of neighbors
 
+::: {.direction}
 Use Euclidean distance, rectangular neighbor weights, and candidate values 3, 5, 9, 15, and 25.
 
 ```{r}
@@ -266,14 +267,15 @@ show_best(knn_results, metric = "roc_auc", n = 5)
 
 Distance calculations use numerical differences. Without scaling, a difference of hundreds of euros can overwhelm meaningful differences in utilization or debt ratios merely because of units.
 :::
+
+
 # Part 4 — Decision tree <a id="tree"></a>
 
 A tree recursively partitions predictor space. Greater depth and smaller terminal-node requirements increase flexibility, while a larger `cost_complexity` encourages pruning.
 
-::: {.direction}
-
 ### Task 4.1 — Tune tree complexity
 
+::: {.direction}
 Use eight combinations: cost complexity 0.001 or 0.01, depth 3 or 6, and minimum node size 10 or 25.
 
 ```{r}
@@ -324,10 +326,9 @@ A single tree is often easy to explain as decision paths, but small changes in d
 
 A random forest aggregates trees trained on bootstrap samples while considering random predictor subsets. Aggregation generally reduces the instability of one tree, but the ensemble is harder to explain as a single decision path.
 
-::: {.direction}
-
 ### Task 5.1 — Tune the forest
 
+::: {.direction}
 Keep `trees = 500` fixed. Tune `mtry` over 2, 4, and 6 predictors and `min_n` over 10 and 25.
 
 ```{r}
@@ -374,14 +375,15 @@ show_best(rf_results, metric = "roc_auc", n = 5)
 
 Averaging many decorrelated trees can reduce variance and improve generalization. Unlike one tree, however, a forest cannot be summarized by one transparent set of decision paths.
 :::
+
+
 # Part 6 — RBF support vector machine <a id="svm"></a>
 
 An SVM seeks a decision boundary with a wide margin. `cost` controls how strongly classification errors are penalized. The RBF kernel permits nonlinear boundaries, while `rbf_sigma` controls how locally the kernel responds and therefore affects flexibility.
 
-::: {.direction}
-
 ### Task 6.1 — Tune cost and kernel scale
 
+::: {.direction}
 Tune six combinations: cost 0.25, 1, or 4 and RBF sigma 0.01 or 0.1. Use normalized predictors.
 
 ```{r}
@@ -501,6 +503,10 @@ validation_comparison |>
 
 ### Task 7.2 — Visualize the comparison
 
+::: {.direction}
+Create a plot that compares the mean validation metrics across algorithms and includes uncertainty based on the cross-validation standard errors.
+:::
+
 ::: {.sol}
 
 ```{r}
@@ -582,14 +588,15 @@ selected_model
 
 For this exercise, the quantitative rule selects the strongest mean validation ROC AUC. A business recommendation may reasonably prefer a nearly equivalent, more interpretable model when score differences are small and regulated credit decisions require clear explanations. The choice is locked before any test outcome is inspected.
 :::
+
+
 # Part 8 — Final held-out test evaluation <a id="final-test"></a>
 
 We now use the test set once. This is not another opportunity to tune the winner.
 
-::: {.direction}
-
 ### Task 8.1 — Finalize the selected workflow
 
+::: {.direction}
 Run the selection map, finalize the chosen workflow with its best parameters, and evaluate it with `last_fit()`.
 :::
 
@@ -635,6 +642,10 @@ final_test_metrics
 
 ### Task 8.2 — Compare validation and test performance
 
+::: {.direction}
+Compare the selected model's cross-validation metrics with its held-out test metrics. Then inspect the confusion matrix and ROC curve. Does the held-out result broadly support the validation-based recommendation?
+:::
+
 ::: {.sol}
 
 ```{r}
@@ -679,6 +690,8 @@ Does the test result broadly support the validation-based recommendation? A diff
 :::
 
 ::: {.direction}
+
+
 ## Wrap-up
 
 🎉🎈 You have completed the exercise—good work! 🎈🎉

@@ -156,7 +156,7 @@ train_bow <- dfm(train_tokens) |>
   dfm_trim(
     max_docfreq = 0.95,
     docfreq_type = "prop",
-    max_nfeat = 5000
+    max_n = 5000
   )
 
 test_bow <- dfm(test_tokens) |>
