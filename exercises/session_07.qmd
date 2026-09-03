@@ -35,6 +35,24 @@ After this exercise, you should be able to:
 
 > In Session 6, we learned that models must be compared using the same training data and validation procedure. Here, we keep that workflow fixed and vary the algorithm.
 
+### Package setup
+
+Before starting this exercise, make sure the required R packages are installed.
+
+Run this command once in the R console. You do not need to run it every time you open the exercise. You can skip this step if these packages are already installed.
+
+```{r}
+#| eval: false
+install.packages(c(
+  "tidyverse",
+  "tidymodels",
+  "glmnet",
+  "kknn",
+  "ranger",
+  "kernlab"
+))
+```
+
 :::
 
 ```{r}

@@ -17,6 +17,19 @@ In this exercise, we cover:
 
 Work directly in this Quarto (`.qmd`) exercise using R in RStudio, Positron, or VS Code. Work through the tasks in R and compare your work with the solution.
 
+### Package setup
+
+Before starting this exercise, make sure the required R packages are installed.
+
+Run this command once in the R console. You do not need to run it every time you open the exercise. You can skip this step if these packages are already installed.
+
+```{r}
+#| eval: false
+install.packages(c(
+  "tidyverse"
+))
+```
+
 :::
 
 # EDA: Clustering <a id="clustering"></a>

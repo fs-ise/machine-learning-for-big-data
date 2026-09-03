@@ -27,6 +27,24 @@ You are a data analyst for **ReviewSense**, a fictional analytics team supportin
 
 We use the local prepared sample `data/imdb_reviews_sample.csv`; rendering never downloads the full IMDB dataset or a language model.
 
+### Package setup
+
+Before starting this exercise, make sure the required R packages are installed.
+
+Run this command once in the R console. You do not need to run it every time you open the exercise. You can skip this step if these packages are already installed.
+
+```{r}
+#| eval: false
+install.packages(c(
+  "tidyverse",
+  "quanteda",
+  "tidymodels",
+  "Matrix",
+  "irlba",
+  "glmnet"
+))
+```
+
 :::
 
 ```{r}
