@@ -36,9 +36,17 @@ You first focus on early-career urban borrowers and build a logistic regression 
 LendWise is interested in questions such as:
 
 - Which factors are associated with a higher probability of default in early-career urban borrowers?
+
+**Your answer:** *Write your answer here.*
 - How can predicted probabilities be translated into default/non-default classifications?
+
+**Your answer:** *Write your answer here.*
 - How well does the model perform, and how informative are the ROC curve and AUC?
+
+**Your answer:** *Write your answer here.*
 - Does a model work equally well across customer categories?
+
+**Your answer:** *Write your answer here.*
 
 ## Data description
 
@@ -95,7 +103,7 @@ Create a filtered data frame containing only early-career urban borrowers.
 ::: {.direction}
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -123,7 +131,7 @@ Estimate a logistic regression model for credit default.
 - Inspect `coef(model)` and `summary(model)`.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -283,12 +291,16 @@ sum(y_pred_t)
 ```
 
 - How does the number classified as high default risk change?
+
+**Your answer:** *Write your answer here.*
 - What pattern appears as the threshold increases?
+
+**Your answer:** *Write your answer here.*
 
 Then identify the 20% riskiest and 20% safest customers using `quantile()`.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -360,7 +372,7 @@ For simplicity, predictions are evaluated on the same observations used for esti
 Create a labeled 2 × 2 table. Rows should be actual outcomes and columns predicted outcomes.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 Identify true negatives, false positives, false negatives, and true positives.
@@ -445,7 +457,7 @@ A risk-control strategy may use a **lower threshold**. More customers are flagge
 Use `pROC` to evaluate discrimination across all possible thresholds. Here, higher predicted probabilities should correspond to `default = 1`, so `direction = "<"` states that controls tend to have lower scores than cases.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -538,7 +550,7 @@ Repeat the same model specification for platform workers, then compare coefficie
 ::: {.direction}
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -574,7 +586,7 @@ summary(model_platform)
 ::: {.direction}
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -610,7 +622,7 @@ Income and months with company are negative in both models but do not reach the 
 ::: {.direction}
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -683,7 +695,7 @@ The early-career urban model has the higher in-sample AUC: approximately **0.801
 :::
 
 ::: {.direction}
-# 🧩 Wrap-up <a id="wrap-up"></a>
+# 🧩 Wrap-up {#wrap-up}
 
 🎉🎈 You have completed the exercise—good work! 🎈🎉
 

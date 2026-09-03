@@ -25,14 +25,12 @@ Run this command once in the R console. You do not need to run it every time you
 
 ```{r}
 #| eval: false
-install.packages(c(
-  "tidyverse"
-))
+install.packages("tidyverse")
 ```
 
 :::
 
-# EDA: Clustering <a id="clustering"></a>
+# EDA: Clustering {#clustering}
 
 Now that the data is structured and cleaned, we explore whether companies group into similar patterns.
 Clustering helps us move from preparation to insight generation: instead of looking at firms one by one, we ask whether there are recurring profiles in the data.
@@ -119,27 +117,28 @@ ggplot(
   )
 ```
 
-How many clusters would you expect?
-Briefly justify your answer based on the plot.
+How many clusters would you expect? Briefly justify your answer based on the plot.
 
-<br>
+**Your answer:** *Write your answer here.*
 
 ### 2. Apply k-means clustering
 
 * Next, run the k-means clustering algorithm for different values of `k`.
 
 ```{r}
-# Add your solution below. Try values from 2 to 10.
+# YOUR CODE HERE: try values from 2 to 10.
 # Remember that kmeans() expects centers = k.
 ```
 
 * Try different values of `k` (e.g., 2–10). Which number of clusters seems appropriate?
+
+**Your answer:** *Write your answer here.*
 ### 3. Add cluster labels to the dataset
 
 * Assign the cluster labels returned by `kmeans()` to the original data frame (`firm_data_df`).
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 
@@ -149,10 +148,12 @@ Briefly justify your answer based on the plot.
 * Try to complete the task using the [`ggplot2` boxplot documentation](https://ggplot2.tidyverse.org/reference/geom_boxplot.html).
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 * What do the revenue distributions tell you about the firm profiles represented by the clusters?
+
+**Your answer:** *Write your answer here.*
 
 :::
 
@@ -315,7 +316,7 @@ The boxplots reveal how revenue differs across clusters, helping to characterize
 
 :::{.direction}
 
-## Wrap-up <a id="wrap-up"></a>
+## Wrap-up {#wrap-up}
 
 🎉🎈 You have completed the exercise—good work! 🎈🎉
 

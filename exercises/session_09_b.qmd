@@ -37,10 +37,20 @@ Select **one** company from the following list:
 Build a basic understanding of the company:
 
 - What is its business model?
+
+**Your answer:** *Write your answer here.*
 - Who are its main customers or users?
+
+**Your answer:** *Write your answer here.*
 - What are its main products, services, or platforms?
+
+**Your answer:** *Write your answer here.*
 - What organizational problem, opportunity, or strategic objective seems especially important?
+
+**Your answer:** *Write your answer here.*
 - What could be plausible key performance indicators for this objective?
+
+**Your answer:** *Write your answer here.*
 
 Official strategic metrics may not be publicly available. If necessary, infer plausible KPIs and justify your reasoning.
 
@@ -53,14 +63,26 @@ Start with the selected company's official investor-relations, engineering/resea
 For each source, ask:
 
 - What strategic objective does it reveal?
+
+**Your answer:** *Write your answer here.*
 - Which business processes and ML/AI capabilities are described or implied?
+
+**Your answer:** *Write your answer here.*
 - Which decisions are supported by analytics, and which are automated?
+
+**Your answer:** *Write your answer here.*
 - Which data sources or systems are mentioned?
+
+**Your answer:** *Write your answer here.*
 - Are there signs of experimentation, feedback, monitoring, governance, or regulation?
+
+**Your answer:** *Write your answer here.*
 
 ## 4. Build an Analytics-Enabled Strategy Map {#strategy-map}
 
 Complete the map below for your selected case. Connect the rows into a coherent chain rather than treating them as isolated questions.
+
+**Your task:** Enter your group’s notes in the final column of the table.
 
 | Strategy-map element | Guiding question | Group notes |
 |---|---|---|
@@ -88,7 +110,17 @@ Prepare a short explanation of your map. Another group should be able to trace t
 During feedback, ask:
 
 1. Is the expected business value plausible and tied to a process and KPI?
+
+**Your answer:** *Write your answer here.*
 2. Are the required complementary capabilities visible?
+
+**Your answer:** *Write your answer here.*
 3. Is the proposed division of work between humans and AI justified?
+
+**Your answer:** *Write your answer here.*
 4. Are accountability, explanation, risk, and regulatory questions specific enough to guide later project work?
+
+**Your answer:** *Write your answer here.*
 5. Which claims require additional evidence or verification?
+
+**Your answer:** *Write your answer here.*

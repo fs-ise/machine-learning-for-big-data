@@ -53,7 +53,7 @@ library(quanteda)
 library(tidymodels)
 ```
 
-# Part 1 — Load, clean, and split text <a id="part-1"></a>
+# Part 1 — Load, clean, and split text {#part-1}
 
 ## Task 1.1 — Load and inspect
 
@@ -61,7 +61,7 @@ library(tidymodels)
 Load the local data, inspect its columns, and count sentiment labels.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -89,10 +89,12 @@ count(df, sentiment)
 4. Create a reproducible stratified 75/25 split.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 Why must vocabulary, document-frequency weights, and later dimensionality reduction be learned only from training text?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -135,7 +137,7 @@ split_summary
 
 Learning representation parameters from test reviews would leak information about the final evaluation corpus. The correct order is split first, learn every representation from training text, and only transform the test text with the already learned vocabulary, weights, and rotations.
 :::
-# Part 2 — Sparse text representations <a id="part-2"></a>
+# Part 2 — Sparse text representations {#part-2}
 
 Bag-of-Words records token counts. TF-IDF retains a sparse lexical representation but downweights ubiquitous features and emphasizes features characteristic of fewer documents.
 
@@ -145,7 +147,7 @@ Bag-of-Words records token counts. TF-IDF retains a sparse lexical representatio
 Use `quanteda` to tokenize training reviews, remove punctuation, numbers, and English stopwords, and create unigrams and bigrams. Trim the **training** vocabulary to at most 5,000 features. Then match test features to that fixed vocabulary.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -223,6 +225,10 @@ The IDF vector is calculated once from training document frequencies and reused 
 
 ::: {.direction}
 Calculate the fraction of zero cells without converting the full matrix to a dense object. Explain what rows, columns, and high sparsity mean.
+
+```{r}
+# YOUR CODE HERE
+```
 :::
 
 ::: {.sol}
@@ -246,6 +252,10 @@ Rows are training reviews and columns are retained tokens or bigrams. High spars
 
 ::: {.direction}
 For the first training review, retrieve non-zero TF-IDF values and show the 15 largest.
+
+```{r}
+# YOUR CODE HERE
+```
 :::
 
 ::: {.sol}
@@ -273,6 +283,10 @@ Sparse features are relatively interpretable because they reveal words and phras
 
 ::: {.direction}
 Use cosine similarity to retrieve the five training reviews closest to review 1. Exclude the query itself and display similarity, sentiment, and text.
+
+```{r}
+# YOUR CODE HERE
+```
 :::
 
 ::: {.sol}
@@ -307,7 +321,7 @@ similar_reviews_tfidf
 Discuss whether neighbors share meaning, exact wording, topic, or sentiment. Lexical overlap can be useful, but reviews expressing similar ideas with different words may remain far apart.
 :::
 
-# Part 3 — Dense latent-semantic representations <a id="part-3"></a>
+# Part 3 — Dense latent-semantic representations {#part-3}
 
 A local pretrained sentence-embedding artifact is not available in this repository, and the exercise must not download a model at runtime. We therefore use a transparent, fully R-native **latent semantic analysis (LSA)** representation: truncated singular-value decomposition learns dense latent dimensions from the training TF-IDF matrix.
 
@@ -322,6 +336,10 @@ The training corpus alone determines the latent space; test reviews are projecte
 
 ::: {.direction}
 Use `irlba()` to learn 100 latent dimensions from `train_tfidf`. Create dense training embeddings and project test TF-IDF rows using the training right-singular vectors.
+
+```{r}
+# YOUR CODE HERE
+```
 :::
 
 ::: {.sol}
@@ -364,6 +382,10 @@ The matrices are dense because most latent coordinates are non-zero. Unlike TF-I
 
 ::: {.direction}
 Repeat the nearest-review search using normalized dense vectors. Compare the retrieved reviews with TF-IDF results.
+
+```{r}
+# YOUR CODE HERE
+```
 :::
 
 ::: {.sol}
@@ -397,6 +419,12 @@ Dense neighbors can reflect shared co-occurrence patterns even without exact wor
 
 ::: {.direction}
 Fit PCA using training embeddings only and plot the first two components by sentiment. Why is this only a partial view?
+
+```{r}
+# YOUR CODE HERE
+```
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -428,7 +456,7 @@ ggplot(
 
 Two principal components retain only part of a 100-dimensional representation. Apparent overlap does not imply that the full space contains no useful sentiment information, and apparent clusters may reflect topic or writing style rather than sentiment.
 :::
-# Part 4 — Classification with two representations <a id="part-4"></a>
+# Part 4 — Classification with two representations {#part-4}
 
 We hold the classifier family fixed—a ridge logistic model—and vary only the representation. This isolates the representational comparison. `glmnet` accepts sparse TF-IDF matrices directly and avoids expanding them into a dense data frame.
 
@@ -436,6 +464,10 @@ We hold the classifier family fixed—a ridge logistic model—and vary only the
 
 ::: {.direction}
 Fit cross-validated ridge logistic regression on sparse training TF-IDF features, predict test probabilities, apply a 0.5 threshold, and report accuracy, positive-class sensitivity, and a confusion matrix.
+
+```{r}
+# YOUR CODE HERE
+```
 :::
 
 ::: {.sol}
@@ -497,6 +529,10 @@ tfidf_timing["elapsed"]
 
 ::: {.direction}
 Fit the same ridge logistic family on dense LSA embeddings and report the same outputs.
+
+```{r}
+# YOUR CODE HERE
+```
 :::
 
 ::: {.sol}
@@ -605,12 +641,16 @@ model_comparison
 | Semantic relationships | Limited to lexical co-occurrence | Captures broader co-occurrence structure |
 
 Do not assume dense representations win. Compare measured performance with representation cost and analytical purpose.
-# Part 5 — Qualitative edge-case analysis <a id="part-5"></a>
+# Part 5 — Qualitative edge-case analysis {#part-5}
 
 Synthetic difficult examples are useful for discussing failures, not measuring general performance.
 
 ::: {.direction}
 Apply both already-fitted pipelines to examples involving slang, negation, irony, understatement, and ambiguity.
+
+```{r}
+# YOUR CODE HERE
+```
 :::
 
 ::: {.sol}
@@ -701,7 +741,7 @@ Discuss which examples fail and why. TF-IDF may overreact to visible words such 
 :::
 
 ::: {.direction}
-# Wrap-up <a id="wrap-up"></a>
+# Wrap-up {#wrap-up}
 
 | Representation | Main idea | Strength | Limitation |
 |---|---|---|---|

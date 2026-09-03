@@ -30,8 +30,14 @@ Inspect this framework-neutral architecture:
 
 1. Write down the sequence of layers and dimensions.
 2. How many hidden layers and trainable dense layers are present?
+
+**Your answer:** *Write your answer here.*
 3. What changes for `hidden_layers=[32, 16, 8]`?
+
+**Your answer:** *Write your answer here.*
 4. What kind of data structure does this MLP expect? What structural information would be lost if a video were simply flattened into ten features?
+
+**Your answer:** *Write your answer here.*
 
 :::
 
@@ -74,9 +80,17 @@ The model has two hidden layers and three trainable dense layers. With `[32, 16,
 For use cases 2–4, also answer:
 
 - Where is the **spatial** or **sequential** structure?
+
+**Your answer:** *Write your answer here.*
 - Would changing the order or location of input elements change their meaning?
+
+**Your answer:** *Write your answer here.*
 - For audio or video, would you combine more than one architecture? Why?
+
+**Your answer:** *Write your answer here.*
 - What are the likely units of input (features, pixels, frames, waveform samples, spectrogram regions, or tokens)?
+
+**Your answer:** *Write your answer here.*
 
 :::
 

@@ -54,7 +54,7 @@ library(tidyverse)
 library(tidymodels)
 ```
 
-# Part 1 — Define the problem and split the data <a id="split"></a>
+# Part 1 — Define the problem and split the data {#split}
 
 We use the complete `credit_default.csv` dataset and retain `customer_category` as a predictor. This lets the recipe demonstrate categorical preprocessing while preserving continuity with Session 5.
 
@@ -69,7 +69,7 @@ The event of interest is **default**. Yardstick treats the first outcome factor 
 3. Inspect the data, row count, and outcome proportions.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -103,10 +103,12 @@ The level order confirms that `default` is the event used for ROC AUC and sensit
 Create a reproducible 80/20 split, stratified by `default`. Store the partitions as `train_data` and `test_data`, then compare row counts and class proportions.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 Why must `test_data` remain untouched until model selection is complete?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -138,7 +140,7 @@ split_summary
 
 Stratification keeps the outcome distribution approximately consistent across partitions. The test set must remain untouched because it is reserved for one independent estimate of generalization performance. Repeatedly consulting it would make model choices adapt to this particular sample and introduce selection bias.
 :::
-# Part 2 — Specify preprocessing without leakage <a id="recipe"></a>
+# Part 2 — Specify preprocessing without leakage {#recipe}
 
 A recipe records what transformations should happen. It does not estimate normalization statistics until a workflow is fitted. During cross-validation, those statistics are learned separately from each analysis fold and then applied to its assessment fold.
 
@@ -153,7 +155,7 @@ Use `train_data` to specify a recipe that:
 3. normalizes numeric predictors.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 Normalization is useful for many models, including logistic regression when predictors have very different units. Trees generally do not require it, but using one common recipe makes the comparison concise; the tree's split ordering is unchanged by a monotonic rescaling.
@@ -196,7 +198,7 @@ split
 ```
 :::
 
-# Part 3 — Specify two model classes <a id="models"></a>
+# Part 3 — Specify two model classes {#models}
 
 We compare two deliberately different model classes:
 
@@ -213,7 +215,7 @@ Create:
 2. a classification tree using the `rpart` engine, with `cost_complexity`, `tree_depth`, and `min_n` marked for tuning.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -237,7 +239,7 @@ tree_spec
 ```
 :::
 
-# Part 4 — Bundle preprocessing and models <a id="workflows"></a>
+# Part 4 — Bundle preprocessing and models {#workflows}
 
 A workflow bundles a recipe and model specification. This ensures the same transformations are applied consistently in resampling, final fitting, and prediction.
 
@@ -248,7 +250,7 @@ A workflow bundles a recipe and model specification. This ensures the same trans
 Create `logistic_workflow` and `tree_workflow` by combining the shared recipe with each model specification.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -267,7 +269,7 @@ logistic_workflow
 tree_workflow
 ```
 :::
-# Part 5 — Cross-validation on training data only <a id="cross-validation"></a>
+# Part 5 — Cross-validation on training data only {#cross-validation}
 
 Cross-validation creates temporary analysis and assessment partitions **inside the training data**. These folds support model comparison and tuning; they do not replace the final held-out test set.
 
@@ -278,14 +280,20 @@ Cross-validation creates temporary analysis and assessment partitions **inside t
 Create five reproducible folds from `train_data`, stratified by `default`. Confirm that the object contains five splits.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 Discuss:
 
 1. What role do the assessment portions of the folds play?
+
+**Your answer:** *Write your answer here.*
 2. How do they differ from `test_data`?
+
+**Your answer:** *Write your answer here.*
 3. Why would repeated model selection using test performance bias the reported final result?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -308,7 +316,7 @@ nrow(folds)
 3. Choosing repeatedly by test performance adapts decisions to random peculiarities of that test sample. The resulting estimate becomes optimistically biased through selection.
 :::
 
-# Part 6 — Evaluate the logistic baseline <a id="baseline"></a>
+# Part 6 — Evaluate the logistic baseline {#baseline}
 
 We use a small metric set: ROC AUC, accuracy, and sensitivity. Because `default` is the first factor level, ROC AUC and sensitivity treat default as the event.
 
@@ -321,7 +329,7 @@ We use a small metric set: ROC AUC, accuracy, and sensitivity. Because `default`
 3. Collect the mean and standard error for each metric.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -349,7 +357,7 @@ logistic_cv_metrics
 
 These are validation estimates aggregated across folds—not training performance and not final test performance.
 :::
-# Part 7 — Tune the decision tree <a id="tuning"></a>
+# Part 7 — Tune the decision tree {#tuning}
 
 The tree's hyperparameters control flexibility. We use a deliberately small grid so the exercise remains fast and interpretable.
 
@@ -366,10 +374,12 @@ Create all combinations of:
 Evaluate the grid using the **same training folds and metrics**. Select the configuration with the best mean ROC AUC.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 At any point in this task, did the tree see `test_data`?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -436,7 +446,7 @@ collect_metrics(tree_results) |>
 Look for strong mean performance, but also use `std_err` in the collected results to judge uncertainty and stability across folds.
 :::
 
-# Part 8 — Compare and select models <a id="comparison"></a>
+# Part 8 — Compare and select models {#comparison}
 
 Model selection happens using validation results. A more flexible model is not automatically better: it must demonstrate stronger generalization across the folds.
 
@@ -447,14 +457,20 @@ Model selection happens using validation results. A more flexible model is not a
 Build a two-row comparison containing the logistic baseline and best tree. Include mean ROC AUC and its standard error. Select the model with the higher mean value.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 Ask:
 
 - Which model has the higher mean validation ROC AUC?
+
+**Your answer:** *Write your answer here.*
 - How uncertain are the estimates across folds?
+
+**Your answer:** *Write your answer here.*
 - Is the tree clearly better, or might its flexibility be unnecessary?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -498,7 +514,7 @@ selected_model
 
 The comparison is deliberately computed rather than hard-coded: model selection must follow the observed validation results. Differences should be interpreted alongside their fold-to-fold uncertainty, not only by ranking means.
 :::
-# Part 9 — Finalize and evaluate once on the test set <a id="final-test"></a>
+# Part 9 — Finalize and evaluate once on the test set {#final-test}
 
 Only now do we use the held-out test observations. We finalize the selected workflow, refit it on all training observations, and evaluate exactly once on `test_data` through `last_fit()`.
 
@@ -509,7 +525,7 @@ Only now do we use the held-out test observations. We finalize the selected work
 If the tree won, insert `best_tree` into `tree_workflow`. Otherwise, use `logistic_workflow` unchanged. Then call `last_fit()` with the original `data_split`.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -580,7 +596,7 @@ final_roc |>
 The `.pred_default` column corresponds to the explicitly defined event level. CV metrics supported model development; this confusion matrix and ROC curve describe the one-time held-out evaluation.
 :::
 
-# Part 10 — Reflect on generalization <a id="reflection"></a>
+# Part 10 — Reflect on generalization {#reflection}
 
 ::: {.direction}
 Answer the following questions concisely.

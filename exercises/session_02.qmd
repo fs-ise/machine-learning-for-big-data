@@ -17,8 +17,6 @@ In this exercise, we cover:
 | [Wrap-up](#wrap-up)                    |     10     |
 | Overall                                |     65     |
 
-<br>
-
 **Recommended workflow:**
 
 1. ✏️ **Think & plan first:** Draft your answers and outline the transformation steps before coding.
@@ -34,14 +32,12 @@ Run this command once in the R console. You do not need to run it every time you
 
 ```{r}
 #| eval: false
-install.packages(c(
-  "tidyverse"
-))
+install.packages("tidyverse")
 ```
 
 :::
 
-# Part 1: Data structuring 1 <a id="structuring_1"></a>
+# Part 1: Data structuring 1 {#structuring_1}
 
 We start with the `market_data_log.csv` dataset.
 
@@ -62,81 +58,27 @@ market_data_log_df |> head()
 
 1. Identify:
 
-   * Values: ________________
-   * Observations: ________________
-   * Variables: ________________
-   * Units of observation: ________________
+   * Values: *Write your answer here.*
+   * Observations: *Write your answer here.*
+   * Variables: *Write your answer here.*
+   * Units of observation: *Write your answer here.*
 
 2. Draft the **tidy structure** of the dataset:
 
    * Fill in the column names and at least 3 example rows.
 
-<div class="cell-output cell-output-display">
-<div>
-<table style="width:100%; border-collapse:collapse; font-family:Arial, sans-serif; color:#222;">
-  <thead>
-    <tr>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-    </tr>
+**Your answer:** Enter the column names and example values in the empty table.
 
-    <tr>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-    </tr>
-    <tr>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-    </tr>
-    <tr>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
+|   |   |   |   |   |   |   |   |
+|---|---|---|---|---|---|---|---|
+|   |   |   |   |   |   |   |   |
+|   |   |   |   |   |   |   |   |
+|   |   |   |   |   |   |   |   |
 
 
 3. Describe how the dataset should be transformed.
 
-<br><br><br><br>
+**Your answer:** *Write your answer here.*
 
 4. **(Optional challenge)**: Implement the transformation in R (`tidyverse`)
 
@@ -146,7 +88,7 @@ market_data_df <- read_csv(
   show_col_types = FALSE
 )
 
-# Add your solution below.
+# YOUR CODE HERE
 # Note: you may need string operations.
 ```
 
@@ -177,6 +119,7 @@ market_data_df <- read_csv(
 
 
 ### 3. Describe how the dataset should be transformed.
+
 
 * **Parse encoded column:**
 
@@ -225,7 +168,7 @@ df_wide |> head()
 :::
 
 
-# Part 2: Data structuring 2 <a id="structuring_2"></a>
+# Part 2: Data structuring 2 {#structuring_2}
 
 Dataset `sales_data_channels_full_year.csv`
 
@@ -243,67 +186,26 @@ sales_data_df |> head()
 
 1. Identify:
 
-   * Values: ________________
-   * Observations: ________________
-   * Variables: ________________
-   * Units of observation: ________________
+   * Values: *Write your answer here.*
+   * Observations: *Write your answer here.*
+   * Variables: *Write your answer here.*
+   * Units of observation: *Write your answer here.*
 
 2. Draft the **tidy structure** of the dataset:
 
 
-<div class="cell-output cell-output-display">
-<div>
-<table style="width:100%; border-collapse:collapse; font-family:Arial, sans-serif; color:#222;">
-  <thead>
-    <tr>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-      <th style="background:#f2f2f2; border:1px solid #ccc; padding:10px;">&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-    </tr>
+**Your answer:** Enter the column names and example values in the empty table.
 
-    <tr>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-    </tr>
-
-    <tr>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-    </tr>
-
-    <tr>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-      <td contenteditable="true" style="border:1px solid #ccc; padding:10px;">&nbsp;</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
+|   |   |   |   |   |
+|---|---|---|---|---|
+|   |   |   |   |   |
+|   |   |   |   |   |
+|   |   |   |   |   |
 
 
 3. Describe how the dataset should be transformed.
 
-<br><br><br>
+**Your answer:** *Write your answer here.*
 
 4. **(Optional challenge)**: Implement the transformation in R (`tidyverse`)
 
@@ -313,7 +215,7 @@ sales_data_df <- read_csv(
   show_col_types = FALSE
 )
 
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 💡 In addition to the transformation, you may need string operations
@@ -343,6 +245,7 @@ sales_data_df <- read_csv(
 
 
 ### 3. Describe how the dataset should be transformed.
+
 
 - Reshape (wide → long): Convert all monthly/channel columns into two columns
 - Split the combined column (Month, Channel)
@@ -374,7 +277,7 @@ tidy_df |> head()
 
 :::
 
-# Part 3: Data cleansing <a id="cleansing"></a>
+# Part 3: Data cleansing {#cleansing}
 
 Dataset `messy_customer_data.csv`
 
@@ -399,6 +302,8 @@ In this part, move from **detecting problems** to **making the dataset analysis-
 ### 1. Identify scales of variables
 
 * What type of scale is each variable?
+
+**Your answer:** *Write your answer here.*
   Run the following and assign `nominal`, `ordinal`, `interval`, or `ratio`.
 
 ```{r}
@@ -409,6 +314,8 @@ customer_df |> glimpse()
 
 
 * What type of scale should each variable be?
+
+**Your answer:** *Write your answer here.*
   Assign `nominal`, `ordinal`, `interval`, or `ratio`.
 
   - customer_id: ________________
@@ -430,16 +337,13 @@ summary(customer_df)
 
 * Summarize all data quality issues you observe (open the [data/messy_customer_data.csv](data/messy_customer_data.csv)).
 
-<br><br><br><br><br><br><br>
-
-
+**Your answer:** *Write your answer here.*
 
 ### 3. Propose data preparation steps
 
 * For each data quality issue, suggest how you would address it.
 
-<br><br><br><br><br><br><br>
-
+**Your answer:** *Write your answer here.*
 
 ### 4. *(Optional challenge)* Implement in R (`tidyverse`)
 
@@ -447,7 +351,7 @@ summary(customer_df)
 * Run the code after each step and inspect the results.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 Note: Check how the `customer_df` changes after each preparation step!
@@ -516,6 +420,7 @@ summary(customer_df)
 ### 3. Propose data preparation steps
 
 * For each data quality issue, suggest how you would address it.
+
 
 * **Missing values:** impute (e.g., median for income) or remove rows
 * **Implausible / invalid values:** filter out or correct (e.g., negative income, invalid dates)
@@ -611,7 +516,7 @@ customer_df |> head()
 :::{.direction}
 
 
-## Wrap-up <a id="wrap-up"></a>
+## Wrap-up {#wrap-up}
 
 🎉🎈 You have completed the exercise - good work! 🎈🎉
 

@@ -90,10 +90,12 @@ mean(c(4, 6, 8, 10))
 4. Save the `.qmd` file. Do **not** render the document yet.
 
 ```{r}
-# TODO: calculate 17 * 23
+# YOUR CODE HERE: calculate 17 * 23
 ```
 
 What is the difference between code typed only in the Console and code stored in this document?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ## Edit a Quarto document
@@ -165,13 +167,13 @@ You should also see these objects in RStudio's **Environment** pane.
 4. Confirm that it has disappeared.
 
 ```{r}
-# TODO: create answer
+# YOUR CODE HERE: create answer
 
-# TODO: inspect the workspace
+# YOUR CODE HERE: inspect the workspace
 
-# TODO: remove answer
+# YOUR CODE HERE: remove answer
 
-# TODO: inspect the workspace again
+# YOUR CODE HERE: inspect the workspace again
 ```
 :::
 
@@ -257,18 +259,26 @@ glimpse(students_tbl)
 Use R functions to answer the following questions:
 
 - How many rows does `students` have?
+
+**Your answer:** *Write your answer here.*
 - How many columns does it have?
+
+**Your answer:** *Write your answer here.*
 - What is the mean of `score`?
+
+**Your answer:** *Write your answer here.*
 - What are the values in the `name` column?
 
+**Your answer:** *Write your answer here.*
+
 ```{r}
-# TODO: number of rows
+# YOUR CODE HERE: number of rows
 
-# TODO: number of columns
+# YOUR CODE HERE: number of columns
 
-# TODO: mean score
+# YOUR CODE HERE: mean score
 
-# TODO: names of students
+# YOUR CODE HERE: names of students
 ```
 :::
 
@@ -303,6 +313,8 @@ Compare:
 - RStudio's graphical data viewer.
 
 Which is most useful for quickly checking **values**, **column types**, and **larger tables**?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ## Move between objects and files
@@ -396,11 +408,11 @@ Create a new object called `students_updated` in which every student receives 2 
 Hints: use `mutate()` and `write_csv()`.
 
 ```{r}
-# TODO: create students_updated
+# YOUR CODE HERE: create students_updated
 
-# TODO: save it as students_updated.csv
+# YOUR CODE HERE: save it as students_updated.csv
 
-# TODO: confirm that the file exists
+# YOUR CODE HERE: confirm that the file exists
 ```
 :::
 
@@ -465,7 +477,7 @@ Without looking back at the earlier code, write the shortest sequence of command
 5. removes the loaded data frame again.
 
 ```{r}
-# TODO
+# YOUR CODE HERE
 ```
 :::
 

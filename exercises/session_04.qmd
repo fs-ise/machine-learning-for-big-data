@@ -30,9 +30,17 @@ A central question in this exercise is whether **remote work** is associated wit
 MetaCorp is interested in questions such as:
 
 - Does remote work seem to be associated with higher or lower performance?
+
+**Your answer:** *Write your answer here.*
 - Does this relationship remain once we control for experience, training, salary, and management quality?
+
+**Your answer:** *Write your answer here.*
 - Is the relationship between remote work and performance similar across departments?
+
+**Your answer:** *Write your answer here.*
 - When should we be careful not to overinterpret regression results?
+
+**Your answer:** *Write your answer here.*
 
 The target variable is `performance`, a quantitative employee performance score.
 
@@ -54,9 +62,7 @@ Run this command once in the R console. You do not need to run it every time you
 
 ```{r}
 #| eval: false
-install.packages(c(
-  "tidyverse"
-))
+install.packages("tidyverse")
 ```
 
 :::
@@ -97,7 +103,7 @@ Setting the factor levels explicitly makes **HR the reference category**. R's fo
 | `manager_quality` | manager quality rating from 1 to 5 | numeric |
 | `department` | employee department | categorical |
 
-# Part A — Baseline regression <a id="baseline"></a>
+# Part A — Baseline regression {#baseline}
 
 We begin with one regression model for the full company. This gives us a first answer to the question:
 
@@ -120,7 +126,7 @@ Your tasks:
 6. Identify how R represented the `department` factor.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 The identifying fields `name`, `employee_id`, and `role` simply do not appear in the formula. Because `department` is a factor, the formula interface handles its contrasts automatically.
@@ -198,7 +204,7 @@ Because `remote_share` ranges from 0 to 1, a one-unit increase means moving from
 :::
 
 :::
-# Part B — Regression inference and model summary <a id="inference"></a>
+# Part B — Regression inference and model summary {#inference}
 
 Base R's `lm()` provides estimation, prediction, and statistical inference in the same fitted model. We can examine coefficient uncertainty and overall model fit without refitting the model through another library.
 
@@ -212,7 +218,7 @@ Use the same `model` from Part A.
 3. Retrieve only the confidence interval for `remote_share`.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 In the summary, locate the coefficient estimates, standard errors, t-statistics, p-values, residual standard error, R², adjusted R², and overall F-test.
@@ -269,7 +275,7 @@ This observational regression controls only for measured predictors. Unobserved 
 ::: {.sol}
 The formula makes the dependent variable and predictors explicit and readable: `performance ~ experience + ... + department`. Because `department` is a factor, R automatically constructs contrasts relative to HR and reports them as `departmentIT` and `departmentSales`.
 :::
-# Part C — Regression diagnostics <a id="diagnostics"></a>
+# Part C — Regression diagnostics {#diagnostics}
 
 ::: {.direction}
 Regression coefficients are only part of the story. Before relying on model predictions, assess whether the model reasonably represents the data.
@@ -285,7 +291,7 @@ Even if `remote_share` has a positive or negative coefficient, that does **not**
 Create a data frame containing fitted values and residuals from `model`, then create a residual plot with ggplot2.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -333,7 +339,7 @@ No clear curvature or systematic structure is visible. The plot therefore shows 
 ::: {.sol}
 A funnel shape would suggest **heteroscedasticity**: residual variance changes with fitted values. Non-constant variance can make conventional standard errors, confidence intervals, and statistical tests unreliable.
 :::
-# Part D — Subgroup analysis: does one model fit all departments? <a id="subgroup-analysis"></a>
+# Part D — Subgroup analysis: does one model fit all departments? {#subgroup-analysis}
 
 ::: {.direction}
 Sometimes a single regression for the whole company may hide important differences. Internal feedback at MetaCorp suggests that complaints about remote work are more frequent in some departments than in others. Coordination-intensive work may face communication challenges, while other work may benefit from concentration and flexibility.
@@ -351,7 +357,7 @@ Estimate separate regressions for Sales, IT, and HR. Omit `department` from each
 departments <- unique(df$department)
 results <- list()
 
-# Add a loop below. For each department:
+# YOUR CODE HERE: add a loop. For each department:
 # 1. filter df;
 # 2. fit the subgroup model with lm();
 # 3. store it in results;
@@ -436,7 +442,7 @@ performance ~
 The interaction allows the `remote_share` slope to differ by department while estimating one combined model.
 :::
 
-# Part E — Deployment <a id="deployment"></a>
+# Part E — Deployment {#deployment}
 
 Saving and loading a model is useful in practice, but it is not the main conceptual focus of this exercise. It is included as an optional extension after estimation, interpretation, diagnostics, and subgroup analysis.
 
@@ -445,7 +451,7 @@ Saving and loading a model is useful in practice, but it is not the main concept
 :::{.direction}
 
 ```{r}
-# Save model to data/employee_performance_model.rds.
+# YOUR CODE HERE: save the model to data/employee_performance_model.rds.
 ```
 :::
 
@@ -464,7 +470,7 @@ saveRDS(
 Load the fitted model, create a tibble for an IT employee with the original predictors, and call `predict()`.
 
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 
 > **Important:** The fitted `lm()` object retains its formula and factor contrasts. You do not need to construct department indicator variables manually. Production use still requires validation that incoming values, units, factor levels, and other preparation rules match the training data.
@@ -541,7 +547,7 @@ Responsible use requires aligning technical implementation with legal requiremen
 :::
 
 :::{.direction}
-## Wrap-up <a id="wrap-up"></a>
+## Wrap-up {#wrap-up}
 
 🎉🎈 You have completed the exercise—good work! 🎈🎉
 

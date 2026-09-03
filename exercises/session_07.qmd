@@ -60,7 +60,7 @@ library(tidyverse)
 library(tidymodels)
 ```
 
-# Part 1 — Establish the common evaluation setup <a id="setup"></a>
+# Part 1 — Establish the common evaluation setup {#setup}
 
 We continue the LendWise default-classification task from Sessions 5 and 6. Every algorithm receives the same training observations and five cross-validation folds. The held-out test set remains unused until a recommendation has been made from validation results.
 
@@ -120,6 +120,8 @@ folds
 
 ::: {.direction}
 Why must every algorithm use these same folds? Why must `test_data` remain outside model comparison?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -138,8 +140,10 @@ Complete two recipes:
 
 Which model families should use each recipe?
 
+**Your answer:** *Write your answer here.*
+
 ```{r}
-# Add your solution below.
+# YOUR CODE HERE
 ```
 :::
 
@@ -166,7 +170,7 @@ Regularized regression, k-NN, and the SVM use `scaled_recipe`. The decision tree
 :::
 
 
-# Part 2 — Regularized logistic regression <a id="regularized"></a>
+# Part 2 — Regularized logistic regression {#regularized}
 
 Regularization balances fit and simplicity. `penalty` controls its strength: larger values shrink coefficients more. `mixture = 0` gives ridge, `mixture = 1` gives lasso, and intermediate values give elastic net.
 
@@ -181,12 +185,14 @@ regularized_grid <- expand_grid(
   mixture = c(0, 0.5, 1)
 )
 
-# Add regularized_spec and regularized_workflow.
+# YOUR CODE HERE: add regularized_spec and regularized_workflow.
 # Then call tune_grid() with folds, regularized_grid,
 # and classification_metrics.
 ```
 
 How does increasing `penalty` change model flexibility? Why is normalization appropriate here?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -229,7 +235,7 @@ show_best(regularized_results, metric = "roc_auc", n = 5)
 A larger penalty constrains coefficients more strongly and reduces flexibility. Normalization makes the penalty comparable across predictors measured in euros, counts, months, and proportions.
 :::
 
-# Part 3 — k-nearest neighbors <a id="knn"></a>
+# Part 3 — k-nearest neighbors {#knn}
 
 k-NN predicts from nearby labeled observations. Small `k` produces flexible, high-variance boundaries; large `k` smooths over more observations and increases bias.
 
@@ -243,10 +249,12 @@ knn_grid <- tibble(
   neighbors = c(3L, 5L, 9L, 15L, 25L)
 )
 
-# Complete knn_spec, knn_workflow, and knn_results.
+# YOUR CODE HERE: complete knn_spec, knn_workflow, and knn_results.
 ```
 
 Why would unscaled `income` dominate predictors that range between 0 and 1?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -287,7 +295,7 @@ Distance calculations use numerical differences. Without scaling, a difference o
 :::
 
 
-# Part 4 — Decision tree <a id="tree"></a>
+# Part 4 — Decision tree {#tree}
 
 A tree recursively partitions predictor space. Greater depth and smaller terminal-node requirements increase flexibility, while a larger `cost_complexity` encourages pruning.
 
@@ -297,7 +305,7 @@ A tree recursively partitions predictor space. Greater depth and smaller termina
 Use eight combinations: cost complexity 0.001 or 0.01, depth 3 or 6, and minimum node size 10 or 25.
 
 ```{r}
-# Complete the tree specification, workflow, grid, and tuning call.
+# YOUR CODE HERE: complete the tree specification, workflow, grid, and tuning call.
 ```
 :::
 
@@ -340,7 +348,7 @@ show_best(tree_results, metric = "roc_auc", n = 5)
 A single tree is often easy to explain as decision paths, but small changes in data can produce different splits. Complexity controls help limit overfitting.
 :::
 
-# Part 5 — Random forest <a id="forest"></a>
+# Part 5 — Random forest {#forest}
 
 A random forest aggregates trees trained on bootstrap samples while considering random predictor subsets. Aggregation generally reduces the instability of one tree, but the ensemble is harder to explain as a single decision path.
 
@@ -350,10 +358,12 @@ A random forest aggregates trees trained on bootstrap samples while considering 
 Keep `trees = 500` fixed. Tune `mtry` over 2, 4, and 6 predictors and `min_n` over 10 and 25.
 
 ```{r}
-# Complete rf_spec, rf_workflow, rf_grid, and rf_results.
+# YOUR CODE HERE: complete rf_spec, rf_workflow, rf_grid, and rf_results.
 ```
 
 Why might a forest predict better than one tree? What interpretability is lost?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -395,7 +405,7 @@ Averaging many decorrelated trees can reduce variance and improve generalization
 :::
 
 
-# Part 6 — RBF support vector machine <a id="svm"></a>
+# Part 6 — RBF support vector machine {#svm}
 
 An SVM seeks a decision boundary with a wide margin. `cost` controls how strongly classification errors are penalized. The RBF kernel permits nonlinear boundaries, while `rbf_sigma` controls how locally the kernel responds and therefore affects flexibility.
 
@@ -405,7 +415,7 @@ An SVM seeks a decision boundary with a wide margin. `cost` controls how strongl
 Tune six combinations: cost 0.25, 1, or 4 and RBF sigma 0.01 or 0.1. Use normalized predictors.
 
 ```{r}
-# Complete svm_spec, svm_workflow, svm_grid, and svm_results.
+# YOUR CODE HERE: complete svm_spec, svm_workflow, svm_grid, and svm_results.
 ```
 :::
 
@@ -446,7 +456,7 @@ show_best(svm_results, metric = "roc_auc", n = 5)
 Scaling prevents the margin and RBF distances from being dominated by predictors with numerically large units.
 :::
 
-# Part 7 — Compare validation performance and recommend a model <a id="comparison"></a>
+# Part 7 — Compare validation performance and recommend a model {#comparison}
 
 All five algorithms have now been evaluated using the same folds. ROC AUC is the primary selection metric, while accuracy, sensitivity, uncertainty, and organizational requirements provide additional context.
 
@@ -456,7 +466,7 @@ All five algorithms have now been evaluated using the same folds. ROC AUC is the
 Run the supplied helper and comparison code. It retrieves ROC AUC, accuracy, and sensitivity at each model's ROC-AUC-optimal configuration.
 
 ```{r}
-# The complete helper is provided in the solution.
+# YOUR CODE HERE: create the comparison helper described above.
 ```
 :::
 
@@ -574,10 +584,20 @@ Typical properties—not absolute rules—include:
 Answer:
 
 1. Which model has the strongest mean validation ROC AUC?
+
+**Your answer:** *Write your answer here.*
 2. Are differences large relative to their standard errors?
+
+**Your answer:** *Write your answer here.*
 3. Which models naturally capture nonlinear relationships?
+
+**Your answer:** *Write your answer here.*
 4. Is the most flexible model necessarily best here?
+
+**Your answer:** *Write your answer here.*
 5. What matters for LendWise besides the highest score?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -608,7 +628,7 @@ For this exercise, the quantitative rule selects the strongest mean validation R
 :::
 
 
-# Part 8 — Final held-out test evaluation <a id="final-test"></a>
+# Part 8 — Final held-out test evaluation {#final-test}
 
 We now use the test set once. This is not another opportunity to tune the winner.
 
@@ -662,6 +682,8 @@ final_test_metrics
 
 ::: {.direction}
 Compare the selected model's cross-validation metrics with its held-out test metrics. Then inspect the confusion matrix and ROC curve. Does the held-out result broadly support the validation-based recommendation?
+
+**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
