@@ -122,7 +122,7 @@ Extensions:
 
 At the end: highlight that one goal is to get a good understanding of well-structured and contextualized analytical reports.
 
-
+{{< pagebreak >}}
 
 ## Exercise
 
@@ -130,3 +130,18 @@ At the end: highlight that one goal is to get a good understanding of well-struc
   You probably know several of these things, but nevertheless go through the notebook.
 - Do not render the whole document at the beginning, work through it step-by-step, fill out cells and run them individually.
   Then, once the document is complete, you may render it completely (rerun the analyses).
+
+Notes:
+
+| Part | Solution / key point |
+|---|---|
+| **Console vs document** | `17 * 23` → **391**. Console code is transient; code in the `.qmd` is **saved and reproducible**. |
+| **Quarto `eval: false`** | The non-running cell should contain `#| eval: false` followed by `print("This should not run")`. The code remains visible but is not executed during render. |
+| **Objects / memory** | `answer <- 6 * 7`; `ls()` should include `answer`; `rm(answer)` removes it; subsequent `ls()` should not. Objects belong to the **R session**, not the filesystem. |
+| **Package help** | Missing-value argument of `read_csv()` is **`na`**. |
+| **Inspect `students`** | `nrow(students)` → **5**; `ncol(students)` → **4**; `mean(students$score)` → **75.6**; `students$name` → Alex, Bao, Casey, Dina, Emil. |
+| **Different data views** | Printing: good for **small-table values**. `glimpse()`: best for **column names/types + sample values**. `View()`: best for **browsing larger tables**. |
+| **File vs memory** | After `rm(students)`, `file.exists("students.csv")` remains `TRUE`: `rm()` removes the **R object**, not the CSV stored on disk. |
+| **Modify data** | `students_updated <- students |> mutate(score = score + 2)`; then `write_csv(students_updated, "students_updated.csv")`; `file.exists("students_updated.csv")` → `TRUE`. |
+| **Reproducibility check** | After restarting, old objects should be absent. Rendering must recreate everything **from code in document order**, showing that the analysis does not depend on manual execution or a saved workspace. |
+| **Optional challenge** | `library(tidyverse)` → `students <- read_csv("students.csv")` → `head(students, 3)` → `ls()` → `rm(students)`. |

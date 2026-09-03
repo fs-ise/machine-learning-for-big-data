@@ -98,9 +98,8 @@ Metaphor: statisticians carefully collect their data on their own (live on their
 | Data structuring 1 | 15 |
 | Data structuring 2 | 20 |
 | Data cleansing | 20 |
-| EDA: Clustering | 25 |
-| Wrap-up | 10 |
-| **Overall** | **90** |
+
+Open the **tidyr documentation** (linked at the top of the exercise sheet)
 
 - Focus on tibbles (not so much on other R data types).
 - Possible extension: financial API (code for the API call should be included).
