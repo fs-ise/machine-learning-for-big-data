@@ -661,6 +661,14 @@ Use your document as a starting point for a **potential group project topic**.
 If you have a question, put up the **help-needed** tag and I will come by.
 :::
 
+## Preparation
+
+Before the break, please install the tidyverse package for the exercises:
+
+```r
+install.packages("tidyverse")
+```
+
 ## Summary {data-state="hide-menubar"}
 
 In the practical part, we learned how to:
