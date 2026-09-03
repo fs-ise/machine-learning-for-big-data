@@ -23,7 +23,20 @@ jobs:
       - name: Install R exercise dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --yes r-base r-cran-tidyverse
+          sudo apt-get install --yes r-base
+          Rscript -e 'install.packages(c(
+            "tidyverse",
+            "tidymodels",
+            "pROC",
+            "quanteda",
+            "Matrix",
+            "irlba",
+            "glmnet",
+            "kknn",
+            "rpart",
+            "ranger",
+            "kernlab"
+          ), repos = "https://cloud.r-project.org")'
       - uses: quarto-dev/quarto-actions/setup@v2
       - name: Validate all generated exercise variants
         run: make exercises-check
