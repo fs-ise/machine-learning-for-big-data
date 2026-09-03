@@ -34,18 +34,7 @@ Use the UPS, Visa, Walmart, and digital-advertising cases to connect each charac
 
 **Important**: Download the qmd files. do not work in the repository (html rendering fails due to `_quarto.yml` settings)
 
-Work in pairs.
-
-Base task: simple Kaggle
-
-Next: students build their own report/test
-
-Extensions:
-
-- Bibliography: add ``bibliography: references.bib`` to the yaml header + include ``@cit-key``, add explicit ``# References`` at the end.
-- PDF rendering: add ``pdf: default`` in the format section, use the Render dropdown.
-  **Note:** The default PDF template and citation style will be accepted for submissions.
-
+- Work in pairs.
 
 {{< pagebreak >}}
 
@@ -123,4 +112,21 @@ ggplot(advertising, aes(x = TV, y = Sales)) +
   )
 ```
 
+Extensions:
+
+- ggplot: included in the example
+- Bibliography: add ``bibliography: references.bib`` to the yaml header + include ``@cit-key``, add explicit ``# References`` at the end.
+- PDF rendering: add ``pdf: default`` in the format section, use the Render dropdown.
+  **Note:** The default PDF template and citation style will be accepted for submissions.
+
+
 At the end: highlight that one goal is to get a good understanding of well-structured and contextualized analytical reports.
+
+
+
+## Exercise
+
+- Goal: broadly cover all skills required to navigate RStudio, Quarto reports and R code (libraries, in-memory objects).
+  You probably know several of these things, but nevertheless go through the notebook.
+- Do not render the whole document at the beginning, work through it step-by-step, fill out cells and run them individually.
+  Then, once the document is complete, you may render it completely (rerun the analyses).
