@@ -661,14 +661,6 @@ Use your document as a starting point for a **potential group project topic**.
 If you have a question, put up the **help-needed** tag and I will come by.
 :::
 
-## Preparation
-
-Before the break, please install the tidyverse package for the exercises:
-
-```r
-install.packages("tidyverse")
-```
-
 ## Summary {data-state="hide-menubar"}
 
 In the practical part, we learned how to:
@@ -677,5 +669,17 @@ In the practical part, we learned how to:
 - import and inspect data with R,
 - combine text, code, and analytical output in one document,
 - and render the analysis as HTML or PDF.
+
+. . . 
+
+<br>
+
+**Preparation**
+
+Before the break, please install the tidyverse package for the exercises:
+
+```r
+install.packages("tidyverse")
+```
 
 # References {data-state="hide-menubar"}
