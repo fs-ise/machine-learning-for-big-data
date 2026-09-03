@@ -117,9 +117,6 @@ split_summary
 
 Learning representation parameters from test reviews would leak information about the final evaluation corpus. The correct order is split first, learn every representation from training text, and only transform the test text with the already learned vocabulary, weights, and rotations.
 :::
-
-{{< pagebreak >}}
-
 # Part 2 — Sparse text representations <a id="part-2"></a>
 
 Bag-of-Words records token counts. TF-IDF retains a sparse lexical representation but downweights ubiquitous features and emphasizes features characteristic of fewer documents.
@@ -254,9 +251,6 @@ nonzero_features
 
 Sparse features are relatively interpretable because they reveal words and phrases. They remain lexical, however, and do not fully encode context, irony, negation, or paraphrase.
 :::
-
-{{< pagebreak >}}
-
 ## Task 2.4 — Retrieve similar reviews with TF-IDF
 
 ::: {.direction}
@@ -416,9 +410,6 @@ ggplot(
 
 Two principal components retain only part of a 100-dimensional representation. Apparent overlap does not imply that the full space contains no useful sentiment information, and apparent clusters may reflect topic or writing style rather than sentiment.
 :::
-
-{{< pagebreak >}}
-
 # Part 4 — Classification with two representations <a id="part-4"></a>
 
 We hold the classifier family fixed—a ridge logistic model—and vary only the representation. This isolates the representational comparison. `glmnet` accepts sparse TF-IDF matrices directly and avoids expanding them into a dense data frame.
@@ -596,9 +587,6 @@ model_comparison
 | Semantic relationships | Limited to lexical co-occurrence | Captures broader co-occurrence structure |
 
 Do not assume dense representations win. Compare measured performance with representation cost and analytical purpose.
-
-{{< pagebreak >}}
-
 # Part 5 — Qualitative edge-case analysis <a id="part-5"></a>
 
 Synthetic difficult examples are useful for discussing failures, not measuring general performance.
@@ -695,9 +683,6 @@ Discuss which examples fail and why. TF-IDF may overreact to visible words such 
 :::
 
 ::: {.direction}
-
-{{< pagebreak >}}
-
 # Wrap-up <a id="wrap-up"></a>
 
 | Representation | Main idea | Strength | Limitation |
@@ -708,8 +693,10 @@ Discuss which examples fail and why. TF-IDF may overreact to visible words such 
 
 The key lesson is not that one representation is universally best. Representation choice changes what “similar” means, what a classifier can learn, what can be explained, and how much computation is required.
 
+<!--
 ::: {.callout-tip title="Session 8 survey"}
 {{< survey session_08 exercise >}}
 :::
+-->
 
 :::

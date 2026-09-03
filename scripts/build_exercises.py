@@ -47,8 +47,60 @@ def _wanted(semantic: str, variant: Variant) -> bool:
     }[semantic]
 
 
+def _strip_html_comments(source: str) -> str:
+    """Remove HTML comments outside fenced code blocks.
+
+    This deliberately uses a small state machine rather than a document-wide
+    regular expression: comments may span lines, several comments may occur in
+    one document, and HTML-looking examples inside code fences are source text.
+    """
+    output: list[str] = []
+    code_fence: tuple[str, int] | None = None
+    in_comment = False
+
+    for line in source.splitlines(keepends=True):
+        code_match = CODE_FENCE.match(line)
+        if code_fence is not None:
+            output.append(line)
+            if (
+                code_match
+                and code_match.group("fence")[0] == code_fence[0]
+                and len(code_match.group("fence")) >= code_fence[1]
+            ):
+                code_fence = None
+            continue
+        if not in_comment and code_match:
+            code_fence = (code_match.group("fence")[0], len(code_match.group("fence")))
+            output.append(line)
+            continue
+
+        position = 0
+        visible: list[str] = []
+        while position < len(line):
+            if in_comment:
+                end = line.find("-->", position)
+                if end < 0:
+                    position = len(line)
+                else:
+                    in_comment = False
+                    position = end + 3
+            else:
+                start = line.find("<!--", position)
+                if start < 0:
+                    visible.append(line[position:])
+                    position = len(line)
+                else:
+                    visible.append(line[position:start])
+                    in_comment = True
+                    position = start + 4
+        output.extend(visible)
+
+    return "".join(output)
+
+
 def sanitize(source: str, variant: Variant, *, filename: str = "<input>") -> str:
     """Return one variant while retaining source text exactly where possible."""
+    source = _strip_html_comments(source)
     output: list[str] = []
     divs: list[Div] = []
     code_fence: tuple[str, int] | None = None

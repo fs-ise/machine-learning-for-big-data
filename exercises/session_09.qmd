@@ -52,9 +52,6 @@ Output: 1 value
 The model has two hidden layers and three trainable dense layers. With `[32, 16, 8]`, it has three hidden layers with those widths and a final `8 -> 1` layer. It expects a fixed-length feature vector. Flattening media removes explicit spatial and temporal relationships, which CNNs and sequence architectures are designed to preserve.
 
 :::
-
-{{< pagebreak >}}
-
 ## Part 2: Match architectures to media use cases {#part-2}
 
 ::: {.direction}
@@ -74,9 +71,6 @@ The model has two hidden layers and three trainable dense layers. With `[32, 16,
 | 4 | Predict the next song, video, or podcast from recent interaction sequences, time of day, device, and consumption history. | |
 | 5 | Detect toxic or abusive livestream chat messages as they are posted. | |
 | 6 | Forecast server demand and bandwidth from historical usage across days, weeks, and special events. | |
-
-{{< pagebreak >}}
-
 For use cases 2–4, also answer:
 
 - Where is the **spatial** or **sequential** structure?
@@ -115,8 +109,10 @@ raw modality -> numerical representation -> architecture -> output -> evaluation
 
 Then compare it with a case whose input has a different structure. State which architectural assumption changes.
 
+<!--
 ::: {.callout-tip title="Session 9 survey"}
 {{< survey session_09 exercise >}}
 :::
+-->
 
 :::

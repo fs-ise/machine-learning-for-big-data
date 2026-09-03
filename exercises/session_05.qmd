@@ -83,8 +83,6 @@ Create a filtered data frame containing only early-career urban borrowers.
 ```{r}
 # Add your solution below.
 ```
-
-{{< pagebreak >}}
 :::
 
 ::: {.sol}
@@ -213,9 +211,6 @@ y_class
 
 The first observation's predicted default probability is approximately **48.1%**, so it is classified as no default at a 50% threshold.
 :::
-
-{{< pagebreak >}}
-
 # Part 2 — Probabilities and thresholds
 
 ::: {.direction}
@@ -520,9 +515,6 @@ AUC is not a complete measure of business utility and does not determine the ope
 ::: {.sol}
 ROC/AUC evaluates ranking performance across thresholds and supports model comparison before selecting a cutoff. The eventual threshold must still reflect the unequal business costs of false positives and false negatives.
 :::
-
-{{< pagebreak >}}
-
 # Part 5 — Compare early-career urban borrowers and platform workers
 
 Repeat the same model specification for platform workers, then compare coefficients and discrimination.
@@ -677,9 +669,6 @@ The early-career urban model has the higher in-sample AUC: approximately **0.801
 :::
 
 ::: {.direction}
-
-{{< pagebreak >}}
-
 # 🧩 Wrap-up <a id="wrap-up"></a>
 
 🎉🎈 You have completed the exercise—good work! 🎈🎉
@@ -695,8 +684,10 @@ In this exercise, we have learned to:
 - Understand ROC curves and AUC
 - Compare model behavior across customer segments
 
+<!--
 ::: {.callout-tip title="Session 5 survey"}
 {{< survey session_05 exercise >}}
 :::
+-->
 
 :::

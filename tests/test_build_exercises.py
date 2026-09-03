@@ -75,6 +75,50 @@ def test_chunks_and_unrelated_nested_divs_are_preserved() -> None:
     assert all(ordinary in sanitize(SOURCE, variant) for variant in VARIANTS)
 
 
+@pytest.mark.parametrize("variant", VARIANTS)
+def test_html_comments_are_removed_from_both_variants(variant: str) -> None:
+    source = "before<!-- single -->middle<!--\nmultiple\nlines\n-->after\n"
+    assert sanitize(source, variant) == "beforemiddleafter\n"
+
+
+def test_multiple_comments_do_not_remove_intervening_text() -> None:
+    source = "start<!-- first -->kept<!-- second -->end\n"
+    assert sanitize(source, "assign") == "startkeptend\n"
+
+
+@pytest.mark.parametrize("fence", ("```", "~~~~"))
+def test_html_comment_syntax_inside_code_fences_is_preserved(fence: str) -> None:
+    source = f"{fence}text\n<!-- literal example -->\n{fence}\n"
+    assert sanitize(source, "solution") == source
+
+
+def test_comment_removal_preserves_semantic_div_filtering() -> None:
+    source = """<!-- hidden -->
+::: {.direction}
+assignment
+:::
+::: {.sol}
+solution
+:::
+"""
+    assert "assignment" in sanitize(source, "assign")
+    assert "solution" not in sanitize(source, "assign")
+    assert "assignment" not in sanitize(source, "solution")
+    assert "solution" in sanitize(source, "solution")
+
+
+def test_commented_survey_is_absent_from_canonical_variants() -> None:
+    root = Path(__file__).resolve().parents[1]
+    source = (root / "exercises/session_02.qmd").read_text(encoding="utf-8")
+    assert "{{< survey session_02 exercise >}}" in source
+    for variant in VARIANTS:
+        generated = sanitize(source, variant, filename="session_02.qmd")
+        assert "Session 2 survey" not in generated
+        assert "{{< survey" not in generated
+        assert "<!--" not in generated
+        assert "-->" not in generated
+
+
 @pytest.mark.parametrize(
     "source",
     ["::: {.sol}\nmissing close\n", "::: {.sol.direction}\nambiguous\n:::\n"],

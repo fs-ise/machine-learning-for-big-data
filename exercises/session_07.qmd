@@ -145,9 +145,6 @@ tree_recipe
 
 Regularized regression, k-NN, and the SVM use `scaled_recipe`. The decision tree and random forest use `tree_recipe`. Scaling is essential for distance-based k-NN and helpful for penalty- and margin-based models. Tree-based predictions depend on ordered split points, so rescaling adds no useful information.
 :::
-
-{{< pagebreak >}}
-
 # Part 2 — Regularized logistic regression <a id="regularized"></a>
 
 Regularization balances fit and simplicity. `penalty` controls its strength: larger values shrink coefficients more. `mixture = 0` gives ridge, `mixture = 1` gives lasso, and intermediate values give elastic net.
@@ -269,9 +266,6 @@ show_best(knn_results, metric = "roc_auc", n = 5)
 
 Distance calculations use numerical differences. Without scaling, a difference of hundreds of euros can overwhelm meaningful differences in utilization or debt ratios merely because of units.
 :::
-
-{{< pagebreak >}}
-
 # Part 4 — Decision tree <a id="tree"></a>
 
 A tree recursively partitions predictor space. Greater depth and smaller terminal-node requirements increase flexibility, while a larger `cost_complexity` encourages pruning.
@@ -380,9 +374,6 @@ show_best(rf_results, metric = "roc_auc", n = 5)
 
 Averaging many decorrelated trees can reduce variance and improve generalization. Unlike one tree, however, a forest cannot be summarized by one transparent set of decision paths.
 :::
-
-{{< pagebreak >}}
-
 # Part 6 — RBF support vector machine <a id="svm"></a>
 
 An SVM seeks a decision boundary with a wide margin. `cost` controls how strongly classification errors are penalized. The RBF kernel permits nonlinear boundaries, while `rbf_sigma` controls how locally the kernel responds and therefore affects flexibility.
@@ -591,9 +582,6 @@ selected_model
 
 For this exercise, the quantitative rule selects the strongest mean validation ROC AUC. A business recommendation may reasonably prefer a nearly equivalent, more interpretable model when score differences are small and regulated credit decisions require clear explanations. The choice is locked before any test outcome is inspected.
 :::
-
-{{< pagebreak >}}
-
 # Part 8 — Final held-out test evaluation <a id="final-test"></a>
 
 We now use the test set once. This is not another opportunity to tune the winner.
@@ -691,9 +679,6 @@ Does the test result broadly support the validation-based recommendation? A diff
 :::
 
 ::: {.direction}
-
-{{< pagebreak >}}
-
 ## Wrap-up
 
 🎉🎈 You have completed the exercise—good work! 🎈🎉
@@ -707,8 +692,10 @@ You have learned to:
 - balance predictive performance, stability, computation, and interpretability;
 - select and evaluate a final model on unseen data.
 
+<!--
 ::: {.callout-tip title="Session 7 survey"}
 {{< survey session_07 exercise >}}
 :::
+-->
 
 :::

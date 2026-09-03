@@ -124,9 +124,6 @@ split_summary
 
 Stratification keeps the outcome distribution approximately consistent across partitions. The test set must remain untouched because it is reserved for one independent estimate of generalization performance. Repeatedly consulting it would make model choices adapt to this particular sample and introduce selection bias.
 :::
-
-{{< pagebreak >}}
-
 # Part 2 — Specify preprocessing without leakage <a id="recipe"></a>
 
 A recipe records what transformations should happen. It does not estimate normalization statistics until a workflow is fitted. During cross-validation, those statistics are learned separately from each analysis fold and then applied to its assessment fold.
@@ -256,9 +253,6 @@ logistic_workflow
 tree_workflow
 ```
 :::
-
-{{< pagebreak >}}
-
 # Part 5 — Cross-validation on training data only <a id="cross-validation"></a>
 
 Cross-validation creates temporary analysis and assessment partitions **inside the training data**. These folds support model comparison and tuning; they do not replace the final held-out test set.
@@ -341,9 +335,6 @@ logistic_cv_metrics
 
 These are validation estimates aggregated across folds—not training performance and not final test performance.
 :::
-
-{{< pagebreak >}}
-
 # Part 7 — Tune the decision tree <a id="tuning"></a>
 
 The tree's hyperparameters control flexibility. We use a deliberately small grid so the exercise remains fast and interpretable.
@@ -493,9 +484,6 @@ selected_model
 
 The comparison is deliberately computed rather than hard-coded: model selection must follow the observed validation results. Differences should be interpreted alongside their fold-to-fold uncertainty, not only by ranking means.
 :::
-
-{{< pagebreak >}}
-
 # Part 9 — Finalize and evaluate once on the test set <a id="final-test"></a>
 
 Only now do we use the held-out test observations. We finalize the selected workflow, refit it on all training observations, and evaluate exactly once on `test_data` through `last_fit()`.
@@ -621,9 +609,6 @@ Document the locked workflow and evaluation, assess fairness and operational cos
 :::
 
 ::: {.direction}
-
-{{< pagebreak >}}
-
 ## Wrap-up
 
 🎉🎈 You have completed the exercise—good work! 🎈🎉
@@ -637,8 +622,10 @@ split → recipe → workflows → training-data cross-validation
 
 You also connected each step to generalization, overfitting, leakage, selection bias, and the bias–variance trade-off.
 
+<!--
 ::: {.callout-tip title="Session 6 survey"}
 {{< survey session_06 exercise >}}
 :::
+-->
 
 :::

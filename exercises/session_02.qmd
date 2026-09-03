@@ -137,52 +137,7 @@ market_data_df <- read_csv(
 # Note: you may need string operations.
 ```
 
-{{< iconify fluent-mdl2:insights >}} If you didn’t get to this part in class, try working through it at home.
-
-
-::: {.callout-note title="Expectations in the exam"}
-<br>
-
-<table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;">
-  <thead>
-    <tr style="background-color: #f2f2f2;">
-      <th style="border: 1px solid #ccc; padding: 8px;">Grade</th>
-      <th style="border: 1px solid #ccc; padding: 8px;">Expectations</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="border: 1px solid #ccc; padding: 8px;"><strong>1 (Best)</strong></td>
-      <td style="border: 1px solid #ccc; padding: 8px;">
-        <strong>Recommend</strong> how to fix the dataset using appropriate transformations, e.g., describe restructuring steps, select the correct method from examples, or provide pseudocode.
-      </td>
-    </tr>
-    <tr>
-      <td style="border: 1px solid #ccc; padding: 8px;"><strong>2</strong></td>
-      <td style="border: 1px solid #ccc; padding: 8px;">
-        <strong>Evaluate</strong> and justify the decision using tidy data principles, e.g., "This is not tidy because column 2 contains two variables instead of one."
-      </td>
-    </tr>
-    <tr>
-      <td style="border: 1px solid #ccc; padding: 8px;"><strong>3</strong></td>
-      <td style="border: 1px solid #ccc; padding: 8px;">
-        <strong>Apply</strong> tidy data principles to evaluate a dataset (correctly identify whether it is tidy or not).
-      </td>
-    </tr>
-    <tr>
-      <td style="border: 1px solid #ccc; padding: 8px;"><strong>4 (Pass)</strong></td>
-      <td style="border: 1px solid #ccc; padding: 8px;">
-        <strong>Understand</strong> and reproduce the principles of tidy data (e.g., each variable in a column, each observation in a row).
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<p style="font-family: Arial, sans-serif; margin-top: 10px;">
-  <strong>Note:</strong> Even for the best grade, you are not expected to write fully functional code from memory. Still, practicing with code will help you build a deeper conceptual understanding.
-</p>
-
-:::
+💡 If you didn’t get to this part in class, try working through it at home.
 
 :::
 
@@ -198,7 +153,6 @@ market_data_df <- read_csv(
 * **Variables:** Timestamp, Logger system, Firm, Country, Sector, Period, MarketCap, Revenue, EBITDA
 * **Units of observation:** One logged **firm–period** record (aggregating multiple metrics)
 
----
 
 ### 2. Draft the **tidy structure** of the dataset (wide format):
 
@@ -208,7 +162,6 @@ market_data_df <- read_csv(
 | 2023-10-09 00:00:00 | FIN-PIPE-V1 | SAP  | DE      | Tech   | 2023Q2 | 1816.0B   | 82.2B   |        |
 | ...                 | ...         | ...  | ...     | ...    | ...    | ...       | ...     | ...    |
 
----
 
 ### 3. Describe how the dataset should be transformed.
 
@@ -227,7 +180,6 @@ market_data_df <- read_csv(
   * Convert `Value` into numeric format (e.g., remove `B` and cast to float)
   * Keep or drop `timestamp` depending on whether it represents data collection or observation time
 
----
 
 ### 4. (Optional challenge): Implement the transformation in R (`tidyverse`)
 
@@ -260,23 +212,17 @@ df_wide |> head()
 :::
 
 
----
-
-
-
 # Part 2: Data structuring 2 <a id="structuring_2"></a>
 
 Dataset `sales_data_channels_full_year.csv`
 
 ```{r}
-
 sales_data_df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/sales_data_channels_full_year.csv",
   show_col_types = FALSE
 )
 sales_data_df |> head()
 ```
-
 
 :::{.direction}
 
@@ -357,7 +303,7 @@ sales_data_df <- read_csv(
 # Add your solution below.
 ```
 
-{{< iconify fluent-mdl2:insights >}} In addition to the transformation, you may need string operations
+💡 In addition to the transformation, you may need string operations
 
 :::
 
@@ -414,7 +360,6 @@ tidy_df |> head()
 ```
 
 :::
-
 
 # Part 3: Data cleansing <a id="cleansing"></a>
 
@@ -482,7 +427,6 @@ summary(customer_df)
 
 <br><br><br><br><br><br><br>
 
----
 
 ### 4. *(Optional challenge)* Implement in R (`tidyverse`)
 
@@ -555,7 +499,6 @@ summary(customer_df)
 - **Duplicates**
   - Duplicate records identifiable via repeated `customer_id` (high frequency)
 
----
 
 ### 3. Propose data preparation steps
 
@@ -568,7 +511,6 @@ summary(customer_df)
 * **Inconsistent categorical values:** unify categories (e.g., gender labels, country formats)
 * **Duplicates:** remove duplicates based on `customer_id`
 
----
 
 ### 4. *(Optional challenge)* Implement in R (`tidyverse`)
 
@@ -655,9 +597,6 @@ customer_df |> head()
 
 :::{.direction}
 
----
-
-
 
 ## Wrap-up <a id="wrap-up"></a>
 
@@ -668,13 +607,10 @@ In this exercise, we have learned to
 * Structure data in a tidy format
 * Prepare and explore datasets
 
-
-::: {.callout-note title="Stop the Codespace"}
-Remember to <b>stop</b> your Codespace [here](https://github.com/codespaces).
-:::
-
+<!--
 ::: {.callout-tip title="Session 2 survey"}
 {{< survey session_02 exercise >}}
 :::
+-->
 
 :::

@@ -71,9 +71,6 @@ summary(df)
 ```
 
 Setting the factor levels explicitly makes **HR the reference category**. R's formula interface will automatically represent the other departments with contrasts; we do not need to create indicator columns manually.
-
-{{< pagebreak >}}
-
 ## Variable overview
 
 | Variable | Meaning | Type |
@@ -136,9 +133,6 @@ coef(model)
 
 The coefficient names `departmentIT` and `departmentSales` show that R compares IT and Sales with the reference category, HR.
 :::
-
-{{< pagebreak >}}
-
 ## Task A2: Interpret the coefficients
 
 :::{.direction}
@@ -191,9 +185,6 @@ Because `remote_share` ranges from 0 to 1, a one-unit increase means moving from
 :::
 
 :::
-
-{{< pagebreak >}}
-
 # Part B — Regression inference and model summary <a id="inference"></a>
 
 Base R's `lm()` provides estimation, prediction, and statistical inference in the same fitted model. We can examine coefficient uncertainty and overall model fit without refitting the model through another library.
@@ -265,9 +256,6 @@ This observational regression controls only for measured predictors. Unobserved 
 ::: {.sol}
 The formula makes the dependent variable and predictors explicit and readable: `performance ~ experience + ... + department`. Because `department` is a factor, R automatically constructs contrasts relative to HR and reports them as `departmentIT` and `departmentSales`.
 :::
-
-{{< pagebreak >}}
-
 # Part C — Regression diagnostics <a id="diagnostics"></a>
 
 ::: {.direction}
@@ -332,9 +320,6 @@ No clear curvature or systematic structure is visible. The plot therefore shows 
 ::: {.sol}
 A funnel shape would suggest **heteroscedasticity**: residual variance changes with fitted values. Non-constant variance can make conventional standard errors, confidence intervals, and statistical tests unreliable.
 :::
-
-{{< pagebreak >}}
-
 # Part D — Subgroup analysis: does one model fit all departments? <a id="subgroup-analysis"></a>
 
 ::: {.direction}
@@ -389,9 +374,6 @@ for (dept in departments) {
 }
 ```
 :::
-
-{{< pagebreak >}}
-
 ## Task D2: Compare the subgroup models
 
 1. Do the coefficients differ across departments?
@@ -463,9 +445,6 @@ saveRDS(
 )
 ```
 :::
-
-{{< pagebreak >}}
-
 ## Task E2 (optional): Load the model and predict a new case
 
 ::: {.direction}
@@ -549,8 +528,6 @@ Responsible use requires aligning technical implementation with legal requiremen
 :::
 
 :::{.direction}
-{{< pagebreak >}}
-
 ## Wrap-up <a id="wrap-up"></a>
 
 🎉🎈 You have completed the exercise—good work! 🎈🎉
@@ -565,12 +542,10 @@ In this exercise, we have learned to
 - Save, load, and apply fitted models for prediction
 - Reflect on responsible organizational use of predictive models
 
-::: {.callout-note title="Stop the Codespace"}
-Remember to <b>stop</b> your Codespace [here](https://github.com/codespaces).
-:::
-
+<!--
 ::: {.callout-tip title="Session 4 survey"}
 {{< survey session_04 exercise >}}
 :::
+-->
 
 :::
