@@ -22,7 +22,11 @@ In this exercise, we cover:
 1. ✏️ **Think & plan first:** Draft your answers and outline the transformation steps before coding.
 2. 💻 **Then code:** Work directly in this Quarto (`.qmd`) exercise using R in RStudio, Positron, or VS Code.
 
-For data transformation guidance, refer to the [tidyr documentation](https://tidyr.tidyverse.org/).
+**Recommendation:** For data preparation, consult the [Tidyverse packages](https://www.tidyverse.org/packages/), in particular:
+
+- [tidyr](https://tidyr.tidyverse.org/) for reshaping and restructuring data;
+- [dplyr](https://dplyr.tidyverse.org/) for filtering, transforming, and summarizing data;
+- [stringr](https://stringr.tidyverse.org/) for cleaning and manipulating text values.
 
 ### Package setup
 
