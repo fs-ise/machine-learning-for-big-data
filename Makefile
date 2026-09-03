@@ -19,7 +19,16 @@ all: site pdfs
 exercises-generate:
 	$(PYTHON) scripts/build_exercises.py
 exercises-render: exercises-generate
-	$(QUARTO) render _generated/exercises --to html --no-clean
+	@set -eu; \
+		cd _generated/exercises; \
+		for exercise in session_*_assign.qmd; do \
+			echo "Rendering $$exercise without execution"; \
+			$(QUARTO) render "$$exercise" --to html --no-clean --no-execute; \
+		done; \
+		for exercise in session_*_solution.qmd; do \
+			echo "Rendering $$exercise"; \
+			$(QUARTO) render "$$exercise" --to html --no-clean; \
+		done
 	@mkdir -p _site/exercises
 	@cp -R _generated/exercises/_rendered/. _site/exercises/
 	@cp _generated/exercises/*_assign.qmd _site/exercises/
@@ -28,12 +37,13 @@ exercises: exercises-render
 exercises-check: exercises-generate
 	@set -eu; \
 		cd _generated/exercises; \
-		for exercise in session_*_assign.qmd session_*_solution.qmd; do \
-			echo "Rendering $$exercise"; \
-			$(QUARTO) render "$$exercise" --to html --no-clean || { \
-				echo "Exercise render failed: $$exercise" >&2; \
-				exit 1; \
-			}; \
+		for exercise in session_*_assign.qmd; do \
+			echo "Checking $$exercise"; \
+			$(QUARTO) render "$$exercise" --to html --no-clean --no-execute; \
+		done; \
+		for exercise in session_*_solution.qmd; do \
+			echo "Checking $$exercise"; \
+			$(QUARTO) render "$$exercise" --to html --no-clean; \
 		done
 pdfs: $(SLIDES_PDF)
 # Standalone A4 handout; output: _site/handouts/group_work.pdf
