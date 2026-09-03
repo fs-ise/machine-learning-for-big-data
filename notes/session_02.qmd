@@ -44,7 +44,26 @@ Emphasize that these are not clean replacement stages: modern firms often combin
 
 ## Analytical processes
 
-Key trends of improvement:
+## Exercise: Identify the analytical purpose
+
+Classify each question or statement as **descriptive**, **predictive**, or **prescriptive** analytics.
+
+<br>
+
+| Business question / statement                                             | Analytical purpose |
+| ------------------------------------------------------------------------- | ------------------ |
+| How many customers cancelled their subscriptions last month?              | **Descriptive**    |
+| Which customers are likely to cancel their subscriptions next month?      | **Predictive**     |
+| Offer a 15% discount to customers with a high predicted churn risk.       | **Prescriptive**   |
+| What were our highest-selling products last quarter?                      | **Descriptive**    |
+| How much demand should we expect for each product next month?             | **Predictive**     |
+| Reorder 5,000 units to minimize the risk of stock-outs.                   | **Prescriptive**   |
+| Which regions had the highest employee turnover last year?                | **Descriptive**    |
+| How many employees are likely to leave during the next 12 months?         | **Predictive**     |
+| Increase recruiting capacity by 20% to maintain required staffing levels. | **Prescriptive**   |
+
+
+## Key trends of improvement:
 
 - **Maturing:** from descriptive to predictive and prescriptive, reducing ambiguity and the need for human involvement in business decisions.
 - **Pervasive:** extending analytics to more areas and departments, with disciplines refining specialized models.

@@ -79,16 +79,6 @@ Examples:
 - **Gradient Boosting** *(2014)* — High-performance ensemble learning algorithm widely used in predictive analytics and data science
 - **Transformer Models** *(2017–present)* — Transformer architecture enabling large language models and generative AI
 
-::: {.learning_note}
-
-**Learning note**
-
-No need to memorize all algorithms.<br>
-Be able to give a few illustrative examples.<br>
-This also applies to the data production areas.
-
-:::
-
 ## Algorithms enable more powerful analytical models
 
 <br><br>
@@ -734,13 +724,6 @@ Due to the different mathematical properties, not all statistical measures can b
 \(X\) The frequency (relative / absolute) may be calculated for a numeric variable, but makes only sense when the number of possible values is low
 </p>
 
-::: {.learning_note .fragment}
-**Learning focus**
-
-No need to memorize the table.
-Be able to **explain the scales and give examples of operations that are appropriate**.
-:::
-
 ## Data quality and preparation
 
 In business analytics, we rarely work with carefully curated datasets.
@@ -1020,11 +1003,6 @@ This creates a combined dataset that links customer information with sales.
 {{< iconify fluent-mdl2:insights >}} For analytical purposes, **redundant values are often acceptable**.
   The goal is to organize data into a **tidy structure**, where **each row represents one observation** and all relevant variables are available for analysis.
 
-::: aside
-Note: We will cover data integration in more detail in the next lecture.
-:::
-
-
 ## Data transformation: Example
 
 ::: columns
@@ -1080,8 +1058,7 @@ This **severely limits analysis**.
 
 ## Summary {data-state="hide-menubar"}
 
-- Modern machine learning and AI for big data were enabled by more computing power, new algorithms, and new analytics processes.
-- Data warehouses, data lakes, and logical data warehouses provide different ways to make data available for analytics.
+- Modern machine learning and AI for big data were enabled by more computing power, new algorithms, new architectures, and new analytics processes.
 - Analytics capabilities have developed from descriptive toward predictive and prescriptive purposes.
 - CRISP-DM structures analytics as an iterative process connecting business understanding, data, modeling, and evaluation.
 - Data preparation structures, cleans, integrates, and transforms raw data into tidy analytical data.

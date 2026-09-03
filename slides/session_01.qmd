@@ -547,7 +547,7 @@ We use **R, RStudio, and Quarto** because
 ::::
 
 
-## Our analytical environment
+## The analytical environment
 
 :::: {.columns}
 
@@ -657,9 +657,12 @@ Use your document as a starting point for a **potential group project topic**.
 
 ::::
 
+
+<!--
 ::: aside
 If you have a question, put up the **help-needed** tag and I will come by.
 :::
+-->
 
 ## Summary {data-state="hide-menubar"}
 

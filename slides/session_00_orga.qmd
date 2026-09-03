@@ -237,7 +237,6 @@ They help distinguish core material from supporting examples and illustrations.
 
 :::
 
-
 ## Literature
 
 - You are expected to take complementary notes and read the recommended literature.
@@ -262,6 +261,15 @@ They help distinguish core material from supporting examples and illustrations.
 **R and Data Analysis**
 
 - Wickham, Çetinkaya-Rundel, and Grolemund [-@WickhamCetinkayaRundelGrolemund2023]
+
+## Changelog
+
+Changes implemented for this semester:
+
+- Projects: open topic (building on Wagner & Thurner, 2026)
+- Tidyverse instead of Base R
+- Quarto reports
+- Transparent session structure
 
 ## You may also be interested in ... {data-state="hide-menubar"}
 

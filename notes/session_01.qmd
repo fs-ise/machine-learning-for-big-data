@@ -103,6 +103,7 @@ head(advertising)
 
 ```{r}
 #| echo: false
+#| out-width: "40%"
 
 ggplot(advertising, aes(x = TV, y = Sales)) +
   geom_point() +
@@ -121,6 +122,70 @@ Extensions:
 
 
 At the end: highlight that one goal is to get a good understanding of well-structured and contextualized analytical reports.
+
+{{< pagebreak >}}
+
+## Note on extracting/importing functionality for operational systems
+
+Put executable logic in `.R` files and `source()` them from Quarto. This lets the **report and the operational system use exactly the same code**.
+For example:
+
+```text
+project/
+├── report.qmd
+├── R/
+│   ├── functions.R
+│   └── pipeline.R
+```
+
+`R/functions.R`:
+
+```r
+prepare_data <- function(data) {
+  data |> dplyr::filter(!is.na(churn))
+}
+```
+
+`R/pipeline.R`:
+
+```r
+train_model <- function(data) {
+  glm(
+    churn ~ age + monthly_spend,
+    data = data,
+    family = binomial
+  )
+}
+
+predict_churn <- function(model, data) {
+  predict(model, newdata = data, type = "response")
+}
+```
+
+Then in `report.qmd`:
+
+````markdown
+```{{r}}
+source("R/functions.R")
+source("R/pipeline.R")
+
+customers <- readr::read_csv("data/customers.csv")
+customers <- prepare_data(customers)
+model <- train_model(customers)
+customers$churn_probability <- predict_churn(model, customers)
+```
+````
+
+> **Quarto does not have to contain the analytical implementation. It can call the same reusable functions and pipeline that an operational system calls.**
+
+<!--
+TODO: one thing that students said last semester was that there is still a difference between a report and an operational system that updates with new data.
+-> agree
+-> show quarto dasboards: https://quarto.org/docs/gallery/#dashboards
+-> illustrate extraction of analytical code (notebook for contextualization and illustration, same code also imported and used in operational systems)
+-> if the operational systems uses R, you can import R code, if it is in Python, import Python.
+TODO: also make sure the example is in R!
+-->
 
 {{< pagebreak >}}
 
