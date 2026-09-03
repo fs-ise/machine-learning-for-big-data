@@ -24,12 +24,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes r-base
+          mkdir -p "$HOME/R/library"
+          export R_LIBS_USER="$HOME/R/library"
+          echo "R_LIBS_USER=$R_LIBS_USER" >> "$GITHUB_ENV"
           Rscript -e 'install.packages(c(
             "tidyverse",
             "tidymodels",
             "pROC",
             "quanteda",
-            "Matrix",
             "irlba",
             "glmnet",
             "kknn",
