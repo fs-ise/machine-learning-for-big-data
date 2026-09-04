@@ -466,7 +466,7 @@ For each case, consider:
 
 {{< iconify fluent:note-edit-24-regular >}} Be prepared to share **one interesting or ambiguous case**.
 
- ## Are all Vs necessary for Big Data?
+## Are all Vs necessary for Big Data?
 
 @kitchin_big_2016 examined **26 datasets** commonly described as Big Data across seven domains.
 
