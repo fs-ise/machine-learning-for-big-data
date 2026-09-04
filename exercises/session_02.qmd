@@ -156,7 +156,6 @@ market_data_long <- market_data_df |>
     delim = "-",
     names = c("Firm", "Country", "Sector", "Period", "Metric", "Value")
   ) |>
-  distinct() |>
   mutate(Value = parse_number(Value))
 
 # Give each metric its own column.
