@@ -29,6 +29,10 @@ Emphasize that big data is not simply “lots of data.” Each V presents a dist
 
 Use the UPS, Visa, Walmart, and digital-advertising cases to connect each characteristic to models, operational decisions, and business outcomes.
 
+## Vs of Big data
+
+- Velocity: can you think of a business decision that must be made in milliseconds?
+
 {{< pagebreak >}}
 
 ## Analytical environment

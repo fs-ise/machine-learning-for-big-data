@@ -136,6 +136,17 @@ plt.show()
 
 :::
 
+
+:::
+
+<br>
+
+::: aside
+Reinsel, D., Gantz, J., & Rydning, J. (2018). *The Digitization of the World: From Edge to Core*. IDC White Paper #US44413318, sponsored by Seagate. <https://www.seagate.com/files/www-content/our-story/trends/files/dataage-idc-report-final.pdf>
+
+Statista. (2021). *Volume of data/information created, captured, copied, and consumed worldwide from 2010 to 2025*. <https://www.statista.com/statistics/871513/worldwide-data-created/>
+
+CBRE Research. (2024). *European Data Centres Overview*. <https://www.cbre.com/insights/reports/european-data-centres-overview>
 :::
 
 ## Data production
@@ -152,11 +163,13 @@ Platforms such as TikTok, YouTube, and Instagram generate enormous data volumes 
 **IoT and smart devices**<br>
 Connected devices—from wearables to industrial sensors—continuously produce real-time data across interconnected systems.
 
-**Digital transactions**<br>
-Online banking, mobile payments, and blockchain systems generate detailed financial records for transactions and security monitoring.
-
 **AI-generated data**<br>
 Machine learning and generative AI create large datasets during training and operation, further accelerating global data growth.
+
+<!--
+**Digital transactions**<br>
+Online banking, mobile payments, and blockchain systems generate detailed financial records for transactions and security monitoring.
+-->
 
 # Defining big data {data-stack-name="The 4V Model of big data"}
 
@@ -440,7 +453,7 @@ The broader teaching point is that metadata can become "big data" through granul
 
 ## Critically analyzing examples of Big Data
 
-{{< iconify fluent:people-chat-24-regular >}} **Discuss with your neighbor (3–4 min)**
+{{< iconify fluent:people-chat-24-regular >}} **Discuss with your neighbor (5 min)**
 
 Revisit the examples from the previous slides and add **one or two examples of your own**.
 
@@ -453,8 +466,7 @@ For each case, consider:
 
 {{< iconify fluent:note-edit-24-regular >}} Be prepared to share **one interesting or ambiguous case**.
 
-
-## Are all Vs necessary for Big Data?
+ ## Are all Vs necessary for Big Data?
 
 @kitchin_big_2016 examined **26 datasets** commonly described as Big Data across seven domains.
 
@@ -462,9 +474,9 @@ For each case, consider:
 
 Their findings challenge a simple V-based checklist:
 
-- Only a **handful** of datasets exhibited all of the characteristics they examined.
-- Even **volume and variety were not necessary conditions**.
-- **Velocity and exhaustivity** emerged as the strongest boundary markers distinguishing Big Data from small data.
+- Only a **handful of datasets** exhibited all characteristics they examined.
+- Even **volume and variety were not necessary**: some accepted Big Data datasets were neither exceptionally large nor diverse.
+- The clearest distinction was **velocity and exhaustivity**: Big Data tend to capture **continuous or rapidly generated data across an entire system**, rather than slower, sampled observations.
 
 . . .
 
@@ -551,7 +563,7 @@ We use **R, RStudio, and Quarto** because
 
 :::: {.columns}
 
-::: {.column width="35%"}
+::: {.column width="38%"}
 
 **R**
 
@@ -570,17 +582,17 @@ Provides the development environment for
 
 Combines text, code, results, tables, and visualizations into a reproducible analytical document.
 
-{{< iconify fluent-mdl2:insights >}} In this course, the Quarto document is the central analytical artifact.
-
 :::
 
-::: {.column width="64%"}
+::: {.column width="60%"}
 
 ![](../images/rstudio.png){width=100% .boxed-image fig-align=center}
 
 :::
 
 ::::
+
+{{< iconify fluent-mdl2:insights >}} In this course, the Quarto document is the central analytical artifact.
 
 ::: notes
 A Quarto document combines context, code, output, and implications in one reproducible analysis.

@@ -151,7 +151,7 @@ For each question, I’ll invite a few of you to briefly share your thoughts.
   - Robots/agents acting on decisions
   - Reinforcement learning
 
-{{< iconify fluent-mdl2:insights >}} We will *touch* these areas where needed, but our focus is on **analytical reasoning for business decisions**<br>
+We will *touch* these areas where needed, but our focus is on **analytical reasoning for business decisions**<br>
 and **R-based analysis in Quarto documents**.
 
 ## Group work brief
@@ -160,12 +160,12 @@ and **R-based analysis in Quarto documents**.
 
 ::: {.column width="40%"}
 
-{{< iconify mdi:file-document-outline >}} **Read the group work brief, which is linked on the [Canvas course page](https://frankfurtschool.instructure.com/courses/20150).**
+**Read the group work brief, which is linked on the [Canvas course page](https://frankfurtschool.instructure.com/courses/20150).**
 
-{{< iconify mdi:calendar-check-outline >}} **Check the modalities and dates**  
+**Check the modalities and dates**  
 Do they work for you?
 
-{{< iconify mdi:notebook-edit-outline >}} **Take notes on questions or unclear points**
+**Take notes on questions or unclear points**
 
 We will discuss your questions together afterwards.
 
