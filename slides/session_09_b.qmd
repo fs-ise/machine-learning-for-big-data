@@ -857,4 +857,6 @@ The harder question is which human role is appropriate for which task, under whi
 
 - The human role is changing rather than disappearing: analytics and AI create value when people have the skills, mindset, and organizational conditions to work effectively with them.
 
+{{< survey session_09 slide >}}
+
 # References {data-state="hide-menubar"}

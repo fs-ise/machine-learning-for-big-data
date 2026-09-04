@@ -59,7 +59,7 @@ For each session:
 - [ ] Update this changelog with major content changes
 - [ ] Setup Canvas course
 - [ ] Plan groupwork
-- [ ] Plan surveys (reflection questions)
+- [x] Add the standard end-of-session feedback survey to lecture decks
 
 :::
 

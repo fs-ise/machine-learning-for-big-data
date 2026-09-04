@@ -752,5 +752,4 @@ Cover ML Ops pipelines, scaling (parallel architectures)
 
 {{< survey session_08 slide >}}
 
-
 # References {data-state="hide-menubar"}

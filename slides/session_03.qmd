@@ -946,3 +946,6 @@ Clustering often produces **insights that guide later modeling**.
 {{< iconify fluent-mdl2:insights >}}   EDA is **not the final analysis**, but a **foundation** for model building, decision-making, and hypothesis generation.
 
 # References {data-state="hide-menubar"}
+
+
+{{< survey session_03 slide >}}

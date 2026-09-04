@@ -27,3 +27,13 @@ These notes help another instructor or teaching assistant run the course.
 ## Continuous improvement
 
 After each session, record what worked, what confused students, and what should change next time.
+
+### Feedback survey response workflow
+
+The course deliberately uses the same Google Form for every teaching session. After each session:
+
+1. Download or export the current responses for archival and analysis.
+2. Delete those responses from Google Forms.
+3. Reuse the now-empty form during the next session.
+
+Clearing responses is a **manual operation in Google Forms**. The repository does not use Google API authentication or automate response deletion. The survey URL is maintained in `course.yml`; lecture slides read it from that course metadata.

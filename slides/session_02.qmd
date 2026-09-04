@@ -1063,4 +1063,6 @@ This **severely limits analysis**.
 - CRISP-DM structures analytics as an iterative process connecting business understanding, data, modeling, and evaluation.
 - Data preparation structures, cleans, integrates, and transforms raw data into tidy analytical data.
 
+{{< survey session_02 slide >}}
+
 # References {data-state="hide-menubar"}

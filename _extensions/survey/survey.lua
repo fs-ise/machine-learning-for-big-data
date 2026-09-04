@@ -80,33 +80,12 @@ local function qr_code(url)
   return pandoc.Null()
 end
 
-local function link(url, new_window)
-  local attributes = {}
-  if new_window then
-    attributes.target = "_blank"
-  end
-  return pandoc.Link(url, url, "", attributes)
-end
-
-local function slide(number, url)
+local function slide(url)
   return pandoc.Blocks {
-    pandoc.Header(2, "Survey: Session " .. number, { ["data-state"] = "hide-menubar" }),
-    pandoc.RawBlock("html", "<br><br>"),
+    pandoc.Header(2, "Feedback", { ["data-state"] = "hide-menubar" }),
+    pandoc.Para("Please take 1–2 minutes to reflect on today's session."),
     pandoc.Div(qr_code(url), { style = "display:flex; justify-content:center;" }),
-    pandoc.RawBlock("html", "<br><br>"),
-    pandoc.Plain(link(url, false)),
-    pandoc.Div({
-      pandoc.Para("Note: Responses may be analyzed and published in anonymized form."),
-      pandoc.Para("Please complete the survey before you leave today — thank you 🙏"),
-    }, { class = "aside" }),
-  }
-end
-
-local function exercise(number, url)
-  return pandoc.Para {
-    pandoc.Str("Before you wrap up, please complete the Session " .. number .. " survey here: "),
-    link(url, true),
-    pandoc.Str(". Thank you 🙏"),
+    pandoc.Plain(pandoc.Link("Complete the short feedback survey", url)),
   }
 end
 
@@ -124,13 +103,16 @@ return {
       return no_survey()
     end
 
+    -- Survey feedback belongs only in lecture decks. Keep legacy exercise
+    -- shortcodes inert even when the lecture material has a configured URL.
+    if variant == "exercise" then
+      return no_survey()
+    end
+
     local url = survey_url(meta, session)
     if url == nil then
       return no_survey()
     end
-    if variant == "slide" then
-      return slide(number, url)
-    end
-    return exercise(number, url)
+    return slide(url)
   end,
 }

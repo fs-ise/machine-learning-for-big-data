@@ -697,4 +697,8 @@ Before the break, please install the tidyverse package for the exercises:
 install.packages("tidyverse")
 ```
 
+{{< survey session_01 slide >}}
+
 # References {data-state="hide-menubar"}
+
+

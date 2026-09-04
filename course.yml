@@ -47,7 +47,7 @@ events:
     materials:
       - type: slides
         path: slides/session_01.html
-        survey_url: TODO
+        survey_url: https://forms.gle/i6kCrxWSyzgCZvXp7
   - session_id: session-01-exercise
     type: exercise
     date: 2026-09-04
@@ -68,7 +68,7 @@ events:
     materials:
       - type: slides
         path: slides/session_02.html
-        survey_url: TODO
+        survey_url: https://forms.gle/i6kCrxWSyzgCZvXp7
   - session_id: session-02-exercise
     type: exercise
     date: 2026-09-04
@@ -89,7 +89,7 @@ events:
     materials:
       - type: slides
         path: slides/session_03.html
-        survey_url: TODO
+        survey_url: https://forms.gle/i6kCrxWSyzgCZvXp7
   - session_id: session-03-exercise
     type: exercise
     date: 2026-09-11
@@ -110,7 +110,7 @@ events:
     materials:
       - type: slides
         path: slides/session_04.html
-        survey_url: TODO
+        survey_url: https://forms.gle/i6kCrxWSyzgCZvXp7
   - session_id: session-04-exercise
     type: exercise
     date: 2026-09-11
@@ -131,7 +131,7 @@ events:
     materials:
       - type: slides
         path: slides/session_05.html
-        survey_url: TODO
+        survey_url: https://forms.gle/i6kCrxWSyzgCZvXp7
   - session_id: session-05-exercise
     type: exercise
     date: 2026-09-17
@@ -152,7 +152,7 @@ events:
     materials:
       - type: slides
         path: slides/session_06.html
-        survey_url: TODO
+        survey_url: https://forms.gle/i6kCrxWSyzgCZvXp7
   - session_id: session-06-exercise
     type: exercise
     date: 2026-09-18
@@ -173,7 +173,7 @@ events:
     materials:
       - type: slides
         path: slides/session_07.html
-        survey_url: TODO
+        survey_url: https://forms.gle/i6kCrxWSyzgCZvXp7
   - session_id: session-07-exercise
     type: exercise
     date: 2026-09-25
@@ -194,7 +194,7 @@ events:
     materials:
       - type: slides
         path: slides/session_08.html
-        survey_url: TODO
+        survey_url: https://forms.gle/i6kCrxWSyzgCZvXp7
   - session_id: session-08-exercise
     type: exercise
     date: 2026-09-25
@@ -215,10 +215,10 @@ events:
     materials:
       - type: slides
         path: slides/session_09_a.html
-        survey_url: TODO
+        survey_url: https://forms.gle/i6kCrxWSyzgCZvXp7
       - type: slides
         path: slides/session_09_b.html
-        survey_url: TODO
+        survey_url: https://forms.gle/i6kCrxWSyzgCZvXp7
   - session_id: session-09-lecture2
     type: lecture
     date: 2026-10-02
@@ -229,7 +229,7 @@ events:
     materials:
       - type: slides
         path: slides/session_09_b.html
-        survey_url: TODO
+        survey_url: https://forms.gle/i6kCrxWSyzgCZvXp7
   - session_id: session-10-presentation
     type: group presentation
     date: 2026-10-02

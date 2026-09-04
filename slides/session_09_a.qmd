@@ -674,5 +674,4 @@ See the R torch documentation for `nn_module()` and its inherited methods.
 
 {{< survey session_09 slide >}}
 
-
 # References {data-state="hide-menubar"}

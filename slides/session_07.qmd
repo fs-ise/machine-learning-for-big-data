@@ -1208,8 +1208,6 @@ plt.show()
   **Support Vector Machines (SVMs)** (margin-based models),
   illustrating different approaches to learning from data with varying assumptions, flexibility, and interpretability.
 
-
 {{< survey session_07 slide >}}
-
 
 # References {data-state="hide-menubar"}
