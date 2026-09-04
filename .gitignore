@@ -19,5 +19,7 @@ slides/cache/*
 *_files/
 group_work.tex
 
+.build/*
+
 # Models generated while rendering R exercises
 exercises/data/*.rds
