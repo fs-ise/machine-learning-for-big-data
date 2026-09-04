@@ -18,13 +18,8 @@ format: html
 
 I do not know everything. I make mistakes. ...
 
-My Story as a teacher. Copy Stanford slides for CS vs. Evolved role...
-
-- Theoretische Informatik: just reusing Stanford slides (reputable institution: good, but no own contribution)
-Also Connect to Student expectations: broad knowledge (by Heart, being able to discuss immediately instead of asking ChatGPT) plus deep expertise
-
-- Story (TI: Stanford slides, ... - both: hard skills + engagement with practice)
-- I give my very best, aim to make this the best analytics course.
+- From running to studying
+- ...
 
 Mention surveys after each session (voluntary, but help me assess and prioritize)
 
@@ -46,16 +41,17 @@ Maybe:
 - prior experience (e.g., python)?
 - Ask students how they learn (PDF, ...) whether they use a knowledge management system (which one), ...
 
-
+<!--
 ## Curriculum
-
-Ask/check whether it is the right overview (how many students are in semester 4 or 6)
 
 ## Analytics and why it matters
 
 Takeaway - why analytics matters:
 Analytics is not just about data.
 It changes **how decisions are made, how organizations compete, and who wins.**
+-->
+
+{{< pagebreak >}}
 
 ## Course structure
 
@@ -77,16 +73,17 @@ Ask students to review the document (Canvas), discuss
 - Anything to clarify? Questions?
 - Take notes on topioc ideas and discuss them over the break. We will revisit them in the afternoon.
 
+<!--
 ## Logistics
 
 - Format of the session (exercises, preparation/reading)
 - Summary presentations of practitioner materials?
 - Consultation hour?
 
-
 ## Materials
 
 - You always have the slides available (especially if you sit in the back, some slides may be hard to read)
+-->
 
 ## Changelog
 

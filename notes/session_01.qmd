@@ -6,10 +6,16 @@ event_id: null
 
 ## Lecture
 
-| Time (min) | Duration | Topic | Additional materials |
-|------------|----------|-------|----------------------|
-| 0–20       | 20       | Growth and sources of data | |
-| 20–90      | 70       | Big Data, the 4Vs, and business cases | |
+| Time (min) | Duration | Topic |
+|------------|----------|-------|
+| 0–10 | 10 | Growth of data and data-volume units |
+| 10–20 | 10 | Sources of data production |
+| 20–30 | 10 | Defining Big Data: the 4Vs |
+| 30–55 | 25 | Business cases for the 4Vs |
+| 55–65 | 10 | Metadata and location intelligence |
+| 65–75 | 10 | Critically analyzing Big Data examples |
+| 75–82 | 7 | Are all Vs necessary? |
+| 82–90 | 8 | Summary and analytical setup |
 
 ::: objective
 Explain why the growth and changing characteristics of data matter for business analytics.
@@ -17,7 +23,7 @@ Explain why the growth and changing characteristics of data matter for business 
 
 ## Data production
 
-- highlight progression, note user-generated/crowdsourced content, new devices, ..., AI-generated content
+Highlight **progression**, note user-generated/crowdsourced content, new devices, ..., AI-generated content.
 
 Emphasize that big data is not simply “lots of data.” Each V presents a distinct managerial dilemma: decision complexity (volume), decisions while events unfold (velocity), integration of previously separate data worlds (variety), and whether apparent signals can be trusted (veracity).
 
@@ -32,7 +38,9 @@ Use the UPS, Visa, Walmart, and digital-advertising cases to connect each charac
 - Who is familiar with qmd documents?
 - Step-by-step: create qmd (header, context), activate render on save, create an R codeblock (with/out curly parentheses for execution), show ctrl+Enter execution, show environment
 
-**Important**: Download the qmd files. do not work in the repository (html rendering fails due to `_quarto.yml` settings)
+::: {.callout-note title="Important"}
+Download the qmd files. do not work in the repository (html rendering fails due to `_quarto.yml` settings)
+:::
 
 - Work in pairs.
 
@@ -190,6 +198,16 @@ TODO: also make sure the example is in R!
 {{< pagebreak >}}
 
 ## Exercise
+
+| Time (min) | Duration | Topic |
+|------------|----------|-------|
+| 0–15 | 15 | RStudio and Quarto walkthrough |
+| 15–30 | 15 | Importing and inspecting data |
+| 30–50 | 20 | Building the first analytical report |
+| 50–65 | 15 | Visualization with `ggplot2` |
+| 65–75 | 10 | Rendering and presentation |
+| 75–85 | 10 | Optional extensions |
+| 85–90 | 5 | Reproducibility and reusable analytical code |
 
 - Goal: broadly cover all skills required to navigate RStudio, Quarto reports and R code (libraries, in-memory objects).
   You probably know several of these things, but nevertheless go through the notebook.

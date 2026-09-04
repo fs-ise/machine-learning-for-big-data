@@ -5,14 +5,21 @@ session_id: session-02
 
 ## Lecture
 
-| Time (min) | Duration | Topic | Additional materials |
-|------------|----------|-------|----------------------|
-| 0–15       | 15       | More computing power | |
-| 15–30      | 15       | Analytical data architectures | |
-| 30–45      | 15       | New algorithms | |
-| 45–75      | 30       | Analytics capabilities and purposes | |
-| 75–90      | 15       | CRISP-DM | |
+| Time (min) | Duration | Topic |
+|------------|----------|-------|
+| 0–15 | 15 | Growth and evolution of computing power |
+| 15–35 | 20 | New algorithms and advances in AI |
+| 35–45 | 10 | Evolution of analytical data architectures |
+| 45–75 | 30 | Descriptive, predictive, and prescriptive analytics |
+| 75–90 | 15 | CRISP-DM and the analytics process |
 
+Data preparation:
+
+| Time (min) | Duration | Topic |
+|------------|----------|-------|
+| 0–15 | 15 | Foundations and data types |
+| 15–25 | 10 | Data quality and preparation |
+| 25–40 | 15 | Data structuring, cleansing, integration, and transformation |
 
 **Start by revisiting the topic ideas of students (as announced in session 0). Discuss ideas, provide guidance on analytical focus and scope, answer questions.**
 
@@ -42,7 +49,11 @@ TODO/TBD: illustrations for the algorithms?
 
 Emphasize that these are not clean replacement stages: modern firms often combine warehouses, lakes, federated sources, and AI infrastructure.
 
+<!--
 ## Analytical processes
+-->
+
+{{< pagebreak >}}
 
 ## Exercise: Identify the analytical purpose
 
@@ -71,12 +82,9 @@ Classify each question or statement as **descriptive**, **predictive**, or **pre
 
 CRISP-DM is a well-established model for data analytics and provides a useful structure for the course. Emphasize that analytics is iterative rather than a linear pipeline.
 
-# Data Preparation lecture
+{{< pagebreak >}}
 
-| Time (min) | Duration | Topic | Additional materials |
-|------------|----------|-------|----------------------|
-| 0–10       | 10       | Foundations and data types | |
-| 10–40      | 30       | Data preparation: structuring, cleansing, integration, and transformation | |
+# Data Preparation lecture
 
 Badly formatted data blocks analysis — data preparation unlocks it.
 
@@ -98,25 +106,20 @@ Note: `|>` was introduced in Base R in 2021. Preferred over `%>%`.
 Observational unit: **Quarterly sales per region** (implicitly: across years)
 
 **Key learning**: Data structures for analytics may tolerate redundancies!
--> Illustrate this on the whiteboard: ERD/ERM: different rationale (ACID): preventing inconsistent states in operational databases
--> analytical data: often extracted (copied), will not be changed by operational systems. May not even be persisted (just used in-memory for the analysis)
--> in *tidy data*, there is no need for assigning unique IDs. Duplicates are a concern, but unique IDs are not enough to conclude that there are not duplicates.
+
+- Illustrate this on the whiteboard: ERD/ERM: different rationale (ACID): preventing inconsistent states in operational databases
+- Analytical data: often extracted (copied), will not be changed by operational systems. May not even be persisted (just used in-memory for the analysis)
+- In *tidy data*, there is no need for assigning unique IDs. Duplicates are a concern, but unique IDs are not enough to conclude that there are not duplicates.
 
 ## Data integration
-
-Remember the @Davenport2006 case: competing on analytics means pooling data that was generated in-house and data acquired from outside data sources.
 
 Question: what does the "merge()" method correspond to in SQL?
 
 Metaphor: statisticians carefully collect their data on their own (live on their own island) - business analysts have to work with existing data (which can be very messy)
 
-# Data Preparation exercise
+{{< pagebreak >}}
 
-| Exercise part | Time (min) |
-|---------------|------------|
-| Data structuring 1 | 15 |
-| Data structuring 2 | 20 |
-| Data cleansing | 20 |
+# Data Preparation exercise
 
 Open the **tidyr documentation** (linked at the top of the exercise sheet)
 
@@ -125,3 +128,5 @@ Open the **tidyr documentation** (linked at the top of the exercise sheet)
 - Implementation in R/tidyverse: level of difficulty: use the package documentation vs. use ChatGPT.
 - Possible extensions: data structuring with tables requiring transpose.
 - TODO: include an example for tidying data with different observational units (e.g., different levels like department sales vs. package deliveries to customers).
+
+**See separate solution printout.**
