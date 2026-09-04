@@ -133,7 +133,7 @@ While these fields often focus on methodological development, business analytics
 
 ## Algorithmic breakthroughs drive AI progress
 
-Recent breakthroughs in artificial intelligence (AI)^[AI systems are based on algorithms; in the following, we use the broader term AI when referring to such algorithm-based systems.] show how new algorithms can rapidly surpass human performance.
+Breakthroughs in artificial intelligence (AI)^[AI systems are based on algorithms; in the following, we use the broader term AI when referring to such algorithm-based systems.] show how new algorithms can rapidly surpass human performance.
 **DeepMind** provides good examples.
 
 ::: columns
@@ -142,7 +142,7 @@ Recent breakthroughs in artificial intelligence (AI)^[AI systems are based on al
 
 AlphaGo (2016)
 
-- Uses **deep neural networks + reinforcement learning**
+- Uses **deep neural networks and reinforcement learning**
 - Defeated world champion **Lee Sedol** in the game of Go
 
 Go was long considered too complex for computers due to the enormous search space.
