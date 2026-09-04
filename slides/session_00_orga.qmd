@@ -266,7 +266,7 @@ They help distinguish core material from supporting examples and illustrations.
 
 Changes implemented for this semester:
 
-- Projects: open topic (building on Wagner & Thurner, 2026)
+- Projects: open topic (building on the CONTRIBUTE framework [@ThurnerWagner2026])
 - Tidyverse instead of Base R
 - Quarto reports
 - Transparent session structure
