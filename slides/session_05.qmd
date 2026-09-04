@@ -273,8 +273,8 @@ plt.show()
 ```
 
 :::  {.callout-note}
-- Changing **β₀ shifts** the curve left/right
-- Changing **β₁ changes slope** (flatter vs. steeper transition)
+- Changing **$\beta_0$ shifts** the curve left/right
+- Changing **$\beta_1$ changes slope** (flatter vs. steeper transition)
 :::
 
 ::: notes

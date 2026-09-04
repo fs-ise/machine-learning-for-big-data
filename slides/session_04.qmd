@@ -494,10 +494,10 @@ $$\hat{\text{price}} = 50{,}000 + 180 \cdot \text{squarefoot}$$
 
 <br>
 
-**β₀ = 50,000** — *intercept*
+**$\beta_0 = 50{,}000$** — *intercept*
 : The predicted price for a house with 0 sq ft. Rarely meaningful on its own — it anchors the line.
 
-**β₁ = 180** — *slope*
+**$\beta_1 = 180$** — *slope*
 : The **slope** (or marginal effect) of square footage:
 each additional square foot is associated with **+$180** in predicted price, on average.
 
@@ -558,7 +558,7 @@ Plot.plot({
 ## Including multiple predictor variables
 
 We can include many additional variables to predict the price of a house.
-Each coefficient (β) captures the **differential effect of a variable**—that is, how much the price is expected to change when that variable increases while the others are held constant.
+Each coefficient ($\beta$) captures the **differential effect of a variable**—that is, how much the price is expected to change when that variable increases while the others are held constant.
 
 <br>
 
@@ -884,7 +884,7 @@ $$ R^2 = 1 - \frac{RSS}{TSS} $$
 -->
 
 ::: notes
-Main takeaway: students should understand R² well.
+Main takeaway: students should understand $R^2$ well.
 Other measures can be introduced as complementary metrics, especially because they are in the original unit of the target variable.
 Emphasize that model evaluation is not just “how well did it fit the training data?”
 :::

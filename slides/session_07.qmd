@@ -177,7 +177,7 @@ $$
 \sum_{i=0}^{n} \left(y_i - \beta_0 - \beta' x_i\right)^2 + \lambda \cdot \sum_{j=1}^{p} \beta_j^2
 $$
 
-where $\lambda ≥ 0$ is a tuning parameter, to be determined separately.
+where $\lambda \geq 0$ is a tuning parameter, to be determined separately.
 It is called a shrinkage penalty and has the effect of shrinking the estimates of $\beta_j$ towards zero.
 This is equivalent to reducing complexity.
 

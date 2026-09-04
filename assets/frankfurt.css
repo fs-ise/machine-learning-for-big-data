@@ -254,9 +254,8 @@ body:has(.reveal section#title-slide.present) #fs-header {
   border-radius: 6px;
 }
 
-/* Title with icon */
 .learning-objectives::before {
-  content: "🎯 Learning objectives";
+  content: "Learning objectives";
   display: block;
   font-weight: 700;
   margin-bottom: 0.5rem;

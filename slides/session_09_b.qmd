@@ -172,12 +172,12 @@ The paper complements Müller et al. (2018): rather than focusing on objective B
 
 | Independent variable | n | N | Estimated effect | 95% CI | Heterogeneity |
 |------|--:|--:|----:|---:|-------:|
-| BA technical resources | 91 | 39,246 | 0.452 | 0.409–0.493 | Q = 1920.153**, df = 90, I² = 95.31% |
-| BA human resources | 42 | 9,219 | 0.494 | 0.444–0.541 | Q = 379.967**, df = 41, I² = 89.21% |
-| BA management capabilities | 69 | 16,074 | 0.477 | 0.433–0.519 | Q = 861.169**, df = 68, I² = 92.10% |
-| Data quality | 14 | 3,088 | 0.434 | 0.328–0.528 | Q = 142.257**, df = 13, I² = 90.86% |
-| Organizational culture | 18 | 3,698 | 0.472 | 0.391–0.546 | Q = 153.939**, df = 17, I² = 88.96% |
-| External pressure | 17 | 3,644 | 0.165 | 0.036–0.288 | Q = 248.937**, df = 16, I² = 93.57% |
+| BA technical resources | 91 | 39,246 | 0.452 | 0.409–0.493 | $Q = 1920.153^{**}$, $df = 90$, $I^2 = 95.31\%$ |
+| BA human resources | 42 | 9,219 | 0.494 | 0.444–0.541 | $Q = 379.967^{**}$, $df = 41$, $I^2 = 89.21\%$ |
+| BA management capabilities | 69 | 16,074 | 0.477 | 0.433–0.519 | $Q = 861.169^{**}$, $df = 68$, $I^2 = 92.10\%$ |
+| Data quality | 14 | 3,088 | 0.434 | 0.328–0.528 | $Q = 142.257^{**}$, $df = 13$, $I^2 = 90.86\%$ |
+| Organizational culture | 18 | 3,698 | 0.472 | 0.391–0.546 | $Q = 153.939^{**}$, $df = 17$, $I^2 = 88.96\%$ |
+| External pressure | 17 | 3,644 | 0.165 | 0.036–0.288 | $Q = 248.937^{**}$, $df = 16$, $I^2 = 93.57\%$ |
 :::
 
 <br>

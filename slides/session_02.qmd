@@ -687,12 +687,12 @@ Examples:
 - A numeric measurable attribute in the form of integer or real values.
   The distance between the numbers or units on this scale is equal over all levels of the scale.
   Values of the interval scale have no natural “zero” point.
-- Invariant under a linear transformation 𝑎𝑥 + 𝑏, 𝑎 > 0, 𝑏 ≥ 0
+- Invariant under a linear transformation $ax + b$, $a > 0$, $b \geq 0$
 - Although the sum of two interval-scale measurements is not meaningful by itself, their average can be computed
 
 Examples:
 
-- Celsius scale of temperature (there is no natural zero, 0°C is arbitrarily defined), a Celsius value 𝑐 can be linearly transformed to a Fahrenheit value 𝑓: 𝑓 = 9/5 ∗ 𝑐 + 32
+- Celsius scale of temperature (there is no natural zero, 0°C is arbitrarily defined), a Celsius value $c$ can be linearly transformed to a Fahrenheit value $f$: $f = \frac{9}{5}c + 32$
 - Dates and time (e.g., conversion from Julian to Gregorian calendar is possible)
 
 ## Quantitative: Ratio scale
@@ -703,7 +703,7 @@ Examples:
 Examples:
 
 - Money, person’s age, market share, quantities purchased, speed, …
-- Kelvin (K) temperature (has a true zero-point (0 °K=− 273.15 ℃): It is the point at which the particles that comprise matter have zero kinetic energy
+- Kelvin (K) temperature, which has a true zero-point ($0\,K = -273.15\,^\circ C$): It is the point at which the particles that comprise matter have zero kinetic energy
 
 ## Scales and mathematical operations
 
