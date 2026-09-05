@@ -33,6 +33,8 @@ Use the UPS, Visa, Walmart, and digital-advertising cases to connect each charac
 
 - Velocity: can you think of a business decision that must be made in milliseconds?
 
+Discuss the paradox of Big Data and the V-Model: Big Data is often considered prevalent, but if we really apply all Vs as mandatory, not much qualifies as Big Data.
+
 {{< pagebreak >}}
 
 ## Analytical environment

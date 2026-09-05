@@ -86,6 +86,15 @@ CRISP-DM is a well-established model for data analytics and provides a useful st
 
 # Data Preparation lecture
 
+::: {.callout-note title="Interactive part"}
+Start with questions to activate students (previous knowledge).
+State that machine learning projects invest a lot of time in data preparation - expect an analytics team to spend approx. 80% of the time on preparationa before they begin with the analysis.
+
+- What do they do in this stage? what would you do for data preparation?
+- Follow-up: in which order would you approach the data preparation?
+:::
+
+
 Badly formatted data blocks analysis — data preparation unlocks it.
 
 Data quality: never trust data blindly. Always evaluate data you receive as an input
