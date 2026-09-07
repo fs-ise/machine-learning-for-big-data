@@ -19,6 +19,11 @@ But: Sometimes it is better to know/predict something even if we cannot explain 
  -> Business decision to recommend anything is always better than no recommendation at all
 - Fraud detection: prediction of irregular and fraudulent transactions can be very accurate, but the attackers' goal is to behave in a way that is hard to anticipate. Prediction may focus on identifying cases that are "not behaving regularly" (rather than identifying generalizable patterns)
 
+## Previous exercise
+
+- Take time to solve the previous exercise sheet, in particular the last exercise (long code).
+- Make sure students understand the functional programming pipes and object assignment
+
 ## EDA/Clustering
 
 TODO: Illustrate how k-means clustering works for a given k (random centroids/assignments, recalculation of centroids), using different colors
