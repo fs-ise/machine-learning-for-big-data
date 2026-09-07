@@ -65,22 +65,27 @@ format:
   pdf:
     papersize: a4
     toc: true
+    toc-depth: 1
     number-sections: false
     geometry:
-      - margin=18mm
+      - left=1.5cm
+      - right=1.5cm
+      - top=1.5cm
+      - bottom=2.2cm
+      - includefoot
+      - footskip=0.9cm
     filters:
       - ../scripts/html_br_to_linebreak.lua
     include-in-header:
       text: |
-        \\usepackage{{fancyhdr}}
-        \\pagestyle{{fancy}}
-        \\fancyhf{{}}
-        \\newcommand{{\\teachingnotesfooterlabel}}{{}}
-        \\fancyfoot[L]{{Machine Learning for Big Data}}
-        \\fancyfoot[C]{{\\teachingnotesfooterlabel}}
-        \\fancyfoot[R]{{\\thepage}}
-        \\renewcommand{{\\headrulewidth}}{{0pt}}
-        \\renewcommand{{\\footrulewidth}}{{0pt}}
+        \\usepackage{{scrlayer-scrpage}}
+        \\usepackage{{etoolbox}}
+        \\newcommand{{\\teachingnotesfooterlabel}}{{{DOCUMENT_TITLE}}}
+        \\clearpairofpagestyles
+        \\ifoot[\\teachingnotesfooterlabel]{{\\teachingnotesfooterlabel}}
+        \\ofoot[\\pagemark]{{\\pagemark}}
+        \\pagestyle{{scrheadings}}
+        \\pretocmd{{\\subsection}}{{\\clearpage}}{{}}{{}}
 execute:
   enabled: false
 ---
@@ -88,9 +93,12 @@ execute:
     rendered_sections: list[str] = []
     for title, body in sections:
         rendered_sections.append(
-            "\\clearpage\n\n"
+            "```{=latex}\n"
+            "\\clearpage\n"
             f"\\renewcommand{{\\teachingnotesfooterlabel}}"
-            f"{{{latex_escape(title)}}}\n\n# {title}\n\n{body}\n"
+            f"{{MLBD -- {latex_escape(title)}}}\n"
+            "```\n\n"
+            f"# {title}\n\n{body}\n"
         )
     return header + "\n" + "\n".join(rendered_sections)
 

@@ -36,12 +36,25 @@ def test_document_configuration_and_course_specific_footer(tmp_path: Path) -> No
 
     assert f'title: "{DOCUMENT_TITLE}"' in result
     assert "toc: true" in result
+    assert "toc-depth: 1" in result
     assert "number-sections: false" in result
     assert "papersize: a4" in result
+    assert "left=1.5cm" in result
+    assert "right=1.5cm" in result
+    assert "top=1.5cm" in result
+    assert "bottom=2.2cm" in result
+    assert "includefoot" in result
+    assert "footskip=0.9cm" in result
     assert "execute:\n  enabled: false" in result
     assert "execute: false" not in result
-    assert r"\newcommand{\teachingnotesfooterlabel}{}" in result
-    assert "Machine Learning for Big Data" in result
+    assert r"\usepackage{scrlayer-scrpage}" in result
+    assert "fancyhdr" not in result
+    assert r"\clearpairofpagestyles" in result
+    assert r"\ifoot[\teachingnotesfooterlabel]{\teachingnotesfooterlabel}" in result
+    assert r"\ofoot[\pagemark]{\pagemark}" in result
+    assert r"\pagestyle{scrheadings}" in result
+    assert r"\pretocmd{\subsection}{\clearpage}" in result
+    assert rf"\newcommand{{\teachingnotesfooterlabel}}{{{DOCUMENT_TITLE}}}" in result
     assert "mlbdfooterlabel" not in result.lower()
 
     front_matter = result.split("---", 2)[1]
@@ -56,7 +69,18 @@ def test_escapes_title_for_latex_footer(tmp_path: Path) -> None:
 
     result = combine_notes([note])
 
-    assert f"{{{latex_escape(title)}}}" in result
+    footer_command = (
+        r"\renewcommand{\teachingnotesfooterlabel}"
+        f"{{MLBD -- {latex_escape(title)}}}"
+    )
+    session_opening = (
+        "```{=latex}\n"
+        "\\clearpage\n"
+        f"{footer_command}\n"
+        "```\n\n"
+        f"# {title}"
+    )
+    assert session_opening in result
     assert r"Data \& 100\% of x\_1 \# \{cases\}" in result
 
 
@@ -67,8 +91,8 @@ def test_starts_every_session_on_a_new_page(tmp_path: Path) -> None:
 
     result = combine_notes(notes)
 
-    assert result.count(r"\clearpage") == 3
-    assert result.index(r"\clearpage") < result.index("# Session 1")
+    assert result.count("```{=latex}\n\\clearpage") == 3
+    assert result.index("```{=latex}\n\\clearpage") < result.index("# Session 1")
 
 
 def test_preserves_html_break_and_configures_lua_filter(tmp_path: Path) -> None:
@@ -132,7 +156,7 @@ assert args[args.index("--output") + 1] == "notes.pdf"
 source = Path(args[1])
 combined = source.read_text(encoding="utf-8")
 assert "../scripts/html_br_to_linebreak.lua" in combined
-(source.parent / "notes.pdf").write_bytes(b"%PDF-fake")
+Path("notes.pdf").write_bytes(b"%PDF-fake")
 """,
         encoding="utf-8",
     )
