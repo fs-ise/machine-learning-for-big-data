@@ -72,6 +72,12 @@ For each question, I’ll invite a few of you to briefly share your thoughts.
   - What would make this course “worth it” for you?
 -->
 
+<br>
+
+::: {.learning_note .fragment style="position: static;"}
+**Please use your name tags.**
+:::
+
 # Machine Learning for Big Data {data-stack-name="Machine Learning for Big Data"}
 
 ## Machine Learning for Big Data in the curriculum {#mlbd-curriculum}

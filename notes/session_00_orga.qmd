@@ -66,6 +66,8 @@ It changes **how decisions are made, how organizations compete, and who wins.**
 
 ## Group work brief
 
+Highlight: Focus on a topic that excites you. Realistic industry cases (typically involving confidential/proprietary data) are possible with the synthetic data creation setup.
+
 Ask students to review the document (Canvas), discuss
 
 - Dates/logistics suitable?

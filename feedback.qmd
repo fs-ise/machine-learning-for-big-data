@@ -1,0 +1,13 @@
+---
+title: "Feedback"
+---
+
+- Slides exercise to classify the analytical purpose was trivial. Include a bit more challenging (maybe code-based) examples.
+- Clarify tidy data (using magnetic card organizing task on the blackboard?)
+- Structure data preparation slides more clearly (do not combine tidy data structuring with other items on the slide)
+- Tidy data vocabulary: explain *variable* and *observation*
+- Include an example in tidy data for datasets that combine multiple observational units?
+- Improve slide explanation of scales.
+
+
+- Include `frankfurt_locations.csv` to be able to 

@@ -5,6 +5,8 @@ session_id: session-02
 
 ## Lecture
 
+Prep: print separate solution printout.
+
 | Time (min) | Duration | Topic |
 |------------|----------|-------|
 | 0–15 | 15 | Growth and evolution of computing power |
@@ -139,3 +141,11 @@ Open the **tidyr documentation** (linked at the top of the exercise sheet)
 - TODO: include an example for tidying data with different observational units (e.g., different levels like department sales vs. package deliveries to customers).
 
 **See separate solution printout.**
+
+
+::: {.callout-note title="Summary of lessons learned"}
+- Know where the `.qmd` and data is stored
+- How the environment objects are found and removed
+- How to render a document (in viewer pane), using citations, and hiding R code
+- Need to consult with documentation, make sense of error messages
+:::
