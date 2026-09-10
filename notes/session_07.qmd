@@ -10,8 +10,6 @@ format: html
 |------------|----------|-------|----------------------|
 | 0–90       |       90 |  TODO |                      |
 
-
-
 TODO:
 
 - Better prepare the explanation of decision trees (entropy, information gain) (see https://www.cs.cmu.edu/~aarti/Class/10315_Fall20/recs/DecisionTreesBoostingExampleProblem.pdf)
@@ -108,7 +106,6 @@ Entropy is best understood as:
 
 This is exactly why decision trees aim to **reduce entropy** through splits (information gain).
 
-
 ## SVM
 
 <!--
@@ -117,7 +114,7 @@ https://www.youtube.com/watch?v=efR1C6CvhmE
 See also: https://www.mathstat.dal.ca/~aarms2014/StatLearn/docs/09%20_annotated.pdf
 -->
 
-## Maximal margin classifier
+### Maximal margin classifier
 
 Small M&A teams are **successful**, large teams **unsuccessful**.
 
@@ -174,7 +171,7 @@ plt.show()
 The midpoint between means uses the class centers.
 The maximal margin classifier uses the **edge cases** that define the safest separating threshold. This matches the standard SVM intuition that only the nearest points determine the margin.
 
-## Support vector classifier (soft margin)
+### Support vector classifier (soft margin)
 
 Now allow slight overlap:
 
@@ -233,7 +230,7 @@ plt.show()
 **Teaching point:**
 This is the most important soft-margin visual: one point can be **inside the margin but still correctly classified**, while another can be **across the boundary and misclassified**. That is exactly the role of slack variables in the standard support vector classifier formulation.
 
-## Support Vector Machines (Kernel trick for nonlinear patterns)
+### Support Vector Machines (Kernel trick for nonlinear patterns)
 
 Change the M&A example. Assume:
 
@@ -300,7 +297,7 @@ plt.show()
 **Teaching point:**
 The kernel trick makes nonlinear patterns **linearly separable in a transformed space**.
 
-## Short wrap-up
+### Short wrap-up
 
 - **Maximal margin classifier** → perfect separation
 - **Support vector classifier** → allows some errors
@@ -319,11 +316,3 @@ must be exactly the same as for the training data. Thus, it is necessary, to kee
 <!--
 https://harvard-iacs.github.io/2019-CS109A/labs/lab9/notebook/
 -->
-
-{{< pagebreak >}}
-
-## Materials
-
-Lectures: https://harvard-iacs.github.io/2019-CS109A/lectures/lecture15/presentation/Lecture15_Decision_Trees.pdf
-
-https://medium.com/data-science/entropy-how-decision-trees-make-decisions-2946b9c18c8

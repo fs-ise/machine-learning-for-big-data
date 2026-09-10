@@ -31,6 +31,8 @@ format: revealjs
 
 The following forms of EDA are typically distinguished:
 
+<br>
+
 <table style="border-collapse:collapse; margin:auto; font-size:20px; text-align:center;">
   <tr>
     <td style="border:none; width:170px;"></td>
@@ -59,107 +61,151 @@ The following forms of EDA are typically distinguished:
 
 ## Descriptive statistics
 
-How to describe data (not the data type)?
+We use one real data set throughout the examples: 200 firms from four sectors.
 
-| Customer ID | Name         | Year of birth | Tariff |
-|-------------|-------------|---------------|--------|
-| 100216      | Kevin Meyer | 1983          | A      |
-| 271692      | Lars Knopp  | 1963          | B      |
-| 892615      | Anton Albert| 1954          | C      |
-| 331625      | Peter Pan   | 1988          | D      |
-| ...         | ...         | ...           | ...    |
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
 
+library(tidyverse)
 
-## What are the “key figures” of a distribution?
+firm_data_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/firm_data.csv",
+  show_col_types = FALSE
+)
 
-- Graphics work well for single variables, but for comparison of different variables and their distributions and later working with the data, numeric indicators are necessary
+head(firm_data_df)
+```
 
-- Descriptive statistics provide us with numbers describing the characteristics of a distribution
+## Key figures: concepts map directly to R
 
-- For qualitative / categorical data
-  - **Mode**
-  - **Relative frequency**
+::: columns
 
-- For quantitative / numerical data
-  - **Mean** (also known as **Expected Value**) – describing the position of the center
-  - **Variance** (or **Standard Deviation**) – describing the spread
-  - **Percentiles** (also known as quantiles / quintiles) – more detailed figures on the distribution
+::: {.column width="45%"}
 
-## Describing data using descriptive statistics
+**Categorical variables** (`sector`)
+
+- mode → category with the highest count
+- relative frequency → proportion in each category
+
+**Numerical variables** (`profit_margin`)
+
+- mean → center
+- variance / standard deviation → spread
+- percentiles / quantiles → position in the distribution
+
+:::
+
+::: {.column width="55%"}
+
+```{r}
+#| echo: true
+
+table(firm_data_df$sector)
+
+mean(firm_data_df$profit_margin)
+sd(firm_data_df$profit_margin)
+quantile(firm_data_df$profit_margin)
+```
+
+:::
+
+:::
+
+## Numerical summary: `profit_margin`
+
+::: columns
+
+::: {.column width="38%"}
+
+- `summary()` gives a compact overview.
+- **Mean** describes the center.
+- **Standard deviation** describes spread around the mean.
+- **Quantiles** mark positions in the ordered values.
+
+:::
+
+::: {.column width="62%"}
+
+```{r}
+#| echo: true
+
+summary(firm_data_df$profit_margin)
+
+round(mean(firm_data_df$profit_margin), 2)
+round(sd(firm_data_df$profit_margin), 2)
+
+quantile(
+  firm_data_df$profit_margin,
+  probs = c(0.25, 0.5, 0.75)
+) |>
+  round(2)
+```
+
+:::
+
+:::
+
+## Histogram: shape, center, and spread
 
 ::: columns
 
 ::: {.column width="50%"}
 
-- Basic statistical descriptions can be used to identify characteristics of the data and highlight which data values should be treated as noise or outliers.
-
-- A good way to get an impression of continuous / numeric data is the **histogram**.
-
-- The graph shows the range of observations on the horizontal axis, with a bar showing how many times each value occurred in the data set.
+- Numerical values are divided into intervals (**bins**).
+- Bar height indicates how many observations fall into each interval.
+- A histogram reveals the distribution's shape, center, spread, and unusual observations.
 
 :::
 
 ::: {.column width="50%"}
 
-```{python}
-import numpy as np
-import matplotlib.pyplot as plt
+```{r}
+#| echo: true
+#| fig-width: 5
+#| fig-height: 3.2
 
-# Simulated year-of-birth data (similar distribution as in the slide)
-np.random.seed(42)
-years = np.concatenate([
-    np.random.normal(1965, 15, 40000),
-    np.random.normal(1980, 8, 20000)
-])
-
-years = years[(years > 1920) & (years < 2020)]
-
-plt.figure()
-plt.hist(years, bins=20)
-plt.title("Year of birth - Histogram")
-plt.xlabel("Year of birth")
-plt.ylabel("Frequency")
-plt.show()
+ggplot(firm_data_df, aes(x = profit_margin)) +
+  geom_histogram(bins = 20) +
+  labs(
+    x = "Profit margin",
+    y = "Number of firms"
+  )
 ```
 :::
 
 :::
 
 
-## Mode
+::: aside
+See [ggplot2 documentation](https://ggplot2.tidyverse.org/reference/ggplot.html) and [cheatsheet](https://rstudio.github.io/cheatsheets/html/data-visualization.html).
+:::
+
+
+## Mode and relative frequencies
 
 ::: columns
 
 ::: {.column width="50%"}
 
-- The mode is the value that appears most in a set of data values
-- The highest mode also has the highest relative frequency (see next slide)
-- Example: On a party, you meet many other students, and you ask what they are studying.
+- A frequency table **counts** firms in each category.
+- Relative frequencies express these counts as **proportions**.
+- The category with the highest frequency is the **mode**: Healthcare.
 
 :::
 
 ::: {.column width="50%"}
 
-```{python}
-import matplotlib.pyplot as plt
+```{r}
+#| echo: true
 
-# Example data
-fields = [
-    "Computer Science",
-    "Information Systems",
-    "Business Administration",
-    "Engineering"
-]
+table(firm_data_df$sector)
 
-counts = [20, 25, 17, 12]
-
-plt.figure()
-plt.barh(fields, counts)
-plt.title("What is your background?")
-plt.xlabel("Number of students")
-plt.ylabel("")
-plt.xlim(0, 30)
-plt.show()
+prop.table(
+  table(firm_data_df$sector)
+) |>
+  round(2)
 ```
 :::
 
@@ -183,34 +229,17 @@ plt.show()
 
 ::: {.column width="50%"}
 
-```{python}
-import numpy as np
-import matplotlib.pyplot as plt
+```{r}
+#| echo: true
+#| fig-width: 4.5
+#| fig-height: 3.2
 
-# Simulated year-of-birth data
-np.random.seed(42)
-years = np.concatenate([
-    np.random.normal(1965, 15, 40000),
-    np.random.normal(1980, 8, 20000)
-])
-
-years = years[(years > 1920) & (years < 2020)]
-
-fig, ax = plt.subplots(2, 1, figsize=(6, 6))
-
-# Histogram
-ax[0].hist(years, bins=20)
-ax[0].set_title("Year of birth - Histogram")
-ax[0].set_xlabel("")
-ax[0].set_ylabel("Frequency")
-
-# Boxplot
-ax[1].boxplot(years, vert=False)
-ax[1].set_xlabel("Year of birth")
-ax[1].set_yticks([])
-
-plt.tight_layout()
-plt.show()
+ggplot(firm_data_df, aes(y = profit_margin)) +
+  geom_boxplot() +
+  labs(
+    x = NULL,
+    y = "Profit margin"
+  )
 ```
 :::
 
@@ -223,43 +252,28 @@ plt.show()
 
 ::: {.column width="50%"}
 
-**Example:**
+The same summary can be calculated for each category.
 
-- In an experiment, households received different types of feedback on their electricity consumption
-
-- The “control” group received no feedback
-
-- The plot shows boxplots of the savings in electricity consumption after three weeks with feedback
-
-- One can – for example – see that there is a higher spread in group 2A compared to the others
+**Observation:** Industry and Tech have wider interquartile ranges than Finance. Finance has the highest median profit margin and several potential outliers.
 
 :::
 
 ::: {.column width="50%"}
 
-```{python}
-import numpy as np
-import matplotlib.pyplot as plt
+```{r}
+#| echo: true
+#| fig-width: 5
+#| fig-height: 3.2
 
-np.random.seed(42)
-
-# Simulated savings data (kWh per day)
-group_1A = np.random.normal(0.6, 0.8, 100)
-group_1B = np.random.normal(0.5, 0.9, 100)
-group_2A = np.random.normal(1.0, 1.8, 100)   # higher spread
-group_2B = np.random.normal(0.9, 1.0, 100)
-control  = np.random.normal(0.4, 0.7, 100)
-
-data = [group_1A, group_1B, group_2A, group_2B, control]
-labels = ["1A", "1B", "2A", "2B", "control"]
-
-plt.figure()
-plt.boxplot(data, tick_labels=labels)
-plt.axhline(0)
-plt.ylabel("average el. consumption (kWh) per day")
-plt.xlabel("experiment group")
-plt.title("Savings = cons. treatment - cons. baseline")
-plt.show()
+ggplot(
+  firm_data_df,
+  aes(x = sector, y = profit_margin)
+) +
+  geom_boxplot() +
+  labs(
+    x = "Sector",
+    y = "Profit margin"
+  )
 ```
 :::
 
@@ -284,7 +298,46 @@ Multivariate non-graphical EDA techniques generally show the relationship betwee
 
 Multivariate graphical EDA techniques are scatterplots for numerical variables, Barcharts for categorical variables, or Boxplots for mixed types.
 
-![](../images/slides_196.png){fig-align=center}
+::: columns
+
+::: {.column width="45%"}
+**Scatterplot**
+
+```{r}
+#| echo: true
+#| fig-width: 5
+#| fig-height: 2.5
+#| fig-align: center
+
+ggplot(firm_data_df) +
+  geom_point(
+    aes(
+      x = rd_intensity,
+      y = profit_margin
+    )
+  )
+```
+
+`geom_point()` shows relationships between numerical variables.
+:::
+
+::: {.column width="50%"}
+**Line plot**
+
+```{r}
+#| echo: true
+#| fig-width: 5
+#| fig-height: 2.5
+#| fig-align: center
+
+ggplot(economics) +
+  geom_line(aes(x = date, y = unemploy))
+```
+
+`geom_line()` connects observations along an ordered x-axis.
+:::
+
+:::
 
 ## Bivariate statistics: Correlation
 
@@ -615,6 +668,28 @@ plot_k(7)
 The following runs a k-means clustering analysis in R:
 <br>
 
+```{r}
+#| echo: true
+#| fig-width: 5
+#| fig-height: 3.2
+#| fig-align: center
+
+set.seed(42)       # for reproducibility
+
+X <- firm_data_df |>
+  select(profit_margin, rd_intensity) |>
+  scale()
+
+km <- kmeans(X, centers = 4, nstart = 25)
+
+as.data.frame(X) |>
+  mutate(cluster = factor(km$cluster)) |>
+  ggplot(aes(x = profit_margin, y = rd_intensity, color = cluster)) +
+    geom_point() +
+    labs(color = "Cluster")
+```
+
+<!--
 ```r
 fit <- kmeans(X, centers = k, nstart = 25)
 labels <- fit$cluster
@@ -642,6 +717,7 @@ X <- matrix(c(
   5.5, 8.1
 ), ncol = 2, byrow = TRUE)
 ```
+-->
 
 ## k-means: Choosing the number of clusters (I)
 
@@ -657,8 +733,42 @@ A common heuristic is the **elbow method**.
 
 **Example metric:** within-cluster variance (inertia)
 
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 3
+#| fig-align: center
+
+elbow <- map_dfr(1:9, \(k) {
+  set.seed(42)
+
+  km <- kmeans(
+    X,
+    centers = k,
+    nstart = 25
+  )
+
+  tibble(
+    k = k,
+    withinss = km$tot.withinss
+  )
+})
+
+ggplot(elbow, aes(k, withinss)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    x = "Number of clusters (k)",
+    y = "Within-cluster sum of squares"
+  )
+
+```
+
+<!--
 ```{python}
 #| fig-align: center
+#| message: false
+#| warning: false
 #| out-width: 70%
 
 from sklearn.cluster import KMeans
@@ -678,6 +788,7 @@ plt.ylabel("Within-cluster variance")
 plt.title("Elbow method")
 plt.show()
 ```
+-->
 . . .
 
 Choose k at the **“elbow”** (diminishing returns)
@@ -704,6 +815,45 @@ An alternative is the **silhouette score**.
 
 Choose k that **maximizes the score**
 
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 3
+#| fig-align: center
+
+silhouette_scores <- map_dfr(2:9, \(k) {
+  set.seed(42)
+
+  km <- kmeans(
+    X,
+    centers = k,
+    nstart = 25
+  )
+
+  s <- cluster::silhouette(
+    km$cluster,
+    dist(X)
+  )
+
+  tibble(
+    k = k,
+    silhouette = mean(s[, "sil_width"])
+  )
+})
+
+ggplot(
+  silhouette_scores,
+  aes(k, silhouette)
+) +
+  geom_line() +
+  geom_point() +
+  labs(
+    x = "Number of clusters (k)",
+    y = "Average silhouette score"
+  )
+```
+
+<!--
 ```{python}
 #| fig-align: center
 #| out-width: 70%
@@ -725,6 +875,7 @@ plt.ylabel("Silhouette score")
 plt.title("Silhouette analysis")
 plt.show()
 ```
+-->
 
 . . .
 
@@ -764,21 +915,23 @@ Thus, a good cluster number might be at a point from where the width of the foll
 This allows us to explore clusters at **multiple levels of granularity**.
 
 ```{python}
+#| echo: false
 #| fig-align: center
-#| out-width: 70%
+#| out-width: 50%
 
 from scipy.cluster.hierarchy import dendrogram, linkage
 
 Z = linkage(X, method='ward')
 
-plt.figure(figsize=(6,4))
-dendrogram(Z)
-plt.title("Dendrogram")
-plt.xlabel("Observations")
-plt.ylabel("Distance")
-plt.show()
+_ = plt.figure(figsize=(6,4))
+_ = dendrogram(Z)
+_ = plt.title("Dendrogram")
+_ = plt.xlabel("Observations")
+_ = plt.ylabel("Distance")
+_ = plt.show()
 ```
 
+<!--
 ## Measuring similarity between clusters
 
 When merging clusters, we must define **distance between clusters**.
@@ -807,7 +960,7 @@ Timing: ~3 minutes.
 Ward is often used with Euclidean distance.
 :::
 
-<!--
+
       ## Measuring similarity between clusters (I)
 
       ![](../images/slides_328.png)

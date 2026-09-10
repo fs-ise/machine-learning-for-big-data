@@ -11,3 +11,15 @@ title: "Feedback"
 
 
 - Include `frankfurt_locations.csv` to be able to 
+
+- Think how the second part of clustering should be presented (hierarchical; distance measures). It was covered (too) quickly in the last session.
+
+
+Regression
+
+2026-03-31: 80 mins for the lecture (slightly short, could be a bit more formal/challenging)
+
+TODO
+
+- prepare explanation of regression assumptions and diagnostics
+- include transformations at the end (see https://ds100.org/course-notes/loss-transformations/#transformations-of-linear-models)

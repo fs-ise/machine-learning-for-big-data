@@ -4,7 +4,7 @@ session_id: session-01
 event_id: null
 ---
 
-## Lecture
+### Lecture
 
 | Time (min) | Duration | Topic |
 |------------|----------|-------|
@@ -29,13 +29,11 @@ Emphasize that big data is not simply “lots of data.” Each V presents a dist
 
 Use the UPS, Visa, Walmart, and digital-advertising cases to connect each characteristic to models, operational decisions, and business outcomes.
 
-## Vs of Big data
+### Vs of Big data
 
 - Velocity: can you think of a business decision that must be made in milliseconds?
 
 Discuss the paradox of Big Data and the V-Model: Big Data is often considered prevalent, but if we really apply all Vs as mandatory, not much qualifies as Big Data.
-
-{{< pagebreak >}}
 
 ## Analytical environment
 
@@ -50,9 +48,7 @@ Download the qmd files. do not work in the repository (html rendering fails due 
 
 - Work in pairs.
 
-{{< pagebreak >}}
-
-## Report.qmd exercise
+### Report.qmd exercise
 
 - On Kaggle, search for ``Advertising`` and download the ``Sales Prediction (Simple Linear Regression)`` dataset (by ``ASHISH``).
 - Add an R block using the interface
@@ -98,8 +94,6 @@ There is a positive relationship between TV advertising expenditure and sales:
 observations with higher TV advertising expenditure tend to have higher sales.
 ````
 
-{{< pagebreak >}}
-
 ## Output
 
 ```{r}
@@ -135,8 +129,6 @@ Extensions:
 
 
 At the end: highlight that one goal is to get a good understanding of well-structured and contextualized analytical reports.
-
-{{< pagebreak >}}
 
 ## Optional: Extracting/importing functionality for operational systems
 
@@ -200,8 +192,6 @@ TODO: one thing that students said last semester was that there is still a diffe
 TODO: also make sure the example is in R!
 -->
 
-{{< pagebreak >}}
-
 ## Exercise
 
 | Time (min) | Duration | Topic |
@@ -224,7 +214,7 @@ Installation: Old RStudio versions did not bundle Quarto. May need to download a
 Notes:
 
 | Part | Solution / key point |
-|---|---|
+|---|----------------------|
 | **Console vs document** | `17 * 23` → **391**. Console code is transient; code in the `.qmd` is **saved and reproducible**. |
 | **Quarto `eval: false`** | The non-running cell should contain `#| eval: false` followed by `print("This should not run")`. The code remains visible but is not executed during render. |
 | **Objects / memory** | `answer <- 6 * 7`; `ls()` should include `answer`; `rm(answer)` removes it; subsequent `ls()` should not. Objects belong to the **R session**, not the filesystem. |

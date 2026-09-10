@@ -14,7 +14,7 @@ format: html
 |-------------|-----------|-------------------------|
 | 00-20       | 20        | Orga                    |
 
-## Myself
+### Myself
 
 I do not know everything. I make mistakes. ...
 
@@ -34,7 +34,7 @@ First round
 - I will learn as much as you will.
 - I will ask for your feedback **very** regularly (at the end of each session)
 
-## About you
+### About you
 
 Maybe:
 
@@ -51,20 +51,18 @@ Analytics is not just about data.
 It changes **how decisions are made, how organizations compete, and who wins.**
 -->
 
-{{< pagebreak >}}
-
 ## Course structure
 
 - Highlight that the report submission will be approx. one month after the presentations.
 
-## Not covered
+### Not covered
 
 - Engineering: "building the system"
 - Statistical theory: "explaining the WHY"
 - Mathematical models: "building more specialized models"
 - Autonomous systems: "Implementing the decisions"
 
-## Group work brief
+### Group work brief
 
 Highlight: Focus on a topic that excites you. Realistic industry cases (typically involving confidential/proprietary data) are possible with the synthetic data creation setup.
 
@@ -87,11 +85,11 @@ Ask students to review the document (Canvas), discuss
 - You always have the slides available (especially if you sit in the back, some slides may be hard to read)
 -->
 
-## Changelog
+### Changelog
 
 - Invested a lot of effort
 - Hard to anticipate how long sessions will last: in some cases, we may complete the materials early (gives us some time to discuss the project work); if it takes too long, we can follow-up next time.
 
-## Theses
+### Theses
 
 - My students publish (very proud of them)

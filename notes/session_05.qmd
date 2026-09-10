@@ -170,20 +170,3 @@ $$
 
 
 Part 1.3: TODO: extract confidence and interpret practical and statistical significance? (the small coefficient for income could be practically significant because of the high values of income, which is not standardized)
-
-{{< pagebreak >}}
-
-## Materials
-
-- good slides: https://harvard-iacs.github.io/2019-CS109A/lectures/lecture10/ (https://harvard-iacs.github.io/2019-CS109A/lectures/lecture11/presentation/Lecture11_LogReg2.pdf)
-- good (simple; geographical) explanation:  https://www.youtube.com/watch?v=yIYKR4sgzI8
-- Lecture, Ng: https://www.youtube.com/watch?v=4u81xU7BIOc
-- https://web.stanford.edu/class/cme250/files/cme250_lecture2.pdf
-- https://slds-lmu.github.io/i2ml/chapters/03_supervised_classification/03-04-classification-logistic/
-- https://ubc-cs.github.io/cpsc330-2023W1/README.html
-- Optional /extension: changing the data: https://ubc-cs.github.io/cpsc330-2023W1/lectures/09_classification-metrics.html#optional-changing-the-data
-- https://harvard-iacs.github.io/2019-CS109A/lectures/lecture-11/notebook/
-- https://github.com/UBC-CS/cpsc330-2023W1
-- https://slds-lmu.github.io/i2ml/
-- https://www2.stat.duke.edu/courses/Spring20/sta210.001/labs/lab-08-logistic.html
-

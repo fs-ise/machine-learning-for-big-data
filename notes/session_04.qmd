@@ -14,23 +14,15 @@ session_id: session-04
 | 68–79      | 11       | Next steps             |                      |
 | 79–90      | 11       | Deployment             |                      |
 
-2026-03-31: 80 mins for the lecture (slightly short, could be a bit more formal/challenging)
-
-TODO
-
-- prepare explanation of regression assumptions and diagnostics
-- include transformations at the end (see https://ds100.org/course-notes/loss-transformations/#transformations-of-linear-models)
-
-
 Explicitly discuss "why do we focus on/start with regression? (boring/want ML/AI)"
 
--> Simplest form of a model, where we can see principles (like fitting/overfitting/...)
--> sometimes, we may try to extract structured data from big data to run regression/ML models
+- Simplest form of a model, where we can see principles (like fitting/overfitting/...)
+- sometimes, we may try to extract structured data from big data to run regression/ML models
 
 Process:
 
-... in this session, we apply the CRISP-DM, taking a foundational analytical technique as an example
--> modeling: selecting a model and refining it; or comparing different models
+- ... in this session, we apply the CRISP-DM, taking a foundational analytical technique as an example
+- modeling: selecting a model and refining it; or comparing different models
 
 ## Model choice
 
@@ -44,8 +36,6 @@ Dataset: Mention Kaggle as a great source. Different datasets are available.
 It offers descriptive overviews (EDA), and links existing analyses (tab: code)
 
 Notebook demonstration: run regression without NA-filling and correct afterward.
-
-"Solution"
 
 ```{r}
 library(readr)
@@ -63,21 +53,20 @@ model <- lm(price ~ area + Overall.Qual, data = model_data)
 tidy(model)
 ```
 
-## Overall model performance
+### Overall model performance
 
 Whether predictions are accurate enough for decisions
 
 -> depends on nr. of cases and their significance (e.g., large samples: estimating age based on names)
 
-
-## Categorical predictors
+### Categorical predictors
 
 TODO: Why should we not include all levels for a categorical variable? (include explanation here)
 
-
 ## Exercise
 
-**Why does it make sense to "test" different libraries?
+**Why does it make sense to "test" different libraries?**
+
 - Check whether they yield the same results? (did we specify the model correctly?
   Is there an error in the library?) - generally, validating results is an important skill
 - Some libraries may offer more comprehensive output (like `statsmodel`)
@@ -89,12 +78,3 @@ For `statsmodel` output, we may need to click on **scrollable** (output is trunc
 Insight: model coefficients change in subgroups
 
 Note: always exclude unique identifiers from regression models.
-
-
-{{< pagebreak >}}
-
-## Materials
-
-- Example: https://www.tidymodels.org/start/models/
-- MAFS6010u_Regression see pairwise scatter and multiple linear regression.ipynb
-- Check: https://github.com/lmarti/machine-learning/blob/master/02.%20Linear%20regression.ipynb

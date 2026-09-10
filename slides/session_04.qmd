@@ -314,11 +314,6 @@ TODO: refine based on https://chatgpt.com/c/69c508fd-8900-8393-9589-e1b01ad0ba30
 
 - Define the **target variable** (e.g., price as a continuous variable)
 
-:::
-
-. . .
-
-::: {.highlight_must_learn}
 
 **2. Collect candidate models** *(selective overview)*
 
@@ -332,23 +327,11 @@ TODO: refine based on https://chatgpt.com/c/69c508fd-8900-8393-9589-e1b01ad0ba30
 
 </div>
 
-:::
-
-. . .
-
-::: {.highlight_must_learn}
-
 **3. Select model**
 
 - **Trade-offs:** interpretability vs. performance; simplicity vs. flexibility
 - **Model complexity:** flexible models capture patterns but may overfit
 - **Performance:** unknown → must be **tested empirically**
-
-:::
-
-. . .
-
-::: {.highlight_must_learn}
 
 **4. Test and compare**
 
@@ -662,13 +645,6 @@ $$
 The parameter vector can be estimated by
 
 $$ \beta = (X'X)^{-1}X'y $$
-
-::: {.learning_note .fragment}
-**Learning focus**
-
-Aim to **understand and explain** the OLS procedure.
-You are **not required to memorize** the formulas for RSS or the closed-form OLS solution.
-:::
 
 ::: notes
 In a statistics lecture, we would derive the closed form solution mathematically.

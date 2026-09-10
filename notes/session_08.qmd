@@ -103,10 +103,9 @@ Note: `Service` has $idf=0$ and will be eliminated from TF-IDF.
 
 Most entries are zero because each document only uses a small part of the full vocabulary.
 
-## Dense representations
+### Dense representations
 
 Highlight that dense representations allow us to determine semantic similarity based on mathematical operations.
-
 
 ## Exercises
 
@@ -115,10 +114,3 @@ Highlight that dense representations allow us to determine semantic similarity b
 TODO
 
 - Reduce the IMDB dataset to 1500 or 2000 ? (faster computations of the dense vectors)
-
-{{< pagebreak >}}
-
-## Materials
-
-Check for NLP assignments: https://github.com/microsoft/ai-for-beginners
-- https://juliasilge.github.io/tidytext/

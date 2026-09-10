@@ -6,16 +6,18 @@ format: html
 
 2026-05-04 source delivery: 80 minutes. The recomposed core is planned for 90 minutes; use the discussion prompts to adjust pace.
 
-| Time (min) | Duration | Topic | Guidance |
-|---:|---:|---|---|
-| 0–15 | 15 | Why modality and structure matter | Contrast fixed columns, pixel neighborhoods, and ordered observations. |
-| 15–40 | 25 | Neural-network foundations and training | Work through the perceptron, activations, forward pass, loss, backpropagation, and gradient descent in the core flow. |
-| 40–52 | 12 | MLPs and CNNs | Move from fixed-length vectors to spatial inductive bias. |
-| 52–65 | 13 | Video, RNNs, and audio | Show that video combines space and time; audio representation affects architecture. |
-| 65–75 | 10 | Transformers and multimodality | Contrast recurrence with attention and discuss long-range relationships. |
-| 75–90 | 15 | Architecture-choice discussion | Use examples from the exercise and reinforce input → architecture → output. |
+| Time (min) | Duration | Topic |
+|---:|---:|---|
+| 0–15 | 15 | Why modality and structure matter |
+| 15–40 | 25 | Neural-network foundations and training | 
+| 40–52 | 12 | MLPs and CNNs | 
+| 52–65 | 13 | Video, RNNs, and audio |
+| 65–75 | 10 | Transformers and multimodality |
+| 75–90 | 15 | Architecture-choice discussion |
 
-## Teaching emphasis
+: {tbl-colwidths="[20,40,40]"}
+
+### Teaching emphasis
 
 The main teaching point is that specialized networks encode assumptions about **data structure**. CNNs reuse local filters over spatial data; RNNs reuse recurrent cells over time; Transformers compare positions through attention. Do not present them as isolated model definitions.
 
@@ -79,12 +81,3 @@ The original broader NovaStream quiz also included recommendation, anomaly detec
 - Clarify RNN and Transformer explanations after observing student questions.
 - Add a substantive video task or dataset during later content redevelopment; the imported exercise contained modality-selection scenarios but no hands-on media dataset.
 - Keep the R torch implementation aligned with the conceptual network diagrams when revising the session later.
-
-{{< pagebreak >}}
-
-## Materials
-
-- [3Blue1Brown neural-network explanation](https://www.youtube.com/watch?v=aircAruvnKk)
-- [MIT Introduction to Deep Learning](https://introtodeeplearning.com/)
-- [Dive into Deep Learning](https://d2l.ai/)
-- [Microsoft AI for Beginners](https://github.com/microsoft/ai-for-beginners)

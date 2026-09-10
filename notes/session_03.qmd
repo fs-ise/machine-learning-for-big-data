@@ -3,10 +3,6 @@ title: "Notes: Session 3: Exploratory data analysis"
 session_id: session-03
 ---
 
-TODO:
-
-- think how the second part of clustering should be presented (hierarchical; distance measures). It was covered (too) quickly in the last session.
-
 Preparation:
 
 - Prep follow-up to survey responses
@@ -20,35 +16,35 @@ Preparation:
 
 : {tbl-colwidths="[20,40,40]"}
 
+<!--
 But: Sometimes it is better to know/predict something even if we cannot explain it instead of doing nothing! Examples:
 
 - Recommendation systems: Which movie are you likely to watch next? Thousands of variables may be available; we may never know why exactly a particular recommendation works, but recommendations generally improve engagement/revenue. ("We don't know/don't give a recommendation" is the worst option)
  -> Business decision to recommend anything is always better than no recommendation at all
 - Fraud detection: prediction of irregular and fraudulent transactions can be very accurate, but the attackers' goal is to behave in a way that is hard to anticipate. Prediction may focus on identifying cases that are "not behaving regularly" (rather than identifying generalizable patterns)
+-->
 
-## Previous exercise
+### Previous exercise
 
 - Take time to solve the previous exercise sheet, in particular the last exercise (long code).
 - Make sure students understand the functional programming pipes and object assignment.
 - Point to [Posit Cheatsheets](https://opensource.posit.co/resources/cheatsheets/?languages=R), in particular the [tidyr cheatsheet](https://opensource.posit.co/resources/cheatsheets/tidyr/) and [stringr cheatsheet](https://opensource.posit.co/resources/cheatsheets/strings/)
 - Open `View(data_df)` and code in console. Then copy working code to the `.qmd` file.
 
+## In-class exercise
 
-## EDA/Clustering
+Ask students to open a new `.qmd` file and run the statistics from the slides (when there are many, select one).
 
+### EDA/Clustering
+
+<!--
 TODO: Illustrate how k-means clustering works for a given k (random centroids/assignments, recalculation of centroids), using different colors
+-->
 
-## Survey
-
-- Generally: indicate when notes on learning focus or expectations would be helpful.
+- set.seed(42) makes the random initialization reproducible.
+- nstart = 25 makes K-means try 25 different initializations and keep the best one.
 
 {{< pagebreak >}}
-
-## Materials
-
-- check/include overview: https://ds100.org/course-notes/visualization-2/
-- for EDA/best practices in visualization: https://harvard-iacs.github.io/2019-CS109A/lectures/lecture9/presentation/Lecture9a_Visualization.pdf
-- https://proceedings.scipy.org/articles/tyyd7356
 
 ## Exercise
 
@@ -57,11 +53,12 @@ TODO: Illustrate how k-means clustering works for a given k (random centroids/as
 | 0–25 | 25 | EDA: Clustering | `exercises/session_03.qmd` |
 | 25–35 | 10 | Wrap-up | |
 
-### Group work
 
-Briefly have the groups summarize their topics, discuss ideas and current challenges.
-
-## EDA Clustering
+### EDA Clustering
 
 - Focus on the existing R clustering workflow: select `profit_margin` and `rd_intensity`, inspect their distributions, standardize them, compare k-means solutions, add labels, and interpret grouped revenue box plots.
 - The imported source provides 35 minutes of dedicated EDA exercise material. Retain this gap for the later R-port and content-review stage rather than adding new tasks now.
+
+### Group work (depending on time / maybe shift to next session)
+
+Briefly have the groups summarize their topics, discuss ideas and current challenges.

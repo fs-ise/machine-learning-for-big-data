@@ -3,7 +3,7 @@ title: "Notes: Session 2: Analytics"
 session_id: session-02
 ---
 
-## Lecture
+### Lecture
 
 Prep: print separate solution printout.
 
@@ -47,7 +47,7 @@ TODO/TBD: illustrations for the algorithms?
 - Gradient boosting: combining different algorithms to solve challenging problems.
 - Transformer models: complex NN architectures that are able to process unstructured data well and also generate output (useful for principal data, but also for analytical code)
 
-## Architectures
+### Architectures
 
 Emphasize that these are not clean replacement stages: modern firms often combine warehouses, lakes, federated sources, and AI infrastructure.
 
@@ -55,9 +55,7 @@ Emphasize that these are not clean replacement stages: modern firms often combin
 ## Analytical processes
 -->
 
-{{< pagebreak >}}
-
-## Exercise: Identify the analytical purpose
+### Exercise: Identify the analytical purpose
 
 Classify each question or statement as **descriptive**, **predictive**, or **prescriptive** analytics.
 
@@ -76,15 +74,13 @@ Classify each question or statement as **descriptive**, **predictive**, or **pre
 | Increase recruiting capacity by 20% to maintain required staffing levels. | **Prescriptive**   |
 
 
-## Key trends of improvement:
+### Key trends of improvement:
 
 - **Maturing:** from descriptive to predictive and prescriptive, reducing ambiguity and the need for human involvement in business decisions.
 - **Pervasive:** extending analytics to more areas and departments, with disciplines refining specialized models.
 - **Standardized:** sharing algorithms, software environments, and governance models such as CRISP-DM across organizations and industries.
 
 CRISP-DM is a well-established model for data analytics and provides a useful structure for the course. Emphasize that analytics is iterative rather than a linear pipeline.
-
-{{< pagebreak >}}
 
 ## Data Preparation lecture
 
@@ -122,13 +118,11 @@ Observational unit: **Quarterly sales per region** (implicitly: across years)
 - Analytical data: often extracted (copied), will not be changed by operational systems. May not even be persisted (just used in-memory for the analysis)
 - In *tidy data*, there is no need for assigning unique IDs. Duplicates are a concern, but unique IDs are not enough to conclude that there are not duplicates.
 
-## Data integration
+### Data integration
 
 Question: what does the "merge()" method correspond to in SQL?
 
 Metaphor: statisticians carefully collect their data on their own (live on their own island) - business analysts have to work with existing data (which can be very messy)
-
-{{< pagebreak >}}
 
 ## Data Preparation exercise
 

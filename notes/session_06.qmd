@@ -17,7 +17,7 @@ TODO:
 
 - Suggest code reading/understanding exercises (e.g., "what are the next steps of the procedure?", "annotate what is done in the code blocks", "give pseudocode", "are there any errors (e.g., switched code blocks)?")
 
-## Group work topics
+### Group work topics
 
 Check which topics were selected by groups, identify potential overlap and guide topic selection.
 
@@ -41,7 +41,7 @@ Highlight: The *objective function* typically includes a *loss function* (e.g., 
 
 Variance: draw many training datasets from the population, train the model on each one, analyze fluctuation in predictions
 
-## Generalization Problem
+### Generalization Problem
 
 **Question** (go back to the supervised-ML slide showing “Dataset + Learning algorithm (model class + objective + optimizer) → predictive model”):
 How can we improve *generalization* (performance on unseen data)?
@@ -56,8 +56,7 @@ $$\min_{\theta}; \text{Loss}(\theta) + \lambda \cdot \text{Complexity}(\theta)$$
 
 That equation often helps students understand that regularization literally changes the optimization target.
 
-
-## Training/Test data
+### Training/Test data
 
 Highlight: tabular data (features in rows). Only for deep learning, unstructured data can be used as an input (learns patterns automatically)
 
@@ -74,8 +73,7 @@ Problem: the test data does not remain "unseen"
 
 “Endogenization of the test data” means that the test set—supposed to be an external, independent benchmark—becomes internally involved in the model-building process.
 
-
-## Selection bias
+### Selection bias
 
 > **Model-selection bias** occurs when a model appears better simply because many hyperparameter configurations were tried and the best-performing one was selected.
 
@@ -100,37 +98,3 @@ The authoritative exercise is `../exercises/session_06.qmd`. It remains an impor
 Note: this exercise should be a focused work-through-a-full-cross-validation effort.
 Announce that we will treat ML algorithms as black boxes for now (except for using their specific hyperparameters).
 They all have to be implemented according to the same workflow.
-
-{{< pagebreak >}}
-
-## Materials
-
-- Nice introduction: https://kuleshov-group.github.io/aml-website (careful: copyright!)
-- Lecture: https://harvard-iacs.github.io/2019-CS109A/lectures/lecture7/presentation/Lecture7_ModeLSelectionRegularization.pdf
-- https://github.com/kuleshov/cornell-cs5785-2025-applied-ml/blob/main/lecture-notes/lecture2-supervised-learning.ipynb
-
-- https://jose.theoj.org/papers/10.21105/jose.00239
-   -> slides not useful for ABD
-   -> Exercises: penguin dataset, but maybe useful as an inspiration.
-- https://torch.mlverse.org/
-
-- instructive animations on neural networks etc.:  https://www.3blue1brown.com/topics/neural-networks
-- Andrew Ng lecture:  https://www.youtube.com/watch?v=jGwO_UgTS7I
-- https://cs229.stanford.edu/
-
-<!--
-
-https://learningds.org/ch/16/ms_intro.html
-
-Feature engineering:
-https://www.kaggle.com/learn/feature-engineering
-
-Nice "whats wrong with the procedure":
-https://courses.cs.washington.edu/courses/cse446/26sp/schedule/lectures/05-train%20test%20split%20cross%20validation.pdf
-
-Exercises in jupyter:
-https://github.com/intro-stat-learning/ISLP_labs/
-https://harvard-iacs.github.io/2019-CS109A/labs/lab9/notebook/
-
-https://www.tidymodels.org/start/resampling/
--->

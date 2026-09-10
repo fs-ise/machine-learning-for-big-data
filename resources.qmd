@@ -7,3 +7,92 @@ title: Resources
 Add reusable readings, software setup instructions, and support links here.
 
 Use accessible link text and remove this page if the course does not need shared resources.
+
+### EDA Materials
+
+- check/include overview: https://ds100.org/course-notes/visualization-2/
+- for EDA/best practices in visualization: https://harvard-iacs.github.io/2019-CS109A/lectures/lecture9/presentation/Lecture9a_Visualization.pdf
+- https://proceedings.scipy.org/articles/tyyd7356
+
+### Regression
+
+- Example: https://www.tidymodels.org/start/models/
+- MAFS6010u_Regression see pairwise scatter and multiple linear regression.ipynb
+- Check: https://github.com/lmarti/machine-learning/blob/master/02.%20Linear%20regression.ipynb
+
+- Nice introduction: https://kuleshov-group.github.io/aml-website (careful: copyright!)
+- Lecture: https://harvard-iacs.github.io/2019-CS109A/lectures/lecture7/presentation/Lecture7_ModeLSelectionRegularization.pdf
+- https://github.com/kuleshov/cornell-cs5785-2025-applied-ml/blob/main/lecture-notes/lecture2-supervised-learning.ipynb
+
+- https://jose.theoj.org/papers/10.21105/jose.00239
+   -> slides not useful for ABD
+   -> Exercises: penguin dataset, but maybe useful as an inspiration.
+- https://torch.mlverse.org/
+
+- instructive animations on neural networks etc.:  https://www.3blue1brown.com/topics/neural-networks
+- Andrew Ng lecture:  https://www.youtube.com/watch?v=jGwO_UgTS7I
+- https://cs229.stanford.edu/
+
+<!--
+https://learningds.org/ch/16/ms_intro.html
+
+Feature engineering:
+https://www.kaggle.com/learn/feature-engineering
+
+Nice "whats wrong with the procedure":
+https://courses.cs.washington.edu/courses/cse446/26sp/schedule/lectures/05-train%20test%20split%20cross%20validation.pdf
+
+Exercises in jupyter:
+https://github.com/intro-stat-learning/ISLP_labs/
+https://harvard-iacs.github.io/2019-CS109A/labs/lab9/notebook/
+
+https://www.tidymodels.org/start/resampling/
+-->
+
+### Logistic Regression
+
+- good slides: https://harvard-iacs.github.io/2019-CS109A/lectures/lecture10/ (https://harvard-iacs.github.io/2019-CS109A/lectures/lecture11/presentation/Lecture11_LogReg2.pdf)
+- good (simple; geographical) explanation:  https://www.youtube.com/watch?v=yIYKR4sgzI8
+- Lecture, Ng: https://www.youtube.com/watch?v=4u81xU7BIOc
+- https://web.stanford.edu/class/cme250/files/cme250_lecture2.pdf
+- https://slds-lmu.github.io/i2ml/chapters/03_supervised_classification/03-04-classification-logistic/
+- https://ubc-cs.github.io/cpsc330-2023W1/README.html
+- Optional /extension: changing the data: https://ubc-cs.github.io/cpsc330-2023W1/lectures/09_classification-metrics.html#optional-changing-the-data
+- https://harvard-iacs.github.io/2019-CS109A/lectures/lecture-11/notebook/
+- https://github.com/UBC-CS/cpsc330-2023W1
+- https://slds-lmu.github.io/i2ml/
+- https://www2.stat.duke.edu/courses/Spring20/sta210.001/labs/lab-08-logistic.html
+
+### ML
+
+- Lectures: https://harvard-iacs.github.io/2019-CS109A/lectures/lecture15/presentation/Lecture15_Decision_Trees.pdf
+- https://medium.com/data-science/entropy-how-decision-trees-make-decisions-2946b9c18c8
+
+### ML Text
+
+- Check for NLP assignments: https://github.com/microsoft/ai-for-beginners
+- https://juliasilge.github.io/tidytext/
+
+
+### Neural Networks
+
+- [3Blue1Brown neural-network explanation](https://www.youtube.com/watch?v=aircAruvnKk)
+- [MIT Introduction to Deep Learning](https://introtodeeplearning.com/)
+- [Dive into Deep Learning](https://d2l.ai/)
+- [Microsoft AI for Beginners](https://github.com/microsoft/ai-for-beginners)
+
+
+### Organizational deployment
+
+- Ethics/Fairness: https://developers.google.com/machine-learning/crash-course/fairness
+- https://github.com/cs124/labs/blob/main/Lab2_LogisticRegression_Solutions.md#ethics-discussion
+
+AI for generating and understanding analytical code.
+
+- https://recipes.tidymodels.org/reference/step_dummy.html - see dummy-variable encoding
+- https://www.datacamp.com/datalab
+- https://www.datacamp.com/datalab/ai
+- Connect to AGI debates (jagged frontier...), which unlocks generation, but places new burdens on validation and testing
+- Reliability: monitoring/ensuring that the data input remains stable/in-line with the model (e.g., one-hot encoded variables with the specific levels for regression)
+- Fairness: https://developers.google.com/machine-learning/crash-course/fairness
+- https://rodneybrooks.com/rodney-brooks-three-laws-of-artificial-intelligence
