@@ -3,15 +3,22 @@ title: "Notes: Session 3: Exploratory data analysis"
 session_id: session-03
 ---
 
-| Time (min) | Duration | Topic                                      | Additional materials |
-|------------|----------|--------------------------------------------|----------------------|
-| 0–20       | 20       | Univariate exploratory data analysis       |                      |
-| 20–40      | 20       | Multivariate exploratory data analysis     |                      |
-| 40–90      | 50       | Clustering in EDA                          |                      |
-
 TODO:
 
 - think how the second part of clustering should be presented (hierarchical; distance measures). It was covered (too) quickly in the last session.
+
+Preparation:
+
+- Prep follow-up to survey responses
+- Print `session_02_solution.html`
+
+| Time (min) | Topic                                      | Additional materials |
+|------------|--------------------------------------------|----------------------|
+| 0–20       | Univariate exploratory data analysis       |                      |
+| 20–40      | Multivariate exploratory data analysis     |                      |
+| 40–90      | Clustering in EDA                          |                      |
+
+: {tbl-colwidths="[20,40,40]"}
 
 But: Sometimes it is better to know/predict something even if we cannot explain it instead of doing nothing! Examples:
 
@@ -22,7 +29,10 @@ But: Sometimes it is better to know/predict something even if we cannot explain 
 ## Previous exercise
 
 - Take time to solve the previous exercise sheet, in particular the last exercise (long code).
-- Make sure students understand the functional programming pipes and object assignment
+- Make sure students understand the functional programming pipes and object assignment.
+- Point to [Posit Cheatsheets](https://opensource.posit.co/resources/cheatsheets/?languages=R), in particular the [tidyr cheatsheet](https://opensource.posit.co/resources/cheatsheets/tidyr/) and [stringr cheatsheet](https://opensource.posit.co/resources/cheatsheets/strings/)
+- Open `View(data_df)` and code in console. Then copy working code to the `.qmd` file.
+
 
 ## EDA/Clustering
 
@@ -36,7 +46,6 @@ TODO: Illustrate how k-means clustering works for a given k (random centroids/as
 
 ## Materials
 
-
 - check/include overview: https://ds100.org/course-notes/visualization-2/
 - for EDA/best practices in visualization: https://harvard-iacs.github.io/2019-CS109A/lectures/lecture9/presentation/Lecture9a_Visualization.pdf
 - https://proceedings.scipy.org/articles/tyyd7356
@@ -47,6 +56,12 @@ TODO: Illustrate how k-means clustering works for a given k (random centroids/as
 |------------|----------|-------|----------------------|
 | 0–25 | 25 | EDA: Clustering | `exercises/session_03.qmd` |
 | 25–35 | 10 | Wrap-up | |
+
+### Group work
+
+Briefly have the groups summarize their topics, discuss ideas and current challenges.
+
+## EDA Clustering
 
 - Focus on the existing R clustering workflow: select `profit_margin` and `rd_intensity`, inspect their distributions, standardize them, compare k-means solutions, add labels, and interpret grouped revenue box plots.
 - The imported source provides 35 minutes of dedicated EDA exercise material. Retain this gap for the later R-port and content-review stage rather than adding new tasks now.

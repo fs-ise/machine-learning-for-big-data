@@ -471,14 +471,13 @@ customer_df <- customer_df |>
   )
 
 # --- Invalid or implausible values ---
-today <- Sys.Date()
 customer_df <- customer_df |>
   filter(
     !is.na(date_of_birth),
     date_of_birth > as.Date("1900-01-01"),
-    date_of_birth < today,
+    date_of_birth < as.Date("2026-09-01"),
     !is.na(signup_date),
-    signup_date <= today,
+    signup_date <= as.Date("2026-09-01"),
     income >= 0
   )
 

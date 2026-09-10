@@ -86,7 +86,7 @@ CRISP-DM is a well-established model for data analytics and provides a useful st
 
 {{< pagebreak >}}
 
-# Data Preparation lecture
+## Data Preparation lecture
 
 ::: {.callout-note title="Interactive part"}
 Start with questions to activate students (previous knowledge).
@@ -130,7 +130,7 @@ Metaphor: statisticians carefully collect their data on their own (live on their
 
 {{< pagebreak >}}
 
-# Data Preparation exercise
+## Data Preparation exercise
 
 Open the **tidyr documentation** (linked at the top of the exercise sheet)
 
@@ -141,7 +141,6 @@ Open the **tidyr documentation** (linked at the top of the exercise sheet)
 - TODO: include an example for tidying data with different observational units (e.g., different levels like department sales vs. package deliveries to customers).
 
 **See separate solution printout.**
-
 
 ::: {.callout-note title="Summary of lessons learned"}
 - Know where the `.qmd` and data is stored
