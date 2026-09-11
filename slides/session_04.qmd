@@ -667,20 +667,17 @@ Here, we simply take away that it exists and that it can be computed efficiently
 
 <br>
 
-```r
+```{r}
+#| echo: true
+
 library(readr)
 library(dplyr)
 
-df <- read_csv("../exercises/data/ames.csv", show_col_types = FALSE) # <1>
-predictors <- c("area", "Overall.Qual")                       # <2>
-model <- lm(price ~ area + Overall.Qual, data = df)           # <3>
-model                                                                    # <4>
+df <- read_csv("../exercises/data/ames.csv", show_col_types = FALSE)
+predictors <- c("area", "Overall.Qual")
+model <- lm(price ~ area + Overall.Qual, data = df)
+model
 ```
-1. Import relevant libraries
-2. Load the Ames housing dataset
-3. Select predictor variables
-4. Create the regression model
-5. Estimate the model on the data
 
 <!--
     **TODO: clarify expectations (TBD: what is reasonable when ChatGPT would be available? - knowing code structure, reproducing? - add example exam questions)**
@@ -877,11 +874,11 @@ Emphasize that model evaluation is not just “how well did it fit the training 
 
 ::: {.highlight_must_learn}
 
-Regression coefficients tell us how the predicted outcome changes when a predictor changes, **holding the other predictors constant**.
-
 <!--
     TODO: include an example of a regression table with significance (p-value/stars/confidence intervals)?
 -->
+
+Regression coefficients tell us how the predicted outcome changes when a predictor changes, **holding the other predictors constant**.
 
 For a coefficient $\beta_j$:
 
@@ -902,9 +899,10 @@ Example:
 
 :::
 
-. . .
 
-**When evaluating coefficients, consider both:**
+## Significance of coefficients
+
+When evaluating coefficients, consider both:
 
 **1. Statistical significance**
 

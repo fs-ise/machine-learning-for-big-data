@@ -564,7 +564,7 @@ Limitations: must choose **k**, sensitive to scaling and outliers.
 Timing: ~4 minutes.
 :::
 
-## k-means: How cluster solutions evolve
+## k-means: Comparison of solutions for different k
 
 ```{python}
 #| label: k-means-how-cluster-solutions-evolve-import-numpy-as-np
