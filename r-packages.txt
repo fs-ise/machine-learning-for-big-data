@@ -7,17 +7,13 @@ irlba
 kernlab
 kknn
 knitr
-leaflet
 Matrix
-osmdata
-patchwork
 pROC
 quanteda
 ranger
 readr
 rmarkdown
 rpart
-sf
 tidymodels
 tidyverse
 yardstick

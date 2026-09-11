@@ -20,22 +20,31 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install R exercise dependencies
+      - name: Install R and system libraries
         run: |
           sudo apt-get update
-          sudo apt-get install --yes r-base
+          # tidyverse and its graphics/networking dependencies compile against
+          # these headers when CRAN binaries are unavailable.
+          sudo apt-get install --yes --no-install-recommends \
+            r-base \
+            r-base-dev \
+            libcurl4-openssl-dev \
+            libfontconfig1-dev \
+            libfreetype6-dev \
+            libfribidi-dev \
+            libharfbuzz-dev \
+            libicu-dev \
+            libssl-dev \
+            libxml2-dev
           mkdir -p "$HOME/R/library"
           export R_LIBS_USER="$HOME/R/library"
           echo "R_LIBS_USER=$R_LIBS_USER" >> "$GITHUB_ENV"
-          Rscript -e 'install.packages(c("knitr", "rmarkdown"), repos = "https://cloud.r-project.org")'
+      - name: Install and validate R rendering dependencies
+        run: |
           Rscript scripts/install_r_dependencies.R
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           tinytex: true
-      - name: Check R rendering dependencies
-        run: |
-          Rscript -e 'cat("knitr:", as.character(packageVersion("knitr")), "\n")'
-          Rscript -e 'cat("rmarkdown:", as.character(packageVersion("rmarkdown")), "\n")'
       - name: Render site and exercise artifacts
         run: make site
       - uses: actions/upload-pages-artifact@v3
