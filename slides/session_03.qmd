@@ -17,10 +17,10 @@ format: revealjs
 - **Explain** the role of exploratory data analysis in business decision-making.
 :::
 
+<!--
 ## Table of contents {data-state="hide-menubar"}
 <ul class="menu"><ul>
-
-# Univariate exploratory data analysis {data-stack-name="Univariate EDA"}
+-->
 
 ## Foundations
 
@@ -58,6 +58,8 @@ The following forms of EDA are typically distinguished:
     </td>
   </tr>
 </table>
+
+# Univariate exploratory data analysis {data-stack-name="Univariate EDA"}
 
 ## Descriptive statistics
 
@@ -303,7 +305,7 @@ Multivariate non-graphical EDA techniques generally show the relationship betwee
 
 ## Multivariate graphical EDA
 
-Multivariate graphical EDA techniques are scatterplots for numerical variables, Barcharts for categorical variables, or Boxplots for mixed types.
+When exploring multiple variables together, the appropriate visualization depends on the types of variables being compared.
 
 ::: columns
 
@@ -326,7 +328,6 @@ ggplot(firm_data_df) +
   )
 ```
 
-`geom_point()` shows relationships between numerical variables.
 :::
 
 ::: {.column width="50%"}
@@ -343,10 +344,14 @@ ggplot(economics) +
   geom_line(aes(x = date, y = unemploy))
 ```
 
-`geom_line()` connects observations along an ordered x-axis.
 :::
 
 :::
+
+<!--
+`geom_point()` shows relationships between numerical variables.
+`geom_line()` connects observations along an ordered x-axis.
+-->
 
 ## Bivariate statistics: Correlation
 
@@ -685,14 +690,11 @@ plot_k(7)
 
 ## k-means: Implementation in R
 
-The following runs a k-means clustering analysis in R:
-<br>
-
 ```{r}
 #| label: k-means-implementation-in-r-set-seed
 #| echo: true
 #| fig-width: 5
-#| fig-height: 3.2
+#| fig-height: 4
 #| fig-align: center
 
 set.seed(42)       # for reproducibility
@@ -1057,7 +1059,7 @@ Common evaluation approaches include:
 
 * **interpretability checks**
 
-  * do cluster profiles make business sense?
+  * do cluster profiles make sense in the given context?
 
 ::: aside
 Based on @BalijepallyMangalarajIyengar2011.
