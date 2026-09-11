@@ -474,7 +474,7 @@ Clustering algorithms can be grouped into several **families of approaches**.
 
 | Family | Examples | Key characteristics |
 |------|------|------|
-| **Segmentation / Partitioning methods** | **k-means**, k-medoids (PAM), bisecting k-means | divide observations into *k predefined clusters*; scalable for **large datasets**; widely used for **business/customer segmentation** |
+| **Partitioning methods** | **k-means**, k-medoids (PAM), bisecting k-means | divide observations into a predefined number k of clusters; k-means is computationally efficient and widely used for **business/customer segmentation** |
 | **Hierarchical methods** | **Agglomerative clustering**, divisive clustering | clusters formed through **successive merging or splitting**; produce **dendrograms (cluster trees)**; useful for **exploratory structure discovery** |
 | **Density-based methods** | DBSCAN, HDBSCAN | clusters defined as **regions of high density**; identify **arbitrary shapes** and **outliers/noise** |
 | **Probabilistic / model-based methods** | Gaussian mixture models | clusters modeled as **probability distributions**; allow **soft cluster membership** when groups overlap |

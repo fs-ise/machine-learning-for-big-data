@@ -210,7 +210,6 @@ sales_data_df |> head()
 |   |   |   |   |   |
 |   |   |   |   |   |
 
-
 3. Describe how the dataset should be transformed.
 
 **Your answer:** *Write your answer here.*
@@ -250,11 +249,7 @@ sales_data_df <- read_csv(
 | CUST-AB12CD | EU     | Jan   | Store   | 95    |
 | CUST-AB12CD | EU     | Feb   | Online  | 135   |
 
-
-
-
 ### 3. Describe how the dataset should be transformed.
-
 
 - Reshape (wide → long): Convert all monthly/channel columns into two columns
 - Split the combined column (Month, Channel)
@@ -460,7 +455,7 @@ customer_df <- customer_df |>
   mutate(income = parse_number(income))
 
 # --- Missing income: replace with the median ---
-income_median <- median(customer_df$income, na.rm = TRUE)
+income_median <- median(customer_df$income)
 customer_df <- customer_df |>
   mutate(income = replace_na(income, income_median))
 

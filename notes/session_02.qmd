@@ -134,6 +134,20 @@ Open the **tidyr documentation** (linked at the top of the exercise sheet)
 - Possible extensions: data structuring with tables requiring transpose.
 - TODO: include an example for tidying data with different observational units (e.g., different levels like department sales vs. package deliveries to customers).
 
+Briefly illustrate syntax:
+
+```r
+5                               # printed immediately
+amount <- 5                     # assignment
+paste0(amount, " Euro")         # function call
+amount |> paste0(" Euro")       # pipe operation (functional programming)
+                                # means the amount variable will be provided
+                                # as the first argument to paste0()
+output <- amount |> paste0(" Euro")
+                                # code example resembles typical R code
+output
+```
+
 **See separate solution printout.**
 
 ::: {.callout-note title="Summary of lessons learned"}
