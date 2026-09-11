@@ -25,17 +25,30 @@ PROJECT_CONFIG = """project:
 format:
   html: default
   pdf:
-    documentclass: article
+    pdf-engine: lualatex
+    documentclass: scrartcl
+    classoption:
+      - 11pt
+      - headings=small
+      - parskip=half
     papersize: a4
     geometry:
-      - margin=25mm
+      - top=27mm
+      - bottom=25mm
+      - left=28mm
+      - right=28mm
+      - headheight=15pt
+      - headsep=8mm
+      - footskip=12mm
+    keep-tex: true
+    include-in-header:
+      - solution-pdf/preamble.tex
     template-partials:
-      - solution-pdf/in-header.tex
       - solution-pdf/before-body.tex
 """
 COURSE_TITLE = "Machine Learning for Big Data"
 SOLUTION_TEMPLATES = (
-    Path("scripts/templates/exercise-solution-in-header.tex"),
+    Path("scripts/templates/exercise-solution-preamble.tex"),
     Path("scripts/templates/exercise-solution-before-body.tex"),
 )
 FRONT_MATTER = re.compile(r"\A---[ \t]*\r?\n(?P<body>.*?)^---[ \t]*$", re.MULTILINE | re.DOTALL)

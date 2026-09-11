@@ -79,21 +79,27 @@ def test_pdf_metadata_is_added_only_when_explicitly_building_solution() -> None:
     assert generated.endswith("Body\n")
 
 
-def test_shared_pdf_template_has_compact_running_header() -> None:
+def test_pdf_config_and_templates_use_static_preamble_and_dynamic_body() -> None:
     root = Path(__file__).resolve().parents[1]
     templates = root / "scripts/templates"
-    header = templates.joinpath("exercise-solution-in-header.tex").read_text()
+    preamble = templates.joinpath("exercise-solution-preamble.tex").read_text()
     body = templates.joinpath("exercise-solution-before-body.tex").read_text()
 
-    assert r"\usepackage{scrlayer-scrpage}" in header
-    assert r"\ihead[" in header  # optional argument also configures the plain style
-    assert r"\ohead[" in header
-    assert r"\setheadsepline{0.4pt}" in header
-    assert r"\cfoot[\pagemark]{\pagemark}" in header
+    assert "include-in-header:\n      - solution-pdf/preamble.tex" in PROJECT_CONFIG
+    assert "template-partials:\n      - solution-pdf/before-body.tex" in PROJECT_CONFIG
+    assert "solution-pdf/in-header.tex" not in PROJECT_CONFIG
+    assert r"\usepackage{scrlayer-scrpage}" in preamble
+    assert r"\KOMAoptions{headsepline=0.3pt}" in preamble
+    assert "$course-title$" not in preamble
+    assert "$exercise-number$" not in preamble
+    assert r"\ihead[" in body  # optional argument also configures the plain style
+    assert r"\ohead[" in body
+    assert r"\ofoot[\pagemark]{\pagemark}" in body
+    assert r"\thispagestyle{scrheadings}" in body
     for field in ("$course-title$", "$exercise-number$", "$exercise-variant$"):
-        assert field in header
-    assert body.strip() == r"\section*{$exercise-topic$}"
-    assert r"\Large" not in header + body
+        assert field in body
+    assert r"\section*{$exercise-topic$}" in body
+    assert r"\Large" not in preamble + body
 
 
 def test_canonical_shared_setup_survives_in_both_variants() -> None:
@@ -188,7 +194,7 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     template = tmp_path / "scripts/templates"
     template.mkdir(parents=True)
     template.joinpath("exercise-solution-before-body.tex").write_text("shared template")
-    template.joinpath("exercise-solution-in-header.tex").write_text("shared header")
+    template.joinpath("exercise-solution-preamble.tex").write_text("shared preamble")
     data = exercises / "data"
     data.mkdir()
     fixture = data / "market_data_log.csv"
@@ -200,15 +206,18 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     generated = tmp_path / "_generated/exercises"
     assert (generated / "_quarto.yml").read_text(encoding="utf-8") == PROJECT_CONFIG
     assert (generated / "solution-pdf/before-body.tex").read_text() == "shared template"
-    assert (generated / "solution-pdf/in-header.tex").read_text() == "shared header"
+    assert (generated / "solution-pdf/preamble.tex").read_text() == "shared preamble"
     assert "output-dir: _rendered" in PROJECT_CONFIG
     assignment = (generated / "session_01_assign.qmd").read_text(encoding="utf-8")
     solution = (generated / "session_01_solution.qmd").read_text(encoding="utf-8")
     assert "title: Test" in assignment
-    assert "course-title:" not in assignment
+    for field in ("course-title", "exercise-number", "exercise-variant", "exercise-topic"):
+        assert f"{field}:" not in assignment
     assert "title: Test" in solution
     assert 'course-title: "Machine Learning for Big Data"' in solution
     assert 'exercise-number: "01"' in solution
+    assert 'exercise-variant: "Solution"' in solution
+    assert 'exercise-topic: "Test"' in solution
     assert (generated / "data/market_data_log.csv").read_bytes() == fixture.read_bytes()
     first = {
         path.relative_to(generated): path.read_bytes()
@@ -247,8 +256,8 @@ def test_make_build_publishes_rendered_variants_and_data(tmp_path: Path) -> None
         tmp_path / "scripts/templates/exercise-solution-before-body.tex",
     )
     shutil.copy(
-        root / "scripts/templates/exercise-solution-in-header.tex",
-        tmp_path / "scripts/templates/exercise-solution-in-header.tex",
+        root / "scripts/templates/exercise-solution-preamble.tex",
+        tmp_path / "scripts/templates/exercise-solution-preamble.tex",
     )
     (tmp_path / "exercises/session_01.qmd").write_text(SOURCE, encoding="utf-8")
     (tmp_path / "exercises/data/market_data_log.csv").write_text("price\n42\n", encoding="utf-8")
@@ -340,10 +349,19 @@ def test_real_quarto_project_render_smoke(tmp_path: Path) -> None:
     """Catch invalid Quarto CLI combinations when Quarto is available."""
     root = Path(__file__).resolve().parents[1]
     (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts/templates").mkdir()
     (tmp_path / "exercises").mkdir()
     (tmp_path / "exercises/data").mkdir()
     shutil.copy(root / "Makefile", tmp_path / "Makefile")
     shutil.copy(root / "scripts/build_exercises.py", tmp_path / "scripts/build_exercises.py")
+    shutil.copy(
+        root / "scripts/templates/exercise-solution-before-body.tex",
+        tmp_path / "scripts/templates/exercise-solution-before-body.tex",
+    )
+    shutil.copy(
+        root / "scripts/templates/exercise-solution-preamble.tex",
+        tmp_path / "scripts/templates/exercise-solution-preamble.tex",
+    )
     (tmp_path / "exercises/session_01.qmd").write_text(SOURCE, encoding="utf-8")
     (tmp_path / "exercises/data/market_data_log.csv").write_text("price\n42\n", encoding="utf-8")
 
