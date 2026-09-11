@@ -75,6 +75,7 @@ $$H = \log_2 K$$
 #### 4) Python Illustration (Entropy vs. Number of Classes)
 
 ```{python}
+#| label: 4-python-illustration-entropy-vs-number-of-classes-import-numpy-as-np
 #| fig-align: center
 #| echo: false
 import numpy as np

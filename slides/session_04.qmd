@@ -201,6 +201,7 @@ This makes it well suited for **regression analysis**.
 As a first step, we retrieve the dataset and load it into our R environment for analysis.
 
 ```{r}
+#| label: load-the-data-load-packages
 #| echo: true
 #| output: true
 library(readr)
@@ -353,6 +354,7 @@ TODO: check and refine: when do we use the \hat and epsilon?
 Model formula: $$price = \beta_0 + \beta_1*squarefoot$$
 
 ```{ojs}
+//| label: regression-models-a-visual-illustration
 n = 40
 
 mulberry32 = (a) => () => {
@@ -386,6 +388,7 @@ fitLine = [
 **Data**
 
 ```{ojs}
+//| label: regression-models-a-visual-illustration-inputs-table
 Inputs.table(data, {
   columns: ["squarefoot", "price"],
   height: 420
@@ -399,6 +402,7 @@ Inputs.table(data, {
 **Visualization**
 
 ```{ojs}
+//| label: regression-models-a-visual-illustration-viewof-combinedsliders
 viewof combinedSliders = {
   const b0 = Inputs.range([0, 300000], {value: 50000, step: 5000, label: "β₀ (base price)"})
   const b1 = Inputs.range([50, 400], {value: 180, step: 5, label: "β₁ (price per sq ft)"})
@@ -420,6 +424,7 @@ beta1 = combinedSliders.beta1
 ```
 
 ```{ojs}
+//| label: regression-models-a-visual-illustration-plot-plot
 Plot.plot({
   height: 480,
   marginLeft: 70,
@@ -446,6 +451,7 @@ Plot.plot({
 ::: {.highlight_must_learn}
 
 ```{ojs}
+//| label: interpreting-the-regression-model-exampledata
 exampleData = [
   {squarefoot: 800,  price: 196000},
   {squarefoot: 1200, price: 272000},
@@ -494,6 +500,7 @@ each additional square foot is associated with **+$180** in predicted price, on 
 
 $$\hat{price} = 50{,}000 + 180 \times 1{,}500 = \$322{,}000$$
 ```{ojs}
+//| label: interpreting-the-regression-model-plot-plot
 Plot.plot({
   height: 320,
   marginLeft: 70,

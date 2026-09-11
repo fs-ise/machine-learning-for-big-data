@@ -64,6 +64,7 @@ The following forms of EDA are typically distinguished:
 We use one real data set throughout the examples: 200 firms from four sectors.
 
 ```{r}
+#| label: descriptive-statistics-load-packages
 #| echo: true
 #| message: false
 #| warning: false
@@ -100,6 +101,7 @@ head(firm_data_df)
 ::: {.column width="55%"}
 
 ```{r}
+#| label: key-figures-concepts-map-directly-to-r-table
 #| echo: true
 
 table(firm_data_df$sector)
@@ -129,6 +131,7 @@ quantile(firm_data_df$profit_margin)
 ::: {.column width="62%"}
 
 ```{r}
+#| label: numerical-summary-profit-margin
 #| echo: true
 
 summary(firm_data_df$profit_margin)
@@ -162,6 +165,7 @@ quantile(
 ::: {.column width="50%"}
 
 ```{r}
+#| label: histogram-shape-center-and-spread-ggplot
 #| echo: true
 #| fig-width: 5
 #| fig-height: 3.2
@@ -198,6 +202,7 @@ See [ggplot2 documentation](https://ggplot2.tidyverse.org/reference/ggplot.html)
 ::: {.column width="50%"}
 
 ```{r}
+#| label: mode-and-relative-frequencies-table
 #| echo: true
 
 table(firm_data_df$sector)
@@ -230,6 +235,7 @@ prop.table(
 ::: {.column width="50%"}
 
 ```{r}
+#| label: boxplot-ggplot
 #| echo: true
 #| fig-width: 4.5
 #| fig-height: 3.2
@@ -261,6 +267,7 @@ The same summary can be calculated for each category.
 ::: {.column width="50%"}
 
 ```{r}
+#| label: boxplots-can-be-used-to-compare-different-distributions-ggplot
 #| echo: true
 #| fig-width: 5
 #| fig-height: 3.2
@@ -304,6 +311,7 @@ Multivariate graphical EDA techniques are scatterplots for numerical variables, 
 **Scatterplot**
 
 ```{r}
+#| label: multivariate-graphical-eda-ggplot
 #| echo: true
 #| fig-width: 5
 #| fig-height: 2.5
@@ -325,6 +333,7 @@ ggplot(firm_data_df) +
 **Line plot**
 
 ```{r}
+#| label: multivariate-eda-line-plot
 #| echo: true
 #| fig-width: 5
 #| fig-height: 2.5
@@ -365,6 +374,7 @@ $$r =
 ::: {.column width="50%"}
 
 ```{python}
+#| label: correlation-scatterplot
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -385,6 +395,7 @@ plt.show()
 ::: {.column width="50%"}
 
 ```{python}
+#| label: correlation-coefficient-scale
 #| fig-width: 4
 #| fig-height: 1
 
@@ -498,6 +509,7 @@ Timing: ~5 minutes.
 Goal: give students a quick mental map of clustering methods.
 
 Emphasize that many algorithms exist, but we focus on the two most intuitive and widely taught ones:
+
 - k-means
 - agglomerative hierarchical clustering.
 :::
@@ -574,6 +586,7 @@ Timing: ~4 minutes.
 ## k-means: How cluster solutions evolve
 
 ```{python}
+#| label: k-means-how-cluster-solutions-evolve-import-numpy-as-np
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -611,42 +624,49 @@ def plot_k(k):
 
 ::: {.fragment}
 ```{python}
+#| label: k-means-how-cluster-solutions-evolve-plot-1
 plot_k(1)
 ```
 :::
 
 ::: {.fragment}
 ```{python}
+#| label: k-means-how-cluster-solutions-evolve-plot-2
 plot_k(2)
 ```
 :::
 
 ::: {.fragment}
 ```{python}
+#| label: k-means-how-cluster-solutions-evolve-plot-3
 plot_k(3)
 ```
 :::
 
 ::: {.fragment}
 ```{python}
+#| label: k-means-how-cluster-solutions-evolve-plot-4
 plot_k(4)
 ```
 :::
 
 ::: {.fragment}
 ```{python}
+#| label: k-means-how-cluster-solutions-evolve-plot-5
 plot_k(5)
 ```
 :::
 
 ::: {.fragment}
 ```{python}
+#| label: k-means-how-cluster-solutions-evolve-plot-6
 plot_k(6)
 ```
 :::
 
 ::: {.fragment}
 ```{python}
+#| label: k-means-how-cluster-solutions-evolve-plot-7
 plot_k(7)
 ```
 :::
@@ -669,6 +689,7 @@ The following runs a k-means clustering analysis in R:
 <br>
 
 ```{r}
+#| label: k-means-implementation-in-r-set-seed
 #| echo: true
 #| fig-width: 5
 #| fig-height: 3.2
@@ -734,6 +755,7 @@ A common heuristic is the **elbow method**.
 **Example metric:** within-cluster variance (inertia)
 
 ```{r}
+#| label: k-means-choosing-the-number-of-clusters-i-elbow
 #| echo: false
 #| fig-width: 7
 #| fig-height: 3
@@ -766,6 +788,7 @@ ggplot(elbow, aes(k, withinss)) +
 
 <!--
 ```{python}
+#| label: k-means-choosing-the-number-of-clusters-i-from-sklearn-cluster-import
 #| fig-align: center
 #| message: false
 #| warning: false
@@ -816,6 +839,7 @@ An alternative is the **silhouette score**.
 Choose k that **maximizes the score**
 
 ```{r}
+#| label: k-means-choosing-the-number-of-clusters-ii-silhouette-scores
 #| echo: false
 #| fig-width: 7
 #| fig-height: 3
@@ -855,6 +879,7 @@ ggplot(
 
 <!--
 ```{python}
+#| label: k-means-choosing-the-number-of-clusters-ii-from-sklearn-metrics-import
 #| fig-align: center
 #| out-width: 70%
 
@@ -915,6 +940,7 @@ Thus, a good cluster number might be at a point from where the width of the foll
 This allows us to explore clusters at **multiple levels of granularity**.
 
 ```{python}
+#| label: dendrogram-from-scipy-cluster-hierarchy-i
 #| echo: false
 #| fig-align: center
 #| out-width: 50%

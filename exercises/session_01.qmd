@@ -59,6 +59,7 @@ At the top of the Source editor, switch the document from **Source** to **Visual
 Start with a simple R command:
 
 ```{r}
+#| label: test-the-r-setup-r-version-string
 R.version.string
 ```
 
@@ -67,6 +68,7 @@ R.version.string
 Now use R as a calculator. Run this cell yourself:
 
 ```{r}
+#| label: test-the-r-setup-calculation
 3 * 5
 7 + 2
 100 / 5
@@ -76,6 +78,7 @@ Now use R as a calculator. Run this cell yourself:
 Try a few functions:
 
 ```{r}
+#| label: test-the-r-setup-sqrt
 sqrt(144)
 log(10)
 mean(c(4, 6, 8, 10))
@@ -90,6 +93,7 @@ mean(c(4, 6, 8, 10))
 4. Save the `.qmd` file. Do **not** render the document yet.
 
 ```{r}
+#| label: exercise-console-versus-document-student-response
 # YOUR CODE HERE: calculate 17 * 23
 ```
 
@@ -127,6 +131,7 @@ R stores values in named **objects** in the current R session. The assignment op
 Run this cell:
 
 ```{r}
+#| label: create-variables-and-inspect-memory
 a <- 3 * 5
 b <- 7 + 2
 c <- a * b
@@ -137,6 +142,7 @@ c
 Create objects of different types:
 
 ```{r}
+#| label: create-variables-and-inspect-memory-course
 course <- "Machine Learning for Big Data"
 session_number <- 1
 setup_complete <- TRUE
@@ -145,12 +151,14 @@ setup_complete <- TRUE
 List the objects currently in memory:
 
 ```{r}
+#| label: create-variables-and-inspect-memory-ls
 ls()
 ```
 
 Inspect individual objects:
 
 ```{r}
+#| label: create-variables-and-inspect-memory-class
 class(course)
 class(session_number)
 class(setup_complete)
@@ -167,6 +175,7 @@ You should also see these objects in RStudio's **Environment** pane.
 4. Confirm that it has disappeared.
 
 ```{r}
+#| label: exercise-create-and-remove-an-object-student-response
 # YOUR CODE HERE: create answer
 
 # YOUR CODE HERE: inspect the workspace
@@ -187,6 +196,7 @@ R packages add functions and datasets to R. **Installing** and **loading** are d
 Install the tidyverse from the **Console** if it is not already installed:
 
 ```{r}
+#| label: install-and-load-packages-install-packages
 #| eval: false
 install.packages("tidyverse")
 ```
@@ -194,12 +204,14 @@ install.packages("tidyverse")
 Package installation should not be part of code that runs every time an analysis is rendered. Once installed, load the package in the document:
 
 ```{r}
+#| label: install-and-load-packages
 library(tidyverse)
 ```
 
 Check the installed version:
 
 ```{r}
+#| label: install-and-load-packages-packageversion
 packageVersion("tidyverse")
 ```
 
@@ -209,6 +221,7 @@ packageVersion("tidyverse")
 Open the help page for `read_csv()` interactively:
 
 ```{r}
+#| label: exercise-package-help-function-help
 #| eval: false
 ?read_csv
 ```
@@ -223,6 +236,7 @@ A **data frame** represents rectangular tabular data: rows are observations and 
 Create a small data frame:
 
 ```{r}
+#| label: work-with-a-data-frame-students
 students <- data.frame(
   name = c("Alex", "Bao", "Casey", "Dina", "Emil"),
   study_hours = c(2.5, 4.0, 3.5, 5.5, 1.5),
@@ -236,6 +250,7 @@ students
 Inspect its structure:
 
 ```{r}
+#| label: work-with-a-data-frame-class
 class(students)
 str(students)
 dim(students)
@@ -246,6 +261,7 @@ head(students)
 The tidyverse can work directly with ordinary R data frames. It also commonly uses **tibbles**, which are modern data-frame subclasses.
 
 ```{r}
+#| label: work-with-a-data-frame-students-tbl
 students_tbl <- as_tibble(students)
 
 class(students_tbl)
@@ -261,17 +277,21 @@ Use R functions to answer the following questions:
 - How many rows does `students` have?
 
 **Your answer:** *Write your answer here.*
+
 - How many columns does it have?
 
 **Your answer:** *Write your answer here.*
+
 - What is the mean of `score`?
 
 **Your answer:** *Write your answer here.*
+
 - What are the values in the `name` column?
 
 **Your answer:** *Write your answer here.*
 
 ```{r}
+#| label: exercise-inspect-the-data-student-response
 # YOUR CODE HERE: number of rows
 
 # YOUR CODE HERE: number of columns
@@ -289,6 +309,7 @@ So far, you have inspected data by printing it in the Console or in this documen
 Run this interactively:
 
 ```{r}
+#| label: display-a-data-frame-in-rstudio-view
 #| eval: false
 View(students)
 ```
@@ -298,6 +319,7 @@ You can also click the `students` object in the **Environment** pane.
 Compare this with:
 
 ```{r}
+#| label: display-a-data-frame-in-rstudio-head
 head(students, 3)
 summary(students)
 glimpse(students)
@@ -328,18 +350,21 @@ For this course, open the exercise folder as an RStudio Project and use **relati
 Check the current working directory:
 
 ```{r}
+#| label: move-between-objects-and-files-getwd
 getwd()
 ```
 
 Save the `students` object as a CSV file in the project folder:
 
 ```{r}
+#| label: move-between-objects-and-files-write-csv
 write_csv(students, "students.csv")
 ```
 
 Confirm that the file exists:
 
 ```{r}
+#| label: move-between-objects-and-files-file-exists
 file.exists("students.csv")
 ```
 
@@ -356,6 +381,7 @@ At this point, the same data exists in two different forms:
 Remove the in-memory object:
 
 ```{r}
+#| label: exercise-file-versus-memory-rm
 rm(students)
 ls()
 ```
@@ -363,6 +389,7 @@ ls()
 Now check whether the file still exists:
 
 ```{r}
+#| label: exercise-file-versus-memory-file-exists
 file.exists("students.csv")
 ```
 
@@ -374,12 +401,14 @@ Explain why the result is `TRUE` even though `students` no longer appears in `ls
 Read the local CSV file back into memory:
 
 ```{r}
+#| label: load-data-from-a-file-or-url-students
 students <- read_csv("students.csv")
 ```
 
 Inspect the result:
 
 ```{r}
+#| label: load-data-inspect-students
 students
 glimpse(students)
 class(students)
@@ -391,6 +420,7 @@ Notice that `read_csv()` returns a **tibble**, and `is.data.frame(students)` is 
 `read_csv()` can also load a CSV file directly from a **URL**. For example:
 
 ```{r}
+#| label: load-data-from-a-file-or-url-penguins
 penguins <- read_csv(
   "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/main/inst/extdata/penguins.csv"
 )
@@ -408,6 +438,7 @@ Create a new object called `students_updated` in which every student receives 2 
 Hints: use `mutate()` and `write_csv()`.
 
 ```{r}
+#| label: exercise-modify-and-save-data-student-response
 # YOUR CODE HERE: create students_updated
 
 # YOUR CODE HERE: save it as students_updated.csv
@@ -421,12 +452,14 @@ Hints: use `mutate()` and `write_csv()`.
 Remove one object:
 
 ```{r}
+#| label: clean-the-workspace-rm
 rm(students_tbl)
 ```
 
 To remove **all user-created objects** from the current R session, you can run:
 
 ```{r}
+#| label: clean-the-workspace-remove-all-objects
 #| eval: false
 rm(list = ls())
 ```
@@ -452,6 +485,7 @@ So far, you have developed the analysis by executing individual code cells. Now 
 7. Inspect the rendered HTML in the Viewer.
 
 ```{r}
+#| label: final-reproducibility-check-render-the-complete-documen-ls
 #| eval: false
 # Run interactively immediately after restarting R, before rendering:
 ls()
@@ -477,6 +511,7 @@ Without looking back at the earlier code, write the shortest sequence of command
 5. removes the loaded data frame again.
 
 ```{r}
+#| label: optional-challenge-student-response
 # YOUR CODE HERE
 ```
 :::

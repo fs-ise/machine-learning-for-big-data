@@ -97,6 +97,7 @@ observations with higher TV advertising expenditure tend to have higher sales.
 ## Output
 
 ```{r}
+#| label: output-load-packages
 #| message: false
 library(tidyverse)
 
@@ -109,6 +110,7 @@ head(advertising)
 
 
 ```{r}
+#| label: output-ggplot
 #| echo: false
 #| out-width: "40%"
 

@@ -201,6 +201,7 @@ Predicting protein folding had been a major unsolved problem in biology for deca
 <br><br>
 
 ```{python}
+#| label: jagged-frontier-of-ai-import-numpy-as-np
 #| echo: false
 
 import numpy as np
@@ -269,7 +270,7 @@ plt.show()
 
 AI progress often occurs through **algorithmic breakthroughs**, enabling machines to outperform humans in increasingly complex tasks.
 
-Recent studies suggest that AI creates a **“jagged frontier.”** [@DellAcquaEtAl2023], i.e., some tasks are well suited to AI, while others that appear similar remain outside its capabilities.
+Recent studies suggest that AI creates a **“jagged frontier.”**\ [@DellAcquaEtAl2023], i.e., some tasks are well suited to AI, while others that appear similar remain outside its capabilities.
 
 - **Within this frontier, AI can strongly enhance knowledge work**, improving productivity and the quality of outputs.
 - **Outside the frontier, AI can reduce performance**, especially when users rely too heavily on its outputs without verification.
@@ -520,7 +521,7 @@ Descriptive → Predictive → Prescriptive
 
 ::: {.highlight_must_learn}
 
-**CRISP-DM** is a widely used framework that structures data mining and analytics projects [@WirthHipp2000].
+**CRISP-DM** is a widely used framework that structures data mining and analytics projects\ [@WirthHipp2000].
 
 - Developed by an **industry consortium** (e.g., DaimlerChrysler, SPSS, NCR) to create a common methodology for data mining projects.
 - Designed to be **independent of specific industries and technologies**, making it applicable across many domains.
@@ -738,7 +739,7 @@ Because these data sources are not always standardized or under the analyst’s 
 
 . . .
 
-Before conducting analysis, we must ensure that the **data is fit for use** [@StrongLeeWang1997].
+Before conducting analysis, we must ensure that the **data is fit for use**\ [@StrongLeeWang1997].
 
 ::: {.highlight_must_learn}
 

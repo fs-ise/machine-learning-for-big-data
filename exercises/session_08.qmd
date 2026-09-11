@@ -34,6 +34,7 @@ Before starting this exercise, make sure the required R packages are installed.
 Run this command once in the R console. You do not need to run it every time you open the exercise. You can skip this step if these packages are already installed.
 
 ```{r}
+#| label: package-setup-install-packages
 #| eval: false
 install.packages(c(
   "tidyverse",
@@ -48,6 +49,7 @@ install.packages(c(
 :::
 
 ```{r}
+#| label: package-setup-load-packages
 library(tidyverse)
 library(quanteda)
 library(tidymodels)
@@ -61,6 +63,7 @@ library(tidymodels)
 Load the local data, inspect its columns, and count sentiment labels.
 
 ```{r}
+#| label: task-1-1-load-and-inspect-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -68,6 +71,7 @@ Load the local data, inspect its columns, and count sentiment labels.
 ::: {.sol}
 
 ```{r}
+#| label: task-1-1-load-and-inspect-df
 df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/imdb_reviews_sample.csv",
   show_col_types = FALSE
@@ -89,6 +93,7 @@ count(df, sentiment)
 4. Create a reproducible stratified 75/25 split.
 
 ```{r}
+#| label: task-1-2-clean-and-split-student-response
 # YOUR CODE HERE
 ```
 
@@ -100,6 +105,7 @@ Why must vocabulary, document-frequency weights, and later dimensionality reduct
 ::: {.sol}
 
 ```{r}
+#| label: task-1-2-clean-and-split-df
 df <- df |>
   drop_na(review, sentiment) |>
   mutate(
@@ -147,6 +153,7 @@ Bag-of-Words records token counts. TF-IDF retains a sparse lexical representatio
 Use `quanteda` to tokenize training reviews, remove punctuation, numbers, and English stopwords, and create unigrams and bigrams. Trim the **training** vocabulary to at most 5,000 features. Then match test features to that fixed vocabulary.
 
 ```{r}
+#| label: task-2-1-build-training-vocabulary-and-sparse-matrices-student-respons
 # YOUR CODE HERE
 ```
 :::
@@ -154,6 +161,7 @@ Use `quanteda` to tokenize training reviews, remove punctuation, numbers, and En
 ::: {.sol}
 
 ```{r}
+#| label: task-2-1-build-training-vocabulary-and-sparse-matrices-tokenize-review
 tokenize_reviews <- function(text) {
   tokens(
     text,
@@ -197,6 +205,7 @@ c(
 ::: {.sol}
 
 ```{r}
+#| label: construct-compatible-tf-idf-weights
 idf_weights <- log(
   (nrow(train_bow) + 1) /
     (docfreq(train_bow) + 1)
@@ -227,6 +236,7 @@ The IDF vector is calculated once from training document frequencies and reused 
 Calculate the fraction of zero cells without converting the full matrix to a dense object. Explain what rows, columns, and high sparsity mean.
 
 ```{r}
+#| label: task-2-2-inspect-dimensions-and-sparsity-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -234,6 +244,7 @@ Calculate the fraction of zero cells without converting the full matrix to a den
 ::: {.sol}
 
 ```{r}
+#| label: task-2-2-inspect-dimensions-and-sparsity-tfidf-sparsity
 tfidf_sparsity <- 1 -
   Matrix::nnzero(train_tfidf) /
     (nrow(train_tfidf) * ncol(train_tfidf))
@@ -254,6 +265,7 @@ Rows are training reviews and columns are retained tokens or bigrams. High spars
 For the first training review, retrieve non-zero TF-IDF values and show the 15 largest.
 
 ```{r}
+#| label: task-2-3-inspect-one-review-s-strongest-features-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -261,6 +273,7 @@ For the first training review, retrieve non-zero TF-IDF values and show the 15 l
 ::: {.sol}
 
 ```{r}
+#| label: task-2-3-inspect-one-review-s-strongest-features-review-id
 review_id <- 1
 
 nonzero_features <- Matrix::summary(
@@ -285,6 +298,7 @@ Sparse features are relatively interpretable because they reveal words and phras
 Use cosine similarity to retrieve the five training reviews closest to review 1. Exclude the query itself and display similarity, sentiment, and text.
 
 ```{r}
+#| label: task-2-4-retrieve-similar-reviews-with-tf-idf-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -292,6 +306,7 @@ Use cosine similarity to retrieve the five training reviews closest to review 1.
 ::: {.sol}
 
 ```{r}
+#| label: task-2-4-retrieve-similar-reviews-with-tf-idf-query-id
 query_id <- 1
 
 sparse_similarity <- as.numeric(
@@ -338,6 +353,7 @@ The training corpus alone determines the latent space; test reviews are projecte
 Use `irlba()` to learn 100 latent dimensions from `train_tfidf`. Create dense training embeddings and project test TF-IDF rows using the training right-singular vectors.
 
 ```{r}
+#| label: task-3-1-learn-and-apply-dense-embeddings-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -345,6 +361,7 @@ Use `irlba()` to learn 100 latent dimensions from `train_tfidf`. Create dense tr
 ::: {.sol}
 
 ```{r}
+#| label: task-3-1-learn-and-apply-dense-embeddings-set-seed
 set.seed(42)
 
 lsa_fit <- irlba::irlba(
@@ -384,6 +401,7 @@ The matrices are dense because most latent coordinates are non-zero. Unlike TF-I
 Repeat the nearest-review search using normalized dense vectors. Compare the retrieved reviews with TF-IDF results.
 
 ```{r}
+#| label: task-3-2-dense-cosine-similarity-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -391,6 +409,7 @@ Repeat the nearest-review search using normalized dense vectors. Compare the ret
 ::: {.sol}
 
 ```{r}
+#| label: task-3-2-dense-cosine-similarity-dense-similarity
 dense_similarity <- as.numeric(
   train_embeddings %*% train_embeddings[query_id, ]
 )
@@ -421,6 +440,7 @@ Dense neighbors can reflect shared co-occurrence patterns even without exact wor
 Fit PCA using training embeddings only and plot the first two components by sentiment. Why is this only a partial view?
 
 ```{r}
+#| label: task-3-3-visualize-the-latent-space-student-response
 # YOUR CODE HERE
 ```
 
@@ -430,6 +450,7 @@ Fit PCA using training embeddings only and plot the first two components by sent
 ::: {.sol}
 
 ```{r}
+#| label: task-3-3-visualize-the-latent-space-embedding-pca
 embedding_pca <- prcomp(
   train_embeddings,
   center = TRUE,
@@ -466,6 +487,7 @@ We hold the classifier family fixed—a ridge logistic model—and vary only the
 Fit cross-validated ridge logistic regression on sparse training TF-IDF features, predict test probabilities, apply a 0.5 threshold, and report accuracy, positive-class sensitivity, and a confusion matrix.
 
 ```{r}
+#| label: task-4-1-fit-the-tf-idf-classifier-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -473,6 +495,7 @@ Fit cross-validated ridge logistic regression on sparse training TF-IDF features
 ::: {.sol}
 
 ```{r}
+#| label: task-4-1-fit-the-tf-idf-classifier-train-outcome
 train_outcome <- as.integer(
   train_data$sentiment == "positive"
 )
@@ -531,6 +554,7 @@ tfidf_timing["elapsed"]
 Fit the same ridge logistic family on dense LSA embeddings and report the same outputs.
 
 ```{r}
+#| label: task-4-2-fit-the-dense-classifier-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -538,6 +562,7 @@ Fit the same ridge logistic family on dense LSA embeddings and report the same o
 ::: {.sol}
 
 ```{r}
+#| label: task-4-2-fit-the-dense-classifier-set-seed
 set.seed(42)
 
 dense_timing <- system.time({
@@ -591,6 +616,7 @@ dense_timing["elapsed"]
 ::: {.sol}
 
 ```{r}
+#| label: task-4-3-compare-sparse-and-dense-pipelines-model-comparison
 model_comparison <- bind_rows(
   tibble(
     representation = "TF-IDF",
@@ -649,6 +675,7 @@ Synthetic difficult examples are useful for discussing failures, not measuring g
 Apply both already-fitted pipelines to examples involving slang, negation, irony, understatement, and ambiguity.
 
 ```{r}
+#| label: part-5-qualitative-edge-case-analysis-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -656,6 +683,7 @@ Apply both already-fitted pipelines to examples involving slang, negation, irony
 ::: {.sol}
 
 ```{r}
+#| label: part-5-qualitative-edge-case-analysis-edge-cases
 edge_cases <- tibble(
   review = c(
     "This movie was sick in the best possible way.",

@@ -24,6 +24,7 @@ Before starting this exercise, make sure the required R packages are installed.
 Run this command once in the R console. You do not need to run it every time you open the exercise. You can skip this step if these packages are already installed.
 
 ```{r}
+#| label: package-setup-install-packages
 #| eval: false
 install.packages("tidyverse")
 ```
@@ -38,6 +39,7 @@ Clustering helps us move from preparation to insight generation: instead of look
 Dataset: `firm_data.csv`
 
 ```{r}
+#| label: eda-clustering-load-packages
 #| output: false
 
 library(tidyverse)
@@ -61,6 +63,7 @@ We decide to use `profit_margin` and `rd_intensity` to cluster firms.
 In a first step, create a data frame `X` containing these two variables:
 
 ```{r}
+#| label: 1-prepare-the-data-for-clustering-x
 X <- firm_data_df |>
   select(profit_margin, rd_intensity)
 
@@ -71,10 +74,12 @@ X
 Before clustering, do a quick exploratory check so you know what kind of patterns you are looking for.
 
 ```{r}
+#| label: 1-prepare-the-data-for-clustering-summary
 summary(X)
 ```
 
 ```{r}
+#| label: 1-prepare-the-data-for-clustering-x-pipeline
 X |>
   pivot_longer(
     cols = everything(),
@@ -96,6 +101,7 @@ This ensures that they have approximately equal influence on the clusters. Base 
 Run the following code and observe how the scale of both variables changes:
 
 ```{r}
+#| label: 1-prepare-the-data-for-clustering-x-scaled
 X_scaled <- scale(X)
 head(X_scaled)
 ```
@@ -103,6 +109,7 @@ head(X_scaled)
 Before running a clustering algorithm, view the standardized data in a scatterplot:
 
 ```{r}
+#| label: 1-prepare-the-data-for-clustering-x-scaled-df
 X_scaled_df <- as.data.frame(X_scaled)
 
 ggplot(
@@ -126,6 +133,7 @@ How many clusters would you expect? Briefly justify your answer based on the plo
 * Next, run the k-means clustering algorithm for different values of `k`.
 
 ```{r}
+#| label: 2-apply-k-means-clustering-student-response
 # YOUR CODE HERE: try values from 2 to 10.
 # Remember that kmeans() expects centers = k.
 ```
@@ -138,6 +146,7 @@ How many clusters would you expect? Briefly justify your answer based on the plo
 * Assign the cluster labels returned by `kmeans()` to the original data frame (`firm_data_df`).
 
 ```{r}
+#| label: 3-add-cluster-labels-to-the-dataset-student-response
 # YOUR CODE HERE
 ```
 
@@ -148,6 +157,7 @@ How many clusters would you expect? Briefly justify your answer based on the plo
 * Try to complete the task using the [`ggplot2` boxplot documentation](https://ggplot2.tidyverse.org/reference/geom_boxplot.html).
 
 ```{r}
+#| label: 4-create-grouped-boxplots-student-response
 # YOUR CODE HERE
 ```
 
@@ -166,6 +176,7 @@ How many clusters would you expect? Briefly justify your answer based on the plo
 We use only `profit_margin` and `rd_intensity` for clustering:
 
 ```{r}
+#| label: prepare-clustering-data-solution
 X <- firm_data_df |>
   select(profit_margin, rd_intensity)
 
@@ -176,10 +187,12 @@ X |>
 #### Exploratory check
 
 ```{r}
+#| label: exploratory-check-summary
 summary(X)
 ```
 
 ```{r}
+#| label: exploratory-check-x-pipeline
 X |>
   pivot_longer(
     cols = everything(),
@@ -201,6 +214,7 @@ These summaries and histograms help us understand the distribution and scale of 
 Since k-means is sensitive to scale differences, we standardize the variables. `scale()` centers each variable around zero and scales it to unit standard deviation.
 
 ```{r}
+#| label: standardization-x-scaled
 X_scaled <- scale(X)
 head(X_scaled)
 ```
@@ -208,6 +222,7 @@ head(X_scaled)
 #### Scatterplot (before clustering)
 
 ```{r}
+#| label: scatterplot-before-clustering-x-scaled-df
 X_scaled_df <- as.data.frame(X_scaled)
 
 ggplot(
@@ -229,6 +244,7 @@ From the scatterplot, we might expect a small number of clusters (e.g., 3–5), 
 We try different values of `k` and visually inspect the cluster structure. Setting `nstart = 25` makes the result less sensitive to a single random initialization.
 
 ```{r}
+#| label: 2-apply-k-means-clustering-for
 for (k in 2:10) {
   set.seed(42)
   km <- kmeans(
@@ -277,6 +293,7 @@ A value around **k = 4** appears to provide a reasonable balance between simplic
 We now fit the final model reproducibly and store the cluster labels as a factor because they represent categories rather than quantities:
 
 ```{r}
+#| label: 3-add-cluster-labels-to-the-dataset-set-seed
 set.seed(42)
 
 k <- 4
@@ -297,6 +314,7 @@ firm_data_df |>
 We compare `revenue` across clusters:
 
 ```{r}
+#| label: 4-create-grouped-boxplots-ggplot
 ggplot(
   firm_data_df,
   aes(x = cluster, y = revenue)

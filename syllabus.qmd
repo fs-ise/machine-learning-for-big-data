@@ -73,15 +73,15 @@ Lecture with in-class and home exercises, practical group work using Excel and R
 
 ### General Introduction
 
-- Alpaydin [-@Alpaydin2016NewAI]
-- Schutt and O'Neil [-@SchuttONeil2013]
-- Schmarzo [-@Schmarzo2016]
+- Alpaydin\ [-@Alpaydin2016NewAI]
+- Schutt and O'Neil\ [-@SchuttONeil2013]
+- Schmarzo\ [-@Schmarzo2016]
 
 ### Methods and Algorithms
 
-- Alpaydin [-@Alpaydin2016IntroML]
-- Hastie, Tibshirani, and Friedman [-@HastieTibshiraniFriedman2009]
-- James et al. [-@JamesWittenHastieTibshirani2013]
+- Alpaydin\ [-@Alpaydin2016IntroML]
+- Hastie, Tibshirani, and Friedman\ [-@HastieTibshiraniFriedman2009]
+- James et al.\ [-@JamesWittenHastieTibshirani2013]
 
 ## Module Structure
 

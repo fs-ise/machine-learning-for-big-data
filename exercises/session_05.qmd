@@ -38,12 +38,15 @@ LendWise is interested in questions such as:
 - Which factors are associated with a higher probability of default in early-career urban borrowers?
 
 **Your answer:** *Write your answer here.*
+
 - How can predicted probabilities be translated into default/non-default classifications?
 
 **Your answer:** *Write your answer here.*
+
 - How well does the model perform, and how informative are the ROC curve and AUC?
 
 **Your answer:** *Write your answer here.*
+
 - Does a model work equally well across customer categories?
 
 **Your answer:** *Write your answer here.*
@@ -69,6 +72,7 @@ Before starting this exercise, make sure the required R packages are installed.
 Run this command once in the R console. You do not need to run it every time you open the exercise. You can skip this step if these packages are already installed.
 
 ```{r}
+#| label: package-setup-install-packages
 #| eval: false
 install.packages(c(
   "tidyverse",
@@ -79,6 +83,7 @@ install.packages(c(
 :::
 
 ```{r}
+#| label: package-setup-load-packages
 library(tidyverse)
 library(pROC)
 
@@ -103,6 +108,7 @@ Create a filtered data frame containing only early-career urban borrowers.
 ::: {.direction}
 
 ```{r}
+#| label: task-1-1-prepare-the-subset-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -112,6 +118,7 @@ Create a filtered data frame containing only early-career urban borrowers.
 ## Solution
 
 ```{r}
+#| label: solution-df-ec-urban
 df_ec_urban <- df |>
   filter(customer_category == "early_career_urban")
 
@@ -131,6 +138,7 @@ Estimate a logistic regression model for credit default.
 - Inspect `coef(model)` and `summary(model)`.
 
 ```{r}
+#| label: task-1-2-estimate-the-model-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -140,6 +148,7 @@ Estimate a logistic regression model for credit default.
 ## Solution
 
 ```{r}
+#| label: solution-model
 model <- glm(
   default ~
     income +
@@ -165,6 +174,7 @@ Logistic-regression coefficients describe changes in **log-odds**, holding the o
 ::: {.sol}
 
 ```{r}
+#| label: task-1-3-interpret-the-model-coefficient-table
 coefficient_table <- tibble(
   predictor = names(coef(model)),
   estimate = coef(model),
@@ -217,6 +227,7 @@ The sequence is:
 3. a chosen threshold converts the probability into a class.
 
 ```{r}
+#| label: solution-z
 z <- predict(
   model,
   newdata = df_ec_urban[1, ],
@@ -246,6 +257,7 @@ Because the modeled event is `default = 1`, the returned values estimate **P(def
 Run the code and compare the probabilities with the classes.
 
 ```{r}
+#| label: task-2-1-understanding-outputs-y-prob
 y_prob <- predict(
   model,
   type = "response"
@@ -279,6 +291,7 @@ head(y_pred)
 Try thresholds of 0.2, 0.4, 0.6, and 0.7:
 
 ```{r}
+#| label: task-2-2-manual-thresholding
 t <- 0.4
 
 y_pred_t <- if_else(
@@ -293,6 +306,7 @@ sum(y_pred_t)
 - How does the number classified as high default risk change?
 
 **Your answer:** *Write your answer here.*
+
 - What pattern appears as the threshold increases?
 
 **Your answer:** *Write your answer here.*
@@ -300,6 +314,7 @@ sum(y_pred_t)
 Then identify the 20% riskiest and 20% safest customers using `quantile()`.
 
 ```{r}
+#| label: task-2-2-manual-thresholding-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -314,6 +329,7 @@ At thresholds 0.2, 0.4, 0.6, and 0.7, respectively, the model flags **138, 86, 5
 - A **higher threshold** flags fewer customers as risky.
 
 ```{r}
+#| label: solution-threshold-risky
 threshold_risky <- quantile(
   y_prob,
   probs = 0.80
@@ -372,6 +388,7 @@ For simplicity, predictions are evaluated on the same observations used for esti
 Create a labeled 2 × 2 table. Rows should be actual outcomes and columns predicted outcomes.
 
 ```{r}
+#| label: task-3-1-create-and-interpret-the-matrix-student-response
 # YOUR CODE HERE
 ```
 
@@ -381,6 +398,7 @@ Identify true negatives, false positives, false negatives, and true positives.
 ::: {.sol}
 
 ```{r}
+#| label: task-3-1-create-and-interpret-the-matrix-cm
 cm <- table(
   actual = df_ec_urban$default,
   predicted = y_pred
@@ -415,6 +433,7 @@ Compute and interpret accuracy, precision, and recall. Recall is also called sen
 ::: {.sol}
 
 ```{r}
+#| label: task-3-2-compute-key-metrics-accuracy
 accuracy <- (tp + tn) / sum(cm)
 precision <- tp / (tp + fp)
 recall <- tp / (tp + fn)
@@ -457,6 +476,7 @@ A risk-control strategy may use a **lower threshold**. More customers are flagge
 Use `pROC` to evaluate discrimination across all possible thresholds. Here, higher predicted probabilities should correspond to `default = 1`, so `direction = "<"` states that controls tend to have lower scores than cases.
 
 ```{r}
+#| label: part-4-roc-curve-and-auc-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -464,6 +484,7 @@ Use `pROC` to evaluate discrimination across all possible thresholds. Here, high
 ::: {.sol}
 
 ```{r}
+#| label: part-4-roc-curve-and-auc-roc-ec
 roc_ec <- roc(
   response = df_ec_urban$default,
   predictor = y_prob,
@@ -550,6 +571,7 @@ Repeat the same model specification for platform workers, then compare coefficie
 ::: {.direction}
 
 ```{r}
+#| label: task-5-1-fit-the-second-model-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -559,6 +581,7 @@ Repeat the same model specification for platform workers, then compare coefficie
 ## Solution
 
 ```{r}
+#| label: solution-df-platform
 df_platform <- df |>
   filter(customer_category == "platform_worker")
 
@@ -586,6 +609,7 @@ summary(model_platform)
 ::: {.direction}
 
 ```{r}
+#| label: task-5-2-compare-coefficients-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -593,6 +617,7 @@ summary(model_platform)
 ::: {.sol}
 
 ```{r}
+#| label: task-5-2-compare-coefficients-comparison
 comparison <- tibble(
   predictor = names(coef(model)),
   early_career_urban_estimate = coef(model),
@@ -622,6 +647,7 @@ Income and months with company are negative in both models but do not reach the 
 ::: {.direction}
 
 ```{r}
+#| label: task-5-3-compare-roc-and-auc-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -629,6 +655,7 @@ Income and months with company are negative in both models but do not reach the 
 ::: {.sol}
 
 ```{r}
+#| label: task-5-3-compare-roc-and-auc-y-prob-platform
 y_prob_platform <- predict(
   model_platform,
   type = "response"

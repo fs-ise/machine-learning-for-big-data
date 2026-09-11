@@ -896,6 +896,7 @@ So maximizing the margin = minimizing $|w|$.
 
 
 ```{python}
+#| label: the-key-insight-maximize-the-margin-import-numpy-as-np
 #| fig-align: center
 #| echo: false
 import numpy as np
@@ -1105,6 +1106,7 @@ A linear regression curve in higher dimensions becomes a non-linear regression c
 <br>
 
 ```{python}
+#| label: svr-examples-i-import-numpy-as-np
 #| fig-align: center
 import numpy as np
 import matplotlib.pyplot as plt
@@ -1134,6 +1136,7 @@ plt.show()
 <br>
 
 ```{python}
+#| label: svr-examples-ii-import-numpy-as-np
 #| fig-align: center
 import numpy as np
 import matplotlib.pyplot as plt
@@ -1163,6 +1166,7 @@ plt.show()
 <br>
 
 ```{python}
+#| label: svr-examples-iii-import-numpy-as-np
 #| fig-align: center
 import numpy as np
 import matplotlib.pyplot as plt

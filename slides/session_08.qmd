@@ -143,6 +143,7 @@ line-height:1;
 Stopword removal:
 
 ```{r}
+#| label: text-processing-examples-load-packages
 #| echo: true
 library(quanteda)
 documents <- "Jupiter is the largest gas planet."

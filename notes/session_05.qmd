@@ -19,6 +19,7 @@ TODO
 - Emphasize the distinction between probability estimation and the threshold-based classification decision.
 
 ```{python}
+#| label: linear-regression-plot
 # | echo: false
 import numpy as np
 import matplotlib.pyplot as plt
@@ -43,6 +44,7 @@ plt.show()
 ```
 
 ```{python}
+#| label: categorical-regression-plot
 # | echo: false
 import numpy as np
 import matplotlib.pyplot as plt
@@ -79,6 +81,7 @@ plt.show()
 ```
 
 ```{python}
+#| label: logistic-regression-plot
 # | echo: false
 import numpy as np
 import matplotlib.pyplot as plt

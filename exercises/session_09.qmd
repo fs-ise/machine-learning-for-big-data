@@ -82,12 +82,15 @@ For use cases 2–4, also answer:
 - Where is the **spatial** or **sequential** structure?
 
 **Your answer:** *Write your answer here.*
+
 - Would changing the order or location of input elements change their meaning?
 
 **Your answer:** *Write your answer here.*
+
 - For audio or video, would you combine more than one architecture? Why?
 
 **Your answer:** *Write your answer here.*
+
 - What are the likely units of input (features, pixels, frames, waveform samples, spectrogram regions, or tokens)?
 
 **Your answer:** *Write your answer here.*

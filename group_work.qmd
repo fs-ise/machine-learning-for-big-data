@@ -194,6 +194,7 @@ Participation in the presentation and discussion may additionally be considered 
 ## Example: Synthetic data generation in R
 
 ```{r}
+#| label: example-synthetic-data-generation-in-r-set-seed
 #| eval: false
 
 set.seed(42)

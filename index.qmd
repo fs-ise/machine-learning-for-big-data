@@ -20,6 +20,7 @@ Welcome to **{{< meta course.title >}}**. This course introduces machine learnin
 [Course logistics](slides/session_00_orga.qmd)
 
 ```{python}
+#| label: sessions-from-scripts-session-overview
 #| echo: false
 #| output: asis
 from scripts.session_overview import markdown_table

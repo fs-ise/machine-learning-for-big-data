@@ -391,6 +391,7 @@ Example of different OLS models as a result of different samples:
 ::: {.column width="60%"}
 
 ```{python}
+#| label: selection-bias-import-numpy-as-np
 # Clear, high-variance selection bias illustration (Quarto / revealjs friendly)
 
 import numpy as np
@@ -749,6 +750,7 @@ TODO: categories like "center", "industrial", "..."
 -->
 
 ```{python}
+#| label: example-of-feature-engineering-ii-import-geopandas-as-gpd
 #| fig-align: center
 
 import geopandas as gpd

@@ -32,12 +32,15 @@ MetaCorp is interested in questions such as:
 - Does remote work seem to be associated with higher or lower performance?
 
 **Your answer:** *Write your answer here.*
+
 - Does this relationship remain once we control for experience, training, salary, and management quality?
 
 **Your answer:** *Write your answer here.*
+
 - Is the relationship between remote work and performance similar across departments?
 
 **Your answer:** *Write your answer here.*
+
 - When should we be careful not to overinterpret regression results?
 
 **Your answer:** *Write your answer here.*
@@ -61,6 +64,7 @@ Before starting this exercise, make sure the required R packages are installed.
 Run this command once in the R console. You do not need to run it every time you open the exercise. You can skip this step if these packages are already installed.
 
 ```{r}
+#| label: package-setup-install-packages
 #| eval: false
 install.packages("tidyverse")
 ```
@@ -72,6 +76,7 @@ install.packages("tidyverse")
 ## Load and inspect the dataset
 
 ```{r}
+#| label: load-and-inspect-the-dataset-load-packages
 library(tidyverse)
 
 df <- read_csv(
@@ -126,6 +131,7 @@ Your tasks:
 6. Identify how R represented the `department` factor.
 
 ```{r}
+#| label: task-a1-fit-a-regression-model-student-response
 # YOUR CODE HERE
 ```
 
@@ -135,6 +141,7 @@ The identifying fields `name`, `employee_id`, and `role` simply do not appear in
 :::{.sol}
 
 ```{r}
+#| label: task-a1-fit-a-regression-model
 model <- lm(
   performance ~
     experience +
@@ -218,6 +225,7 @@ Use the same `model` from Part A.
 3. Retrieve only the confidence interval for `remote_share`.
 
 ```{r}
+#| label: task-b1-examine-the-fitted-model-student-response
 # YOUR CODE HERE
 ```
 
@@ -227,6 +235,7 @@ In the summary, locate the coefficient estimates, standard errors, t-statistics,
 :::{.sol}
 
 ```{r}
+#| label: task-b1-examine-the-fitted-model-summary
 summary(model)
 confint(model)
 confint(model)["remote_share", ]
@@ -291,6 +300,7 @@ Even if `remote_share` has a positive or negative coefficient, that does **not**
 Create a data frame containing fitted values and residuals from `model`, then create a residual plot with ggplot2.
 
 ```{r}
+#| label: task-c1-residual-plot-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -298,6 +308,7 @@ Create a data frame containing fitted values and residuals from `model`, then cr
 :::{.sol}
 
 ```{r}
+#| label: task-c1-residual-plot-diagnostics-df
 diagnostics_df <- tibble(
   fitted = fitted(model),
   residual = residuals(model)
@@ -354,6 +365,7 @@ Estimate separate regressions for Sales, IT, and HR. Omit `department` from each
 :::{.direction}
 
 ```{r}
+#| label: task-d1-department-specific-regressions-student-response
 departments <- unique(df$department)
 results <- list()
 
@@ -368,6 +380,7 @@ results <- list()
 :::{.sol}
 
 ```{r}
+#| label: task-d1-department-specific-regressions-departments
 departments <- unique(df$department)
 results <- list()
 
@@ -429,6 +442,7 @@ The pooled model allows department intercepts to differ but assumes that slopes 
 Separate regressions are intuitive for exploration. Differences can also be represented in one model with interaction terms, for example:
 
 ```{r}
+#| label: task-d2-compare-the-subgroup-models-performance
 #| eval: false
 performance ~
   experience +
@@ -451,6 +465,7 @@ Saving and loading a model is useful in practice, but it is not the main concept
 :::{.direction}
 
 ```{r}
+#| label: task-e1-optional-save-a-fitted-model-student-response
 # YOUR CODE HERE: save the model to data/employee_performance_model.rds.
 ```
 :::
@@ -458,6 +473,7 @@ Saving and loading a model is useful in practice, but it is not the main concept
 :::{.sol}
 
 ```{r}
+#| label: task-e1-optional-save-a-fitted-model-saverds
 saveRDS(
   model,
   "data/employee_performance_model.rds"
@@ -470,6 +486,7 @@ saveRDS(
 Load the fitted model, create a tibble for an IT employee with the original predictors, and call `predict()`.
 
 ```{r}
+#| label: task-e2-optional-load-the-model-and-predict-a-new-case-student-respons
 # YOUR CODE HERE
 ```
 
@@ -479,6 +496,7 @@ Load the fitted model, create a tibble for an IT employee with the original pred
 :::{.sol}
 
 ```{r}
+#| label: task-e2-optional-load-the-model-and-predict-a-new-case-loaded-model
 loaded_model <- readRDS(
   "data/employee_performance_model.rds"
 )

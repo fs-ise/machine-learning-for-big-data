@@ -30,6 +30,7 @@ nocite: |
 <br><br>
 
 ```{python}
+#| label: the-exponential-growth-of-data-import-matplotlib-pyplot-as-pl
 #| echo: false
 
 import matplotlib.pyplot as plt

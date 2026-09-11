@@ -35,6 +35,7 @@ Before starting this exercise, make sure the required R packages are installed.
 Run this command once in the R console. You do not need to run it every time you open the exercise. You can skip this step if these packages are already installed.
 
 ```{r}
+#| label: package-setup-install-packages
 #| eval: false
 install.packages("tidyverse")
 ```
@@ -46,6 +47,7 @@ install.packages("tidyverse")
 We start with the `market_data_log.csv` dataset.
 
 ```{r}
+#| label: part-1-data-structuring-1-load-packages
 #| warning: false
 library(tidyverse)
 
@@ -87,6 +89,7 @@ market_data_log_df |> head()
 4. **(Optional challenge)**: Implement the transformation in R (`tidyverse`)
 
 ```{r}
+#| label: tasks-student-response
 market_data_df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/market_data_log.csv",
   show_col_types = FALSE
@@ -144,6 +147,7 @@ market_data_df <- read_csv(
 ### 4. (Optional challenge): Implement the transformation in R (`tidyverse`)
 
 ```{r}
+#| label: 4-optional-challenge-implement-the-transformation-in-r-market-data-df
 market_data_df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/market_data_log.csv",
   show_col_types = FALSE
@@ -176,6 +180,7 @@ df_wide |> head()
 Dataset `sales_data_channels_full_year.csv`
 
 ```{r}
+#| label: part-2-data-structuring-2-sales-data-df
 sales_data_df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/sales_data_channels_full_year.csv",
   show_col_types = FALSE
@@ -213,6 +218,7 @@ sales_data_df |> head()
 4. **(Optional challenge)**: Implement the transformation in R (`tidyverse`)
 
 ```{r}
+#| label: sales-data-structuring-student-response
 sales_data_df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/sales_data_channels_full_year.csv",
   show_col_types = FALSE
@@ -256,6 +262,7 @@ sales_data_df <- read_csv(
 ### 4. (Optional challenge): Implement the transformation in R (`tidyverse`)
 
 ```{r}
+#| label: 4-optional-challenge-implement-the-transformation-in-r-sales-data-df
 sales_data_df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/sales_data_channels_full_year.csv",
   show_col_types = FALSE
@@ -285,6 +292,7 @@ tidy_df |> head()
 Dataset `messy_customer_data.csv`
 
 ```{r}
+#| label: part-3-data-cleansing-customer-df
 customer_df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/messy_customer_data.csv",
   na = c("", "NA", "NaN"),
@@ -310,6 +318,7 @@ In this part, move from **detecting problems** to **making the dataset analysis-
   Run the following and assign `nominal`, `ordinal`, `interval`, or `ratio`.
 
 ```{r}
+#| label: 1-identify-scales-of-variables-customer-df-pipeline
 #| output: false
 
 customer_df |> glimpse()
@@ -335,6 +344,7 @@ customer_df |> glimpse()
 Examine the dataset `data/messy_customer_data.csv` and run the following:
 
 ```{r}
+#| label: 2-analyze-data-quality-summary
 summary(customer_df)
 ```
 
@@ -354,6 +364,7 @@ summary(customer_df)
 * Run the code after each step and inspect the results.
 
 ```{r}
+#| label: 4-optional-challenge-implement-in-r-tidyverse-student-response
 # YOUR CODE HERE
 ```
 
@@ -388,6 +399,7 @@ Note: Check how the `customer_df` changes after each preparation step!
 Examine the dataset `data/messy_customer_data.csv` and run the following:
 
 ```{r}
+#| label: analyze-data-quality-solution-summary
 summary(customer_df)
 ```
 
@@ -436,6 +448,7 @@ summary(customer_df)
 ### 4. *(Optional challenge)* Implement in R (`tidyverse`)
 
 ```{r}
+#| label: 4-optional-challenge-implement-in-r-tidyverse-customer-df
 customer_df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/messy_customer_data.csv",
   na = c("", "NA", "NaN"),

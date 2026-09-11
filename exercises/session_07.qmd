@@ -42,6 +42,7 @@ Before starting this exercise, make sure the required R packages are installed.
 Run this command once in the R console. You do not need to run it every time you open the exercise. You can skip this step if these packages are already installed.
 
 ```{r}
+#| label: package-setup-install-packages
 #| eval: false
 install.packages(c(
   "tidyverse",
@@ -56,6 +57,7 @@ install.packages(c(
 :::
 
 ```{r}
+#| label: package-setup-load-packages
 library(tidyverse)
 library(tidymodels)
 ```
@@ -75,6 +77,7 @@ Run the common setup and verify:
 :::
 
 ```{r}
+#| label: task-1-1-re-establish-the-session-6-setup-df
 df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/credit_default.csv",
   show_col_types = FALSE
@@ -143,6 +146,7 @@ Which model families should use each recipe?
 **Your answer:** *Write your answer here.*
 
 ```{r}
+#| label: task-1-2-define-algorithm-specific-preprocessing-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -150,6 +154,7 @@ Which model families should use each recipe?
 ::: {.sol}
 
 ```{r}
+#| label: task-1-2-define-algorithm-specific-preprocessing-scaled-recipe
 scaled_recipe <- recipe(
   default ~ .,
   data = train_data
@@ -180,6 +185,7 @@ Regularization balances fit and simplicity. `penalty` controls its strength: lar
 Complete the specification and workflow, then tune the nine explicit combinations in `regularized_grid` on the shared folds.
 
 ```{r}
+#| label: task-2-1-specify-and-tune-the-model-student-response
 regularized_grid <- expand_grid(
   penalty = c(0.0001, 0.01, 0.1),
   mixture = c(0, 0.5, 1)
@@ -198,6 +204,7 @@ How does increasing `penalty` change model flexibility? Why is normalization app
 ::: {.sol}
 
 ```{r}
+#| label: task-2-1-specify-and-tune-the-model-regularized-spec
 regularized_spec <- logistic_reg(
   penalty = tune(),
   mixture = tune()
@@ -245,6 +252,7 @@ k-NN predicts from nearby labeled observations. Small `k` produces flexible, hig
 Use Euclidean distance, rectangular neighbor weights, and candidate values 3, 5, 9, 15, and 25.
 
 ```{r}
+#| label: task-3-1-tune-the-number-of-neighbors-student-response
 knn_grid <- tibble(
   neighbors = c(3L, 5L, 9L, 15L, 25L)
 )
@@ -260,6 +268,7 @@ Why would unscaled `income` dominate predictors that range between 0 and 1?
 ::: {.sol}
 
 ```{r}
+#| label: task-3-1-tune-the-number-of-neighbors-knn-spec
 knn_spec <- nearest_neighbor(
   neighbors = tune(),
   weight_func = "rectangular",
@@ -305,6 +314,7 @@ A tree recursively partitions predictor space. Greater depth and smaller termina
 Use eight combinations: cost complexity 0.001 or 0.01, depth 3 or 6, and minimum node size 10 or 25.
 
 ```{r}
+#| label: task-4-1-tune-tree-complexity-student-response
 # YOUR CODE HERE: complete the tree specification, workflow, grid, and tuning call.
 ```
 :::
@@ -312,6 +322,7 @@ Use eight combinations: cost complexity 0.001 or 0.01, depth 3 or 6, and minimum
 ::: {.sol}
 
 ```{r}
+#| label: task-4-1-tune-tree-complexity-tree-spec
 tree_spec <- decision_tree(
   cost_complexity = tune(),
   tree_depth = tune(),
@@ -358,6 +369,7 @@ A random forest aggregates trees trained on bootstrap samples while considering 
 Keep `trees = 500` fixed. Tune `mtry` over 2, 4, and 6 predictors and `min_n` over 10 and 25.
 
 ```{r}
+#| label: task-5-1-tune-the-forest-student-response
 # YOUR CODE HERE: complete rf_spec, rf_workflow, rf_grid, and rf_results.
 ```
 
@@ -369,6 +381,7 @@ Why might a forest predict better than one tree? What interpretability is lost?
 ::: {.sol}
 
 ```{r}
+#| label: task-5-1-tune-the-forest-rf-spec
 rf_spec <- rand_forest(
   mtry = tune(),
   min_n = tune(),
@@ -415,6 +428,7 @@ An SVM seeks a decision boundary with a wide margin. `cost` controls how strongl
 Tune six combinations: cost 0.25, 1, or 4 and RBF sigma 0.01 or 0.1. Use normalized predictors.
 
 ```{r}
+#| label: task-6-1-tune-cost-and-kernel-scale-student-response
 # YOUR CODE HERE: complete svm_spec, svm_workflow, svm_grid, and svm_results.
 ```
 :::
@@ -422,6 +436,7 @@ Tune six combinations: cost 0.25, 1, or 4 and RBF sigma 0.01 or 0.1. Use normali
 ::: {.sol}
 
 ```{r}
+#| label: task-6-1-tune-cost-and-kernel-scale-svm-spec
 svm_spec <- svm_rbf(
   cost = tune(),
   rbf_sigma = tune()
@@ -466,6 +481,7 @@ All five algorithms have now been evaluated using the same folds. ROC AUC is the
 Run the supplied helper and comparison code. It retrieves ROC AUC, accuracy, and sensitivity at each model's ROC-AUC-optimal configuration.
 
 ```{r}
+#| label: task-7-1-collect-each-model-s-best-metrics-student-response
 # YOUR CODE HERE: create the comparison helper described above.
 ```
 :::
@@ -473,6 +489,7 @@ Run the supplied helper and comparison code. It retrieves ROC AUC, accuracy, and
 ::: {.sol}
 
 ```{r}
+#| label: task-7-1-collect-each-model-s-best-metrics-collect-best-metrics
 collect_best_metrics <- function(results, best_parameters, model_name) {
   all_metrics <- collect_metrics(results)
   parameter_names <- intersect(
@@ -538,6 +555,7 @@ Create a plot that compares the mean validation metrics across algorithms and in
 ::: {.sol}
 
 ```{r}
+#| label: task-7-2-visualize-the-comparison-validation-comparison-pipeline
 validation_comparison |>
   ggplot(
     aes(
@@ -613,6 +631,7 @@ The code below identifies the highest mean validation ROC AUC. Before running th
 ::: {.sol}
 
 ```{r}
+#| label: task-7-4-lock-the-recommendation-using-validation-only-roc-auc-compari
 roc_auc_comparison <- validation_comparison |>
   filter(.metric == "roc_auc") |>
   arrange(desc(mean))
@@ -641,6 +660,7 @@ Run the selection map, finalize the chosen workflow with its best parameters, an
 ::: {.sol}
 
 ```{r}
+#| label: task-8-1-finalize-the-selected-workflow-workflow-lookup
 workflow_lookup <- list(
   "Regularized logistic" = regularized_workflow,
   "k-NN" = knn_workflow,
@@ -689,6 +709,7 @@ Compare the selected model's cross-validation metrics with its held-out test met
 ::: {.sol}
 
 ```{r}
+#| label: task-8-2-compare-validation-and-test-performance-selected-cv-metrics
 selected_cv_metrics <- validation_comparison |>
   filter(model == selected_model) |>
   select(.metric, cv_mean = mean, cv_std_err = std_err)

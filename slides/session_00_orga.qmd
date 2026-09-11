@@ -254,25 +254,25 @@ They help distinguish core material from supporting examples and illustrations.
 
 **General Introduction**
 
-- Alpaydin [-@Alpaydin2016NewAI]
-- Schutt and O'Neil [-@SchuttONeil2013]
-- Schmarzo [-@Schmarzo2016]
+- Alpaydin\ [-@Alpaydin2016NewAI]
+- Schutt and O'Neil\ [-@SchuttONeil2013]
+- Schmarzo\ [-@Schmarzo2016]
 
 **Methods and Algorithms**
 
-- Alpaydin [-@Alpaydin2016IntroML]
-- Hastie, Tibshirani, and Friedman [-@HastieTibshiraniFriedman2009]
-- James et al. [-@JamesWittenHastieTibshirani2013]
+- Alpaydin\ [-@Alpaydin2016IntroML]
+- Hastie, Tibshirani, and Friedman\ [-@HastieTibshiraniFriedman2009]
+- James et al.\ [-@JamesWittenHastieTibshirani2013]
 
 **R and Data Analysis**
 
-- Wickham, Çetinkaya-Rundel, and Grolemund [-@WickhamCetinkayaRundelGrolemund2023]
+- Wickham, Çetinkaya-Rundel, and Grolemund\ [-@WickhamCetinkayaRundelGrolemund2023]
 
 ## Changelog
 
 Changes implemented for this semester:
 
-- Projects: open topic (building on the CONTRIBUTE framework [@ThurnerWagner2026])
+- Projects: open topic (building on the CONTRIBUTE framework\ [@ThurnerWagner2026])
 - Tidyverse instead of Base R
 - Quarto reports
 - Transparent session structure

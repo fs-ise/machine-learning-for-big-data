@@ -40,6 +40,7 @@ Before starting this exercise, make sure the required R packages are installed.
 Run this command once in the R console. You do not need to run it every time you open the exercise. You can skip this step if these packages are already installed.
 
 ```{r}
+#| label: package-setup-install-packages
 #| eval: false
 install.packages(c(
   "tidyverse",
@@ -50,6 +51,7 @@ install.packages(c(
 :::
 
 ```{r}
+#| label: package-setup-load-packages
 library(tidyverse)
 library(tidymodels)
 ```
@@ -69,6 +71,7 @@ The event of interest is **default**. Yardstick treats the first outcome factor 
 3. Inspect the data, row count, and outcome proportions.
 
 ```{r}
+#| label: task-1-1-load-and-inspect-the-data-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -76,6 +79,7 @@ The event of interest is **default**. Yardstick treats the first outcome factor 
 ::: {.sol}
 
 ```{r}
+#| label: task-1-1-load-and-inspect-the-data-df
 df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/credit_default.csv",
   show_col_types = FALSE
@@ -103,6 +107,7 @@ The level order confirms that `default` is the event used for ROC AUC and sensit
 Create a reproducible 80/20 split, stratified by `default`. Store the partitions as `train_data` and `test_data`, then compare row counts and class proportions.
 
 ```{r}
+#| label: task-1-2-create-a-held-out-test-set-student-response
 # YOUR CODE HERE
 ```
 
@@ -114,6 +119,7 @@ Why must `test_data` remain untouched until model selection is complete?
 ::: {.sol}
 
 ```{r}
+#| label: task-1-2-create-a-held-out-test-set-set-seed
 set.seed(42)
 
 data_split <- initial_split(
@@ -155,6 +161,7 @@ Use `train_data` to specify a recipe that:
 3. normalizes numeric predictors.
 
 ```{r}
+#| label: task-2-1-create-the-recipe-student-response
 # YOUR CODE HERE
 ```
 
@@ -164,6 +171,7 @@ Normalization is useful for many models, including logistic regression when pred
 ::: {.sol}
 
 ```{r}
+#| label: task-2-1-create-the-recipe-model-recipe
 model_recipe <- recipe(
   default ~ .,
   data = train_data
@@ -179,6 +187,7 @@ model_recipe
 The following conceptual order is **wrong**:
 
 ```{r}
+#| label: task-2-1-create-the-recipe-empty-response
 #| eval: false
 # WRONG:
 # 1. estimate normalization values from the full dataset
@@ -215,6 +224,7 @@ Create:
 2. a classification tree using the `rpart` engine, with `cost_complexity`, `tree_depth`, and `min_n` marked for tuning.
 
 ```{r}
+#| label: task-3-1-specify-the-models-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -222,6 +232,7 @@ Create:
 ::: {.sol}
 
 ```{r}
+#| label: task-3-1-specify-the-models-logistic-spec
 logistic_spec <- logistic_reg() |>
   set_engine("glm") |>
   set_mode("classification")
@@ -250,6 +261,7 @@ A workflow bundles a recipe and model specification. This ensures the same trans
 Create `logistic_workflow` and `tree_workflow` by combining the shared recipe with each model specification.
 
 ```{r}
+#| label: task-4-1-create-two-workflows-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -257,6 +269,7 @@ Create `logistic_workflow` and `tree_workflow` by combining the shared recipe wi
 ::: {.sol}
 
 ```{r}
+#| label: task-4-1-create-two-workflows-logistic-workflow
 logistic_workflow <- workflow() |>
   add_recipe(model_recipe) |>
   add_model(logistic_spec)
@@ -280,6 +293,7 @@ Cross-validation creates temporary analysis and assessment partitions **inside t
 Create five reproducible folds from `train_data`, stratified by `default`. Confirm that the object contains five splits.
 
 ```{r}
+#| label: task-5-1-create-stratified-folds-student-response
 # YOUR CODE HERE
 ```
 
@@ -299,6 +313,7 @@ Discuss:
 ::: {.sol}
 
 ```{r}
+#| label: task-5-1-create-stratified-folds-set-seed
 set.seed(42)
 
 folds <- vfold_cv(
@@ -329,6 +344,7 @@ We use a small metric set: ROC AUC, accuracy, and sensitivity. Because `default`
 3. Collect the mean and standard error for each metric.
 
 ```{r}
+#| label: task-6-1-resample-the-baseline-workflow-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -336,6 +352,7 @@ We use a small metric set: ROC AUC, accuracy, and sensitivity. Because `default`
 ::: {.sol}
 
 ```{r}
+#| label: task-6-1-resample-the-baseline-workflow-classification-metrics
 classification_metrics <- metric_set(
   roc_auc,
   accuracy,
@@ -374,6 +391,7 @@ Create all combinations of:
 Evaluate the grid using the **same training folds and metrics**. Select the configuration with the best mean ROC AUC.
 
 ```{r}
+#| label: task-7-1-create-and-evaluate-a-tuning-grid-student-response
 # YOUR CODE HERE
 ```
 
@@ -385,6 +403,7 @@ At any point in this task, did the tree see `test_data`?
 ::: {.sol}
 
 ```{r}
+#| label: task-7-1-create-and-evaluate-a-tuning-grid-tree-grid
 tree_grid <- expand_grid(
   cost_complexity = c(0.0001, 0.001, 0.01),
   tree_depth = c(2L, 4L, 6L),
@@ -418,6 +437,7 @@ No. Every tuning decision uses only cross-validation partitions created from `tr
 ::: {.sol}
 
 ```{r}
+#| label: task-7-2-visualize-tuning-results-collect-metrics
 collect_metrics(tree_results) |>
   filter(.metric == "roc_auc") |>
   mutate(min_n = factor(min_n)) |>
@@ -457,6 +477,7 @@ Model selection happens using validation results. A more flexible model is not a
 Build a two-row comparison containing the logistic baseline and best tree. Include mean ROC AUC and its standard error. Select the model with the higher mean value.
 
 ```{r}
+#| label: task-8-1-compare-validation-roc-auc-student-response
 # YOUR CODE HERE
 ```
 
@@ -465,9 +486,11 @@ Ask:
 - Which model has the higher mean validation ROC AUC?
 
 **Your answer:** *Write your answer here.*
+
 - How uncertain are the estimates across folds?
 
 **Your answer:** *Write your answer here.*
+
 - Is the tree clearly better, or might its flexibility be unnecessary?
 
 **Your answer:** *Write your answer here.*
@@ -476,6 +499,7 @@ Ask:
 ::: {.sol}
 
 ```{r}
+#| label: task-8-1-compare-validation-roc-auc-logistic-summary
 logistic_summary <- logistic_cv_metrics |>
   filter(.metric == "roc_auc") |>
   transmute(
@@ -525,6 +549,7 @@ Only now do we use the held-out test observations. We finalize the selected work
 If the tree won, insert `best_tree` into `tree_workflow`. Otherwise, use `logistic_workflow` unchanged. Then call `last_fit()` with the original `data_split`.
 
 ```{r}
+#| label: task-9-1-finalize-the-selected-workflow-student-response
 # YOUR CODE HERE
 ```
 :::
@@ -532,6 +557,7 @@ If the tree won, insert `best_tree` into `tree_workflow`. Otherwise, use `logist
 ::: {.sol}
 
 ```{r}
+#| label: task-9-1-finalize-the-selected-workflow-if
 if (selected_model == "decision_tree") {
   final_workflow <- finalize_workflow(
     tree_workflow,
@@ -563,6 +589,7 @@ Use yardstick to create a test confusion matrix and ROC curve. Do not recreate t
 ::: {.sol}
 
 ```{r}
+#| label: task-9-2-inspect-final-predictions
 final_predictions <- collect_predictions(final_fit)
 
 final_confusion_matrix <- final_predictions |>

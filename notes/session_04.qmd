@@ -38,6 +38,7 @@ It offers descriptive overviews (EDA), and links existing analyses (tab: code)
 Notebook demonstration: run regression without NA-filling and correct afterward.
 
 ```{r}
+#| label: model-choice-load-packages
 library(readr)
 library(dplyr)
 library(broom)

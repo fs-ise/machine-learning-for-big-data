@@ -75,6 +75,7 @@ where $X$ contains the observed customer characteristics and behaviors.
 Churn prediction is a **binary classification problem**:
 
 ```{python}
+#| label: geometric-view-of-the-problem-import-numpy-as-np
 # | fig-align: center
 
 import numpy as np
@@ -122,6 +123,7 @@ Possible approach: We could use Linear Regression with a threshold at `0.5` to c
  
 ::: notes
 On whiteboard: draw previous versions (continuous -> continuous; categorical -> continuous / multidimensional)
+
 - good (simple; geographical) explanation:  https://www.youtube.com/watch?v=yIYKR4sgzI8
 - TODO : include illustrations from video, min 2.17 and 3.20
 
@@ -236,6 +238,7 @@ The sigmoid function serves as a *link function* to convert the linear predictor
 ## The Sigmoid function
 
 ```{python}
+#| label: the-sigmoid-function-import-numpy-as-np
 #| fig-align: center
 import numpy as np
 import matplotlib.pyplot as plt
@@ -319,6 +322,7 @@ No need to memorize the formula. Understand the idea.
 We estimate the model using base R's `glm()` function:
 
 ```{r}
+#| label: logistic-regression-in-r-load-packages
 #| echo: true
 #| output: true
 library(tidyverse)
@@ -375,6 +379,7 @@ Logistic regression is linear in log-odds — but **nonlinear in probabilities**
 
 
 ```{python}
+#| label: evaluation-import-numpy-as-np
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -455,6 +460,7 @@ Comparing predicted vs. actual class labels allows us to evaluate the performanc
 
 ::: {.column width="50%"}
 ```{python}
+#| label: predicted-probabilities-fig-ax-plt-subplots-figsize-7
 #| fig-align: center
 fig, ax = plt.subplots(figsize=(7.5, 5.2))
 ax.scatter(
@@ -500,6 +506,7 @@ The confusion matrix summarizes:
 
 ::: {.column width="50%"}
 ```{python}
+#| label: confusion-matrix-fig-ax-plt-subplots-figsize-7
 #| fig-align: center
 fig, ax = plt.subplots(figsize=(7, 5.2))
 
@@ -540,6 +547,7 @@ plt.show()
 ## Evaluation metrics
 
 ```{python}
+#| label: evaluation-metrics-import-numpy-as-np
 #| fig-align: center
 import numpy as np
 import matplotlib.pyplot as plt
@@ -815,6 +823,7 @@ A good classifier achieves:
 <br><br>
 
 ```{python}
+#| label: roc-curve-and-auc-from-sklearn-metrics-import-ro
 #| fig-align: center
 from sklearn.metrics import roc_curve, roc_auc_score
 import matplotlib.pyplot as plt
@@ -1069,6 +1078,7 @@ This decision combines two complementary inputs:
 $$
 p(x)=P(\text{churn}=1\mid x)
 $$
+
 - Learned from historical data  
 - Provides a probability (what is likely to happen)
 

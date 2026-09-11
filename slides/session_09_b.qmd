@@ -284,6 +284,7 @@ They also argue that ML changes BA value creation through autonomy, dynamism, an
 Note: maybe add explanations on the following slide?!
 
 TODO:
+
 - cover canonical information processing path, decision augmentation vs. automation
 - cover knowledge accumulation path, transfer, feedback
 
@@ -584,6 +585,7 @@ IUI XAI lecture on local/global and intrinsic/post-hoc interpretability.
 
 <!--
 Discussion prompts:
+
 - There has always been proprietary, non-interpretable knowledge. What is different now?
 - We do not need to understand how a motor works to drive a car. why do we need to understand ML models now?
 
