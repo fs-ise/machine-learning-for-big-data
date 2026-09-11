@@ -74,89 +74,62 @@ We use one real data set throughout the examples: 200 firms from four sectors.
 library(tidyverse)
 
 firm_data_df <- read_csv(
-  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/firm_data.csv",
+  paste0(
+    "https://raw.githubusercontent.com/fs-ise/",
+    "machine-learning-for-big-data/main/",
+    "exercises/data/firm_data.csv"
+  ),
   show_col_types = FALSE
 )
 
 head(firm_data_df)
 ```
 
-## Key figures: concepts map directly to R
+## Descriptive statistics by variable type
 
 ::: columns
-
 ::: {.column width="45%"}
 
 **Categorical variables** (`sector`)
 
-- mode → category with the highest count
-- relative frequency → proportion in each category
+- frequency → number of observations per category
 
 **Numerical variables** (`profit_margin`)
 
 - mean → center
 - variance / standard deviation → spread
-- percentiles / quantiles → position in the distribution
+- quantiles → position in the distribution
+- compact overview of minimum, quartiles, median, mean, and maximum
 
 :::
 
 ::: {.column width="55%"}
 
 ```{r}
-#| label: key-figures-concepts-map-directly-to-r-table
+#| label: descriptive-statistics-by-type
 #| echo: true
 
 table(firm_data_df$sector)
 
 mean(firm_data_df$profit_margin)
+
+var(firm_data_df$profit_margin)
+
 sd(firm_data_df$profit_margin)
+
 quantile(firm_data_df$profit_margin)
-```
-
-:::
-
-:::
-
-## Numerical summary: `profit_margin`
-
-::: columns
-
-::: {.column width="38%"}
-
-- `summary()` gives a compact overview.
-- **Mean** describes the center.
-- **Standard deviation** describes spread around the mean.
-- **Quantiles** mark positions in the ordered values.
-
-:::
-
-::: {.column width="62%"}
-
-```{r}
-#| label: numerical-summary-profit-margin
-#| echo: true
 
 summary(firm_data_df$profit_margin)
-
-round(mean(firm_data_df$profit_margin), 2)
-round(sd(firm_data_df$profit_margin), 2)
-
-quantile(
-  firm_data_df$profit_margin,
-  probs = c(0.25, 0.5, 0.75)
-) |>
-  round(2)
 ```
 
 :::
-
 :::
 
 ## Histogram: shape, center, and spread
 
 ::: columns
 
-::: {.column width="50%"}
+::: {.column width="45%"}
 
 - Numerical values are divided into intervals (**bins**).
 - Bar height indicates how many observations fall into each interval.
@@ -164,13 +137,14 @@ quantile(
 
 :::
 
-::: {.column width="50%"}
+::: {.column width="55%"}
 
 ```{r}
 #| label: histogram-shape-center-and-spread-ggplot
 #| echo: true
 #| fig-width: 5
-#| fig-height: 3.2
+#| fig-height: 4
+#| fig-align: center
 
 ggplot(firm_data_df, aes(x = profit_margin)) +
   geom_histogram(bins = 20) +
@@ -189,6 +163,7 @@ See [ggplot2 documentation](https://ggplot2.tidyverse.org/reference/ggplot.html)
 :::
 
 
+<!--
 ## Mode and relative frequencies
 
 ::: columns
@@ -217,6 +192,7 @@ prop.table(
 :::
 
 :::
+-->
 
 ## Boxplot
 
@@ -694,7 +670,7 @@ plot_k(7)
 #| label: k-means-implementation-in-r-set-seed
 #| echo: true
 #| fig-width: 5
-#| fig-height: 4
+#| fig-height: 3.8
 #| fig-align: center
 
 set.seed(42)       # for reproducibility
@@ -708,8 +684,7 @@ km <- kmeans(X, centers = 4, nstart = 25)
 as.data.frame(X) |>
   mutate(cluster = factor(km$cluster)) |>
   ggplot(aes(x = profit_margin, y = rd_intensity, color = cluster)) +
-    geom_point() +
-    labs(color = "Cluster")
+    geom_point() + labs(color = "Cluster")
 ```
 
 <!--
