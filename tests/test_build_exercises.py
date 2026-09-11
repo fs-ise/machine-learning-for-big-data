@@ -5,7 +5,15 @@ from pathlib import Path
 
 import pytest
 
-from scripts.build_exercises import ExerciseSyntaxError, PROJECT_CONFIG, VARIANTS, build, sanitize
+from scripts.build_exercises import (
+    ExerciseSyntaxError,
+    PROJECT_CONFIG,
+    VARIANTS,
+    add_solution_metadata,
+    build,
+    sanitize,
+    solution_metadata,
+)
 
 
 SOURCE = """---
@@ -40,6 +48,52 @@ def test_variant_semantics_and_clean_wrappers() -> None:
     assert "Solution" not in variants["assign"]
     assert "Solution" in variants["solution"]
     assert all(class_name not in text for text in variants.values() for class_name in (".direction", ".sol"))
+
+
+@pytest.mark.parametrize(
+    ("stem", "title", "number", "topic"),
+    [
+        ("session_01", "Exercise: R Setup", "01", "R Setup"),
+        ("session_03", "Session 3: EDA", "03", "EDA"),
+        ("session_09_b", "Session 9B Supplement: Deployment", "09B", "Deployment"),
+    ],
+)
+def test_solution_pdf_metadata_is_derived_from_filename_and_title(
+    stem: str, title: str, number: str, topic: str
+) -> None:
+    source = f'---\ntitle: "{title}"\n---\nBody\n'
+    assert solution_metadata(source, stem) == {
+        "course-title": "Machine Learning for Big Data",
+        "exercise-number": number,
+        "exercise-variant": "Solution",
+        "exercise-topic": topic,
+    }
+
+
+def test_pdf_metadata_is_added_only_when_explicitly_building_solution() -> None:
+    source = '---\ntitle: "Session 3: EDA"\nformat:\n  html: default\n---\nBody\n'
+    generated = add_solution_metadata(source, "session_03")
+    assert 'title: "Session 3: EDA"' in generated
+    assert 'exercise-number: "03"' in generated
+    assert 'exercise-topic: "EDA"' in generated
+    assert generated.endswith("Body\n")
+
+
+def test_shared_pdf_template_has_compact_running_header() -> None:
+    root = Path(__file__).resolve().parents[1]
+    templates = root / "scripts/templates"
+    header = templates.joinpath("exercise-solution-in-header.tex").read_text()
+    body = templates.joinpath("exercise-solution-before-body.tex").read_text()
+
+    assert r"\usepackage{scrlayer-scrpage}" in header
+    assert r"\ihead[" in header  # optional argument also configures the plain style
+    assert r"\ohead[" in header
+    assert r"\setheadsepline{0.4pt}" in header
+    assert r"\cfoot[\pagemark]{\pagemark}" in header
+    for field in ("$course-title$", "$exercise-number$", "$exercise-variant$"):
+        assert field in header
+    assert body.strip() == r"\section*{$exercise-topic$}"
+    assert r"\Large" not in header + body
 
 
 def test_canonical_shared_setup_survives_in_both_variants() -> None:
@@ -131,6 +185,10 @@ def test_malformed_semantic_div_fails_clearly(source: str) -> None:
 def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path: Path) -> None:
     exercises = tmp_path / "exercises"
     exercises.mkdir()
+    template = tmp_path / "scripts/templates"
+    template.mkdir(parents=True)
+    template.joinpath("exercise-solution-before-body.tex").write_text("shared template")
+    template.joinpath("exercise-solution-in-header.tex").write_text("shared header")
     data = exercises / "data"
     data.mkdir()
     fixture = data / "market_data_log.csv"
@@ -141,7 +199,16 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     build(tmp_path)
     generated = tmp_path / "_generated/exercises"
     assert (generated / "_quarto.yml").read_text(encoding="utf-8") == PROJECT_CONFIG
+    assert (generated / "solution-pdf/before-body.tex").read_text() == "shared template"
+    assert (generated / "solution-pdf/in-header.tex").read_text() == "shared header"
     assert "output-dir: _rendered" in PROJECT_CONFIG
+    assignment = (generated / "session_01_assign.qmd").read_text(encoding="utf-8")
+    solution = (generated / "session_01_solution.qmd").read_text(encoding="utf-8")
+    assert "title: Test" in assignment
+    assert "course-title:" not in assignment
+    assert "title: Test" in solution
+    assert 'course-title: "Machine Learning for Big Data"' in solution
+    assert 'exercise-number: "01"' in solution
     assert (generated / "data/market_data_log.csv").read_bytes() == fixture.read_bytes()
     first = {
         path.relative_to(generated): path.read_bytes()
@@ -169,11 +236,20 @@ def test_make_build_publishes_rendered_variants_and_data(tmp_path: Path) -> None
     """Exercise the real Make targets with a minimal Quarto stand-in."""
     root = Path(__file__).resolve().parents[1]
     (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts/templates").mkdir()
     (tmp_path / "exercises").mkdir()
     (tmp_path / "exercises/data").mkdir()
     shutil.copy(root / "Makefile", tmp_path / "Makefile")
     shutil.copy(root / "_quarto.yml", tmp_path / "_quarto.yml")
     shutil.copy(root / "scripts/build_exercises.py", tmp_path / "scripts/build_exercises.py")
+    shutil.copy(
+        root / "scripts/templates/exercise-solution-before-body.tex",
+        tmp_path / "scripts/templates/exercise-solution-before-body.tex",
+    )
+    shutil.copy(
+        root / "scripts/templates/exercise-solution-in-header.tex",
+        tmp_path / "scripts/templates/exercise-solution-in-header.tex",
+    )
     (tmp_path / "exercises/session_01.qmd").write_text(SOURCE, encoding="utf-8")
     (tmp_path / "exercises/data/market_data_log.csv").write_text("price\n42\n", encoding="utf-8")
 

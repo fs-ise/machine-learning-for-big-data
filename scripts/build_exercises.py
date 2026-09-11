@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import shutil
 from dataclasses import dataclass
@@ -23,7 +24,23 @@ PROJECT_CONFIG = """project:
 
 format:
   html: default
+  pdf:
+    documentclass: article
+    papersize: a4
+    geometry:
+      - margin=25mm
+    template-partials:
+      - solution-pdf/in-header.tex
+      - solution-pdf/before-body.tex
 """
+COURSE_TITLE = "Machine Learning for Big Data"
+SOLUTION_TEMPLATES = (
+    Path("scripts/templates/exercise-solution-in-header.tex"),
+    Path("scripts/templates/exercise-solution-before-body.tex"),
+)
+FRONT_MATTER = re.compile(r"\A---[ \t]*\r?\n(?P<body>.*?)^---[ \t]*$", re.MULTILINE | re.DOTALL)
+TITLE = re.compile(r'^title:[ \t]*(?P<title>.+?)[ \t]*$', re.MULTILINE)
+SESSION_FILENAME = re.compile(r"^session_(?P<number>\d+)(?:_(?P<suffix>[a-z]+))?$")
 DIV_OPEN = re.compile(r"^(?P<indent>[ \t]*)(?P<fence>:{3,})[ \t]*(?P<attrs>(?!:)\S.*?)[ \t]*(?:\r?\n)?$")
 DIV_CLOSE = re.compile(r"^[ \t]*:{3,}[ \t]*(?:\r?\n)?$")
 CODE_FENCE = re.compile(r"^[ \t]*(?P<fence>`{3,}|~{3,})")
@@ -159,6 +176,55 @@ def sanitize(source: str, variant: Variant, *, filename: str = "<input>") -> str
     return "".join(output)
 
 
+def _yaml_scalar(value: str) -> str:
+    """Read the simple quoted or plain scalar used by canonical exercise titles."""
+    value = value.strip()
+    if value.startswith('"') and value.endswith('"'):
+        return json.loads(value)
+    if value.startswith("'") and value.endswith("'"):
+        return value[1:-1].replace("''", "'")
+    return value
+
+
+def solution_metadata(source: str, stem: str) -> dict[str, str]:
+    """Derive PDF-only semantic metadata from canonical filename and title."""
+    session = SESSION_FILENAME.fullmatch(stem)
+    front_matter = FRONT_MATTER.match(source)
+    title = TITLE.search(front_matter.group("body")) if front_matter else None
+    if session is None or title is None:
+        raise ExerciseSyntaxError(
+            f"{stem}: solution PDF metadata requires a session_XX filename and YAML title"
+        )
+
+    number = session.group("number")
+    suffix = session.group("suffix")
+    if suffix:
+        number += suffix.upper()
+    canonical_title = _yaml_scalar(title.group("title"))
+    topic = re.sub(
+        r"^(?:Session\s+\d+[A-Za-z]?(?:\s+Supplement)?|Exercise)\s*:\s*",
+        "",
+        canonical_title,
+        flags=re.IGNORECASE,
+    )
+    return {
+        "course-title": COURSE_TITLE,
+        "exercise-number": number,
+        "exercise-variant": "Solution",
+        "exercise-topic": topic,
+    }
+
+
+def add_solution_metadata(source: str, stem: str) -> str:
+    """Add metadata consumed only by the shared PDF title partial."""
+    metadata = solution_metadata(source, stem)
+    front_matter = FRONT_MATTER.match(source)
+    assert front_matter is not None  # validated by solution_metadata
+    fields = "".join(f"{key}: {json.dumps(value)}\n" for key, value in metadata.items())
+    insert_at = front_matter.end("body")
+    return source[:insert_at] + fields + source[insert_at:]
+
+
 def build(root: Path) -> list[Path]:
     exercises = root / "exercises"
     destination = root / "_generated" / "exercises"
@@ -168,6 +234,11 @@ def build(root: Path) -> list[Path]:
     source_data = exercises / "data"
     if source_data.is_dir():
         shutil.copytree(source_data, generated_data)
+    template_destination = destination / "solution-pdf"
+    template_destination.mkdir(exist_ok=True)
+    for template_source in SOLUTION_TEMPLATES:
+        destination_name = template_source.name.removeprefix("exercise-solution-")
+        shutil.copy2(root / template_source, template_destination / destination_name)
     (destination / "_quarto.yml").write_text(PROJECT_CONFIG, encoding="utf-8", newline="")
     sources = sorted(exercises.glob("session_*.qmd"))
     expected: set[Path] = set()
@@ -179,6 +250,8 @@ def build(root: Path) -> list[Path]:
             target = destination / f"{source.stem}_{variant}.qmd"
             expected.add(target)
             rendered = sanitize(original, variant, filename=str(source))
+            if variant == "solution":
+                rendered = add_solution_metadata(rendered, source.stem)
             target.write_text(rendered, encoding="utf-8", newline="")
             written.append(target)
     for stale in destination.glob("session_*_*.qmd"):
