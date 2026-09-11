@@ -54,7 +54,7 @@ help:
 	@echo ""
 	@echo "Exercises:"
 	@echo "  canonical QMD -> _generated/exercises variant QMD"
-	@echo "                -> _site/exercises HTML and QMD"
+	@echo "                -> _site/exercises HTML, solution PDF, and QMD"
 
 
 # ---------------------------------------------------------------------------
@@ -90,6 +90,8 @@ exercises-render: exercises-generate
 		for exercise in session_*_solution.qmd; do \
 			echo "Rendering $$exercise"; \
 			$(QUARTO) render "$$exercise" --to html --no-clean; \
+			echo "Rendering $$exercise to PDF"; \
+			$(QUARTO) render "$$exercise" --to pdf --no-clean; \
 		done
 
 	@mkdir -p _site/exercises
@@ -111,6 +113,8 @@ exercises-check: exercises-generate
 		for exercise in session_*_solution.qmd; do \
 			echo "Checking $$exercise"; \
 			$(QUARTO) render "$$exercise" --to html --no-clean; \
+			echo "Checking $$exercise PDF"; \
+			$(QUARTO) render "$$exercise" --to pdf --no-clean; \
 		done
 
 

@@ -186,19 +186,25 @@ from pathlib import Path
 
 args = sys.argv[1:]
 assert args[0] == "render"
-if len(args) > 1 and args[1] == "_generated/exercises":
+if Path.cwd().name == "exercises" and Path.cwd().parent.name == "_generated":
     assert "--output" not in args
     assert "--output-dir" not in args
-    assert args[args.index("--to") + 1] == "html"
-    project = Path(args[1])
-    assert (project / "_quarto.yml").exists()
-    assert "output-dir: _rendered" in (project / "_quarto.yml").read_text(encoding="utf-8")
-    assert (project / "data/market_data_log.csv").exists()
-    output_dir = project / "_rendered"
+    output_format = args[args.index("--to") + 1]
+    source = Path(args[1])
+    if source.name.endswith("_assign.qmd"):
+        assert output_format == "html"
+        assert "--no-execute" in args
+    else:
+        assert output_format in {"html", "pdf"}
+        assert "--no-execute" not in args
+    assert Path("_quarto.yml").exists()
+    assert "output-dir: _rendered" in Path("_quarto.yml").read_text(encoding="utf-8")
+    assert Path("data/market_data_log.csv").exists()
+    output_dir = Path("_rendered")
     output_dir.mkdir(parents=True, exist_ok=True)
-    for source in project.glob("session_*_*.qmd"):
-        (output_dir / source.with_suffix(".html").name).write_text("rendered", encoding="utf-8")
-    shutil.copytree(project / "data", output_dir / "data")
+    (output_dir / source.with_suffix(f".{output_format}").name).write_text("rendered", encoding="utf-8")
+    if not (output_dir / "data").exists():
+        shutil.copytree("data", output_dir / "data")
 else:
     config = Path("_quarto.yml").read_text(encoding="utf-8")
     site = Path("_site")
@@ -234,10 +240,13 @@ else:
         "session_01_assign.html",
         "session_01_assign.qmd",
         "session_01_solution.html",
+        "session_01_solution.pdf",
         "session_01_solution.qmd",
     ]
     assert (published / "data/market_data_log.csv").read_text(encoding="utf-8") == "price\n42\n"
     assert (tmp_path / "_generated/exercises/_rendered/session_01_assign.html").exists()
+    assert not (tmp_path / "_generated/exercises/_rendered/session_01_assign.pdf").exists()
+    assert (tmp_path / "_generated/exercises/_rendered/session_01_solution.pdf").exists()
     assert not (tmp_path / "_site/exercises/generated").exists()
     assert not (tmp_path / "_site/exercises/_quarto.yml").exists()
     assert not (tmp_path / "_site/exercises/session_01.html").exists()
@@ -272,6 +281,7 @@ def test_real_quarto_project_render_smoke(tmp_path: Path) -> None:
         "session_01_assign.html",
         "session_01_assign.qmd",
         "session_01_solution.html",
+        "session_01_solution.pdf",
         "session_01_solution.qmd",
     ]
     assert (tmp_path / "_generated/exercises/_rendered/session_01_assign.html").exists()
