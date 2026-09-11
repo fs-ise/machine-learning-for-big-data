@@ -33,10 +33,10 @@ install.packages("tidyverse")
 
 # EDA: Clustering {#clustering}
 
-Now that the data is structured and cleaned, we explore whether companies group into similar patterns.
-Clustering helps us move from preparation to insight generation: instead of looking at firms one by one, we ask whether there are recurring profiles in the data.
+An organization wants to understand whether employees show recurring **work profiles**.
+Instead of defining employee types in advance, we use clustering to identify groups with similar working patterns.
 
-Dataset: `firm_data.csv`
+Dataset: `employee_work_profiles.csv`
 
 ```{r}
 #| label: eda-clustering-load-packages
@@ -44,14 +44,16 @@ Dataset: `firm_data.csv`
 
 library(tidyverse)
 
-firm_data_df <- read_csv(
-  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/firm_data.csv",
+employee_work_df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/employee_work_profiles.csv",
   show_col_types = FALSE
 )
 
-firm_data_df |>
+employee_work_df |>
   slice_head(n = 5)
 ```
+
+The dataset contains measures such as weekly meeting hours, weekly focus hours, the share of work performed remotely, performance, and job satisfaction.
 
 :::{.direction}
 
@@ -59,13 +61,19 @@ firm_data_df |>
 
 ### 1. Prepare the data for clustering
 
-We decide to use `profit_margin` and `rd_intensity` to cluster firms.
-In a first step, create a data frame `X` containing these two variables:
+We want the clusters to represent **how employees work**, rather than their outcomes.
+Use the following three variables for clustering:
+
+- `meeting_hours`
+- `focus_hours`
+- `remote_share`
+
+Create a data frame `X` containing these variables:
 
 ```{r}
 #| label: 1-prepare-the-data-for-clustering-x
-X <- firm_data_df |>
-  select(profit_margin, rd_intensity)
+X <- employee_work_df |>
+  select(meeting_hours, focus_hours, remote_share)
 
 # Print X at the end.
 X
@@ -96,9 +104,9 @@ X |>
 ```
 
 Considering that k-means is sensitive to different measurement scales, we need to standardize the values.
-This ensures that they have approximately equal influence on the clusters. Base R's `scale()` centers each variable around zero and scales it to unit standard deviation.
+This ensures that the three variables have approximately equal influence on the clusters. Base R's `scale()` centers each variable around zero and scales it to unit standard deviation.
 
-Run the following code and observe how the scale of both variables changes:
+Run the following code and observe how the scale of the variables changes:
 
 ```{r}
 #| label: 1-prepare-the-data-for-clustering-x-scaled
@@ -106,7 +114,7 @@ X_scaled <- scale(X)
 head(X_scaled)
 ```
 
-Before running a clustering algorithm, view the standardized data in a scatterplot:
+Before running a clustering algorithm, view two of the standardized variables in a scatterplot:
 
 ```{r}
 #| label: 1-prepare-the-data-for-clustering-x-scaled-df
@@ -114,13 +122,13 @@ X_scaled_df <- as.data.frame(X_scaled)
 
 ggplot(
   X_scaled_df,
-  aes(x = profit_margin, y = rd_intensity)
+  aes(x = meeting_hours, y = focus_hours)
 ) +
   geom_point() +
   labs(
-    title = "Standardized data (no clustering)",
-    x = "Profit margin (scaled)",
-    y = "R&D intensity (scaled)"
+    title = "Standardized work-pattern data (no clustering)",
+    x = "Meeting hours (scaled)",
+    y = "Focus hours (scaled)"
   )
 ```
 
@@ -130,38 +138,48 @@ How many clusters would you expect? Briefly justify your answer based on the plo
 
 ### 2. Apply k-means clustering
 
-* Next, run the k-means clustering algorithm for different values of `k`.
+Next, run the k-means algorithm for different values of `k`.
+Use a `for` loop to test values from **2 to 10**. For each value of `k`, create a scatterplot showing the resulting clusters.
+
+Remember that the clustering itself uses all three variables in `X_scaled`, even though the plot displays only `meeting_hours` and `focus_hours`.
 
 ```{r}
 #| label: 2-apply-k-means-clustering-student-response
-# YOUR CODE HERE: try values from 2 to 10.
-# Remember that kmeans() expects centers = k.
+# YOUR CODE HERE
+# Use a for loop to try k = 2, 3, ..., 10.
+# For each k:
+# 1. run kmeans()
+# 2. add the cluster labels to X_scaled_df
+# 3. create and print a scatterplot
 ```
 
-* Try different values of `k` (e.g., 2–10). Which number of clusters seems appropriate?
+Which number of clusters seems appropriate? Consider both the separation of the groups and whether adding more clusters reveals meaningful additional structure.
 
 **Your answer:** *Write your answer here.*
+
 ### 3. Add cluster labels to the dataset
 
-* Assign the cluster labels returned by `kmeans()` to the original data frame (`firm_data_df`).
+Based on your result above, fit a final k-means model and assign the cluster labels returned by `kmeans()` to the original data frame (`employee_work_df`).
+Store the labels as a factor.
 
 ```{r}
 #| label: 3-add-cluster-labels-to-the-dataset-student-response
 # YOUR CODE HERE
 ```
 
+### 4. Compare outcomes across the employee profiles
 
-### 4. Create grouped boxplots
+The clusters were created only from work-pattern variables. We can now ask whether the resulting employee profiles also differ in outcomes.
 
-* Generate a boxplot, grouped according to the clusters, to compare differences in `revenue`.
-* Try to complete the task using the [`ggplot2` boxplot documentation](https://ggplot2.tidyverse.org/reference/geom_boxplot.html).
+Create grouped boxplots to compare **performance** and **job satisfaction** across the clusters.
+Try to complete the task using the [`ggplot2` boxplot documentation](https://ggplot2.tidyverse.org/reference/geom_boxplot.html).
 
 ```{r}
 #| label: 4-create-grouped-boxplots-student-response
 # YOUR CODE HERE
 ```
 
-* What do the revenue distributions tell you about the firm profiles represented by the clusters?
+What do the boxplots tell you about the employee profiles represented by the clusters?
 
 **Your answer:** *Write your answer here.*
 
@@ -173,12 +191,12 @@ How many clusters would you expect? Briefly justify your answer based on the plo
 
 ### 1. Prepare the data for clustering
 
-We use only `profit_margin` and `rd_intensity` for clustering:
+We use `meeting_hours`, `focus_hours`, and `remote_share` to describe employees' working patterns:
 
 ```{r}
 #| label: prepare-clustering-data-solution
-X <- firm_data_df |>
-  select(profit_margin, rd_intensity)
+X <- employee_work_df |>
+  select(meeting_hours, focus_hours, remote_share)
 
 X |>
   slice_head(n = 5)
@@ -208,7 +226,8 @@ X |>
   )
 ```
 
-These summaries and histograms help us understand the distribution and scale of the variables.
+These summaries and histograms help us understand the distributions and the different scales of the variables.
+
 #### Standardization
 
 Since k-means is sensitive to scale differences, we standardize the variables. `scale()` centers each variable around zero and scales it to unit standard deviation.
@@ -219,7 +238,7 @@ X_scaled <- scale(X)
 head(X_scaled)
 ```
 
-#### Scatterplot (before clustering)
+#### Scatterplot before clustering
 
 ```{r}
 #| label: scatterplot-before-clustering-x-scaled-df
@@ -227,18 +246,19 @@ X_scaled_df <- as.data.frame(X_scaled)
 
 ggplot(
   X_scaled_df,
-  aes(x = profit_margin, y = rd_intensity)
+  aes(x = meeting_hours, y = focus_hours)
 ) +
   geom_point() +
   labs(
-    title = "Standardized data (no clustering)",
-    x = "Profit margin (scaled)",
-    y = "R&D intensity (scaled)"
+    title = "Standardized work-pattern data (no clustering)",
+    x = "Meeting hours (scaled)",
+    y = "Focus hours (scaled)"
   )
 ```
 
 **Interpretation:**
-From the scatterplot, we might expect a small number of clusters (e.g., 3–5), depending on visible groupings.
+The scatterplot suggests approximately **three groups**: employees with relatively high focus and low meeting time, employees with high meeting and low focus time, and a larger group between these extremes.
+
 ### 2. Apply k-means clustering
 
 We try different values of `k` and visually inspect the cluster structure. Setting `nstart = 25` makes the result less sensitive to a single random initialization.
@@ -247,6 +267,7 @@ We try different values of `k` and visually inspect the cluster structure. Setti
 #| label: 2-apply-k-means-clustering-for
 for (k in 2:10) {
   set.seed(42)
+
   km <- kmeans(
     X_scaled,
     centers = k,
@@ -261,15 +282,15 @@ for (k in 2:10) {
   cluster_plot <- ggplot(
     cluster_plot_data,
     aes(
-      x = profit_margin,
-      y = rd_intensity,
+      x = meeting_hours,
+      y = focus_hours,
       color = cluster
     )
   ) +
     geom_point() +
     geom_point(
       data = centers,
-      aes(x = profit_margin, y = rd_intensity),
+      aes(x = meeting_hours, y = focus_hours),
       inherit.aes = FALSE,
       shape = 4,
       size = 4,
@@ -277,8 +298,8 @@ for (k in 2:10) {
     ) +
     labs(
       title = paste("k =", k),
-      x = "Profit margin (scaled)",
-      y = "R&D intensity (scaled)",
+      x = "Meeting hours (scaled)",
+      y = "Focus hours (scaled)",
       color = "Cluster"
     )
 
@@ -287,7 +308,8 @@ for (k in 2:10) {
 ```
 
 **Conclusion:**
-A value around **k = 4** appears to provide a reasonable balance between simplicity and structure.
+A value of **k = 3** captures the main structure well. Larger values increasingly subdivide groups that already appear internally similar rather than revealing clearly distinct additional profiles.
+
 ### 3. Add cluster labels to the dataset
 
 We now fit the final model reproducibly and store the cluster labels as a factor because they represent categories rather than quantities:
@@ -296,39 +318,68 @@ We now fit the final model reproducibly and store the cluster labels as a factor
 #| label: 3-add-cluster-labels-to-the-dataset-set-seed
 set.seed(42)
 
-k <- 4
+k <- 3
 km <- kmeans(
   X_scaled,
   centers = k,
   nstart = 25
 )
 
-firm_data_df <- firm_data_df |>
+employee_work_df <- employee_work_df |>
   mutate(cluster = factor(km$cluster))
 
-firm_data_df |>
+employee_work_df |>
   slice_head(n = 5)
 ```
-### 4. Create grouped boxplots
 
-We compare `revenue` across clusters:
+To help interpret the clusters, we can summarize the average work patterns and outcomes in each group:
+
+```{r}
+#| label: 3-summarize-clusters
+employee_work_df |>
+  group_by(cluster) |>
+  summarise(
+    across(
+      c(
+        meeting_hours,
+        focus_hours,
+        remote_share,
+        performance,
+        job_satisfaction
+      ),
+      mean
+    ),
+    .groups = "drop"
+  )
+```
+
+The numerical cluster labels themselves have no inherent meaning. Interpret each cluster based on its observed characteristics.
+
+### 4. Compare outcomes across the employee profiles
+
+We compare performance and job satisfaction across clusters. Because the two measures use different scales, we reshape the data and allow each facet to use its own y-axis.
 
 ```{r}
 #| label: 4-create-grouped-boxplots-ggplot
-ggplot(
-  firm_data_df,
-  aes(x = cluster, y = revenue)
-) +
+employee_work_df |>
+  select(cluster, performance, job_satisfaction) |>
+  pivot_longer(
+    cols = c(performance, job_satisfaction),
+    names_to = "outcome",
+    values_to = "value"
+  ) |>
+  ggplot(aes(x = cluster, y = value)) +
   geom_boxplot() +
+  facet_wrap(~ outcome, scales = "free_y") +
   labs(
-    title = "Revenue by cluster",
+    title = "Employee outcomes by cluster",
     x = "Cluster",
-    y = "Revenue"
+    y = NULL
   )
 ```
 
 **Interpretation:**
-The boxplots reveal how revenue differs across clusters, helping to characterize the identified firm profiles.
+The clusters differ not only in their work patterns but also in their outcome distributions. This helps us characterize the groups as organizationally meaningful employee profiles rather than merely geometric groupings in the clustering variables.
 
 :::
 
@@ -340,8 +391,10 @@ The boxplots reveal how revenue differs across clusters, helping to characterize
 
 In this exercise, we have learned to
 
-* Explore variable distributions and relationships
-* Prepare selected variables for clustering
+* Explore distributions and relationships in employee work data
+* Select and standardize variables for clustering
+* Compare different numbers of clusters using a `for` loop
 * Apply and interpret k-means clustering
+* Use variables not included in the clustering to characterize the resulting profiles
 
 :::
