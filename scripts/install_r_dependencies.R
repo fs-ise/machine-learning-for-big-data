@@ -23,23 +23,25 @@ missing_packages <- packages[
 if (length(missing_packages) == 0) {
   message("All R dependencies are already installed.")
 } else {
-  message("Installing missing R dependencies: ", paste(missing_packages, collapse = ", "))
-  install.packages(
-    missing_packages,
-    repos = c(CRAN = "https://cloud.r-project.org")
-  )
+  for (pkg in missing_packages) {
+    message("Installing R package: ", pkg)
+    install.packages(pkg)
+
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      stop("Failed to install/load required R package: ", pkg)
+    }
+  }
 }
 
 # install.packages() reports an unavailable or failed source package as a
 # warning. Turn that into an actionable CI failure before rendering begins.
-missing_packages <- packages[
+unavailable <- packages[
   !vapply(packages, requireNamespace, quietly = TRUE, FUN.VALUE = logical(1))
 ]
-if (length(missing_packages) > 0) {
+if (length(unavailable) > 0L) {
   stop(
-    "Missing R packages after installation: ",
-    paste(missing_packages, collapse = ", "),
-    ". Check the CRAN installation output above for the package that failed."
+    "Required R packages unavailable: ",
+    paste(unavailable, collapse = ", ")
   )
 }
 
