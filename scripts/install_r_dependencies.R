@@ -20,17 +20,14 @@ missing_packages <- packages[
   !vapply(packages, requireNamespace, quietly = TRUE, FUN.VALUE = logical(1))
 ]
 
-if (length(missing_packages) == 0) {
+if (length(missing_packages) == 0L) {
   message("All R dependencies are already installed.")
 } else {
-  for (pkg in missing_packages) {
-    message("Installing R package: ", pkg)
-    install.packages(pkg)
-
-    if (!requireNamespace(pkg, quietly = TRUE)) {
-      stop("Failed to install/load required R package: ", pkg)
-    }
-  }
+  message(
+    "Installing missing R dependencies: ",
+    paste(missing_packages, collapse = ", ")
+  )
+  install.packages(missing_packages)
 }
 
 # install.packages() reports an unavailable or failed source package as a
