@@ -33,6 +33,7 @@ jobs:
             libfontconfig1-dev \
             libfreetype6-dev \
             libfribidi-dev \
+            libglpk40 \
             libharfbuzz-dev \
             libicu-dev \
             libssl-dev \

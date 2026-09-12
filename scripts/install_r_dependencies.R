@@ -32,20 +32,9 @@ if (length(missing_packages) == 0L) {
 
 # install.packages() reports an unavailable or failed source package as a
 # warning. Turn that into an actionable CI failure before rendering begins.
-unavailable <- character()
-
-for (pkg in packages) {
-  tryCatch(
-    loadNamespace(pkg),
-    error = function(e) {
-      message(
-        "Failed to load ", pkg, ": ",
-        conditionMessage(e)
-      )
-      unavailable <<- c(unavailable, pkg)
-    }
-  )
-}
+unavailable <- packages[
+  !vapply(packages, requireNamespace, quietly = TRUE, FUN.VALUE = logical(1))
+]
 
 if (length(unavailable) > 0L) {
   stop(
