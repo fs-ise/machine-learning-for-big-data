@@ -32,9 +32,11 @@ Inspect this framework-neutral architecture:
 2. How many hidden layers and trainable dense layers are present?
 
 **Your answer:** *Write your answer here.*
+
 3. What changes for `hidden_layers=[32, 16, 8]`?
 
 **Your answer:** *Write your answer here.*
+
 4. What kind of data structure does this MLP expect? What structural information would be lost if a video were simply flattened into ten features?
 
 **Your answer:** *Write your answer here.*

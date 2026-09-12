@@ -30,6 +30,8 @@ In this session, we follow the CRISP-DM process:
 <br><br>
 
 ```{dot}
+//| label: crisp-dm-workflow
+
 digraph CRISPDM {
   layout=neato;
   overlap=false;
@@ -261,7 +263,7 @@ We create a small table that summarizes key variables:
 
 ::: aside
 For the Ames Housing dataset, we rely on this data description:
- [http://jse.amstat.org/v19n3/decock/DataDocumentation.txt](http://jse.amstat.org/v19n3/decock/DataDocumentation.txt)
+ <http://jse.amstat.org/v19n3/decock/DataDocumentation.txt>
 :::
 
 <!--
@@ -553,6 +555,8 @@ Each coefficient ($\beta$) captures the **differential effect of a variable**—
 <br>
 
 ```{dot}
+//| label: multiple-predictor-model
+
 digraph regression_model {
   rankdir=LR
   bgcolor="transparent"
@@ -668,6 +672,7 @@ Here, we simply take away that it exists and that it can be computed efficiently
 <br>
 
 ```{r}
+#| label: fit-ames-regression
 #| echo: true
 
 library(readr)
@@ -683,7 +688,7 @@ model
     **TODO: clarify expectations (TBD: what is reasonable when ChatGPT would be available? - knowing code structure, reproducing? - add example exam questions)**
 
     ::: aside
-    Data available at [https://www.openintro.org/data/index.php?data=ames](https://www.openintro.org/data/index.php?data=ames)
+    Data available at <https://www.openintro.org/data/index.php?data=ames>
     :::
 -->
 

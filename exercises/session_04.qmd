@@ -258,7 +258,7 @@ All included predictors except `remote_share` are statistically significant at t
 2. What do the p-value and confidence interval say about `remote_share`?
 
 ::: {.sol}
-The estimate is about **-0.936**, its t-statistic is about **-0.76**, and its p-value is about **0.449**. Its 95% confidence interval is approximately **[-3.36, 1.49]**, which includes zero. Thus, the pooled data do not provide strong evidence that the association differs from zero.
+The estimate is about **-0.936**, its t-statistic is about **-0.76**, and its p-value is about **0.449**. Its 95% confidence interval is approximately **\[-3.36, 1.49\]**, which includes zero. Thus, the pooled data do not provide strong evidence that the association differs from zero.
 :::
 
 3. What do R² and adjusted R² tell you?

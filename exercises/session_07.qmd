@@ -604,15 +604,19 @@ Answer:
 1. Which model has the strongest mean validation ROC AUC?
 
 **Your answer:** *Write your answer here.*
+
 2. Are differences large relative to their standard errors?
 
 **Your answer:** *Write your answer here.*
+
 3. Which models naturally capture nonlinear relationships?
 
 **Your answer:** *Write your answer here.*
+
 4. Is the most flexible model necessarily best here?
 
 **Your answer:** *Write your answer here.*
+
 5. What matters for LendWise besides the highest score?
 
 **Your answer:** *Write your answer here.*

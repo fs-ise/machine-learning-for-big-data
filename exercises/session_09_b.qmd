@@ -120,15 +120,19 @@ During feedback, ask:
 1. Is the expected business value plausible and tied to a process and KPI?
 
 **Your answer:** *Write your answer here.*
+
 2. Are the required complementary capabilities visible?
 
 **Your answer:** *Write your answer here.*
+
 3. Is the proposed division of work between humans and AI justified?
 
 **Your answer:** *Write your answer here.*
+
 4. Are accountability, explanation, risk, and regulatory questions specific enough to guide later project work?
 
 **Your answer:** *Write your answer here.*
+
 5. Which claims require additional evidence or verification?
 
 **Your answer:** *Write your answer here.*

@@ -3,7 +3,7 @@ title: Syllabus
 format: html
 ---
 
-# Machine Learning for Big Data [FIN72063]
+# Machine Learning for Big Data \[FIN72063\]
 
 | Field | Details |
 |---|-----------------------------|

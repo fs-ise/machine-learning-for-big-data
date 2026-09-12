@@ -15,6 +15,7 @@ title: "Group Work Brief"
 Project work begins with the first course session, continues through the presentation phase, and concludes with the final submission.
 
 ```{mermaid}
+%%| label: project-schedule
 %%| fig-width: 6.5
 %%| fig-height: 3
 %%| fig-align: center

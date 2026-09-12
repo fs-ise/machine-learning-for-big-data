@@ -57,7 +57,7 @@ The growth of modern analytics is enabled by **changing strategies for increasin
 ::: aside
 (*) Miniaturization continues today, but progress has slowed as transistors approach physical limits.
 Advances such as extreme ultraviolet (EUV) lithography are required to continue scaling.
-See how $400 million machines are constructed to build modern chips: [https://www.youtube.com/watch?v=MiUHjLxm3V0](https://www.youtube.com/watch?v=MiUHjLxm3V0).
+See how $400 million machines are constructed to build modern chips: <https://www.youtube.com/watch?v=MiUHjLxm3V0>.
 :::
 
 
@@ -536,6 +536,7 @@ Descriptive → Predictive → Prescriptive
 
 <br>
 ```{dot}
+//| label: crisp-dm-process
 //| fig-width: 8
 
 digraph CRISPDM {

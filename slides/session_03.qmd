@@ -438,7 +438,7 @@ plt.show()
 {{< iconify fluent-mdl2:insights >}}  If causal explanations are unavailable, decisions may need to rely on predictions.
 
 ::: aside
-More examples are available at: [https://www.tylervigen.com/spurious-correlations](https://www.tylervigen.com/spurious-correlations)
+More examples are available at: <https://www.tylervigen.com/spurious-correlations>
 <!-- Note: CC-BY licensed  -->
 :::
 

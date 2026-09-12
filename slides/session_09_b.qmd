@@ -486,7 +486,7 @@ Gunning’s XAI work similarly frames the problem as enabling users to understan
 Sources: https://iui-lecture.org/files/IUI-2021-01-21-slides/IUI_Explainable_AI.pdf ; Gunning (DARPA XAI); Gunning et al. (2019).
 
 
-The black-box problem  “[…] stems from the mismatch between mathematical optimization in high-dimensionality characteristic of machine learning and the demands of human-scale reasoning and styles of semantic interpretation.” @Burrell2016
+The black-box problem  “\[…] stems from the mismatch between mathematical optimization in high-dimensionality characteristic of machine learning and the demands of human-scale reasoning and styles of semantic interpretation.” @Burrell2016
 
 :::
 

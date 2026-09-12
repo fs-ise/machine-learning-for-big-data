@@ -43,7 +43,7 @@ Explain how $idf_i$ changes:
 Vocabulary:
 
 <div style="font-family: monospace; font-size: 0.75em;">
-[delay, experience, helpful, quick, refund, rude, service, shipping]
+\[delay, experience, helpful, quick, refund, rude, service, shipping\]
 </div>
 
 <br>

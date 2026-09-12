@@ -302,9 +302,11 @@ Discuss:
 1. What role do the assessment portions of the folds play?
 
 **Your answer:** *Write your answer here.*
+
 2. How do they differ from `test_data`?
 
 **Your answer:** *Write your answer here.*
+
 3. Why would repeated model selection using test performance bias the reported final result?
 
 **Your answer:** *Write your answer here.*

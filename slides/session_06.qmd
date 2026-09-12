@@ -682,7 +682,7 @@ To overcome this effect, we scale the features to bring them to the same level o
 
 <br>
 
-**Normalization (Min–Max Scaling: values in [0,1])**
+**Normalization (Min–Max Scaling: values in \[0,1\])**
 
 $$
 \hat{X}_i = \frac{X_i - X_{\min}}{X_{\max} - X_{\min}}
