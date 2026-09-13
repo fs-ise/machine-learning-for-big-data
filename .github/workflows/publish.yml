@@ -20,6 +20,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install Python rendering dependencies
+        run: python3 -m pip install .
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
@@ -48,7 +50,11 @@ jobs:
         with:
           tinytex: true
       - name: Render site and exercise artifacts
-        run: make site
+        run: |
+          python3 -c "import yaml; print('PyYAML:', yaml.__version__)"
+          python3 -c "import jupyter; print('Jupyter available')"
+          quarto check jupyter
+          make site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
