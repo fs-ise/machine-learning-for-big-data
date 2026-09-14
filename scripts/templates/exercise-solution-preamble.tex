@@ -1,5 +1,19 @@
 \usepackage{xcolor}
 \usepackage{scrlayer-scrpage}
+\usepackage{fvextra}
+
+% Pandoc may define Highlighting after header includes, but omits it when a
+% document has no highlighted code. Define it at begin-document time so the
+% environment both exists and has our settings in either case.
+\AtBeginDocument{%
+  \DefineVerbatimEnvironment{Highlighting}{Verbatim}{%
+    commandchars=\\\{\},%
+    breaklines=true,%
+    breaknonspaceingroup=true,%
+    breakanywhere=true,%
+    breaksymbolleft={}%
+  }%
+}
 
 \definecolor{FSMidGray}{HTML}{666666}
 \definecolor{FSLightGray}{HTML}{E7E4DF}

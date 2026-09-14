@@ -89,6 +89,14 @@ def test_pdf_config_and_templates_use_static_preamble_and_dynamic_body() -> None
     assert "template-partials:\n      - solution-pdf/before-body.tex" in PROJECT_CONFIG
     assert "solution-pdf/in-header.tex" not in PROJECT_CONFIG
     assert r"\usepackage{scrlayer-scrpage}" in preamble
+    assert r"\usepackage{fvextra}" in preamble
+    assert r"\AtBeginDocument" in preamble
+    assert r"\DefineVerbatimEnvironment{Highlighting}{Verbatim}" in preamble
+    assert r"\RecustomVerbatimEnvironment{Highlighting}{Verbatim}" not in preamble
+    assert "breaklines=true" in preamble
+    assert "breaknonspaceingroup=true" in preamble
+    assert "breakanywhere=true" in preamble
+    assert "breaksymbolleft={}" in preamble
     assert r"\KOMAoptions{headsepline=0.3pt}" in preamble
     assert "$course-title$" not in preamble
     assert "$exercise-number$" not in preamble
@@ -100,6 +108,19 @@ def test_pdf_config_and_templates_use_static_preamble_and_dynamic_body() -> None
         assert field in body
     assert r"\section*{$exercise-topic$}" in body
     assert r"\Large" not in preamble + body
+
+
+def test_pdf_wrapping_covers_a_long_quoted_highlighted_url() -> None:
+    """Keep a single-token string that requires breaking inside a Pandoc group."""
+    root = Path(__file__).resolve().parents[1]
+    source = root.joinpath("exercises/session_03.qmd").read_text(encoding="utf-8")
+    url = (
+        "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/"
+        "main/exercises/data/employee_work_profiles.csv"
+    )
+
+    assert len(url) > 100
+    assert f'  "{url}",' in sanitize(source, "solution", filename="session_03.qmd")
 
 
 def test_canonical_shared_setup_survives_in_both_variants() -> None:
