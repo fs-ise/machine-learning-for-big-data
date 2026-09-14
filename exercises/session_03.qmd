@@ -208,6 +208,8 @@ X |>
   slice_head(n = 5)
 ```
 
+{{< needspace >}}
+
 #### Exploratory check
 
 ```{r}

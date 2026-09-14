@@ -1,0 +1,6 @@
+title: Needspace
+author: Frankfurt School ISE
+version: 1.0.0
+contributes:
+  shortcodes:
+    - needspace.lua

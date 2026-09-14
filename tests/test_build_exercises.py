@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from scripts.build_exercises import (
+    EXERCISE_EXTENSIONS,
     ExerciseSyntaxError,
     PROJECT_CONFIG,
     VARIANTS,
@@ -90,6 +91,7 @@ def test_pdf_config_and_templates_use_static_preamble_and_dynamic_body() -> None
     assert "solution-pdf/in-header.tex" not in PROJECT_CONFIG
     assert r"\usepackage{scrlayer-scrpage}" in preamble
     assert r"\usepackage{fvextra}" in preamble
+    assert r"\usepackage{needspace}" in preamble
     assert r"\AtBeginDocument" in preamble
     assert r"\DefineVerbatimEnvironment{Highlighting}{Verbatim}" in preamble
     assert r"\RecustomVerbatimEnvironment{Highlighting}{Verbatim}" not in preamble
@@ -216,6 +218,9 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     template.mkdir(parents=True)
     template.joinpath("exercise-solution-before-body.tex").write_text("shared template")
     template.joinpath("exercise-solution-preamble.tex").write_text("shared preamble")
+    extension = tmp_path / EXERCISE_EXTENSIONS[0]
+    extension.mkdir(parents=True)
+    extension.joinpath("_extension.yml").write_text("title: test")
     data = exercises / "data"
     data.mkdir()
     fixture = data / "market_data_log.csv"
@@ -228,6 +233,7 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     assert (generated / "_quarto.yml").read_text(encoding="utf-8") == PROJECT_CONFIG
     assert (generated / "solution-pdf/before-body.tex").read_text() == "shared template"
     assert (generated / "solution-pdf/preamble.tex").read_text() == "shared preamble"
+    assert (generated / "_extensions/needspace/_extension.yml").read_text() == "title: test"
     assert "output-dir: _rendered" in PROJECT_CONFIG
     assignment = (generated / "session_01_assign.qmd").read_text(encoding="utf-8")
     solution = (generated / "session_01_solution.qmd").read_text(encoding="utf-8")
@@ -269,6 +275,7 @@ def test_make_build_publishes_rendered_variants_and_data(tmp_path: Path) -> None
     (tmp_path / "scripts/templates").mkdir()
     (tmp_path / "exercises").mkdir()
     (tmp_path / "exercises/data").mkdir()
+    shutil.copytree(root / "_extensions/needspace", tmp_path / "_extensions/needspace")
     shutil.copy(root / "Makefile", tmp_path / "Makefile")
     shutil.copy(root / "_quarto.yml", tmp_path / "_quarto.yml")
     shutil.copy(root / "scripts/build_exercises.py", tmp_path / "scripts/build_exercises.py")
@@ -373,6 +380,7 @@ def test_real_quarto_project_render_smoke(tmp_path: Path) -> None:
     (tmp_path / "scripts/templates").mkdir()
     (tmp_path / "exercises").mkdir()
     (tmp_path / "exercises/data").mkdir()
+    shutil.copytree(root / "_extensions/needspace", tmp_path / "_extensions/needspace")
     shutil.copy(root / "Makefile", tmp_path / "Makefile")
     shutil.copy(root / "scripts/build_exercises.py", tmp_path / "scripts/build_exercises.py")
     shutil.copy(

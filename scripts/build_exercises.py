@@ -51,6 +51,7 @@ SOLUTION_TEMPLATES = (
     Path("scripts/templates/exercise-solution-preamble.tex"),
     Path("scripts/templates/exercise-solution-before-body.tex"),
 )
+EXERCISE_EXTENSIONS = (Path("_extensions/needspace"),)
 FRONT_MATTER = re.compile(r"\A---[ \t]*\r?\n(?P<body>.*?)^---[ \t]*$", re.MULTILINE | re.DOTALL)
 TITLE = re.compile(r'^title:[ \t]*(?P<title>.+?)[ \t]*$', re.MULTILINE)
 SESSION_FILENAME = re.compile(r"^session_(?P<number>\d+)(?:_(?P<suffix>[a-z]+))?$")
@@ -252,6 +253,10 @@ def build(root: Path) -> list[Path]:
     for template_source in SOLUTION_TEMPLATES:
         destination_name = template_source.name.removeprefix("exercise-solution-")
         shutil.copy2(root / template_source, template_destination / destination_name)
+    extension_destination = destination / "_extensions"
+    shutil.rmtree(extension_destination, ignore_errors=True)
+    for extension_source in EXERCISE_EXTENSIONS:
+        shutil.copytree(root / extension_source, extension_destination / extension_source.name)
     (destination / "_quarto.yml").write_text(PROJECT_CONFIG, encoding="utf-8", newline="")
     sources = sorted(exercises.glob("session_*.qmd"))
     expected: set[Path] = set()
