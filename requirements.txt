@@ -1,6 +1,20 @@
+# Quarto / Jupyter execution
 jupyter>=1.1.1
+ipywidgets
+
+# Repository utilities
 PyYAML>=6.0.2
+
+# Scientific computing and visualization
 numpy
-matplotlib
-scikit-learn
 pandas
+scipy
+matplotlib
+
+# Machine learning
+scikit-learn
+
+# Geospatial examples
+geopandas
+folium
+osmnx
