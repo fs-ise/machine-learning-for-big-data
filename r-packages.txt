@@ -12,6 +12,7 @@ pROC
 quanteda
 ranger
 readr
+reticulate
 rmarkdown
 rpart
 tidymodels
