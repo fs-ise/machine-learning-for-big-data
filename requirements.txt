@@ -1,2 +1,4 @@
 jupyter>=1.1.1
 PyYAML>=6.0.2
+numpy
+matplotlib
