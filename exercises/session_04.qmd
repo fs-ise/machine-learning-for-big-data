@@ -95,6 +95,7 @@ summary(df)
 ```
 
 Setting the factor levels explicitly makes **HR the reference category**. R's formula interface will automatically represent the other departments with contrasts; we do not need to create indicator columns manually.
+
 ## Variable overview
 
 | Variable | Meaning | Type |
@@ -159,6 +160,7 @@ coef(model)
 
 The coefficient names `departmentIT` and `departmentSales` show that R compares IT and Sales with the reference category, HR.
 :::
+
 ## Task A2: Interpret the coefficients
 
 :::{.direction}
@@ -273,17 +275,18 @@ R² is approximately **0.816**, so the model explains about 81.6% of the observe
 Statistical significance concerns whether the data provide evidence that an association differs from zero. Practical relevance concerns whether its magnitude matters for decisions. The small `remote_share` estimate is neither statistically significant in the pooled model nor large in practical terms, but context and subgroup differences still deserve investigation.
 :::
 
-5. Why must we avoid a causal interpretation?
+5. Why shuld we avoid a causal interpretation?
 
 ::: {.sol}
 This observational regression controls only for measured predictors. Unobserved differences, selection into remote work, reverse causality, or measurement error could explain associations. The coefficient therefore describes a conditional association, not necessarily the effect of changing remote-work policy.
 :::
 
-6. What does the formula interface allow us to express directly, and how does R handle `department`?
+6. What does the formula interface (`lm(...)`) allow us to express directly, and how does R handle `department`?
 
 ::: {.sol}
 The formula makes the dependent variable and predictors explicit and readable: `performance ~ experience + ... + department`. Because `department` is a factor, R automatically constructs contrasts relative to HR and reports them as `departmentIT` and `departmentSales`.
 :::
+
 # Part C — Regression diagnostics {#diagnostics}
 
 ::: {.direction}
@@ -350,6 +353,7 @@ No clear curvature or systematic structure is visible. The plot therefore shows 
 ::: {.sol}
 A funnel shape would suggest **heteroscedasticity**: residual variance changes with fitted values. Non-constant variance can make conventional standard errors, confidence intervals, and statistical tests unreliable.
 :::
+
 # Part D — Subgroup analysis: does one model fit all departments? {#subgroup-analysis}
 
 ::: {.direction}
@@ -453,7 +457,7 @@ performance ~
   manager_quality
 ```
 
-The interaction allows the `remote_share` slope to differ by department while estimating one combined model.
+The interaction `remote_share * department` allows the `remote_share` slope to differ by `department` while estimating one combined model.
 :::
 
 # Part E — Deployment {#deployment}
@@ -466,7 +470,7 @@ Saving and loading a model is useful in practice, but it is not the main concept
 
 ```{r}
 #| label: task-e1-optional-save-a-fitted-model-student-response
-# YOUR CODE HERE: save the model to data/employee_performance_model.rds.
+# YOUR CODE HERE: save the model to employee_performance_model.rds.
 ```
 :::
 
@@ -476,7 +480,7 @@ Saving and loading a model is useful in practice, but it is not the main concept
 #| label: task-e1-optional-save-a-fitted-model-saverds
 saveRDS(
   model,
-  "data/employee_performance_model.rds"
+  "employee_performance_model.rds"
 )
 ```
 :::
@@ -498,7 +502,7 @@ Load the fitted model, create a tibble for an IT employee with the original pred
 ```{r}
 #| label: task-e2-optional-load-the-model-and-predict-a-new-case-loaded-model
 loaded_model <- readRDS(
-  "data/employee_performance_model.rds"
+  "employee_performance_model.rds"
 )
 
 new_employee <- tibble(

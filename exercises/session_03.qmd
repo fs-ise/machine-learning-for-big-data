@@ -11,9 +11,10 @@ In this exercise, we cover:
 
 | Exercise part | Time (min) |
 |---|---:|
-| [EDA: Clustering](#clustering) | 25 |
-| [Wrap-up](#wrap-up) | 10 |
-| **Overall** | **35** |
+| [Business context](#context) | 5 |
+| [Clustering tasks](#clustering) | 30 |
+| [Wrap-up](#wrap-up) | 5 |
+| **Overall** | **40** |
 
 Work directly in this Quarto (`.qmd`) exercise using R in RStudio, Positron, or VS Code. Work through the tasks in R and compare your work with the solution.
 
@@ -31,7 +32,7 @@ install.packages("tidyverse")
 
 :::
 
-# EDA: Clustering {#clustering}
+## Business context {#context}
 
 An organization wants to understand whether employees show recurring **work profiles**.
 Instead of defining employee types in advance, we use clustering to identify groups with similar working patterns.
@@ -57,7 +58,7 @@ The dataset contains measures such as weekly meeting hours, weekly focus hours, 
 
 :::{.direction}
 
-## Tasks
+## Clustering tasks {#clustering}
 
 ### 1. Prepare the data for clustering
 
@@ -102,6 +103,11 @@ X |>
     y = "Count"
   )
 ```
+
+::: {.callout-note}
+`pivot_longer()` puts the variable names into one column so that
+`facet_wrap(~ variable)` can create one panel per variable.
+:::
 
 Considering that k-means is sensitive to different measurement scales, we need to standardize the values.
 This ensures that the three variables have approximately equal influence on the clusters. Base R's `scale()` centers each variable around zero and scales it to unit standard deviation.
@@ -279,19 +285,21 @@ for (k in 2:10) {
 
   centers <- as.data.frame(km$centers)
 
-  cluster_plot <- ggplot(
-    cluster_plot_data,
-    aes(
-      x = meeting_hours,
-      y = focus_hours,
-      color = cluster
-    )
-  ) +
-    geom_point() +
+  cluster_plot <- ggplot() +
+    geom_point(
+      data = cluster_plot_data,
+      aes(
+        x = meeting_hours,
+        y = focus_hours,
+        color = cluster
+      )
+    ) +
     geom_point(
       data = centers,
-      aes(x = meeting_hours, y = focus_hours),
-      inherit.aes = FALSE,
+      aes(
+        x = meeting_hours,
+        y = focus_hours
+      ),
       shape = 4,
       size = 4,
       stroke = 1.5
@@ -329,6 +337,7 @@ employee_work_df <- employee_work_df |>
   mutate(cluster = factor(km$cluster))
 
 employee_work_df |>
+  select(employee_id, cluster, meeting_hours, focus_hours) |>
   slice_head(n = 5)
 ```
 
