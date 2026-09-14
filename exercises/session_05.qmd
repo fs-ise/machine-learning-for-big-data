@@ -95,6 +95,8 @@ df <- read_csv(
 glimpse(df)
 ```
 
+{{< needspace 8 >}}
+
 # Part 1 — Analyze early-career urban borrowers with logistic regression
 
 ::: {.direction}
@@ -424,6 +426,8 @@ At the 0.5 threshold:
 A false positive is a customer predicted to default who does not; this could mean rejecting or intervening on a good customer. A false negative is predicted not to default but actually defaults; this could mean approving a risky loan.
 :::
 
+{{< needspace 5 >}}
+
 ### Task 3.2 — Compute key metrics
 
 ::: {.direction}
@@ -485,6 +489,7 @@ Use `pROC` to evaluate discrimination across all possible thresholds. Here, high
 
 ```{r}
 #| label: part-4-roc-curve-and-auc-roc-ec
+#| out-width: 68%
 roc_ec <- roc(
   response = df_ec_urban$default,
   predictor = y_prob,
@@ -565,6 +570,8 @@ ROC/AUC evaluates ranking performance across thresholds and supports model compa
 # Part 5 — Compare early-career urban borrowers and platform workers
 
 Repeat the same model specification for platform workers, then compare coefficients and discrimination.
+
+{{< needspace 12 >}}
 
 ### Task 5.1 — Fit the second model
 
@@ -656,6 +663,7 @@ Income and months with company are negative in both models but do not reach the 
 
 ```{r}
 #| label: task-5-3-compare-roc-and-auc-y-prob-platform
+#| out-width: 68%
 y_prob_platform <- predict(
   model_platform,
   type = "response"

@@ -242,6 +242,8 @@ show_best(regularized_results, metric = "roc_auc", n = 5)
 A larger penalty constrains coefficients more strongly and reduces flexibility. Normalization makes the penalty comparable across predictors measured in euros, counts, months, and proportions.
 :::
 
+{{< needspace 8 >}}
+
 # Part 3 — k-nearest neighbors {#knn}
 
 k-NN predicts from nearby labeled observations. Small `k` produces flexible, high-variance boundaries; large `k` smooths over more observations and increases bias.
@@ -626,6 +628,8 @@ Answer:
 The output determines the numerical ranking. Treat small differences relative to fold uncertainty cautiously. Trees, forests, k-NN, and the RBF SVM can capture nonlinear structure in different ways, but flexibility does not guarantee better generalization. LendWise should also consider sensitivity to actual defaults, stability, computation, transparent explanations for credit decisions, preprocessing requirements, and governance.
 :::
 
+{{< needspace 8 >}}
+
 ### Task 7.4 — Lock the recommendation using validation only
 
 ::: {.direction}
@@ -714,6 +718,7 @@ Compare the selected model's cross-validation metrics with its held-out test met
 
 ```{r}
 #| label: task-8-2-compare-validation-and-test-performance-selected-cv-metrics
+#| out-width: 63%
 selected_cv_metrics <- validation_comparison |>
   filter(model == selected_model) |>
   select(.metric, cv_mean = mean, cv_std_err = std_err)

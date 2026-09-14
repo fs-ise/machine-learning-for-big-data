@@ -440,6 +440,7 @@ No. Every tuning decision uses only cross-validation partitions created from `tr
 
 ```{r}
 #| label: task-7-2-visualize-tuning-results-collect-metrics
+#| out-width: 88%
 collect_metrics(tree_results) |>
   filter(.metric == "roc_auc") |>
   mutate(min_n = factor(min_n)) |>
@@ -603,7 +604,11 @@ final_confusion_matrix <- final_predictions |>
 final_confusion_matrix
 
 autoplot(final_confusion_matrix, type = "heatmap")
+```
 
+```{r}
+#| label: task-9-2-inspect-final-predictions-roc
+#| out-width: 63%
 final_roc <- final_predictions |>
   roc_curve(
     truth = default,

@@ -410,6 +410,8 @@ for (dept in departments) {
 }
 ```
 :::
+{{< needspace 5 >}}
+
 ## Task D2: Compare the subgroup models
 
 1. Do the coefficients differ across departments?

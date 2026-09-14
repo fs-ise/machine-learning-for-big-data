@@ -273,6 +273,9 @@ We try different values of `k` and visually inspect the cluster structure. Setti
 
 ```{r}
 #| label: 2-apply-k-means-clustering-for
+#| fig-width: 7
+#| fig-height: 4
+#| out-width: 90%
 for (k in 2:10) {
   set.seed(42)
 
