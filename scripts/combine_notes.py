@@ -86,8 +86,6 @@ format:
         \\ofoot[\\pagemark]{{\\pagemark}}
         \\pagestyle{{scrheadings}}
         \\pretocmd{{\\subsection}}{{\\clearpage}}{{}}{{}}
-execute:
-  enabled: false
 ---
 '''
     rendered_sections: list[str] = []
