@@ -76,7 +76,7 @@ Churn prediction is a **binary classification problem**:
 
 ```{python}
 #| label: geometric-view-of-the-problem-import-numpy-as-np
-# | fig-align: center
+#| fig-align: center
 
 import numpy as np
 import matplotlib.pyplot as plt

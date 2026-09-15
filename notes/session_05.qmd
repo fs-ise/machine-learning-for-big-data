@@ -20,7 +20,10 @@ TODO
 
 ```{python}
 #| label: linear-regression-plot
-# | echo: false
+#| echo: false
+#| fig-align: center
+#| out-width: 50%
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -37,15 +40,18 @@ y_fit = np.polyval(coef, x)
 plt.figure()
 plt.scatter(x, y)
 plt.plot(x, y_fit)
-plt.xlabel("X (continuous)")
-plt.ylabel("Y (continuous)")
-plt.title("Linear Regression (Continuous Outcome)")
+_ = plt.xlabel("X (continuous)")
+_ = plt.ylabel("Y (continuous)")
+_ = plt.title("Linear Regression (Continuous Outcome)")
 plt.show()
 ```
 
 ```{python}
 #| label: categorical-regression-plot
-# | echo: false
+#| fig-align: center
+#| echo: false
+#| out-width: 50%
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -72,17 +78,20 @@ plt.scatter(x_jitter, y, alpha=0.6)
 # Plot group means
 plt.plot(range(4), group_means, marker="o")
 
-plt.xticks(range(4), ["A", "B", "C", "D"])
-plt.xlabel("Categorical Predictor (4 levels)")
-plt.ylabel("Y (continuous)")
-plt.title("Regression with 4-Level Categorical Predictor")
+_ = plt.xticks(range(4), ["A", "B", "C", "D"])
+_ = plt.xlabel("Categorical Predictor (4 levels)")
+_ = plt.ylabel("Y (continuous)")
+_ = plt.title("Regression with 4-Level Categorical Predictor")
 
 plt.show()
 ```
 
 ```{python}
 #| label: logistic-regression-plot
-# | echo: false
+#| fig-align: center
+#| echo: false
+#| out-width: 50%
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -99,9 +108,9 @@ y = np.random.binomial(1, p)
 plt.figure()
 plt.scatter(x, y, alpha=0.4)
 plt.plot(x, p)
-plt.xlabel("X (continuous)")
-plt.ylabel("Probability / Outcome (0 or 1)")
-plt.title("Logistic Regression (Binary Outcome)")
+_ = plt.xlabel("X (continuous)")
+_ = plt.ylabel("Probability / Outcome (0 or 1)")
+_ = plt.title("Logistic Regression (Binary Outcome)")
 plt.show()
 ```
 
@@ -129,6 +138,8 @@ We use the **score approach**, where the score is: $p(x)=P(Y=1\mid x)$
 
 Start with the **Logit formulation** and define:
 $$\log\left(\frac{y}{1-y}\right)=\beta_0 + \beta_1 x = z$$
+
+> The log-odds of the outcome probability ($\log\left(\frac{y}{1-y}\right)$) are linear in the predictors ($z=\beta_0 + \beta_1 x$).
 
 **Solve for (y)**
 
