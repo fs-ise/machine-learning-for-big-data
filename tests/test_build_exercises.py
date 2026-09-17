@@ -232,6 +232,15 @@ def test_solution_include_has_filtered_body_executable_chunks_and_nested_heading
     assert "{{< needspace 8 >}}" not in fragment
 
 
+def test_solution_include_nests_semantic_part_and_task_headings() -> None:
+    source = "---\ntitle: Test\n---\n# Part 1\n## Task 1.1\n### Detail\n"
+
+    fragment = solution_include(source)
+
+    assert "### Part 1\n#### Task 1.1\n##### Detail\n" in fragment
+    assert not any(line.startswith("# ") for line in fragment.splitlines())
+
+
 @pytest.mark.parametrize("variant", VARIANTS)
 def test_needspace_directives_are_removed_but_code_examples_are_preserved(variant: str) -> None:
     source = "\n".join(

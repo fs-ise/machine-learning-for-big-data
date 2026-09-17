@@ -93,7 +93,7 @@ glimpse(df)
 In this first part, focus only on early-career urban borrowers.
 :::
 
-### Task 1.1 — Prepare the subset
+## Task 1.1 — Prepare the subset
 
 Create a filtered data frame containing only early-career urban borrowers.
 
@@ -107,7 +107,7 @@ Create a filtered data frame containing only early-career urban borrowers.
 
 ::: {.sol}
 
-## Solution
+**Solution**
 
 ```{r}
 #| label: solution-df-ec-urban
@@ -120,7 +120,7 @@ glimpse(df_ec_urban)
 
 {{< needspace 15 >}}
 
-### Task 1.2 — Estimate the model
+## Task 1.2 — Estimate the model
 
 Estimate a logistic regression model for credit default.
 
@@ -139,7 +139,7 @@ Estimate a logistic regression model for credit default.
 
 ::: {.sol}
 
-## Solution
+**Solution**
 
 ```{r}
 #| label: solution-model
@@ -160,7 +160,7 @@ summary(model)
 `glm()` estimates the unregularized maximum-likelihood logistic model. Its summary includes coefficient estimates, standard errors, z-statistics, and p-values.
 :::
 
-### Task 1.3 — Interpret the model
+## Task 1.3 — Interpret the model
 
 Logistic-regression coefficients describe changes in **log-odds**, holding the other predictors constant. Exponentiating them produces **odds ratios**: the factor by which a one-unit increase multiplies the odds of default.
 
@@ -205,13 +205,13 @@ No. Predictors use different units: income is measured in euros, missed payments
 :::
 :::
 
-### Task 1.4 — From coefficients to classification
+## Task 1.4 — From coefficients to classification
 
 Explain how the model moves from a linear combination of predictors to a predicted probability and then a default/non-default class.
 
 ::: {.sol}
 
-## Solution
+**Solution**
 
 The sequence is:
 
@@ -246,7 +246,7 @@ Logistic regression produces probabilities. A classification is a separate decis
 Because the modeled event is `default = 1`, the returned values estimate **P(default = 1)**.
 :::
 
-### Task 2.1 — Understanding outputs
+## Task 2.1 — Understanding outputs
 
 Run the code and compare the probabilities with the classes.
 
@@ -279,7 +279,7 @@ head(y_pred)
 - Writing the threshold explicitly makes clear that the fitted model estimates risk while the organization chooses how that risk becomes a decision.
 :::
 
-### Task 2.2 — Manual thresholding
+## Task 2.2 — Manual thresholding
 
 ::: {.direction}
 Try thresholds of 0.2, 0.4, 0.6, and 0.7:
@@ -315,7 +315,7 @@ Then identify the 20% riskiest and 20% safest customers using `quantile()`.
 
 ::: {.sol}
 
-## Solution
+**Solution**
 
 At thresholds 0.2, 0.4, 0.6, and 0.7, respectively, the model flags **138, 86, 52, and 31** customers as risky.
 
@@ -381,7 +381,7 @@ Changing the threshold does not change estimated probabilities; it changes how t
 For simplicity, predictions are evaluated on the same observations used for estimation. This deliberately optimistic in-sample evaluation is sufficient for introducing metrics. Train/test splits, cross-validation, and out-of-sample evaluation follow in the machine-learning workflow session.
 :::
 
-### Task 3.1 — Create and interpret the matrix
+## Task 3.1 — Create and interpret the matrix
 
 ::: {.direction}
 Create a labeled 2 × 2 table. Rows should be actual outcomes and columns predicted outcomes.
@@ -425,7 +425,7 @@ A false positive is a customer predicted to default who does not; this could mea
 
 {{< needspace 5 >}}
 
-### Task 3.2 — Compute evaluation metrics
+## Task 3.2 — Compute evaluation metrics
 
 ::: {.direction}
 Compute and interpret accuracy, precision, and recall. Recall is also called sensitivity or the true-positive rate.
@@ -451,7 +451,7 @@ c(
 - Recall/sensitivity/TPR: **0.600**—60.0% of actual defaults are flagged.
 :::
 
-### Task 3.3 — Business reflection
+## Task 3.3 — Business reflection
 
 LendWise is trying to grow its customer base aggressively.
 
@@ -530,7 +530,7 @@ auc_ec
 
 :::
 
-### Task 4.1 — Understanding ROC
+## Task 4.1 — Understanding ROC
 
 - What does the ROC curve represent?
 - What are TPR and FPR?
@@ -542,7 +542,7 @@ auc_ec
 - FPR is `FP / (FP + TN)`.
 :::
 
-### Task 4.2 — Interpreting AUC
+## Task 4.2 — Interpreting AUC
 
 - What does AUC represent?
 - What would values near 0.5, 0.7, and 1.0 suggest?
@@ -558,7 +558,7 @@ AUC summarizes how well predicted scores rank defaults above non-defaults across
 AUC is not a complete measure of business utility and does not determine the operating threshold.
 :::
 
-### Task 4.3 — Threshold perspective
+## Task 4.3 — Threshold perspective
 
 - Why is ROC/AUC useful before the company fixes one decision threshold?
 
@@ -572,7 +572,7 @@ ROC/AUC evaluates ranking performance across thresholds and supports model compa
 
 Repeat the same model specification for platform workers, then compare coefficients and discrimination.
 
-### Task 5.1 — Fit the second model
+## Task 5.1 — Fit the second model
 
 ::: {.direction}
 
@@ -584,7 +584,7 @@ Repeat the same model specification for platform workers, then compare coefficie
 
 ::: {.sol}
 
-## Solution
+**Solution**
 
 ```{r}
 #| label: solution-df-platform
@@ -607,7 +607,7 @@ summary(model_platform)
 ```
 :::
 
-### Task 5.2 — Compare coefficients
+## Task 5.2 — Compare coefficients
 
 - Are directions and statistical evidence the same in both groups?
 - How do meaningful unit changes or odds ratios differ?
@@ -645,7 +645,7 @@ Debt-to-income differs particularly strongly: it is near zero and not significan
 Income and months with company are negative in both models but do not reach the 5% significance level. Because predictors use different units, raw coefficient size alone is not a valid measure of importance.
 :::
 
-### Task 5.3 — Compare ROC and AUC
+## Task 5.3 — Compare ROC and AUC
 
 - Which category has the higher in-sample AUC?
 - What might explain the difference?

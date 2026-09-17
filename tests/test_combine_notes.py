@@ -113,7 +113,8 @@ def test_document_configuration_and_course_specific_footer(tmp_path: Path) -> No
     assert r"\ifoot[\teachingnotesfooterlabel]{\teachingnotesfooterlabel}" in result
     assert r"\ofoot[\pagemark]{\pagemark}" in result
     assert r"\pagestyle{scrheadings}" in result
-    assert r"\pretocmd{\subsection}{\clearpage}" in result
+    assert r"\usepackage{etoolbox}" not in result
+    assert r"\pretocmd{\subsection}{\clearpage}" not in result
     assert rf"\newcommand{{\teachingnotesfooterlabel}}{{{DOCUMENT_TITLE}}}" in result
     assert "mlbdfooterlabel" not in result.lower()
 
@@ -186,6 +187,19 @@ def test_source_files_remain_unchanged(tmp_path: Path) -> None:
 
     assert note.read_bytes() == before
     assert checklist.read_bytes() == checklist_before
+
+
+def test_canonical_notes_and_exercises_have_no_layout_only_page_breaks() -> None:
+    canonical = [
+        *REPOSITORY_ROOT.glob("notes/session_*.qmd"),
+        *REPOSITORY_ROOT.glob("exercises/session_*.qmd"),
+    ]
+
+    for path in canonical:
+        source = path.read_text(encoding="utf-8")
+        assert "{{< pagebreak" not in source, path
+        assert r"\clearpage" not in source, path
+        assert r"\newpage" not in source, path
 
 
 @pytest.mark.parametrize(

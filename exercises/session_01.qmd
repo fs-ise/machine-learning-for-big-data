@@ -13,7 +13,7 @@ execute:
 ---
 
 ::: {.callout-important}
-### Work together
+## Work together
 
 Work through this exercise with the person next to you. Compare what you see in RStudio and help each other when something behaves differently.
 
@@ -35,7 +35,7 @@ After this exercise, you should be able to:
 - restart R and reproduce the complete analysis by rendering the document from top to bottom.
 
 ::: {.callout-note}
-### How to work through this exercise
+## How to work through this exercise
 
 For now, **do not render the complete document** and do not enable **Render on Save**.
 

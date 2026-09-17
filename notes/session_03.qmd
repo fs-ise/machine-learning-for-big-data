@@ -24,7 +24,7 @@ But: Sometimes it is better to know/predict something even if we cannot explain 
 - Fraud detection: prediction of irregular and fraudulent transactions can be very accurate, but the attackers' goal is to behave in a way that is hard to anticipate. Prediction may focus on identifying cases that are "not behaving regularly" (rather than identifying generalizable patterns)
 -->
 
-### Previous exercise
+## Previous exercise
 
 - Take time to solve the previous exercise sheet, in particular the last exercise (long code).
 - Make sure students understand the functional programming pipes and object assignment.
@@ -74,8 +74,6 @@ TODO: Illustrate how k-means clustering works for a given k (random centroids/as
 - Data type: `X` is not a data frame (`kmeans()` is Base R), but the expected structure is still tidy data. 
 
 ![](../images/kmeans-non-spherical-clusters.png){fig-align="center" width="50%"}
-
-{{< pagebreak >}}
 
 ## Exercise
 

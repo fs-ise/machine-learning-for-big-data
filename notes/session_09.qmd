@@ -17,7 +17,7 @@ format: html
 
 : {tbl-colwidths="[20,40,40]"}
 
-### Teaching emphasis
+## Teaching emphasis
 
 The main teaching point is that specialized networks encode assumptions about **data structure**. CNNs reuse local filters over spatial data; RNNs reuse recurrent cells over time; Transformers compare positions through attention. Do not present them as isolated model definitions.
 

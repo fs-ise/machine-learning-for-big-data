@@ -27,7 +27,7 @@ You are a data analyst for **ReviewSense**, a fictional analytics team supportin
 
 We use the local prepared sample `data/imdb_reviews_sample.csv`; rendering never downloads the full IMDB dataset or a language model.
 
-### Package setup
+## Package setup
 
 Before starting this exercise, make sure the required R packages are installed.
 

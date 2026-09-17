@@ -67,7 +67,7 @@ library(tidymodels)
 
 We continue the LendWise default-classification task from Sessions 5 and 6. Every algorithm receives the same training observations and five cross-validation folds. The held-out test set remains unused until a recommendation has been made from validation results.
 
-### Task 1.1 — Re-establish the Session 6 setup
+## Task 1.1 — Re-establish the Session 6 setup
 
 ::: {.direction}
 Run the common setup and verify:
@@ -132,7 +132,7 @@ Why must every algorithm use these same folds? Why must `test_data` remain outsi
 Using identical folds makes performance differences attributable to algorithms and tuning choices rather than different validation samples. The test set remains independent so that it can provide one final estimate of generalization after all model choices are fixed. Consulting it during comparison would introduce selection bias.
 :::
 
-### Task 1.2 — Define algorithm-specific preprocessing
+## Task 1.2 — Define algorithm-specific preprocessing
 
 Some algorithms depend directly on distances or coefficient penalties, while tree splits are largely insensitive to predictor scale.
 
@@ -180,7 +180,7 @@ Regularized regression, k-NN, and the SVM use `scaled_recipe`. The decision tree
 
 Regularization balances fit and simplicity. `penalty` controls its strength: larger values shrink coefficients more. `mixture = 0` gives ridge, `mixture = 1` gives lasso, and intermediate values give elastic net.
 
-### Task 2.1 — Specify and tune the model
+## Task 2.1 — Specify and tune the model
 
 ::: {.direction}
 Complete the specification and workflow, then tune the nine explicit combinations in `regularized_grid` on the shared folds.
@@ -249,7 +249,7 @@ A larger penalty constrains coefficients more strongly and reduces flexibility. 
 
 k-NN predicts from nearby labeled observations. Small `k` produces flexible, high-variance boundaries; large `k` smooths over more observations and increases bias.
 
-### Task 3.1 — Tune the number of neighbors
+## Task 3.1 — Tune the number of neighbors
 
 ::: {.direction}
 Use Euclidean distance, rectangular neighbor weights, and candidate values 3, 5, 9, 15, and 25.
@@ -311,7 +311,7 @@ Distance calculations use numerical differences. Without scaling, a difference o
 
 A tree recursively partitions predictor space. Greater depth and smaller terminal-node requirements increase flexibility, while a larger `cost_complexity` encourages pruning.
 
-### Task 4.1 — Tune tree complexity
+## Task 4.1 — Tune tree complexity
 
 ::: {.direction}
 Use eight combinations: cost complexity 0.001 or 0.01, depth 3 or 6, and minimum node size 10 or 25.
@@ -366,7 +366,7 @@ A single tree is often easy to explain as decision paths, but small changes in d
 
 A random forest aggregates trees trained on bootstrap samples while considering random predictor subsets. Aggregation generally reduces the instability of one tree, but the ensemble is harder to explain as a single decision path.
 
-### Task 5.1 — Tune the forest
+## Task 5.1 — Tune the forest
 
 ::: {.direction}
 Keep `trees = 500` fixed. Tune `mtry` over 2, 4, and 6 predictors and `min_n` over 10 and 25.
@@ -425,7 +425,7 @@ Averaging many decorrelated trees can reduce variance and improve generalization
 
 An SVM seeks a decision boundary with a wide margin. `cost` controls how strongly classification errors are penalized. The RBF kernel permits nonlinear boundaries, while `rbf_sigma` controls how locally the kernel responds and therefore affects flexibility.
 
-### Task 6.1 — Tune cost and kernel scale
+## Task 6.1 — Tune cost and kernel scale
 
 ::: {.direction}
 Tune six combinations: cost 0.25, 1, or 4 and RBF sigma 0.01 or 0.1. Use normalized predictors.
@@ -478,7 +478,7 @@ Scaling prevents the margin and RBF distances from being dominated by predictors
 
 All five algorithms have now been evaluated using the same folds. ROC AUC is the primary selection metric, while accuracy, sensitivity, uncertainty, and organizational requirements provide additional context.
 
-### Task 7.1 — Collect each model's best metrics
+## Task 7.1 — Collect each model's best metrics
 
 ::: {.direction}
 Run the supplied helper and comparison code. It retrieves ROC AUC, accuracy, and sensitivity at each model's ROC-AUC-optimal configuration.
@@ -549,7 +549,7 @@ validation_comparison |>
 ```
 :::
 
-### Task 7.2 — Visualize the comparison
+## Task 7.2 — Visualize the comparison
 
 ::: {.direction}
 Create a plot that compares the mean validation metrics across algorithms and includes uncertainty based on the cross-validation standard errors.
@@ -589,7 +589,7 @@ validation_comparison |>
 ```
 :::
 
-### Task 7.3 — Interpretability and predictive power
+## Task 7.3 — Interpretability and predictive power
 
 Typical properties—not absolute rules—include:
 
@@ -631,7 +631,7 @@ The output determines the numerical ranking. Treat small differences relative to
 
 {{< needspace 8 >}}
 
-### Task 7.4 — Lock the recommendation using validation only
+## Task 7.4 — Lock the recommendation using validation only
 
 ::: {.direction}
 The code below identifies the highest mean validation ROC AUC. Before running the final evaluation, write a short recommendation that also considers stability and interpretability.
@@ -660,7 +660,7 @@ For this exercise, the quantitative rule selects the strongest mean validation R
 
 We now use the test set once. This is not another opportunity to tune the winner.
 
-### Task 8.1 — Finalize the selected workflow
+## Task 8.1 — Finalize the selected workflow
 
 ::: {.direction}
 Run the selection map, finalize the chosen workflow with its best parameters, and evaluate it with `last_fit()`.
@@ -707,7 +707,7 @@ final_test_metrics
 ```
 :::
 
-### Task 8.2 — Compare validation and test performance
+## Task 8.2 — Compare validation and test performance
 
 ::: {.direction}
 Compare the selected model's cross-validation metrics with its held-out test metrics. Then inspect the confusion matrix and ROC curve. Does the held-out result broadly support the validation-based recommendation?

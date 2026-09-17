@@ -16,7 +16,7 @@ format:
 
 :::
 
-## Part 1: Read an MLP architecture {#part-1}
+# Part 1: Read an MLP architecture {#part-1}
 
 ::: {.direction}
 
@@ -45,7 +45,7 @@ Inspect this framework-neutral architecture:
 
 ::: {.sol}
 
-### Solution
+**Solution**
 
 ```text
 Input: 10 features
@@ -60,7 +60,7 @@ Output: 1 value
 The model has two hidden layers and three trainable dense layers. With `[32, 16, 8]`, it has three hidden layers with those widths and a final `8 -> 1` layer. It expects a fixed-length feature vector. Flattening media removes explicit spatial and temporal relationships, which CNNs and sequence architectures are designed to preserve.
 
 :::
-## Part 2: Match architectures to media use cases {#part-2}
+# Part 2: Match architectures to media use cases {#part-2}
 
 ::: {.direction}
 
@@ -101,7 +101,7 @@ For use cases 2–4, also answer:
 
 ::: {.sol}
 
-### Solution
+**Solution**
 
 | # | Input and output | Suitable approach |
 |---:|---|---|
@@ -116,7 +116,7 @@ Video typically combines a CNN's spatial feature extraction with an RNN, tempora
 
 :::
 
-## Wrap-up {#wrap-up}
+# Wrap-up {#wrap-up}
 
 ::: {.direction}
 

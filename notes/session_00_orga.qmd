@@ -14,7 +14,7 @@ format: html
 |-------------|-----------|-------------------------|
 | 00-20       | 20        | Orga                    |
 
-### Myself
+## Myself
 
 I do not know everything. I make mistakes. ...
 
@@ -34,7 +34,7 @@ First round
 - I will learn as much as you will.
 - I will ask for your feedback **very** regularly (at the end of each session)
 
-### About you
+## About you
 
 Maybe:
 

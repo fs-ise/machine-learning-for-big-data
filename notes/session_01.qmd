@@ -4,7 +4,7 @@ session_id: session-01
 event_id: null
 ---
 
-### Lecture
+## Lecture
 
 | Time (min) | Duration | Topic |
 |------------|----------|-------|

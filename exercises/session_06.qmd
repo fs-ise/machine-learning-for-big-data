@@ -65,7 +65,7 @@ The event of interest is **default**. Yardstick treats the first outcome factor 
 
 ::: {.direction}
 
-### Task 1.1 — Load and inspect the data
+## Task 1.1 — Load and inspect the data
 
 1. Load `data/credit_default.csv`.
 2. Convert the numeric outcome to a factor whose levels are ordered `default`, then `no_default`.
@@ -102,7 +102,7 @@ levels(df$default)
 The level order confirms that `default` is the event used for ROC AUC and sensitivity.
 :::
 
-### Task 1.2 — Create a held-out test set
+## Task 1.2 — Create a held-out test set
 
 ::: {.direction}
 Create a reproducible 80/20 split, stratified by `default`. Store the partitions as `train_data` and `test_data`, then compare row counts and class proportions.
@@ -153,7 +153,7 @@ A recipe records what transformations should happen. It does not estimate normal
 
 ::: {.direction}
 
-### Task 2.1 — Create the recipe
+## Task 2.1 — Create the recipe
 
 Use `train_data` to specify a recipe that:
 
@@ -217,7 +217,7 @@ We compare two deliberately different model classes:
 
 ::: {.direction}
 
-### Task 3.1 — Specify the models
+## Task 3.1 — Specify the models
 
 Create:
 
@@ -257,7 +257,7 @@ A workflow bundles a recipe and model specification. This ensures the same trans
 
 ::: {.direction}
 
-### Task 4.1 — Create two workflows
+## Task 4.1 — Create two workflows
 
 Create `logistic_workflow` and `tree_workflow` by combining the shared recipe with each model specification.
 
@@ -289,7 +289,7 @@ Cross-validation creates temporary analysis and assessment partitions **inside t
 
 ::: {.direction}
 
-### Task 5.1 — Create stratified folds
+## Task 5.1 — Create stratified folds
 
 Create five reproducible folds from `train_data`, stratified by `default`. Confirm that the object contains five splits.
 
@@ -340,7 +340,7 @@ We use a small metric set: ROC AUC, accuracy, and sensitivity. Because `default`
 
 ::: {.direction}
 
-### Task 6.1 — Resample the baseline workflow
+## Task 6.1 — Resample the baseline workflow
 
 1. Create `classification_metrics` with `roc_auc`, `accuracy`, and `sens`.
 2. Fit the logistic workflow across `folds`.
@@ -383,7 +383,7 @@ The tree's hyperparameters control flexibility. We use a deliberately small grid
 
 ::: {.direction}
 
-### Task 7.1 — Create and evaluate a tuning grid
+## Task 7.1 — Create and evaluate a tuning grid
 
 Create all combinations of:
 
@@ -435,7 +435,7 @@ show_best(tree_results, metric = "roc_auc", n = 5)
 No. Every tuning decision uses only cross-validation partitions created from `train_data`.
 :::
 
-### Task 7.2 — Visualize tuning results
+## Task 7.2 — Visualize tuning results
 
 ::: {.sol}
 
@@ -476,7 +476,7 @@ Model selection happens using validation results. A more flexible model is not a
 
 ::: {.direction}
 
-### Task 8.1 — Compare validation ROC AUC
+## Task 8.1 — Compare validation ROC AUC
 
 Build a two-row comparison containing the logistic baseline and best tree. Include mean ROC AUC and its standard error. Select the model with the higher mean value.
 
@@ -548,7 +548,7 @@ Only now do we use the held-out test observations. We finalize the selected work
 
 ::: {.direction}
 
-### Task 9.1 — Finalize the selected workflow
+## Task 9.1 — Finalize the selected workflow
 
 If the tree won, insert `best_tree` into `tree_workflow`. Otherwise, use `logistic_workflow` unchanged. Then call `last_fit()` with the original `data_split`.
 
@@ -586,7 +586,7 @@ final_test_metrics
 These test metrics estimate performance on unseen observations. They are for reporting and reflection, not another round of tuning.
 :::
 
-### Task 9.2 — Inspect final predictions
+## Task 9.2 — Inspect final predictions
 
 Use yardstick to create a test confusion matrix and ROC curve. Do not recreate the manual calculations from Session 5.
 

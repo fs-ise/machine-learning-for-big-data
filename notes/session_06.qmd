@@ -17,7 +17,7 @@ TODO:
 
 - Suggest code reading/understanding exercises (e.g., "what are the next steps of the procedure?", "annotate what is done in the code blocks", "give pseudocode", "are there any errors (e.g., switched code blocks)?")
 
-### Group work topics
+## Group work topics
 
 Check which topics were selected by groups, identify potential overlap and guide topic selection.
 

@@ -21,7 +21,7 @@ Your group will develop an **Analytics-Enabled Strategy Map** for one selected c
 
 :::
 
-## 1. Select a case {#select-case}
+# 1. Select a case {#select-case}
 
 Select **one** company from the following list:
 
@@ -32,7 +32,7 @@ Select **one** company from the following list:
 | X / Twitter | Social media / digital platforms |
 | Siemens | Manufacturing / industrial technology |
 
-## 2. Understand the organization {#understand}
+# 2. Understand the organization {#understand}
 
 Build a basic understanding of the company:
 
@@ -58,7 +58,7 @@ Build a basic understanding of the company:
 
 Official strategic metrics may not be publicly available. If necessary, infer plausible KPIs and justify your reasoning.
 
-## 3. Research the deployment {#research}
+# 3. Research the deployment {#research}
 
 Use at least **three credible public sources**. Prioritize primary sources such as official annual reports, investor presentations, corporate engineering or research publications, transparency reports, product documentation, and regulatory filings. Complement them where necessary with regulatory documents, peer-reviewed research, academic case studies, or high-quality journalism.
 
@@ -86,7 +86,7 @@ For each source, ask:
 
 **Your answer:** *Write your answer here.*
 
-## 4. Build an Analytics-Enabled Strategy Map {#strategy-map}
+# 4. Build an Analytics-Enabled Strategy Map {#strategy-map}
 
 Complete the map below for your selected case. Connect the rows into a coherent chain rather than treating them as isolated questions.
 
@@ -111,7 +111,7 @@ Complete the map below for your selected case. Connect the rows into a coherent 
 Focus on **specific analytics-enabled decisions**, not broad statements such as “the company uses AI.” Some information may not be public; clearly distinguish evidence from your group’s reasoned interpretation.
 :::
 
-## 5. Share and refine {#share}
+# 5. Share and refine {#share}
 
 Prepare a short explanation of your map. Another group should be able to trace the connection from organizational objective to ML/AI capability, decision, action, value, and feedback.
 

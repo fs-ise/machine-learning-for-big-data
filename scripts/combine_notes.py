@@ -98,13 +98,11 @@ format:
     include-in-header:
       text: |
         \\usepackage{{scrlayer-scrpage}}
-        \\usepackage{{etoolbox}}
         \\newcommand{{\\teachingnotesfooterlabel}}{{{DOCUMENT_TITLE}}}
         \\clearpairofpagestyles
         \\ifoot[\\teachingnotesfooterlabel]{{\\teachingnotesfooterlabel}}
         \\ofoot[\\pagemark]{{\\pagemark}}
         \\pagestyle{{scrheadings}}
-        \\pretocmd{{\\subsection}}{{\\clearpage}}{{}}{{}}
 ---
 '''
     rendered_sections: list[str] = []

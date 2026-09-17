@@ -28,7 +28,7 @@ In this exercise, we cover:
 - [dplyr](https://dplyr.tidyverse.org/) for filtering, transforming, and summarizing data;
 - [stringr](https://stringr.tidyverse.org/) for cleaning and manipulating text values.
 
-### Package setup
+## Package setup
 
 Before starting this exercise, make sure the required R packages are installed.
 
@@ -61,7 +61,7 @@ market_data_log_df |> head()
 
 :::{.direction}
 
-### Tasks
+## Tasks
 
 1. Identify:
 
@@ -107,7 +107,7 @@ market_data_df <- read_csv(
 
 ::: {.sol}
 
-## Solution
+**Solution**
 
 ### 1. Identify:
 
@@ -192,7 +192,7 @@ sales_data_df |> head()
 
 :::{.direction}
 
-### Tasks
+## Tasks
 
 1. Identify:
 
@@ -234,7 +234,7 @@ sales_data_df <- read_csv(
 
 :::{.sol}
 
-## Solution
+**Solution**
 
 ### 1. Identify:
 
@@ -373,7 +373,7 @@ Note: Check how the `customer_df` changes after each preparation step!
 
 :::{.sol}
 
-## Solution
+**Solution**
 
 ### 1. Identify scales of variables
 

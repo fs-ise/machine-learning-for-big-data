@@ -3,7 +3,7 @@ title: "Notes: Session 2: Analytics"
 session_id: session-02
 ---
 
-### Lecture
+## Lecture
 
 Prep: print separate solution printout.
 
