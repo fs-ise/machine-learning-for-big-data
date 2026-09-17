@@ -91,13 +91,15 @@ Use the linear-regression comparison to surface modeling tensions before introdu
 * **Black box models**
   → Directly map input → class (low interpretability)
 
+* **Regions / rules**
+  → Partition input space into decision areas
+  (e.g., trees, rule systems)
+
 * **Score + threshold**
   → Compute a score, then classify via cutoff
   (separates prediction from decision)
 
-* **Regions / rules**
-  → Partition input space into decision areas
-  (e.g., trees, rule systems)
+![](../images/classifier-approaches.png){fig-align="center" width="70%"}
 
 ### Logistic Regression Choice
 
@@ -177,6 +179,25 @@ $$
 ### In R
 
 `glm(y ~ x1 + x2, data = df, family = binomial)` is the standard logistic regression implementation in R.
+
+## Evaluation
+
+### Evaluation metrics
+
+In the plot:
+
+- Blue and green is the ground truth.
+- Orange is the classifier.
+
+### ROC
+
+**Intuition**: 
+
+- We choose the classification threshold
+- A higher threshold reduces false positives but increases false negatives; a lower threshold does the opposite.
+- The ROC curve shows this trade-off across thresholds.
+
+![](../images/roc-explanation.png){fig-align="center" width="70%"}
 
 ## Exercise
 

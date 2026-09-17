@@ -17,7 +17,6 @@ format: revealjs
 - **Apply** model predictions to decision-making by selecting appropriate thresholds based on business costs and expected value.
 :::
 
-
 # Business problem: Churn prediction {data-stack-name="Business problem: Churn prediction"}
 
 ## Predicting customer churn
@@ -25,7 +24,6 @@ format: revealjs
 :::: {.columns}
 
 ::: {.column width="70%"}
-
 
 A lost customer is often a predictable customer. 
 Firms collect many traces of customer relationships — usage, spending, support interactions, contract data.
@@ -152,7 +150,6 @@ $$y \in \{0,1\}$$ with
 0: "Negative class" (e.g., no fraud, no churn, no spam)  
 1: "Positive class" (e.g., fraud, churn, spam)
 
-
 ::: notes
 
 Don't be confused by Logistic "Regression" - it works like regression, but it is actually a classification algorithm
@@ -208,8 +205,7 @@ $$\mathbb{P}(y_i = 1 \mid x_i) = \sigma(z_i) \text{  with  } \sigma(z) = \frac{1
 
 $$\mathbb{P}(y_i = 1 \mid x_i) = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}$$
 
-- Linear predictor $z$ → transformed by the sigmoid (logistic) function
-- Output always in $[0,1]$
+- Linear predictor $z$ → transformed by the sigmoid (logistic) function (output always in $[0,1]$)
 - Can be interpreted as a probability (next slide)
 
 :::
@@ -817,7 +813,7 @@ A good classifier achieves:
 ```{python}
 #| label: roc-curve-and-auc-from-sklearn-metrics-import-ro
 #| fig-align: center
-#| out-width: 80%
+#| out-width: 90%
 
 from sklearn.metrics import roc_curve, roc_auc_score
 import matplotlib.pyplot as plt
@@ -832,8 +828,8 @@ fig, ax = plt.subplots(figsize=(8, 5.2))
 ax.plot(fpr, tpr, linewidth=3, label=f"Logistic regression (AUC = {auc:.2f})")
 ax.plot([0, 1], [0, 1], linewidth=1.5, linestyle="--", label="Random classifier")
 
-ax.set_xlabel("1 - Specificity (False Positive Rate)")
-ax.set_ylabel("Sensitivity (True Positive Rate)")
+ax.set_xlabel("False Positive Rate")
+ax.set_ylabel("True Positive Rate")
 ax.set_title("ROC curve")
 ax.set_xlim(0, 1)
 ax.set_ylim(0, 1)
@@ -861,6 +857,94 @@ AUC is especially useful when we want to compare models independently of one spe
 :::
 
 
+## ROC and AUC in R
+
+```{r}
+#| label: roc-r-setup
+#| include: false
+
+set.seed(42)
+df <- data.frame(response_time = runif(140, 0.5, 12))
+df$churn <- rbinom(
+  140, 1, plogis(-3.8 + 0.62 * df$response_time)
+)
+
+model <- glm(churn ~ response_time, data = df,
+             family = binomial())
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+**Calculate ROC and AUC**
+
+```{r}
+#| label: roc-r-evaluation
+#| echo: true
+
+library(pROC)
+
+# the model object is the
+# fitted classifier providing predictions
+prob <- predict(model, type = "response")
+
+roc_obj <- roc(
+  df$churn, prob,
+  levels = c(0, 1),
+  direction = "<" # Higher scores:= class 1
+)
+
+auc(roc_obj)
+```
+
+:::
+
+::: {.column width="50%" .fragment}
+
+**Plot ROC curve**
+
+```{r}
+#| label: roc-r-plot-code
+#| echo: true
+
+library(ggplot2)
+
+roc_df <- data.frame(
+  fpr = 1 - roc_obj$specificities,
+  tpr = roc_obj$sensitivities
+)
+
+roc_plot <- ggplot(roc_df, aes(fpr, tpr)) +
+  geom_path(linewidth = 1)
+```
+
+```{r}
+#| label: roc-r-plot
+#| echo: false
+#| fig-align: center
+#| fig-width: 3.6
+#| fig-height: 2.8
+#| out-width: 60%
+
+roc_plot +
+  coord_fixed(
+    xlim = c(0, 1),
+    ylim = c(0, 1),
+    expand = FALSE
+  ) +
+  scale_x_continuous(breaks = c(0, 0.5, 1)) +
+  scale_y_continuous(breaks = c(0, 0.5, 1)) +
+  labs(
+    x = "False Positive Rate",
+    y = "True Positive Rate"
+  ) +
+  theme_classic(base_size = 10)
+```
+
+:::
+
+::::
 
 
 # From prediction to decisions {data-stack-name="From prediction to decisions"}
@@ -1182,88 +1266,6 @@ With arbitrary scores:
 
 Decided to skip multi-label prediction
 -->
-
-# Outlook: Machine learning {data-stack-name="Outlook"}
-
-## From statistical models to machine learning
-
-Logistic regression is a classification model and represents a basic form of machine learning:
-
-- learns from data  
-- makes predictions  
-- but with strong structural assumptions
-
-It is:
-
-- Interpretable
-- Fast and robust
-- Often a baseline model
-
-. . .
-
-<br>
-
-In many machine learning studies, logistic regression is used as a first baseline model —  simple, transparent, and surprisingly effective.
-
-<br>
-
-{{< iconify fluent-mdl2:insights >}}  More complex models are useful only if they improve performance meaningfully
-
-
-## From statistical models to machine learning
-
-:::: {.columns}
-
-::: {.column width="45%"}
-
-::: {.highlight_must_learn}
-
-**New challenges in machine learning**
-
-**1. Overfitting**
-
-- Models may fit noise instead of signal  
-- Good training performance ≠ good generalization  
-
-**2. Role of data**
-
-- More observations and features become critical  
-
-**3. Evaluation**
-
-- Same metrics (accuracy, precision, recall, F1)  
-- But evaluated on unseen data
-
-**4. Model tuning**
-
-- Not only thresholds  
-- Additional hyperparameters
-
-:::
-
-:::
-
-::: {.column width="55%"}
-
-<br><br>
-
-| Logistic regression | Machine learning models |
-|---|---|
-| Linear decision boundary | Can learn nonlinear boundaries |
-| Strong assumptions | Fewer assumptions |
-| Selected variables | Many variables (high-dimensional) |
-| Interpretable | Often less interpretable |
-
-<br>
-
-**Key shift:**
-
-- From structured, theory-driven models
-- To flexible, data-driven models
-
-:::
-
-::::
 
 ## Summary {data-state="hide-menubar"}
 
