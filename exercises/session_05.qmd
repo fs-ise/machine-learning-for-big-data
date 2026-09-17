@@ -239,6 +239,8 @@ y_class
 The first observation's predicted default probability is approximately **48.1%**, so it is classified as no default at a 50% threshold.
 :::
 
+{{< needspace 20 >}}
+
 # Part 2 — Probabilities and thresholds
 
 ::: {.direction}
