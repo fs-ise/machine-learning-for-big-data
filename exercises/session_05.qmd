@@ -118,7 +118,7 @@ glimpse(df_ec_urban)
 ```
 :::
 
-{{< needspace 12 >}}
+{{< needspace 20 >}}
 
 ## Task 1.2 — Estimate the model
 
@@ -129,7 +129,7 @@ Estimate a logistic regression model for credit default.
 - Use `default` as the outcome.
 - Use `income`, `debt_to_income`, `missed_payments_12m`, `credit_utilization`, and `months_with_company` as predictors.
 - Fit the model with `glm(..., family = binomial)`.
-- Inspect `coef(model)` and `summary(model)`.
+- Inspect `summary(model)`.
 
 ```{r}
 #| label: task-1-2-estimate-the-model-student-response
@@ -157,7 +157,6 @@ model <- glm(
 summary(model)
 ```
 
-`glm()` estimates the unregularized maximum-likelihood logistic model. Its summary includes coefficient estimates, standard errors, z-statistics, and p-values.
 :::
 
 ## Task 1.3 — Interpret the model
@@ -185,7 +184,7 @@ coefficient_table
 `missed_payments_12m` and `credit_utilization` have positive coefficients. Holding the other predictors constant:
 
 - one additional missed payment multiplies the estimated odds of default by about **3.06** (coefficient 1.119, p < 0.001);
-- a one-unit increase in credit utilization—from 0 to 1—multiplies the estimated odds by about **6.47** (coefficient 1.867, p ≈ 0.019). A smaller change, such as 0.10, has a more realistic interpretation.
+- a one-unit increase in credit utilization—from 0 to 1—multiplies the estimated odds by about **6.47** (coefficient 1.867, p $\approx$ 0.019). A smaller change, such as 0.10, has a more realistic interpretation.
 :::
 :::
 
@@ -193,7 +192,7 @@ coefficient_table
 
 ::: {.sol}
 ::: {.callout-tip title="Solution"}
-`income`, `debt_to_income`, and `months_with_company` have negative estimates. The evidence is weak at the 5% level for these three predictors: income is close (p ≈ 0.067), while debt-to-income and tenure have larger p-values. The debt-to-income estimate is very close to zero relative to its uncertainty.
+`income`, `debt_to_income`, and `months_with_company` have negative estimates. The evidence is weak at the 5% level for these three predictors: income is close (p $\approx$ 0.067), while debt-to-income and tenure have larger p-values. The debt-to-income estimate is very close to zero relative to its uncertainty.
 :::
 :::
 
@@ -448,9 +447,9 @@ c(
 )
 ```
 
-- Accuracy: approximately **0.720**—72.0% of classifications are correct.
-- Precision: approximately **0.686**—68.6% of customers flagged as risky actually default.
-- Recall/sensitivity/TPR: **0.600**—60.0% of actual defaults are flagged.
+- Accuracy: approximately 72.0% of classifications are correct.
+- Precision: approximately 68.6% of customers flagged as risky actually default.
+- Recall/sensitivity/TPR: 60.0% of actual defaults are flagged.
 :::
 
 ## Task 3.3 — Business reflection
@@ -488,24 +487,23 @@ Use `pROC` to evaluate discrimination across all possible thresholds. Here, high
 
 ```{r}
 #| label: part-4-roc-curve-and-auc-roc-ec
-#| out-width: 68%
+#| out-width: 60%
 #| fig-align: center
 
 roc_ec <- roc(
   response = df_ec_urban$default,
   predictor = y_prob,
   levels = c(0, 1),
-  direction = "<",
-  quiet = TRUE
+  direction = "<"
 )
 
-auc_ec <- auc(roc_ec)
 
 roc_ec_df <- tibble(
   false_positive_rate = 1 - roc_ec$specificities,
   true_positive_rate = roc_ec$sensitivities
 )
 
+auc_ec <- auc(roc_ec)
 ggplot(
   roc_ec_df,
   aes(
@@ -526,8 +524,6 @@ ggplot(
     x = "False-positive rate",
     y = "True-positive rate"
   )
-
-auc_ec
 ```
 
 :::
@@ -578,6 +574,8 @@ Repeat the same model specification for platform workers, then compare coefficie
 
 ::: {.direction}
 
+Fit the same logistic-regression specification for platform workers and inspect `summary(model_platform)`.
+
 ```{r}
 #| label: task-5-1-fit-the-second-model-student-response
 # YOUR CODE HERE
@@ -604,7 +602,6 @@ model_platform <- glm(
   family = binomial
 )
 
-coef(model_platform)
 summary(model_platform)
 ```
 :::
@@ -642,7 +639,7 @@ For both segments, `credit_utilization` and `missed_payments_12m` have positive,
 - credit utilization: **1.87** for early-career urban borrowers and **2.10** for platform workers;
 - missed payments: **1.12** for early-career urban borrowers and **0.40** for platform workers.
 
-Debt-to-income differs particularly strongly: it is near zero and not significant for early-career urban borrowers (**-0.05**, p ≈ 0.968), but positive and significant for platform workers (**2.18**, p ≈ 0.004).
+Debt-to-income differs particularly strongly: it is near zero and not significant for early-career urban borrowers (**-0.05**, p $\approx$ 0.968), but positive and significant for platform workers (**2.18**, p $\approx$ 0.004).
 
 Income and months with company are negative in both models but do not reach the 5% significance level. Because predictors use different units, raw coefficient size alone is not a valid measure of importance.
 :::
@@ -723,10 +720,6 @@ ggplot(
     color = "Segment"
   )
 
-c(
-  early_career_urban = as.numeric(auc_ec),
-  platform_worker = as.numeric(auc_platform)
-)
 ```
 
 The early-career urban model has the higher in-sample AUC: approximately **0.801**, compared with **0.718** for platform workers. One possible explanation is that the available predictors separate defaults more consistently in the early-career segment. AUC alone does not establish why the difference exists or whether it will persist out of sample.
