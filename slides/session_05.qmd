@@ -12,7 +12,6 @@ format: revealjs
 <br><br><br><br><br>
 
 ::: {.learning-objectives}
-- **Explain** how business problems can be formulated as binary classification tasks and modeled using logistic regression.
 - **Understand** how logistic regression uses a linear predictor and sigmoid function to produce probabilities, apply thresholds, and interpret log-odds and coefficients.
 - **Evaluate** classification models using confusion matrices and metrics such as accuracy, precision, recall, and F1 score.
 - **Apply** model predictions to decision-making by selecting appropriate thresholds based on business costs and expected value.
@@ -209,11 +208,9 @@ $$\mathbb{P}(y_i = 1 \mid x_i) = \sigma(z_i) \text{  with  } \sigma(z) = \frac{1
 
 $$\mathbb{P}(y_i = 1 \mid x_i) = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_i)}}$$
 
-**Key intuition:**
-
-* Linear predictor $z$ → transformed by the sigmoid (logistic) function
-* Output always in $[0,1]$
-* Can be interpreted as a probability (next slide)
+- Linear predictor $z$ → transformed by the sigmoid (logistic) function
+- Output always in $[0,1]$
+- Can be interpreted as a probability (next slide)
 
 :::
 
@@ -347,22 +344,16 @@ $$\log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 x$$
 
 . . .
 
+<br>
+
 ::: {.highlight_must_learn}
 
-**More intuitive: odds ratios**
+**Odds ratios: Exponentiate the coefficient**
 
-Exponentiate the coefficient: $e^{\beta_1}$
+- $e^{\beta_1}$ gives the multiplicative change in odds for a one-unit increase in $x$.
+- Example: $1.5$ → odds increase by 50%; $0.7$ → odds decrease by 30%.
 
-- Factor change in the **odds**
-- Example:
-
-  - $e^{\beta_1} = 1.5$ → odds increase by **50%**
-  - $e^{\beta_1} = 0.7$ → odds decrease by **30%**
-
-**Important implication**
-
-- Effect on probability is **nonlinear**
-- Depends on current level of $x$
+**Note:** The effect on probability is nonlinear and depends on the starting probability.
 
 :::
 
@@ -549,6 +540,8 @@ plt.show()
 ```{python}
 #| label: evaluation-metrics-import-numpy-as-np
 #| fig-align: center
+#| out-width: 30%
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -769,12 +762,12 @@ plt.show()
 ::: {.highlight_must_learn}
 
 ::: {.small}
-| Metric | Formula | Value | Interpretation |
-|:--|:----:|:----:|:------------|
-| Accuracy | $\frac{TP+TN}{TP+TN+FP+FN}$ | 81.4% | Overall share of correct predictions |
-| Precision | $\frac{TP}{TP+FP}$ | 83.1% | Among predicted positives, how many are actually positive? |
-| Recall | $\frac{TP}{TP+FN}$ | 80.8% | Among actual positives, how many did the model identify? |
-| F1 | $2\cdot\frac{\text{Precision}\cdot\text{Recall}}{\text{Precision}+\text{Recall}}$ | 81.9% | Balance between precision and recall |
+| Metric | Formula | Interpretation |
+|:--|:----:|:------------|
+| Accuracy | $\frac{TP+TN}{TP+TN+FP+FN}$ | Overall share of correct predictions |
+| Precision | $\frac{TP}{TP+FP}$ | Among predicted positives, how many are actually positive? |
+| Recall | $\frac{TP}{TP+FN}$ | Among actual positives, how many did the model identify? |
+| F1 | $2\cdot\frac{\text{Precision}\cdot\text{Recall}}{\text{Precision}+\text{Recall}}$ | Balance between precision and recall |
 :::
 
 :::
@@ -787,11 +780,11 @@ The metrics depend on how we define the classes (what is "positive").
 ## ROC curve and AUC
 
 ::: columns
-::: {.column width="48%"}
+::: {.column width="52%"}
 
 ::: {.highlight_must_learn}
 
-**ROC** (Receiver Operating Characteristic) curve summarizes the trade-off between:
+The **Receiver Operating Characteristic** (ROC) curve summarizes the trade-off between:
 
 - **True Positive Rate (aka. recall or sensitivity)**
 - **False Positive Rate**
@@ -802,14 +795,13 @@ As we vary the **classification threshold**, the model becomes more or less cons
 
 - **AUC = 0.5**: no better than random guessing
 - **AUC = 1.0**: perfect separation
-- **Higher AUC**: better ranking of churners vs. non-churners
 
 A good classifier achieves:
 
 - **high true positive rate**
 - **low false positive rate**
 
-→ curves closer to the **top-left corner** indicate better model fit.
+→ Curves closer to the **top-left corner** indicate better model fit.
 
 :::
 <!--
@@ -818,13 +810,15 @@ A good classifier achieves:
 
 :::
 
-::: {.column width="52%"}
+::: {.column width="48%"}
 
 <br><br>
 
 ```{python}
 #| label: roc-curve-and-auc-from-sklearn-metrics-import-ro
 #| fig-align: center
+#| out-width: 80%
+
 from sklearn.metrics import roc_curve, roc_auc_score
 import matplotlib.pyplot as plt
 
@@ -1280,9 +1274,6 @@ In many machine learning studies, logistic regression is used as a first baselin
 - Model performance is evaluated using **classification metrics** such as confusion matrices, accuracy, precision, recall, F1, and ROC/AUC.
 - A **threshold** is required to convert probabilities into class labels, and should be chosen based on **business costs**, not fixed at 0.5.
 
-
+{{< survey session_05 slide >}}
 
 # References {data-state="hide-menubar"}
-
-
-{{< survey session_05 slide >}}
