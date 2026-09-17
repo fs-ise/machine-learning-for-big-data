@@ -41,6 +41,7 @@ Dataset: `employee_work_profiles.csv`
 
 ```{r}
 #| label: eda-clustering-load-packages
+#| solution-setup: true
 #| output: false
 
 library(tidyverse)

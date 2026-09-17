@@ -58,6 +58,7 @@ install.packages(c(
 
 ```{r}
 #| label: package-setup-load-packages
+#| solution-setup: true
 library(tidyverse)
 library(tidymodels)
 ```

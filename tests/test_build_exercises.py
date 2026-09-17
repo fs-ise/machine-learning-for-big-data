@@ -149,6 +149,68 @@ def test_canonical_shared_setup_survives_in_both_variants() -> None:
                 assert generated.index(setup) < generated.index(use)
 
 
+def test_solution_setup_marker_suppresses_only_generated_solution_output() -> None:
+    source = """```{r}
+#| label: setup
+#| solution-setup: true
+#| warning: true
+library(tidyverse)
+df <- read_csv("data.csv")
+glimpse(df)
+```
+"""
+    assignment = sanitize(source, "assign")
+    solution = sanitize(source, "solution")
+
+    assert "solution-setup" not in assignment + solution
+    assert "#| warning: true" in assignment
+    assert "#| output: false" not in assignment
+    for code in ("library(tidyverse)", 'df <- read_csv("data.csv")', "glimpse(df)"):
+        assert code in assignment
+        assert code in solution
+    for option in ("echo", "output", "message", "warning"):
+        value = "true" if option == "echo" else "false"
+        assert solution.count(f"#| {option}: {value}") == 1
+    assert "#| warning: true" not in solution
+
+    include = solution_include(source)
+    assert "library(tidyverse)" in include
+    assert "glimpse(df)" in include
+    assert "#| output: false" in include
+
+
+def test_canonical_setup_suppression_preserves_task_results() -> None:
+    root = Path(__file__).resolve().parents[1]
+    session_5 = (root / "exercises/session_05.qmd").read_text(encoding="utf-8")
+    assignment = sanitize(session_5, "assign", filename="session_05.qmd")
+    solution = sanitize(session_5, "solution", filename="session_05.qmd")
+
+    setup_label = "#| label: package-setup-load-packages"
+    start = assignment.index(setup_label)
+    assignment_setup = assignment[start : assignment.index("```", start)]
+    assert "#| output: false" not in assignment_setup
+    start = solution.index(setup_label)
+    solution_setup = solution[start : solution.index("```", start)]
+    for content in ("library(tidyverse)", "df <- read_csv(", "glimpse(df)", "#| output: false"):
+        assert content in solution_setup
+
+    # Analytical results remain unsuppressed rather than inheriting a global option.
+    model_chunk = solution[solution.index("#| label: solution-model") :]
+    model_chunk = model_chunk[: model_chunk.index("```")]
+    assert "summary(model)" in model_chunk
+    assert "#| output: false" not in model_chunk
+
+    session_6 = (root / "exercises/session_06.qmd").read_text(encoding="utf-8")
+    session_6_solution = sanitize(session_6, "solution", filename="session_06.qmd")
+    inspection = session_6_solution[
+        session_6_solution.index("#| label: task-1-1-load-and-inspect-the-data-df") :
+    ]
+    inspection = inspection[: inspection.index("```")]
+    assert "glimpse(df)" in inspection
+    assert "count(df, default)" in inspection
+    assert "#| output: false" not in inspection
+
+
 def test_chunks_and_unrelated_nested_divs_are_preserved() -> None:
     chunk = "```{r}\n#| eval: false\nx <- c(1, 2)  # unchanged\nmean(x)\n```\n"
     assert chunk in sanitize(SOURCE, "assign")

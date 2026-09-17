@@ -63,6 +63,16 @@ CLASS = re.compile(r"\.([A-Za-z_][\w-]*)")
 NEEDSPACE = re.compile(
     r"^[ \t]*\{\{<[ \t]*needspace(?:[ \t]+\d+)?[ \t]*>\}\}[ \t]*(?:\r?\n)?$"
 )
+SOLUTION_SETUP = re.compile(r"^[ \t]*#\|[ \t]*solution-setup:[ \t]*true[ \t]*(?:\r?\n)?$")
+CHUNK_OPTION = re.compile(
+    r"^[ \t]*#\|[ \t]*(?:echo|output|message|warning):[ \t]*.*(?:\r?\n)?$"
+)
+SOLUTION_SETUP_OPTIONS = (
+    "#| echo: true\n"
+    "#| output: false\n"
+    "#| message: false\n"
+    "#| warning: false\n"
+)
 
 
 class ExerciseSyntaxError(ValueError):
@@ -130,6 +140,49 @@ def _strip_html_comments(source: str) -> str:
                     position = start + 4
         output.extend(visible)
 
+    return "".join(output)
+
+
+def _apply_solution_setup_convention(source: str, variant: Variant) -> str:
+    """Expand canonical solution-only setup markers into Quarto options."""
+    lines = source.splitlines(keepends=True)
+    output: list[str] = []
+    index = 0
+    while index < len(lines):
+        opening = CODE_FENCE.match(lines[index])
+        if not opening:
+            output.append(lines[index])
+            index += 1
+            continue
+
+        fence_char = opening.group("fence")[0]
+        fence_length = len(opening.group("fence"))
+        end = index + 1
+        while end < len(lines):
+            closing = CODE_FENCE.match(lines[end])
+            if (
+                closing
+                and closing.group("fence")[0] == fence_char
+                and len(closing.group("fence")) >= fence_length
+            ):
+                break
+            end += 1
+
+        chunk = lines[index : min(end + 1, len(lines))]
+        markers = [position for position, line in enumerate(chunk) if SOLUTION_SETUP.match(line)]
+        if len(markers) > 1:
+            raise ExerciseSyntaxError("a code chunk contains multiple solution-setup markers")
+        if not markers:
+            output.extend(chunk)
+        else:
+            marker = markers[0]
+            for position, line in enumerate(chunk):
+                if position == marker:
+                    if variant == "solution":
+                        output.append(SOLUTION_SETUP_OPTIONS)
+                elif variant != "solution" or not CHUNK_OPTION.match(line):
+                    output.append(line)
+        index = end + 1
     return "".join(output)
 
 
@@ -203,7 +256,7 @@ def sanitize(source: str, variant: Variant, *, filename: str = "<input>") -> str
         raise ExerciseSyntaxError(
             f"{filename}:{frame.line}: unclosed .{frame.semantic} fenced Div"
         )
-    return "".join(output)
+    return _apply_solution_setup_convention("".join(output), variant)
 
 
 def _yaml_scalar(value: str) -> str:

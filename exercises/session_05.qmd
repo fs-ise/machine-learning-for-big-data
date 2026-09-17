@@ -84,6 +84,7 @@ install.packages(c(
 
 ```{r}
 #| label: package-setup-load-packages
+#| solution-setup: true
 library(tidyverse)
 library(pROC)
 
@@ -496,6 +497,8 @@ Use `pROC` to evaluate discrimination across all possible thresholds. Here, high
 ```{r}
 #| label: part-4-roc-curve-and-auc-roc-ec
 #| out-width: 68%
+#| fig-align: center
+
 roc_ec <- roc(
   response = df_ec_urban$default,
   predictor = y_prob,
@@ -671,6 +674,8 @@ Income and months with company are negative in both models but do not reach the 
 ```{r}
 #| label: task-5-3-compare-roc-and-auc-y-prob-platform
 #| out-width: 68%
+#| fig-align: center
+
 y_prob_platform <- predict(
   model_platform,
   type = "response"

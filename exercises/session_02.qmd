@@ -48,6 +48,7 @@ We start with the `market_data_log.csv` dataset.
 
 ```{r}
 #| label: part-1-data-structuring-1-load-packages
+#| solution-setup: true
 #| warning: false
 library(tidyverse)
 
@@ -181,6 +182,7 @@ Dataset `sales_data_channels_full_year.csv`
 
 ```{r}
 #| label: part-2-data-structuring-2-sales-data-df
+#| solution-setup: true
 sales_data_df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/sales_data_channels_full_year.csv",
   show_col_types = FALSE
@@ -288,6 +290,7 @@ Dataset `messy_customer_data.csv`
 
 ```{r}
 #| label: part-3-data-cleansing-customer-df
+#| solution-setup: true
 customer_df <- read_csv(
   "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/messy_customer_data.csv",
   na = c("", "NA", "NaN"),
