@@ -57,7 +57,7 @@ events:
     event_id: 274991-1926698564-0@timeedit.com
     materials:
       - type: exercise
-        path: exercises/session_01.html
+        path: exercises/session_01_assign.qmd
   - session_id: session-02-lecture
     type: lecture
     date: 2026-09-04
@@ -78,7 +78,7 @@ events:
     event_id: 274993-1926698564-0@timeedit.com
     materials:
       - type: exercise
-        path: exercises/session_02.html
+        path: exercises/session_02_assign.qmd
   - session_id: session-03-lecture
     type: lecture
     date: 2026-09-11
@@ -99,7 +99,7 @@ events:
     event_id: 274995-1926698564-0@timeedit.com
     materials:
       - type: exercise
-        path: exercises/session_03.html
+        path: exercises/session_03_assign.qmd
   - session_id: session-04-lecture
     type: lecture
     date: 2026-09-11
@@ -120,7 +120,7 @@ events:
     event_id: 274997-1926698564-0@timeedit.com
     materials:
       - type: exercise
-        path: exercises/session_04.html
+        path: exercises/session_04_assign.qmd
   - session_id: session-05-lecture
     type: lecture
     date: 2026-09-17
@@ -141,7 +141,7 @@ events:
     event_id: 275001-1926698564-0@timeedit.com
     materials:
       - type: exercise
-        path: exercises/session_05.html
+        path: exercises/session_05_assign.qmd
   - session_id: session-06-lecture
     type: lecture
     date: 2026-09-18
@@ -162,7 +162,7 @@ events:
     event_id: 274999-1926698564-0@timeedit.com
     materials:
       - type: exercise
-        path: exercises/session_06.html
+        path: exercises/session_06_assign.qmd
   - session_id: session-07-lecture
     type: lecture
     date: 2026-09-25
@@ -183,7 +183,7 @@ events:
     event_id: 275003-1926698564-0@timeedit.com
     materials:
       - type: exercise
-        path: exercises/session_07.html
+        path: exercises/session_07_assign.qmd
   - session_id: session-08-lecture
     type: lecture
     date: 2026-09-25
@@ -204,7 +204,7 @@ events:
     event_id: 275005-1926698564-0@timeedit.com
     materials:
       - type: exercise
-        path: exercises/session_08.html
+        path: exercises/session_08_assign.qmd
   - session_id: session-09-lecture
     type: lecture
     date: 2026-10-02

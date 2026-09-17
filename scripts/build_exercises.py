@@ -23,7 +23,6 @@ PROJECT_CONFIG = """project:
     - "data/**"
 
 format:
-  html: default
   pdf:
     pdf-engine: lualatex
     documentclass: scrartcl

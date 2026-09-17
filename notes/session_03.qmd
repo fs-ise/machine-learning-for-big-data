@@ -6,7 +6,7 @@ session_id: session-03
 Preparation:
 
 - Prep follow-up to survey responses
-- Print `session_02_solution.html`
+- Print `session_02_solution.pdf`
 
 | Time (min) | Topic                                      | Additional materials |
 |------------|--------------------------------------------|----------------------|

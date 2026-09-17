@@ -276,6 +276,7 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     assert (generated / "solution-pdf/preamble.tex").read_text() == "shared preamble"
     assert not (generated / "_extensions").exists()
     assert "output-dir: _rendered" in PROJECT_CONFIG
+    assert "html:" not in PROJECT_CONFIG
     assignment = (generated / "session_01_assign.qmd").read_text(encoding="utf-8")
     solution = (generated / "session_01_solution.qmd").read_text(encoding="utf-8")
     include = (generated / "includes/_session_01_solution.qmd").read_text(encoding="utf-8")
@@ -372,12 +373,9 @@ if Path.cwd().name == "exercises" and Path.cwd().parent.name == "_generated":
     assert "--output-dir" not in args
     output_format = args[args.index("--to") + 1]
     source = Path(args[1])
-    if source.name.endswith("_assign.qmd"):
-        assert output_format == "html"
-        assert "--no-execute" in args
-    else:
-        assert output_format in {"html", "pdf"}
-        assert "--no-execute" not in args
+    assert source.name.endswith("_solution.qmd")
+    assert output_format == "pdf"
+    assert "--no-execute" not in args
     assert Path("_quarto.yml").exists()
     assert "output-dir: _rendered" in Path("_quarto.yml").read_text(encoding="utf-8")
     assert Path("data/market_data_log.csv").exists()
@@ -400,6 +398,17 @@ else:
     )
     quarto.chmod(0o755)
 
+    # A no-clean rebuild must remove exercise HTML left by an older build.
+    old_rendered = tmp_path / "_generated/exercises/_rendered"
+    old_rendered.mkdir(parents=True)
+    (old_rendered / "session_01_assign.html").write_text("old", encoding="utf-8")
+    (old_rendered / "session_01_solution.html").write_text("old", encoding="utf-8")
+    old_published = tmp_path / "_site/exercises"
+    old_published.mkdir(parents=True)
+    (old_published / "session_01_assign.html").write_text("old", encoding="utf-8")
+    (old_published / "session_01_solution.html").write_text("old", encoding="utf-8")
+    (old_published / "session_01.html").write_text("old", encoding="utf-8")
+
     subprocess.run(
         [
             "make",
@@ -418,14 +427,12 @@ else:
     published = tmp_path / "_site/exercises"
     assert sorted(path.name for path in published.iterdir()) == [
         "data",
-        "session_01_assign.html",
         "session_01_assign.qmd",
-        "session_01_solution.html",
         "session_01_solution.pdf",
         "session_01_solution.qmd",
     ]
     assert (published / "data/market_data_log.csv").read_text(encoding="utf-8") == "price\n42\n"
-    assert (tmp_path / "_generated/exercises/_rendered/session_01_assign.html").exists()
+    assert not list((tmp_path / "_generated/exercises/_rendered").glob("*.html"))
     assert not (tmp_path / "_generated/exercises/_rendered/session_01_assign.pdf").exists()
     assert (tmp_path / "_generated/exercises/_rendered/session_01_solution.pdf").exists()
     assert not (tmp_path / "_site/exercises/generated").exists()
@@ -468,11 +475,9 @@ def test_real_quarto_project_render_smoke(tmp_path: Path) -> None:
     )
     assert sorted(path.name for path in (tmp_path / "_site/exercises").iterdir()) == [
         "data",
-        "session_01_assign.html",
         "session_01_assign.qmd",
-        "session_01_solution.html",
         "session_01_solution.pdf",
         "session_01_solution.qmd",
     ]
-    assert (tmp_path / "_generated/exercises/_rendered/session_01_assign.html").exists()
+    assert not list((tmp_path / "_generated/exercises/_rendered").glob("*.html"))
     assert (tmp_path / "_site/exercises/data/market_data_log.csv").exists()

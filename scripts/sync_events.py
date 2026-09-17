@@ -356,7 +356,7 @@ def default_materials(
             "type": "exercise",
             "path": (
                 f"exercises/"
-                f"session_{material_number:02d}.html"
+                f"session_{material_number:02d}_assign.qmd"
             ),
         },
     ]

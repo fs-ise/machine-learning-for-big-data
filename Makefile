@@ -60,7 +60,7 @@ help:
 	@echo ""
 	@echo "Exercises:"
 	@echo "  canonical QMD -> _generated/exercises variant QMD"
-	@echo "                -> _site/exercises HTML, solution PDF, and QMD"
+	@echo "                -> _site/exercises solution PDF and variant QMD"
 
 
 # ---------------------------------------------------------------------------
@@ -93,18 +93,15 @@ $(EXERCISE_STAMP): $(EXERCISE_SOURCES) $(EXERCISE_GENERATOR_DEPS)
 exercises-render: exercises-generate
 	@set -eu; \
 		cd _generated/exercises; \
-		for exercise in session_*_assign.qmd; do \
-			echo "Rendering $$exercise without execution"; \
-			$(QUARTO) render "$$exercise" --to html --no-clean --no-execute; \
-		done; \
+		mkdir -p _rendered; \
+		find _rendered -maxdepth 1 -type f -name 'session_*.html' -delete; \
 		for exercise in session_*_solution.qmd; do \
-			echo "Rendering $$exercise"; \
-			$(QUARTO) render "$$exercise" --to html --no-clean; \
 			echo "Rendering $$exercise to PDF"; \
 			$(QUARTO) render "$$exercise" --to pdf --no-clean; \
 		done
 
 	@mkdir -p _site/exercises
+	@find _site/exercises -maxdepth 1 -type f -name 'session_*.html' -delete
 	@cp -R _generated/exercises/_rendered/. _site/exercises/
 	@cp _generated/exercises/*_assign.qmd _site/exercises/
 	@cp _generated/exercises/*_solution.qmd _site/exercises/
@@ -116,13 +113,7 @@ exercises: exercises-render
 exercises-check: exercises-generate
 	@set -eu; \
 		cd _generated/exercises; \
-		for exercise in session_*_assign.qmd; do \
-			echo "Checking $$exercise"; \
-			$(QUARTO) render "$$exercise" --to html --no-clean --no-execute; \
-		done; \
 		for exercise in session_*_solution.qmd; do \
-			echo "Checking $$exercise"; \
-			$(QUARTO) render "$$exercise" --to html --no-clean; \
 			echo "Checking $$exercise PDF"; \
 			$(QUARTO) render "$$exercise" --to pdf --no-clean; \
 		done

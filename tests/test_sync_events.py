@@ -139,7 +139,7 @@ class SyncEventsTest(unittest.TestCase):
 
     def test_default_materials_use_session_paths(self):
         self.assertEqual(default_materials(1, "lecture"), [{"type": "slides", "path": "slides/session_01.html"}])
-        self.assertEqual(default_materials(2, "exercise"), [{"type": "exercise", "path": "exercises/session_01.html"}])
+        self.assertEqual(default_materials(2, "exercise"), [{"type": "exercise", "path": "exercises/session_01_assign.qmd"}])
 
 
 if __name__ == "__main__":
