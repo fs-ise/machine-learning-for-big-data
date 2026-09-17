@@ -209,7 +209,7 @@ X |>
   slice_head(n = 5)
 ```
 
-{{< needspace >}}
+{{< needspace 8 >}}
 
 #### Exploratory check
 
@@ -236,6 +236,8 @@ X |>
 ```
 
 These summaries and histograms help us understand the distributions and the different scales of the variables.
+
+{{< needspace 10 >}}
 
 #### Standardization
 

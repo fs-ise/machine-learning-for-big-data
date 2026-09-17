@@ -176,6 +176,8 @@ df_wide |> head()
 :::
 
 
+{{< needspace 8 >}}
+
 # Part 2: Data structuring 2 {#structuring_2}
 
 Dataset `sales_data_channels_full_year.csv`

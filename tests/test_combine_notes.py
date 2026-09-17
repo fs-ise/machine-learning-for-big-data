@@ -202,6 +202,21 @@ def test_canonical_notes_and_exercises_have_no_layout_only_page_breaks() -> None
         assert r"\newpage" not in source, path
 
 
+def test_requested_teaching_note_headings_have_selective_needspace() -> None:
+    expected = {
+        "session_01.qmd": {"Output": 8},
+        "session_09_b.qmd": {
+            "Organizational value creation": 12,
+            "NIST AI RMF and regulatory context": 12,
+        },
+    }
+
+    for filename, headings in expected.items():
+        source = (REPOSITORY_ROOT / "notes" / filename).read_text(encoding="utf-8")
+        for heading, lines in headings.items():
+            assert f"{{{{< needspace {lines} >}}}}\n\n## {heading}\n" in source
+
+
 @pytest.mark.parametrize(
     "contents, message",
     [("No front matter", "missing YAML"), ("---\nsession_id: one\n---\n", "title")],

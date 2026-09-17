@@ -22,6 +22,8 @@ Contrast the two evidence perspectives. Müller et al. examine objective live BD
 
 Use the TDWI maturity model to show that an analytics portfolio is not merely a set of techniques or software. It depends on organizational processes, culture, skills, leadership, funding, data management, and governance aligned with strategy.
 
+{{< needspace 12 >}}
+
 ## Organizational value creation
 
 Kunz, Spohrer, and Heinzl shift from variance explanations to sequences connecting data, information, knowledge, decisions, actions, and process outcomes. Ask: **How would you expect machine learning to affect this value-creation process?**
@@ -55,6 +57,8 @@ For opacity, distinguish lack of access from lack of comprehensibility. Propriet
 - auditors need logs and evidence.
 
 Present the taxonomy as a map, not a technical deep dive. Feature importance may be global or local and should not be interpreted causally. Counterfactual explanations are action-oriented. Interactive explanations support what-if probing. Ask which explanation allows each stakeholder to understand, contest, improve, or govern a system.
+
+{{< needspace 12 >}}
 
 ## NIST AI RMF and regulatory context
 

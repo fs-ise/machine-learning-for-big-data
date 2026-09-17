@@ -118,7 +118,7 @@ glimpse(df_ec_urban)
 ```
 :::
 
-{{< needspace 15 >}}
+{{< needspace 12 >}}
 
 ## Task 1.2 — Estimate the model
 
@@ -204,6 +204,8 @@ coefficient_table
 No. Predictors use different units: income is measured in euros, missed payments as a count, and utilization as a proportion. Raw coefficient magnitudes are therefore not directly comparable. Interpret directions, uncertainty, odds ratios, and changes in substantively meaningful units instead.
 :::
 :::
+
+{{< needspace 10 >}}
 
 ## Task 1.4 — From coefficients to classification
 

@@ -23,6 +23,25 @@ EXERCISE_GENERATOR_DEPS := scripts/build_exercises.py \
 	$(shell find _extensions/needspace -type f 2>/dev/null)
 EXERCISE_STAMP := _generated/exercises/.generated.stamp
 
+define render-exercise-pdfs
+	@set -eu; \
+		cd _generated/exercises; \
+		mkdir -p _rendered; \
+		find _rendered -maxdepth 1 -type f -name 'pdf_session_*_solution.pdf' -delete; \
+		for exercise in pdf_session_*_solution.qmd; do \
+			name=$${exercise#pdf_}; \
+			output="_rendered/$${name%.qmd}.pdf"; \
+			rm -f "$$output"; \
+			echo "Rendering $$exercise to $$output"; \
+			$(QUARTO) render "$$exercise" --to pdf \
+				--output "$${name%.qmd}.pdf" --no-clean; \
+			if [ ! -s "$$output" ]; then \
+				echo "error: Quarto did not create expected PDF: $$output" >&2; \
+				exit 1; \
+			fi; \
+		done
+endef
+
 
 .PHONY: \
 	help \
@@ -91,32 +110,22 @@ $(EXERCISE_STAMP): $(EXERCISE_SOURCES) $(EXERCISE_GENERATOR_DEPS)
 
 
 exercises-render: exercises-generate
-	@set -eu; \
-		cd _generated/exercises; \
-		mkdir -p _rendered; \
-		find _rendered -maxdepth 1 -type f -name 'session_*.html' -delete; \
-		for exercise in session_*_solution.qmd; do \
-			echo "Rendering $$exercise to PDF"; \
-			$(QUARTO) render "$$exercise" --to pdf --no-clean; \
-		done
+	@mkdir -p _generated/exercises/_rendered
+	@find _generated/exercises/_rendered -maxdepth 1 -type f -name 'session_*.html' -delete
+	$(render-exercise-pdfs)
 
 	@mkdir -p _site/exercises
 	@find _site/exercises -maxdepth 1 -type f -name 'session_*.html' -delete
 	@cp -R _generated/exercises/_rendered/. _site/exercises/
 	@cp _generated/exercises/*_assign.qmd _site/exercises/
-	@cp _generated/exercises/*_solution.qmd _site/exercises/
+	@cp _generated/exercises/session_*_solution.qmd _site/exercises/
 
 
 exercises: exercises-render
 
 
 exercises-check: exercises-generate
-	@set -eu; \
-		cd _generated/exercises; \
-		for exercise in session_*_solution.qmd; do \
-			echo "Checking $$exercise PDF"; \
-			$(QUARTO) render "$$exercise" --to pdf --no-clean; \
-		done
+	$(render-exercise-pdfs)
 
 
 # ---------------------------------------------------------------------------

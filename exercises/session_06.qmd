@@ -147,6 +147,7 @@ split_summary
 
 Stratification keeps the outcome distribution approximately consistent across partitions. The test set must remain untouched because it is reserved for one independent estimate of generalization performance. Repeatedly consulting it would make model choices adapt to this particular sample and introduce selection bias.
 :::
+
 # Part 2 — Specify preprocessing without leakage {#recipe}
 
 A recipe records what transformations should happen. It does not estimate normalization statistics until a workflow is fitted. During cross-validation, those statistics are learned separately from each analysis fold and then applied to its assessment fold.
@@ -333,6 +334,8 @@ nrow(folds)
 2. Fold assessments are reused for development across CV iterations; `test_data` is reserved for the final evaluation only.
 3. Choosing repeatedly by test performance adapts decisions to random peculiarities of that test sample. The resulting estimate becomes optimistically biased through selection.
 :::
+
+{{< needspace 10 >}}
 
 # Part 6 — Evaluate the logistic baseline {#baseline}
 
@@ -630,6 +633,8 @@ final_roc |>
 
 The `.pred_default` column corresponds to the explicitly defined event level. CV metrics supported model development; this confusion matrix and ROC curve describe the one-time held-out evaluation.
 :::
+
+{{< needspace 8 >}}
 
 # Part 10 — Reflect on generalization {#reflection}
 

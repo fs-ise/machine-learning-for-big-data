@@ -411,7 +411,7 @@ for (dept in departments) {
 }
 ```
 :::
-{{< needspace 5 >}}
+{{< needspace 8 >}}
 
 ## Task D2: Compare the subgroup models
 
@@ -462,6 +462,8 @@ performance ~
 
 The interaction `remote_share * department` allows the `remote_share` slope to differ by `department` while estimating one combined model.
 :::
+
+{{< needspace 10 >}}
 
 # Part E — Deployment {#deployment}
 
@@ -529,6 +531,8 @@ predict(
 
 The predicted performance is approximately **169.23**. The saved model knows how the department factor was represented during fitting, so prediction uses the original predictor rather than manually created indicator columns.
 :::
+
+{{< needspace 8 >}}
 
 ## Task E3: Reflect on practical and organizational considerations
 

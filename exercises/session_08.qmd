@@ -146,9 +146,12 @@ split_summary
 
 Learning representation parameters from test reviews would leak information about the final evaluation corpus. The correct order is split first, learn every representation from training text, and only transform the test text with the already learned vocabulary, weights, and rotations.
 :::
+
 # Part 2 — Sparse text representations {#part-2}
 
 Bag-of-Words records token counts. TF-IDF retains a sparse lexical representation but downweights ubiquitous features and emphasizes features characteristic of fewer documents.
+
+{{< needspace 12 >}}
 
 ## Task 2.1 — Build training vocabulary and sparse matrices
 

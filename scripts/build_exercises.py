@@ -19,6 +19,7 @@ PROJECT_CONFIG = """project:
   render:
     - "session_*_assign.qmd"
     - "session_*_solution.qmd"
+    - "pdf_session_*_solution.qmd"
   resources:
     - "data/**"
 
@@ -186,7 +187,13 @@ def _apply_solution_setup_convention(source: str, variant: Variant) -> str:
     return "".join(output)
 
 
-def sanitize(source: str, variant: Variant, *, filename: str = "<input>") -> str:
+def sanitize(
+    source: str,
+    variant: Variant,
+    *,
+    filename: str = "<input>",
+    preserve_needspace: bool = False,
+) -> str:
     """Return one variant while retaining source text exactly where possible."""
     source = _strip_html_comments(source)
     output: list[str] = []
@@ -241,7 +248,7 @@ def sanitize(source: str, variant: Variant, *, filename: str = "<input>") -> str
             continue
 
         if all(frame.semantic is None or _wanted(frame.semantic, variant) for frame in divs):
-            if NEEDSPACE.match(line):
+            if NEEDSPACE.match(line) and not preserve_needspace:
                 removed_needspace = True
                 continue
             if removed_needspace:
@@ -358,7 +365,9 @@ def build(root: Path) -> list[Path]:
     for template_source in SOLUTION_TEMPLATES:
         destination_name = template_source.name.removeprefix("exercise-solution-")
         shutil.copy2(root / template_source, template_destination / destination_name)
-    shutil.rmtree(destination / "_extensions", ignore_errors=True)
+    extensions = destination / "_extensions"
+    shutil.rmtree(extensions, ignore_errors=True)
+    shutil.copytree(root / "_extensions" / "needspace", extensions / "needspace")
     (destination / "_quarto.yml").write_text(PROJECT_CONFIG, encoding="utf-8", newline="")
     sources = sorted(exercises.glob("session_*.qmd"))
     includes = destination / "includes"
@@ -376,6 +385,20 @@ def build(root: Path) -> list[Path]:
                 rendered = add_solution_metadata(rendered, source.stem)
             target.write_text(rendered, encoding="utf-8", newline="")
             written.append(target)
+        # Keep pagination markup in a render-only source.  The public variants
+        # above deliberately remain free of layout instructions.
+        pdf_target = destination / f"pdf_{source.stem}_solution.qmd"
+        expected.add(pdf_target)
+        pdf_rendered = sanitize(
+            original,
+            "solution",
+            filename=str(source),
+            preserve_needspace=True,
+        )
+        pdf_target.write_text(
+            add_solution_metadata(pdf_rendered, source.stem), encoding="utf-8", newline=""
+        )
+        written.append(pdf_target)
         include = includes / f"_{source.stem}_solution.qmd"
         expected.add(include)
         include.write_text(
@@ -383,6 +406,9 @@ def build(root: Path) -> list[Path]:
         )
         written.append(include)
     for stale in destination.glob("session_*_*.qmd"):
+        if stale not in expected:
+            stale.unlink()
+    for stale in destination.glob("pdf_session_*_solution.qmd"):
         if stale not in expected:
             stale.unlink()
     for stale in includes.glob("_session_*_solution.qmd"):

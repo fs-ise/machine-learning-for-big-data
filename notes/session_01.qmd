@@ -94,6 +94,8 @@ There is a positive relationship between TV advertising expenditure and sales:
 observations with higher TV advertising expenditure tend to have higher sales.
 ````
 
+{{< needspace 8 >}}
+
 ## Output
 
 ```{r}

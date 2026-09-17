@@ -1,9 +1,14 @@
+import os
+import re
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 import pytest
+
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from scripts.build_exercises import (
     ExerciseSyntaxError,
@@ -267,6 +272,54 @@ def test_needspace_directives_are_removed_but_code_examples_are_preserved(varian
     assert "```qmd\n{{< needspace 8 >}}\n```" in rendered
 
 
+def test_needspace_can_be_preserved_for_pdf_render_sources() -> None:
+    source = "before\n\n{{< needspace 12 >}}\n\n## Heading\n"
+
+    assert "{{< needspace 12 >}}" in sanitize(
+        source, "solution", preserve_needspace=True
+    )
+
+
+def test_requested_exercise_pagination_is_selective_and_headings_are_separate() -> None:
+    root = Path(__file__).resolve().parents[1]
+    expected = {
+        "session_01.qmd": {"Edit a Quarto document": 10},
+        "session_02.qmd": {"Part 2: Data structuring 2": 8},
+        "session_03.qmd": {"Exploratory check": 8, "Standardization": 10},
+        "session_04.qmd": {
+            "Task D2: Compare the subgroup models": 8,
+            "Part E — Deployment": 10,
+            "Task E3: Reflect on practical and organizational considerations": 8,
+        },
+        "session_05.qmd": {
+            "Task 1.2 — Estimate the model": 12,
+            "Task 1.4 — From coefficients to classification": 10,
+        },
+        "session_06.qmd": {
+            "Part 6 — Evaluate the logistic baseline": 10,
+            "Part 10 — Reflect on generalization": 8,
+        },
+        "session_07.qmd": {"Part 6 — RBF support vector machine": 10},
+        "session_08.qmd": {
+            "Task 2.1 — Build training vocabulary and sparse matrices": 12
+        },
+    }
+    for filename, headings in expected.items():
+        source = (root / "exercises" / filename).read_text(encoding="utf-8")
+        for heading, lines in headings.items():
+            assert re.search(
+                rf"\{{\{{< needspace {lines} >\}}\}}\n\n#+ {re.escape(heading)}(?: |\n)",
+                source,
+            )
+
+    for filename, heading in (
+        ("session_08.qmd", "# Part 2 — Sparse text representations {#part-2}"),
+        ("session_06.qmd", "# Part 2 — Specify preprocessing without leakage {#recipe}"),
+    ):
+        source = (root / "exercises" / filename).read_text(encoding="utf-8")
+        assert f":::\n\n{heading}\n" in source
+
+
 @pytest.mark.parametrize("variant", VARIANTS)
 def test_html_comments_are_removed_from_both_variants(variant: str) -> None:
     source = "before<!-- single -->middle<!--\nmultiple\nlines\n-->after\n"
@@ -327,6 +380,9 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     template.mkdir(parents=True)
     template.joinpath("exercise-solution-before-body.tex").write_text("shared template")
     template.joinpath("exercise-solution-preamble.tex").write_text("shared preamble")
+    extension = tmp_path / "_extensions/needspace"
+    extension.mkdir(parents=True)
+    extension.joinpath("_extension.yml").write_text("title: needspace\n")
     data = exercises / "data"
     data.mkdir()
     fixture = data / "market_data_log.csv"
@@ -345,12 +401,14 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     assert (generated / "_quarto.yml").read_text(encoding="utf-8") == PROJECT_CONFIG
     assert (generated / "solution-pdf/before-body.tex").read_text() == "shared template"
     assert (generated / "solution-pdf/preamble.tex").read_text() == "shared preamble"
-    assert not (generated / "_extensions").exists()
+    assert (generated / "_extensions/needspace/_extension.yml").exists()
     assert "output-dir: _rendered" in PROJECT_CONFIG
+    assert '    - "pdf_session_*_solution.qmd"' in PROJECT_CONFIG
     assert "html:" not in PROJECT_CONFIG
     assignment = (generated / "session_01_assign.qmd").read_text(encoding="utf-8")
     solution = (generated / "session_01_solution.qmd").read_text(encoding="utf-8")
     include = (generated / "includes/_session_01_solution.qmd").read_text(encoding="utf-8")
+    pdf_source = (generated / "pdf_session_01_solution.qmd").read_text(encoding="utf-8")
     assert "title: Test" in assignment
     for field in ("course-title", "exercise-number", "exercise-variant", "exercise-topic"):
         assert f"{field}:" not in assignment
@@ -366,6 +424,7 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
         assert "\n{{< needspace 8 >}}\n" not in artifact
         assert "`{{< needspace 3 >}}`" in artifact
         assert "```qmd\n{{< needspace >}}\n```" in artifact
+    assert "\n{{< needspace 8 >}}\n" in pdf_source
     assert (generated / "data/market_data_log.csv").read_bytes() == fixture.read_bytes()
     first = {
         path.relative_to(generated): path.read_bytes()
@@ -418,6 +477,7 @@ def test_make_build_publishes_rendered_variants_and_data(tmp_path: Path) -> None
     (tmp_path / "exercises/data").mkdir()
     shutil.copy(root / "Makefile", tmp_path / "Makefile")
     shutil.copy(root / "_quarto.yml", tmp_path / "_quarto.yml")
+    shutil.copytree(root / "_extensions/needspace", tmp_path / "_extensions/needspace")
     shutil.copy(root / "scripts/build_exercises.py", tmp_path / "scripts/build_exercises.py")
     shutil.copy(
         root / "scripts/templates/exercise-solution-before-body.tex",
@@ -427,7 +487,9 @@ def test_make_build_publishes_rendered_variants_and_data(tmp_path: Path) -> None
         root / "scripts/templates/exercise-solution-preamble.tex",
         tmp_path / "scripts/templates/exercise-solution-preamble.tex",
     )
-    (tmp_path / "exercises/session_01.qmd").write_text(SOURCE, encoding="utf-8")
+    (tmp_path / "exercises/session_01.qmd").write_text(
+        SOURCE + "\n{{< needspace 8 >}}\n\n## Kept together\nBody\n", encoding="utf-8"
+    )
     (tmp_path / "exercises/data/market_data_log.csv").write_text("price\n42\n", encoding="utf-8")
 
     quarto = tmp_path / "fake_quarto.py"
@@ -436,15 +498,18 @@ def test_make_build_publishes_rendered_variants_and_data(tmp_path: Path) -> None
 import sys
 import shutil
 from pathlib import Path
+import os
 
 args = sys.argv[1:]
 assert args[0] == "render"
 if Path.cwd().name == "exercises" and Path.cwd().parent.name == "_generated":
-    assert "--output" not in args
     assert "--output-dir" not in args
     output_format = args[args.index("--to") + 1]
+    output_name = args[args.index("--output") + 1]
     source = Path(args[1])
-    assert source.name.endswith("_solution.qmd")
+    assert source.name.startswith("pdf_session_") and source.name.endswith("_solution.qmd")
+    assert "{{< needspace 8 >}}" in source.read_text(encoding="utf-8")
+    assert output_name == source.name.removeprefix("pdf_").removesuffix(".qmd") + ".pdf"
     assert output_format == "pdf"
     assert "--no-execute" not in args
     assert Path("_quarto.yml").exists()
@@ -452,7 +517,8 @@ if Path.cwd().name == "exercises" and Path.cwd().parent.name == "_generated":
     assert Path("data/market_data_log.csv").exists()
     output_dir = Path("_rendered")
     output_dir.mkdir(parents=True, exist_ok=True)
-    (output_dir / source.with_suffix(f".{output_format}").name).write_text("rendered", encoding="utf-8")
+    if not os.environ.get("FAKE_QUARTO_SKIP_OUTPUT"):
+        (output_dir / output_name).write_text("rendered", encoding="utf-8")
     if not (output_dir / "data").exists():
         shutil.copytree("data", output_dir / "data")
 else:
@@ -472,6 +538,8 @@ else:
     # A no-clean rebuild must remove exercise HTML left by an older build.
     old_rendered = tmp_path / "_generated/exercises/_rendered"
     old_rendered.mkdir(parents=True)
+    (old_rendered / "pdf_session_01_solution.pdf").write_text("stale", encoding="utf-8")
+    (old_rendered / "session_01_solution.pdf").write_text("stale", encoding="utf-8")
     (old_rendered / "session_01_assign.html").write_text("old", encoding="utf-8")
     (old_rendered / "session_01_solution.html").write_text("old", encoding="utf-8")
     old_published = tmp_path / "_site/exercises"
@@ -492,6 +560,7 @@ else:
     )
 
     assert sorted(path.name for path in (tmp_path / "_generated/exercises").glob("*.qmd")) == [
+        "pdf_session_01_solution.qmd",
         "session_01_assign.qmd",
         "session_01_solution.qmd",
     ]
@@ -506,12 +575,32 @@ else:
     assert not list((tmp_path / "_generated/exercises/_rendered").glob("*.html"))
     assert not (tmp_path / "_generated/exercises/_rendered/session_01_assign.pdf").exists()
     assert (tmp_path / "_generated/exercises/_rendered/session_01_solution.pdf").exists()
+    assert (tmp_path / "_generated/exercises/_rendered/session_01_solution.pdf").read_text() == "rendered"
+    assert not list(tmp_path.glob("_generated/exercises/_rendered/pdf_session_*.pdf"))
+    assert not list(published.glob("pdf_session_*"))
     assert not (tmp_path / "_site/exercises/generated").exists()
     assert not (tmp_path / "_site/exercises/_quarto.yml").exists()
     assert not (tmp_path / "_site/exercises/session_01.html").exists()
     assert not (tmp_path / "_site/session_01_assign.html").exists()
     assert not (tmp_path / "_site/session_01_solution.html").exists()
     assert not list(tmp_path.rglob("*.ipynb"))
+
+    # The phony render target must remain repeatable with --no-clean.
+    subprocess.run(
+        ["make", "exercises", f"PYTHON={sys.executable}", f"QUARTO={quarto}"],
+        cwd=tmp_path,
+        check=True,
+    )
+
+    failed = subprocess.run(
+        ["make", "exercises-check", f"PYTHON={sys.executable}", f"QUARTO={quarto}"],
+        cwd=tmp_path,
+        env={**os.environ, "FAKE_QUARTO_SKIP_OUTPUT": "1"},
+        capture_output=True,
+        text=True,
+    )
+    assert failed.returncode != 0
+    assert "Quarto did not create expected PDF" in failed.stderr
 
     subprocess.run(["make", "clean"], cwd=tmp_path, check=True)
     assert not (tmp_path / "_generated").exists()
@@ -527,6 +616,7 @@ def test_real_quarto_project_render_smoke(tmp_path: Path) -> None:
     (tmp_path / "exercises").mkdir()
     (tmp_path / "exercises/data").mkdir()
     shutil.copy(root / "Makefile", tmp_path / "Makefile")
+    shutil.copytree(root / "_extensions/needspace", tmp_path / "_extensions/needspace")
     shutil.copy(root / "scripts/build_exercises.py", tmp_path / "scripts/build_exercises.py")
     shutil.copy(
         root / "scripts/templates/exercise-solution-before-body.tex",
@@ -536,7 +626,9 @@ def test_real_quarto_project_render_smoke(tmp_path: Path) -> None:
         root / "scripts/templates/exercise-solution-preamble.tex",
         tmp_path / "scripts/templates/exercise-solution-preamble.tex",
     )
-    (tmp_path / "exercises/session_01.qmd").write_text(SOURCE, encoding="utf-8")
+    (tmp_path / "exercises/session_01.qmd").write_text(
+        SOURCE + "\n{{< needspace 8 >}}\n\n## Kept together\nBody\n", encoding="utf-8"
+    )
     (tmp_path / "exercises/data/market_data_log.csv").write_text("price\n42\n", encoding="utf-8")
 
     subprocess.run(
@@ -551,4 +643,13 @@ def test_real_quarto_project_render_smoke(tmp_path: Path) -> None:
         "session_01_solution.qmd",
     ]
     assert not list((tmp_path / "_generated/exercises/_rendered").glob("*.html"))
+    pdf = tmp_path / "_site/exercises/session_01_solution.pdf"
+    assert pdf.stat().st_size > 0
+    assert "{{< needspace 8 >}}" in (
+        tmp_path / "_generated/exercises/pdf_session_01_solution.qmd"
+    ).read_text(encoding="utf-8")
+    assert r"\Needspace{8\baselineskip}" in (
+        tmp_path / "_generated/exercises/_rendered/session_01_solution.tex"
+    ).read_text(encoding="utf-8")
+    assert not list((tmp_path / "_site/exercises").glob("pdf_session_*"))
     assert (tmp_path / "_site/exercises/data/market_data_log.csv").exists()

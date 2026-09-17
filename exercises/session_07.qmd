@@ -421,6 +421,8 @@ Averaging many decorrelated trees can reduce variance and improve generalization
 :::
 
 
+{{< needspace 10 >}}
+
 # Part 6 — RBF support vector machine {#svm}
 
 An SVM seeks a decision boundary with a wide margin. `cost` controls how strongly classification errors are penalized. The RBF kernel permits nonlinear boundaries, while `rbf_sigma` controls how locally the kernel responds and therefore affects flexibility.

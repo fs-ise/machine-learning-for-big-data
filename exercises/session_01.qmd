@@ -102,6 +102,8 @@ What is the difference between code typed only in the Console and code stored in
 **Your answer:** *Write your answer here.*
 :::
 
+{{< needspace 10 >}}
+
 ## Edit a Quarto document
 
 A Quarto document combines formatted text, links, lists, code, and computational results. Before working with data, practice adding these elements in **Visual mode**.
