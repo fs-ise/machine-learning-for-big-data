@@ -6,6 +6,7 @@ format:
     theme: simple
     width: 1600
     height: 900
+    code-block-height: 780px
     lazy-load: true
     slide-number: true
     include-before-body: ../assets/header.html

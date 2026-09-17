@@ -948,6 +948,50 @@ roc_plot +
 
 ::::
 
+## How does `roc()` work?
+
+```python
+function roc(actual, scores, levels, direction):
+
+    # Identify actual positive and negative cases
+    negative = actual == levels[0]
+    positive = actual == levels[1]
+
+    for threshold in thresholds(scores):
+
+        # direction determines predicted positives
+        if direction == "<":
+            predicted = scores >= threshold
+        else:
+            predicted = scores <= threshold
+
+        # Evaluate predictions against actual outcomes and store in roc_object
+        TP = count(predicted & positive)
+        FP = count(predicted & negative)
+        TPR = TP / count(positive)
+        FPR = FP / count(negative)
+
+    return roc_object # (containing TPR, FPR, ...)
+```
+
+::: notes
+**Key takeaway:**
+
+* `levels`: Which actual outcome is positive?
+* `direction`: Which side of the threshold predicts positive?
+
+
+* `levels`: First = controls (negative class); second = cases (positive class).
+* `direction = "<"`: Controls have lower scores; higher scores predict positive.
+* `direction = ">"`: Controls have higher scores; lower scores predict positive.
+
+
+This is conceptual pseudocode; pROC uses cumulative counts rather than
+calculating a separate confusion matrix at each threshold.
+
+For levels: Consider prediction of defaults vs. pays back.
+
+:::
 
 # From prediction to decisions {data-stack-name="From prediction to decisions"}
 
