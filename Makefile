@@ -17,10 +17,11 @@ TEACHING_CHECKLIST := notes/teaching_checklist.qmd
 NOTES_PDF := $(OUT_DIR)/notes.pdf
 NOTES_COMBINER := scripts/combine_notes.py
 NOTES_LINEBREAK_FILTER := scripts/html_br_to_linebreak.lua
+NEEDSPACE_EXTENSION_DEPS := $(shell find _extensions/needspace -type f 2>/dev/null)
 EXERCISE_SOURCES := $(sort $(wildcard exercises/session_*.qmd))
 EXERCISE_GENERATOR_DEPS := scripts/build_exercises.py \
 	$(wildcard scripts/templates/exercise-solution-*.tex) \
-	$(shell find _extensions/needspace -type f 2>/dev/null)
+	$(NEEDSPACE_EXTENSION_DEPS)
 EXERCISE_STAMP := _generated/exercises/.generated.stamp
 
 define render-exercise-pdfs
@@ -139,9 +140,12 @@ pdfs: $(SLIDES_PDF)
 notes: $(NOTES_PDF)
 
 
-$(NOTES_PDF): $(NOTE_SOURCES) $(TEACHING_CHECKLIST) $(NOTES_COMBINER) $(NOTES_LINEBREAK_FILTER) $(EXERCISE_STAMP)
+$(NOTES_PDF): $(NOTE_SOURCES) $(TEACHING_CHECKLIST) $(NOTES_COMBINER) $(NOTES_LINEBREAK_FILTER) $(NEEDSPACE_EXTENSION_DEPS) $(EXERCISE_STAMP)
 	@set -eu; \
 		mkdir -p "$(OUT_DIR)" _pdf-tmp; \
+		rm -rf _pdf-tmp/_extensions/needspace; \
+		mkdir -p _pdf-tmp/_extensions; \
+		cp -R _extensions/needspace _pdf-tmp/_extensions/needspace; \
 		combined_qmd="_pdf-tmp/teaching-notes.qmd"; \
 		$(PYTHON) "$(NOTES_COMBINER)" --checklist "$(TEACHING_CHECKLIST)" --output "$$combined_qmd" $(NOTE_SOURCES); \
 		$(QUARTO) render "$$combined_qmd" --to pdf --output notes.pdf; \

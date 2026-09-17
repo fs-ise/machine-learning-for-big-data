@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -229,8 +230,10 @@ def test_validates_front_matter(tmp_path: Path, contents: str, message: str) -> 
         combine_notes([note])
 
 
-def test_make_notes_moves_standalone_render_output(tmp_path: Path) -> None:
-    """The standalone render must not use Quarto's project-only --output-dir."""
+def test_make_notes_renders_needspace_and_moves_standalone_output(
+    tmp_path: Path,
+) -> None:
+    """The standalone render can discover shortcodes beside its generated source."""
     (tmp_path / "notes").mkdir()
     (tmp_path / "scripts").mkdir()
     shutil.copy(REPOSITORY_ROOT / "Makefile", tmp_path / "Makefile")
@@ -255,7 +258,11 @@ def test_make_notes_moves_standalone_render_output(tmp_path: Path) -> None:
         tmp_path / "_extensions/needspace",
     )
     (tmp_path / "exercises").mkdir()
-    write_note(tmp_path / "notes/session_01.qmd", "Session One")
+    write_note(
+        tmp_path / "notes/session_01.qmd",
+        "Session One",
+        "{{< needspace 12 >}}\n\n## Keep with following text\n\nBody",
+    )
     write_checklist(tmp_path / "notes/teaching_checklist.qmd")
 
     quarto = tmp_path / "fake_quarto.py"
@@ -273,13 +280,21 @@ combined = source.read_text(encoding="utf-8")
 assert "../scripts/html_br_to_linebreak.lua" in combined
 assert combined.count("# Teaching checklist") == 1
 assert combined.index("# Teaching checklist") < combined.index("# Session One")
-Path("notes.pdf").write_bytes(b"%PDF-fake")
+extension = source.parent / "_extensions/needspace"
+assert extension.joinpath("_extension.yml").is_file()
+assert extension.joinpath("needspace.lua").is_file()
+assert "{{< needspace 12 >}}" in combined
+Path("notes.tex").write_text(
+    combined.replace("{{< needspace 12 >}}", r"\\Needspace{12\\baselineskip}"),
+    encoding="utf-8",
+)
+Path("notes.pdf").write_bytes(b"%PDF-fake Session One Keep with following text")
 """,
         encoding="utf-8",
     )
     quarto.chmod(0o755)
 
-    subprocess.run(
+    result = subprocess.run(
         [
             "make",
             "notes",
@@ -288,8 +303,52 @@ Path("notes.pdf").write_bytes(b"%PDF-fake")
         ],
         cwd=tmp_path,
         check=True,
+        capture_output=True,
+        text=True,
     )
 
-    assert (tmp_path / "_site/notes.pdf").read_bytes() == b"%PDF-fake"
+    output = result.stdout + result.stderr
+    assert "unknown shortcode" not in output.lower()
+    assert r"\Needspace{12\baselineskip}" in (tmp_path / "notes.tex").read_text(
+        encoding="utf-8"
+    )
+    pdf = (tmp_path / "_site/notes.pdf").read_bytes()
+    assert pdf.startswith(b"%PDF-fake")
+    assert b"needspace" not in pdf.lower()
     assert not (tmp_path / "_pdf-tmp/notes.pdf").exists()
     assert not (tmp_path / "_pdf-tmp/teaching-notes.qmd").exists()
+
+
+def test_needspace_extension_changes_rebuild_notes(tmp_path: Path) -> None:
+    makefile = tmp_path / "Makefile"
+    shutil.copy(REPOSITORY_ROOT / "Makefile", makefile)
+    (tmp_path / "notes").mkdir()
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "_extensions/needspace").mkdir(parents=True)
+    write_note(tmp_path / "notes/session_01.qmd", "Session One")
+    write_checklist(tmp_path / "notes/teaching_checklist.qmd")
+    for dependency in (
+        "combine_notes.py",
+        "html_br_to_linebreak.lua",
+        "build_exercises.py",
+    ):
+        (tmp_path / "scripts" / dependency).touch()
+    (tmp_path / "_extensions/needspace/needspace.lua").touch()
+    (tmp_path / "_generated/exercises").mkdir(parents=True)
+    stamp = tmp_path / "_generated/exercises/.generated.stamp"
+    output = tmp_path / "_site/notes.pdf"
+    output.parent.mkdir()
+    stamp.touch()
+    output.touch()
+    extension = tmp_path / "_extensions/needspace/needspace.lua"
+    old_mtime = output.stat().st_mtime_ns
+    os.utime(extension, ns=(old_mtime + 1_000_000_000,) * 2)
+    result = subprocess.run(
+        ["make", "--dry-run", "notes"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "combine_notes.py" in result.stdout
