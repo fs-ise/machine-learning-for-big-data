@@ -13,6 +13,7 @@ from scripts.build_exercises import (
     add_solution_metadata,
     build,
     sanitize,
+    solution_include,
     solution_metadata,
 )
 
@@ -158,6 +159,18 @@ def test_chunks_and_unrelated_nested_divs_are_preserved() -> None:
     assert all(ordinary in sanitize(SOURCE, variant) for variant in VARIANTS)
 
 
+def test_solution_include_has_filtered_body_executable_chunks_and_nested_headings() -> None:
+    source = SOURCE + "# Part\n## Detail\n```{python}\nprint('executed')\n```\n{{< needspace 8 >}}\n"
+    fragment = solution_include(source)
+    assert not fragment.startswith("---")
+    assert "title: Test" not in fragment
+    assert "Directions" not in fragment
+    assert "Solution" in fragment
+    assert "```{python}\nprint('executed')\n```" in fragment
+    assert "### Part\n#### Detail" in fragment
+    assert "{{< needspace 8 >}}" in fragment
+
+
 @pytest.mark.parametrize("variant", VARIANTS)
 def test_html_comments_are_removed_from_both_variants(variant: str) -> None:
     source = "before<!-- single -->middle<!--\nmultiple\nlines\n-->after\n"
@@ -237,6 +250,7 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     assert "output-dir: _rendered" in PROJECT_CONFIG
     assignment = (generated / "session_01_assign.qmd").read_text(encoding="utf-8")
     solution = (generated / "session_01_solution.qmd").read_text(encoding="utf-8")
+    include = (generated / "includes/_session_01_solution.qmd").read_text(encoding="utf-8")
     assert "title: Test" in assignment
     for field in ("course-title", "exercise-number", "exercise-variant", "exercise-topic"):
         assert f"{field}:" not in assignment
@@ -245,6 +259,9 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     assert 'exercise-number: "01"' in solution
     assert 'exercise-variant: "Solution"' in solution
     assert 'exercise-topic: "Test"' in solution
+    assert not include.startswith("---")
+    assert "Directions" not in include
+    assert "Solution" in include
     assert (generated / "data/market_data_log.csv").read_bytes() == fixture.read_bytes()
     first = {
         path.relative_to(generated): path.read_bytes()
@@ -255,6 +272,8 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     stale.write_text("stale")
     old_variant = generated / "session_01_old.qmd"
     old_variant.write_text("legacy")
+    stale_include = generated / "includes/_session_99_solution.qmd"
+    stale_include.write_text("stale")
     (generated / "data/stale.csv").write_text("stale", encoding="utf-8")
     build(tmp_path)
     second = {
@@ -266,6 +285,24 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     assert canonical.read_bytes() == original
     assert not stale.exists()
     assert not old_variant.exists()
+    assert not stale_include.exists()
+
+
+def test_every_canonical_exercise_gets_an_include_and_session_5_notes_use_it(tmp_path: Path) -> None:
+    root = Path(__file__).resolve().parents[1]
+    # The repository build itself is cheap and proves the complete canonical set.
+    build(root)
+    canonical_stems = {path.stem for path in (root / "exercises").glob("session_*.qmd")}
+    include_stems = {
+        path.name.removeprefix("_").removesuffix("_solution.qmd")
+        for path in (root / "_generated/exercises/includes").glob("_session_*_solution.qmd")
+    }
+    assert include_stems == canonical_stems
+    notes = (root / "notes/session_05.qmd").read_text(encoding="utf-8")
+    assert "{{< include /_generated/exercises/includes/_session_05_solution.qmd >}}" in notes
+    session_5_include = (root / "_generated/exercises/includes/_session_05_solution.qmd").read_text()
+    for prerequisite in ("library(tidyverse)", "library(pROC)", "df <- read_csv("):
+        assert prerequisite in session_5_include
 
 
 def test_make_build_publishes_rendered_variants_and_data(tmp_path: Path) -> None:

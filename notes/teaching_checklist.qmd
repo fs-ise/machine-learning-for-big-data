@@ -1,0 +1,30 @@
+# Teaching checklist
+
+### Room and presentation setup
+
+- [ ] Arrive early and switch on the equipment.
+- [ ] On the room's control panel, select **Source: Beamer**.
+- [ ] Verify the projector and presentation.
+- [ ] Open the course slides, datasets, and exercise materials.
+- [ ] For technical problems, contact Frankfurt School IT Support:
+  - [ ] Phone: [+49 69 154008-111](tel:+4969154008111)
+  - [ ] Email: [111@fs.de](mailto:111@fs.de)
+
+### Student setup and technical issues
+
+- [ ] Check that students can access Canvas and the course materials.
+- [ ] Check that students have installed R and RStudio and can run a simple R command.
+- [ ] Check that students can create and render a Quarto document.
+- [ ] Verify that datasets can be downloaded and imported.
+- [ ] Refer installation and configuration problems to the existing course setup instructions where available.
+- [ ] Direct institutional account, network, and access problems to Frankfurt School IT Support.
+- [ ] Refer course-specific questions to the instructor or the established course communication channel.
+
+### Student advising and support resources
+
+- [ ] For academic and organizational issues, refer students to their [study advisor](https://www.frankfurt-school.de/home/study/advice) or [Student Services](https://www.frankfurt-school.de/home/study/student-services).
+- [ ] For LRS/dyslexia and other learning-related impairments, refer students to [Life & Health Counseling](https://www.frankfurt-school.de/home/study/advice/life-health-counselling).
+- [ ] For accessibility and other health-related needs, refer students to Life & Health Counseling so that appropriate support can be coordinated.
+- [ ] For personal difficulties, stress, or wellbeing concerns, encourage students to contact Life & Health Counseling.
+- [ ] Students can contact **Alexandra Rübesam** at [+49 69 154008-111](tel:+4969154008111) or [a.ruebesam@fs.de](mailto:a.ruebesam@fs.de).
+- [ ] Refer students to the appropriate professional service; instructors should not independently assess disabilities or promise accommodations.

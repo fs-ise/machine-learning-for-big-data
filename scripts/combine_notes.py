@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -46,12 +47,28 @@ def latex_escape(value: str) -> str:
     return "".join(replacements.get(character, character) for character in value)
 
 
-def combine_notes(paths: Sequence[Path]) -> str:
+def read_checklist(path: Path) -> tuple[str, str]:
+    """Return the title and body of a heading-led checklist fragment."""
+    source = path.read_text(encoding="utf-8")
+    first_content = next((line for line in source.splitlines() if line.strip()), "")
+    heading = re.fullmatch(r"#\s+(.+?)\s*", first_content)
+    if heading is None or not heading.group(1).strip():
+        raise ValueError(f"{path}: checklist requires a non-empty level-1 heading")
+
+    title = heading.group(1).strip()
+    body = source.splitlines(keepends=True)
+    heading_index = next(i for i, line in enumerate(body) if line.strip())
+    return title, "".join(body[heading_index + 1 :]).strip()
+
+
+def combine_notes(paths: Sequence[Path], checklist: Path | None = None) -> str:
     """Build a combined QMD string from session files in deterministic order."""
     if not paths:
         raise ValueError("no session note files supplied")
 
     sections: list[tuple[str, str]] = []
+    if checklist is not None:
+        sections.append(read_checklist(checklist))
     for path in sorted(paths, key=lambda item: item.as_posix()):
         metadata, body = split_front_matter(path.read_text(encoding="utf-8"), path)
         title = metadata.get("title")
@@ -61,6 +78,8 @@ def combine_notes(paths: Sequence[Path]) -> str:
 
     header = f'''---
 title: "{DOCUMENT_TITLE}"
+execute:
+  enabled: true
 format:
   pdf:
     papersize: a4
@@ -105,9 +124,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("inputs", nargs="+", type=Path)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--checklist", type=Path)
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(combine_notes(args.inputs), encoding="utf-8")
+    args.output.write_text(
+        combine_notes(args.inputs, checklist=args.checklist), encoding="utf-8"
+    )
 
 
 if __name__ == "__main__":

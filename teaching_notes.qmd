@@ -4,6 +4,8 @@ title: Teaching notes
 
 These notes help another instructor or teaching assistant run the course.
 
+{{< include notes/teaching_checklist.qmd >}}
+
 ## Course-level preparation
 
 - Review the syllabus and session notes before the semester starts.

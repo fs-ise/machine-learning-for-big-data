@@ -17,6 +17,10 @@ def write_note(path: Path, title: str, body: str = "Body") -> None:
     path.write_text(f"---\n{metadata}---\n\n{body}\n", encoding="utf-8")
 
 
+def write_checklist(path: Path, title: str = "Teaching checklist") -> None:
+    path.write_text(f"# {title}\n\n- [ ] Check everything.\n", encoding="utf-8")
+
+
 def test_orders_sessions_and_extracts_yaml_titles(tmp_path: Path) -> None:
     later = tmp_path / "session_10.qmd"
     earlier = tmp_path / "session_02.qmd"
@@ -26,6 +30,62 @@ def test_orders_sessions_and_extracts_yaml_titles(tmp_path: Path) -> None:
     result = combine_notes([later, earlier])
 
     assert result.index("# Session Two") < result.index("# Session Ten")
+
+
+def test_checklist_precedes_sorted_sessions_and_appears_once(tmp_path: Path) -> None:
+    checklist = tmp_path / "z_checklist.qmd"
+    later = tmp_path / "session_10.qmd"
+    earlier = tmp_path / "session_02.qmd"
+    write_checklist(checklist)
+    write_note(later, "Session Ten")
+    write_note(earlier, "Session Two")
+
+    result = combine_notes([later, earlier], checklist=checklist)
+
+    assert result.count("# Teaching checklist") == 1
+    assert result.index("# Teaching checklist") < result.index("# Session Two")
+    assert result.index("# Session Two") < result.index("# Session Ten")
+
+
+def test_checklist_has_own_footer_and_page_break(tmp_path: Path) -> None:
+    checklist = tmp_path / "checklist.qmd"
+    note = tmp_path / "session_01.qmd"
+    write_checklist(checklist, "Before class & support")
+    write_note(note, "First session")
+
+    result = combine_notes([note], checklist=checklist)
+
+    assert (
+        r"\renewcommand{\teachingnotesfooterlabel}"
+        r"{MLBD -- Before class \& support}" in result
+    )
+    assert result.count("```{=latex}\n\\clearpage") == 2
+
+
+def test_combines_without_optional_checklist(tmp_path: Path) -> None:
+    note = tmp_path / "session_01.qmd"
+    write_note(note, "Only session")
+
+    result = combine_notes([note])
+
+    assert "# Only session" in result
+    assert "Teaching checklist" not in result
+
+
+@pytest.mark.parametrize(
+    "contents",
+    ["", "Checklist without a heading\n", "## Level two\n", "#   \n"],
+)
+def test_rejects_checklist_without_nonempty_level_one_heading(
+    tmp_path: Path, contents: str
+) -> None:
+    checklist = tmp_path / "checklist.qmd"
+    note = tmp_path / "session_01.qmd"
+    checklist.write_text(contents, encoding="utf-8")
+    write_note(note, "Session")
+
+    with pytest.raises(ValueError, match="non-empty level-1 heading"):
+        combine_notes([note], checklist=checklist)
 
 
 def test_document_configuration_and_course_specific_footer(tmp_path: Path) -> None:
@@ -45,7 +105,7 @@ def test_document_configuration_and_course_specific_footer(tmp_path: Path) -> No
     assert "bottom=2.2cm" in result
     assert "includefoot" in result
     assert "footskip=0.9cm" in result
-    assert "execute:\n  enabled: false" in result
+    assert "execute:\n  enabled: true" in result
     assert "execute: false" not in result
     assert r"\usepackage{scrlayer-scrpage}" in result
     assert "fancyhdr" not in result
@@ -59,7 +119,15 @@ def test_document_configuration_and_course_specific_footer(tmp_path: Path) -> No
 
     front_matter = result.split("---", 2)[1]
     metadata = yaml.safe_load(front_matter)
-    assert metadata["execute"] == {"enabled": False}
+    assert metadata["execute"] == {"enabled": True}
+
+
+def test_preserves_project_root_solution_include(tmp_path: Path) -> None:
+    note = tmp_path / "session_05.qmd"
+    include = "{{< include /_generated/exercises/includes/_session_05_solution.qmd >}}"
+    write_note(note, "Session Five", f"## Exercise solution\n\n{include}")
+
+    assert include in combine_notes([note])
 
 
 def test_escapes_title_for_latex_footer(tmp_path: Path) -> None:
@@ -108,12 +176,16 @@ def test_preserves_html_break_and_configures_lua_filter(tmp_path: Path) -> None:
 
 def test_source_files_remain_unchanged(tmp_path: Path) -> None:
     note = tmp_path / "session_01.qmd"
+    checklist = tmp_path / "checklist.qmd"
     write_note(note, "Unchanged", "Original <br> body")
+    write_checklist(checklist)
     before = note.read_bytes()
+    checklist_before = checklist.read_bytes()
 
-    combine_notes([note])
+    combine_notes([note], checklist=checklist)
 
     assert note.read_bytes() == before
+    assert checklist.read_bytes() == checklist_before
 
 
 @pytest.mark.parametrize(
@@ -141,7 +213,21 @@ def test_make_notes_moves_standalone_render_output(tmp_path: Path) -> None:
         REPOSITORY_ROOT / "scripts/html_br_to_linebreak.lua",
         tmp_path / "scripts/html_br_to_linebreak.lua",
     )
+    shutil.copy(
+        REPOSITORY_ROOT / "scripts/build_exercises.py",
+        tmp_path / "scripts/build_exercises.py",
+    )
+    shutil.copytree(
+        REPOSITORY_ROOT / "scripts/templates",
+        tmp_path / "scripts/templates",
+    )
+    shutil.copytree(
+        REPOSITORY_ROOT / "_extensions/needspace",
+        tmp_path / "_extensions/needspace",
+    )
+    (tmp_path / "exercises").mkdir()
     write_note(tmp_path / "notes/session_01.qmd", "Session One")
+    write_checklist(tmp_path / "notes/teaching_checklist.qmd")
 
     quarto = tmp_path / "fake_quarto.py"
     quarto.write_text(
@@ -156,6 +242,8 @@ assert args[args.index("--output") + 1] == "notes.pdf"
 source = Path(args[1])
 combined = source.read_text(encoding="utf-8")
 assert "../scripts/html_br_to_linebreak.lua" in combined
+assert combined.count("# Teaching checklist") == 1
+assert combined.index("# Teaching checklist") < combined.index("# Session One")
 Path("notes.pdf").write_bytes(b"%PDF-fake")
 """,
         encoding="utf-8",

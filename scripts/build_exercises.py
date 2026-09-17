@@ -1,4 +1,4 @@
-"""Build student-facing exercise sources from canonical Quarto documents."""
+"""Build exercise variants and include fragments from canonical Quarto documents."""
 
 from __future__ import annotations
 
@@ -54,6 +54,9 @@ SOLUTION_TEMPLATES = (
 EXERCISE_EXTENSIONS = (Path("_extensions/needspace"),)
 FRONT_MATTER = re.compile(r"\A---[ \t]*\r?\n(?P<body>.*?)^---[ \t]*$", re.MULTILINE | re.DOTALL)
 TITLE = re.compile(r'^title:[ \t]*(?P<title>.+?)[ \t]*$', re.MULTILINE)
+HEADING = re.compile(
+    r"^(?P<indent>[ \t]*)(?P<marks>#{1,6})(?P<rest>[ \t]+[^\r\n]*)(?P<ending>\r?\n)?$"
+)
 SESSION_FILENAME = re.compile(r"^session_(?P<number>\d+)(?:_(?P<suffix>[a-z]+))?$")
 DIV_OPEN = re.compile(r"^(?P<indent>[ \t]*)(?P<fence>:{3,})[ \t]*(?P<attrs>(?!:)\S.*?)[ \t]*(?:\r?\n)?$")
 DIV_CLOSE = re.compile(r"^[ \t]*:{3,}[ \t]*(?:\r?\n)?$")
@@ -142,7 +145,11 @@ def sanitize(source: str, variant: Variant, *, filename: str = "<input>") -> str
             output.append(line) if all(
                 frame.semantic is None or _wanted(frame.semantic, variant) for frame in divs
             ) else None
-            if code_match and code_match.group("fence")[0] == code_fence[0] and len(code_match.group("fence")) >= code_fence[1]:
+            if (
+                code_match
+                and code_match.group("fence")[0] == code_fence[0]
+                and len(code_match.group("fence")) >= code_fence[1]
+            ):
                 code_fence = None
             continue
         if code_match:
@@ -239,6 +246,42 @@ def add_solution_metadata(source: str, stem: str) -> str:
     return source[:insert_at] + fields + source[insert_at:]
 
 
+def solution_include(source: str, *, filename: str = "<input>", heading_offset: int = 2) -> str:
+    """Return a metadata-free solution body suitable for a Quarto include.
+
+    The normal solution filtering is deliberately applied first, so includes and
+    standalone solutions have exactly the same executable content.  Headings are
+    lowered to nest underneath the teaching note's ``## Exercise solution``.
+    """
+    rendered = sanitize(source, "solution", filename=filename)
+    front_matter = FRONT_MATTER.match(rendered)
+    if front_matter:
+        rendered = rendered[front_matter.end() :].lstrip("\r\n")
+
+    output: list[str] = []
+    code_fence: tuple[str, int] | None = None
+    for line in rendered.splitlines(keepends=True):
+        code_match = CODE_FENCE.match(line)
+        if code_fence is not None:
+            output.append(line)
+            if code_match and code_match.group("fence")[0] == code_fence[0] and len(code_match.group("fence")) >= code_fence[1]:
+                code_fence = None
+            continue
+        if code_match:
+            code_fence = (code_match.group("fence")[0], len(code_match.group("fence")))
+            output.append(line)
+            continue
+        heading = HEADING.match(line)
+        if heading:
+            marks = "#" * min(6, len(heading.group("marks")) + heading_offset)
+            line = (
+                f'{heading.group("indent")}{marks}{heading.group("rest")}'
+                f'{heading.group("ending") or ""}'
+            )
+        output.append(line)
+    return "".join(output)
+
+
 def build(root: Path) -> list[Path]:
     exercises = root / "exercises"
     destination = root / "_generated" / "exercises"
@@ -259,6 +302,8 @@ def build(root: Path) -> list[Path]:
         shutil.copytree(root / extension_source, extension_destination / extension_source.name)
     (destination / "_quarto.yml").write_text(PROJECT_CONFIG, encoding="utf-8", newline="")
     sources = sorted(exercises.glob("session_*.qmd"))
+    includes = destination / "includes"
+    includes.mkdir(exist_ok=True)
     expected: set[Path] = set()
     written: list[Path] = []
     for source in sources:
@@ -272,7 +317,16 @@ def build(root: Path) -> list[Path]:
                 rendered = add_solution_metadata(rendered, source.stem)
             target.write_text(rendered, encoding="utf-8", newline="")
             written.append(target)
+        include = includes / f"_{source.stem}_solution.qmd"
+        expected.add(include)
+        include.write_text(
+            solution_include(original, filename=str(source)), encoding="utf-8", newline=""
+        )
+        written.append(include)
     for stale in destination.glob("session_*_*.qmd"):
+        if stale not in expected:
+            stale.unlink()
+    for stale in includes.glob("_session_*_solution.qmd"):
         if stale not in expected:
             stale.unlink()
     return written
@@ -286,7 +340,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         written = build(args.root)
     except ExerciseSyntaxError as error:
         parser.exit(1, f"error: {error}\n")
-    print(f"Generated {len(written)} exercise variants.")
+    print(f"Generated {len(written)} exercise artifacts.")
     return 0
 
 

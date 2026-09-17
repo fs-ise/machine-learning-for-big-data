@@ -13,9 +13,15 @@ SLIDES_QMD := $(shell find $(SRC_SLIDES_DIR) -type f -name '*.qmd' 2>/dev/null)
 SLIDES_HTML := $(patsubst $(SRC_SLIDES_DIR)/%.qmd,$(SLIDES_DIR)/%.html,$(SLIDES_QMD))
 SLIDES_PDF := $(SLIDES_HTML:.html=.pdf)
 NOTE_SOURCES := $(sort $(wildcard notes/session_*.qmd))
+TEACHING_CHECKLIST := notes/teaching_checklist.qmd
 NOTES_PDF := $(OUT_DIR)/notes.pdf
 NOTES_COMBINER := scripts/combine_notes.py
 NOTES_LINEBREAK_FILTER := scripts/html_br_to_linebreak.lua
+EXERCISE_SOURCES := $(sort $(wildcard exercises/session_*.qmd))
+EXERCISE_GENERATOR_DEPS := scripts/build_exercises.py \
+	$(wildcard scripts/templates/exercise-solution-*.tex) \
+	$(shell find _extensions/needspace -type f 2>/dev/null)
+EXERCISE_STAMP := _generated/exercises/.generated.stamp
 
 
 .PHONY: \
@@ -61,7 +67,7 @@ help:
 # Site
 # ---------------------------------------------------------------------------
 
-site-fast:
+site-fast: $(EXERCISE_STAMP)
 	$(QUARTO) render --no-clean
 
 
@@ -76,8 +82,12 @@ all: site pdfs notes
 # Exercises
 # ---------------------------------------------------------------------------
 
-exercises-generate:
+exercises-generate: $(EXERCISE_STAMP)
+
+
+$(EXERCISE_STAMP): $(EXERCISE_SOURCES) $(EXERCISE_GENERATOR_DEPS)
 	$(PYTHON) scripts/build_exercises.py
+	@touch "$@"
 
 
 exercises-render: exercises-generate
@@ -129,11 +139,11 @@ pdfs: $(SLIDES_PDF)
 notes: $(NOTES_PDF)
 
 
-$(NOTES_PDF): $(NOTE_SOURCES) $(NOTES_COMBINER) $(NOTES_LINEBREAK_FILTER)
+$(NOTES_PDF): $(NOTE_SOURCES) $(TEACHING_CHECKLIST) $(NOTES_COMBINER) $(NOTES_LINEBREAK_FILTER) $(EXERCISE_STAMP)
 	@set -eu; \
 		mkdir -p "$(OUT_DIR)" _pdf-tmp; \
 		combined_qmd="_pdf-tmp/teaching-notes.qmd"; \
-		$(PYTHON) "$(NOTES_COMBINER)" --output "$$combined_qmd" $(NOTE_SOURCES); \
+		$(PYTHON) "$(NOTES_COMBINER)" --checklist "$(TEACHING_CHECKLIST)" --output "$$combined_qmd" $(NOTE_SOURCES); \
 		$(QUARTO) render "$$combined_qmd" --to pdf --output notes.pdf; \
 		mv "notes.pdf" "$(NOTES_PDF)"; \
 		rm -f "$$combined_qmd"
