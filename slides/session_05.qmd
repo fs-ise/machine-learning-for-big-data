@@ -36,6 +36,8 @@ The analytical challenge is to turn these traces into an early warning system.
 - **How satisfied are they?** complaints, support tickets, response times, NPS/satisfaction
 - **Are there warning signs?** payment delays, downgrades, cancellations of add-ons, price sensitivity
 
+
+<!--
 **Prediction goal**
 
 Predict:
@@ -43,6 +45,7 @@ Predict:
 $$P(\text{churn}=1 \mid X)$$
 
 where $X$ contains the observed customer characteristics and behaviors.
+-->
 
 :::
 
@@ -306,10 +309,6 @@ $$L(\beta) = \prod_{i=1}^n p_i^{y_i} (1 - p_i)^{1 - y_i}$$
 
 {{< iconify fluent-mdl2:insights >}}  **Intuition:** We search for the model that assigns high probability to what actually happened.
 
-::: {.learning_note .fragment}
-No need to memorize the formula. Understand the idea.
-:::
-
 ## Logistic regression in R
 
 We estimate the model using base R's `glm()` function:
@@ -320,7 +319,9 @@ We estimate the model using base R's `glm()` function:
 #| output: true
 library(tidyverse)
 library(broom)
+
 df <- tibble(response_time=c(1,2,3,5,7,8,9,11), churn=c(0,0,0,0,1,1,1,1))
+
 model <- glm(churn ~ response_time, data=df, family=binomial())
 tidy(model)
 ```
@@ -887,10 +888,11 @@ library(pROC)
 
 # the model object is the
 # fitted classifier providing predictions
-prob <- predict(model, type = "response")
+pred <- predict(model, type = "response")
 
 roc_obj <- roc(
-  df$churn, prob,
+  df$churn,       # Ground truth
+  pred,           # Prediction
   levels = c(0, 1),
   direction = "<" # Higher scores:= class 1
 )
@@ -1070,16 +1072,12 @@ $$
 Insert the expected values:
 
 $$
-p(x)\cdot 20 + (1-p(x))\cdot (-10) > -100p(x)
+30p(x) - 10 > -100p(x)
 $$
 
 . . .
 
 Simplify:
-
-$$
-20p(x) -10 +10p(x) > -100p(x)
-$$
 
 $$
 130p(x) > 10
@@ -1166,6 +1164,7 @@ $$
 - Ideally derived from expected value considerations  
 - Based on business costs, strategy, and domain knowledge  
 
+<!--
 . . .
 
 ::: {.highlight_must_learn}
@@ -1177,7 +1176,6 @@ A decision only emerges when probabilities are combined with a chosen threshold 
 this is where predictive analytics becomes prescriptive analytics.
 :::
 
-<!--
 
 ## Big conceptual takeaway
 
