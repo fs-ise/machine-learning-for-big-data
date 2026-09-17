@@ -6,7 +6,6 @@ from pathlib import Path
 import pytest
 
 from scripts.build_exercises import (
-    EXERCISE_EXTENSIONS,
     ExerciseSyntaxError,
     PROJECT_CONFIG,
     VARIANTS,
@@ -168,7 +167,33 @@ def test_solution_include_has_filtered_body_executable_chunks_and_nested_heading
     assert "Solution" in fragment
     assert "```{python}\nprint('executed')\n```" in fragment
     assert "### Part\n#### Detail" in fragment
-    assert "{{< needspace 8 >}}" in fragment
+    assert "{{< needspace 8 >}}" not in fragment
+
+
+@pytest.mark.parametrize("variant", VARIANTS)
+def test_needspace_directives_are_removed_but_code_examples_are_preserved(variant: str) -> None:
+    source = "\n".join(
+        (
+            "before",
+            "",
+            "  {{<   needspace   12   >}}  ",
+            "",
+            "{{< needspace >}}",
+            "after",
+            "`{{< needspace 4 >}}`",
+            "```qmd",
+            "{{< needspace 8 >}}",
+            "```",
+            "",
+        )
+    )
+    rendered = sanitize(source, variant)
+
+    assert "\n\n\nafter" not in rendered
+    assert "{{<   needspace   12   >}}" not in rendered
+    assert "\n{{< needspace >}}\n" not in rendered
+    assert "`{{< needspace 4 >}}`" in rendered
+    assert "```qmd\n{{< needspace 8 >}}\n```" in rendered
 
 
 @pytest.mark.parametrize("variant", VARIANTS)
@@ -231,22 +256,25 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     template.mkdir(parents=True)
     template.joinpath("exercise-solution-before-body.tex").write_text("shared template")
     template.joinpath("exercise-solution-preamble.tex").write_text("shared preamble")
-    extension = tmp_path / EXERCISE_EXTENSIONS[0]
-    extension.mkdir(parents=True)
-    extension.joinpath("_extension.yml").write_text("title: test")
     data = exercises / "data"
     data.mkdir()
     fixture = data / "market_data_log.csv"
     fixture.write_text("price\n42\n", encoding="utf-8")
     canonical = exercises / "session_01.qmd"
-    canonical.write_text(SOURCE, encoding="utf-8")
+    canonical.write_text(
+        SOURCE
+        + "\n{{< needspace 8 >}}\n"
+        + "`{{< needspace 3 >}}`\n"
+        + "```qmd\n{{< needspace >}}\n```\n",
+        encoding="utf-8",
+    )
     original = canonical.read_bytes()
     build(tmp_path)
     generated = tmp_path / "_generated/exercises"
     assert (generated / "_quarto.yml").read_text(encoding="utf-8") == PROJECT_CONFIG
     assert (generated / "solution-pdf/before-body.tex").read_text() == "shared template"
     assert (generated / "solution-pdf/preamble.tex").read_text() == "shared preamble"
-    assert (generated / "_extensions/needspace/_extension.yml").read_text() == "title: test"
+    assert not (generated / "_extensions").exists()
     assert "output-dir: _rendered" in PROJECT_CONFIG
     assignment = (generated / "session_01_assign.qmd").read_text(encoding="utf-8")
     solution = (generated / "session_01_solution.qmd").read_text(encoding="utf-8")
@@ -262,6 +290,10 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     assert not include.startswith("---")
     assert "Directions" not in include
     assert "Solution" in include
+    for artifact in (assignment, solution, include):
+        assert "\n{{< needspace 8 >}}\n" not in artifact
+        assert "`{{< needspace 3 >}}`" in artifact
+        assert "```qmd\n{{< needspace >}}\n```" in artifact
     assert (generated / "data/market_data_log.csv").read_bytes() == fixture.read_bytes()
     first = {
         path.relative_to(generated): path.read_bytes()
@@ -299,7 +331,7 @@ def test_every_canonical_exercise_gets_an_include_and_session_5_notes_use_it(tmp
     }
     assert include_stems == canonical_stems
     notes = (root / "notes/session_05.qmd").read_text(encoding="utf-8")
-    assert "{{< include /_generated/exercises/includes/_session_05_solution.qmd >}}" in notes
+    assert "{{< include ../_generated/exercises/includes/_session_05_solution.qmd >}}" in notes
     session_5_include = (root / "_generated/exercises/includes/_session_05_solution.qmd").read_text()
     for prerequisite in ("library(tidyverse)", "library(pROC)", "df <- read_csv("):
         assert prerequisite in session_5_include
@@ -312,7 +344,6 @@ def test_make_build_publishes_rendered_variants_and_data(tmp_path: Path) -> None
     (tmp_path / "scripts/templates").mkdir()
     (tmp_path / "exercises").mkdir()
     (tmp_path / "exercises/data").mkdir()
-    shutil.copytree(root / "_extensions/needspace", tmp_path / "_extensions/needspace")
     shutil.copy(root / "Makefile", tmp_path / "Makefile")
     shutil.copy(root / "_quarto.yml", tmp_path / "_quarto.yml")
     shutil.copy(root / "scripts/build_exercises.py", tmp_path / "scripts/build_exercises.py")
@@ -417,7 +448,6 @@ def test_real_quarto_project_render_smoke(tmp_path: Path) -> None:
     (tmp_path / "scripts/templates").mkdir()
     (tmp_path / "exercises").mkdir()
     (tmp_path / "exercises/data").mkdir()
-    shutil.copytree(root / "_extensions/needspace", tmp_path / "_extensions/needspace")
     shutil.copy(root / "Makefile", tmp_path / "Makefile")
     shutil.copy(root / "scripts/build_exercises.py", tmp_path / "scripts/build_exercises.py")
     shutil.copy(

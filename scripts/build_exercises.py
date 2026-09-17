@@ -51,7 +51,6 @@ SOLUTION_TEMPLATES = (
     Path("scripts/templates/exercise-solution-preamble.tex"),
     Path("scripts/templates/exercise-solution-before-body.tex"),
 )
-EXERCISE_EXTENSIONS = (Path("_extensions/needspace"),)
 FRONT_MATTER = re.compile(r"\A---[ \t]*\r?\n(?P<body>.*?)^---[ \t]*$", re.MULTILINE | re.DOTALL)
 TITLE = re.compile(r'^title:[ \t]*(?P<title>.+?)[ \t]*$', re.MULTILINE)
 HEADING = re.compile(
@@ -62,6 +61,9 @@ DIV_OPEN = re.compile(r"^(?P<indent>[ \t]*)(?P<fence>:{3,})[ \t]*(?P<attrs>(?!:)
 DIV_CLOSE = re.compile(r"^[ \t]*:{3,}[ \t]*(?:\r?\n)?$")
 CODE_FENCE = re.compile(r"^[ \t]*(?P<fence>`{3,}|~{3,})")
 CLASS = re.compile(r"\.([A-Za-z_][\w-]*)")
+NEEDSPACE = re.compile(
+    r"^[ \t]*\{\{<[ \t]*needspace(?:[ \t]+\d+)?[ \t]*>\}\}[ \t]*(?:\r?\n)?$"
+)
 
 
 class ExerciseSyntaxError(ValueError):
@@ -138,6 +140,7 @@ def sanitize(source: str, variant: Variant, *, filename: str = "<input>") -> str
     output: list[str] = []
     divs: list[Div] = []
     code_fence: tuple[str, int] | None = None
+    removed_needspace = False
 
     for line_number, line in enumerate(source.splitlines(keepends=True), 1):
         code_match = CODE_FENCE.match(line)
@@ -186,6 +189,13 @@ def sanitize(source: str, variant: Variant, *, filename: str = "<input>") -> str
             continue
 
         if all(frame.semantic is None or _wanted(frame.semantic, variant) for frame in divs):
+            if NEEDSPACE.match(line):
+                removed_needspace = True
+                continue
+            if removed_needspace:
+                removed_needspace = False
+                if not line.strip() and output and not output[-1].strip():
+                    continue
             output.append(line)
 
     semantic_frames = [frame for frame in divs if frame.semantic is not None]
@@ -296,10 +306,7 @@ def build(root: Path) -> list[Path]:
     for template_source in SOLUTION_TEMPLATES:
         destination_name = template_source.name.removeprefix("exercise-solution-")
         shutil.copy2(root / template_source, template_destination / destination_name)
-    extension_destination = destination / "_extensions"
-    shutil.rmtree(extension_destination, ignore_errors=True)
-    for extension_source in EXERCISE_EXTENSIONS:
-        shutil.copytree(root / extension_source, extension_destination / extension_source.name)
+    shutil.rmtree(destination / "_extensions", ignore_errors=True)
     (destination / "_quarto.yml").write_text(PROJECT_CONFIG, encoding="utf-8", newline="")
     sources = sorted(exercises.glob("session_*.qmd"))
     includes = destination / "includes"
