@@ -133,7 +133,7 @@ plt.show()
 | Terabyte (TB) | 1,000 GB | Storage of a modern laptop or external drive |
 | Petabyte (PB) | 1,000 TB | Data of a large company or several large data centers |
 | Exabyte (EB) | 1,000 PB | Roughly the yearly internet traffic of a small country |
-| Zettabyte (ZB) | 1,000 EB | ≈ 1 trillion gigabytes; global data creation scale |
+| Zettabyte (ZB) | 1,000 EB | $\approx 1$ trillion gigabytes; global data creation scale |
 
 :::
 
@@ -259,7 +259,7 @@ Can fraud be detected **before** the transaction is approved?
 **Key data facts**
 
 - Up to **83,000 transactions / second**
-- ≈ **7.17B decisions / day** at peak capacity
+- $\approx$ **7.17B decisions / day** at peak capacity
 - 500+ data points per transaction
 - Fraud is rare, but losses are massive
 - Visa reported **$40B+ fraud blocked in 2023**
@@ -292,7 +292,7 @@ The competitive implication is trust. Payment networks compete partly on reliabi
 References for data and claims:
 
 - Visa reports infrastructure capacity of up to 83,000 transactions per second.
-- 83,000 × 86,400 seconds per day = 7,171,200,000 theoretical peak transaction decisions per day.
+- $83{,}000 \times 86{,}400 = 7{,}171{,}200{,}000$ theoretical peak transaction decisions per day.
 - Visa describes using 500+ data points in fraud detection and reported blocking over $40 billion in fraud in 2023.
 - ECB/EBA payment fraud reports can be used to illustrate that fraud rates are small as a percentage of transaction value but still correspond to billions in absolute losses.
 - Useful source search terms: "Visa 83,000 transactions per second", "Visa 500 data points fraud", "Visa blocked 40 billion fraud 2023", "ECB EBA payment fraud 2024 0.002 percent".

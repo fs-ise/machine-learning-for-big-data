@@ -410,7 +410,7 @@ where $p_i$ is the **relative frequency** of observations in node $t$ that belon
 
 **Attribute: Wind**
 
-- **light**: 6 × yes, 2 × no
+- **light**: 6 $\times$ yes, 2 $\times$ no
 
 $$
 \text{entropy}(\text{light}) =
@@ -422,7 +422,7 @@ $$
 = 0.811
 $$
 
-- **strong**: 3 × yes, 3 × no
+- **strong**: 3 $\times$ yes, 3 $\times$ no
 
 $$
 \text{entropy}(\text{strong}) =
@@ -573,7 +573,7 @@ In extreme cases there exists n-1 possibilities.
 
 **Test the splitting point $\text{temperature} = 71.5$:**
 
-- $\text{temperature} < 71.5$: 4 × yes, 2 × no
+- $\text{temperature} < 71.5$: 4 $\times$ yes, 2 $\times$ no
 
 $$
 \text{Entropy}(< 71.5) =
@@ -585,7 +585,7 @@ $$
 = 0.918
 $$
 
-- $\text{temperature} > 71.5$: 5 × yes, 3 × no
+- $\text{temperature} > 71.5$: 5 $\times$ yes, 3 $\times$ no
 
 $$
 \text{Entropy}(> 71.5) =

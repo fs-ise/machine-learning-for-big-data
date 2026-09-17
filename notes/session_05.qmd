@@ -105,7 +105,7 @@ Use the linear-regression comparison to surface modeling tensions before introdu
 
 We use the **score approach**, where the score is: $p(x)=P(Y=1\mid x)$
 
-→ **Interpretable probability** + threshold ⇒ classification
+→ **Interpretable probability** + threshold $\Rightarrow$ classification
 
 Emphasize the distinction between probability estimation and the threshold-based classification decision.
 

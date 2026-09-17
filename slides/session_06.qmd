@@ -661,7 +661,7 @@ linear models → feature engineering critical
 
 **3. Feature combination**
 
-- Create interaction features (e.g., `school_score` = `num_schools` × `median_school`
+- Create interaction features (e.g., `school_score` = `num_schools` $\times$ `median_school`
   with `num_schools` = number of schools within 5 miles of a property and
   median_school = median quality score of those schools)
 - Combine categories (e.g., when there are very few observations or too many dummy features)

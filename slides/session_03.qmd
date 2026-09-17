@@ -205,7 +205,7 @@ prop.table(
 - It consists of
   - Median (thick line)
   - 25% / 75% percentiles
-  - “Whiskers”: the quartiles ± 1.5 × IQR
+  - “Whiskers”: the quartiles $\pm 1.5 \times \mathrm{IQR}$
   - Outliers that are higher/lower than the whiskers
 
 :::
@@ -1045,7 +1045,7 @@ Timing: ~3 minutes.
 
 Key warning:
 
-Clusters ≠ truth.
+Clusters $\neq$ truth.
 They are hypotheses about structure in the data.
 :::
 
@@ -1093,7 +1093,7 @@ Clustering often produces **insights that guide later modeling**.
 
 - **Analyze relationships**
   - multivariate patterns (correlation, scatterplots)
-  - ⚠ correlation ≠ causation
+  - ⚠ correlation $\neq$ causation
 
 - **Identify structure**
   - segmentation (elbow method/silhouette score)

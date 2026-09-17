@@ -385,7 +385,7 @@ For simplicity, predictions are evaluated on the same observations used for esti
 ## Task 3.1 — Create and interpret the matrix
 
 ::: {.direction}
-Create a labeled 2 × 2 table. Rows should be actual outcomes and columns predicted outcomes.
+Create a labeled $2 \times 2$ table. Rows should be actual outcomes and columns predicted outcomes.
 
 ```{r}
 #| label: task-3-1-create-and-interpret-the-matrix-student-response

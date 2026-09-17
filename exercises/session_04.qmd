@@ -232,7 +232,7 @@ Use the same `model` from Part A.
 # YOUR CODE HERE
 ```
 
-In the summary, locate the coefficient estimates, standard errors, t-statistics, p-values, residual standard error, R², adjusted R², and overall F-test.
+In the summary, locate the coefficient estimates, standard errors, t-statistics, p-values, residual standard error, $R^2$, adjusted $R^2$, and overall F-test.
 :::
 
 :::{.sol}
@@ -264,10 +264,10 @@ All included predictors except `remote_share` are statistically significant at t
 The estimate is about **-0.936**, its t-statistic is about **-0.76**, and its p-value is about **0.449**. Its 95% confidence interval is approximately **\[-3.36, 1.49\]**, which includes zero. Thus, the pooled data do not provide strong evidence that the association differs from zero.
 :::
 
-3. What do R² and adjusted R² tell you?
+3. What do $R^2$ and adjusted $R^2$ tell you?
 
 ::: {.sol}
-R² is approximately **0.816**, so the model explains about 81.6% of the observed variation in performance. Adjusted R² is approximately **0.814** and accounts for the number of predictors. Strong model fit does not prove that the specification is correct or that its associations are causal.
+$R^2$ is approximately **0.816**, so the model explains about 81.6% of the observed variation in performance. Adjusted $R^2$ is approximately **0.814** and accounts for the number of predictors. Strong model fit does not prove that the specification is correct or that its associations are causal.
 :::
 
 4. How do statistical significance and practical relevance differ here?
@@ -424,7 +424,7 @@ Yes. Most predictors remain positively associated with performance, but magnitud
 2. Is `remote_share` associated with performance in the same way in every department?
 
 ::: {.sol}
-No. Its coefficient is approximately **-6.41** in HR (p ≈ 0.027), **4.07** in IT (p ≈ 0.043), and **-2.92** in Sales (p ≈ 0.114). Thus it is negative and statistically significant in HR, positive and statistically significant in IT, and negative but not statistically significant in Sales. These are subgroup associations, not causal effects.
+No. Its coefficient is approximately **-6.41** in HR ($p \approx 0.027$), **4.07** in IT ($p \approx 0.043$), and **-2.92** in Sales ($p \approx 0.114$). Thus it is negative and statistically significant in HR, positive and statistically significant in IT, and negative but not statistically significant in Sales. These are subgroup associations, not causal effects.
 :::
 
 3. Does `manager_quality` seem equally important in all departments?

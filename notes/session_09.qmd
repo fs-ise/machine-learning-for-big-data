@@ -43,7 +43,7 @@ An MLP's dense connections are a natural starting point for fixed-length feature
 
 ### CNNs, images, and video
 
-Use the moving-filter diagram to explain local receptive fields and weight sharing. A 28×28 grayscale image with 32 filters can produce 28×28×32 activations; this illustrates feature maps rather than independent input variables.
+Use the moving-filter diagram to explain local receptive fields and weight sharing. A $28 \times 28$ grayscale image with 32 filters can produce $28 \times 28 \times 32$ activations; this illustrates feature maps rather than independent input variables.
 
 For video, ask students to identify two structures: spatial relationships inside frames and temporal relationships between frames. A CNN can extract frame features, followed by recurrence or attention over time. Avoid requiring students to memorize Inception-ResNet-v2; the architecture figure only shows how complex combinations of layers can become.
 

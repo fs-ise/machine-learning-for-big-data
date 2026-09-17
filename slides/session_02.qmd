@@ -715,10 +715,10 @@ Due to the different mathematical properties, not all statistical measures can b
 
 | Scale    | Mathematical operations possible                     | Mode | Frequency | Percentiles / Median | Mean / Variance / SD |
 |----------|----------------------------------------------------|------|-----------|----------------------|----------------------|
-| Nominal  | =, ≠                                               | X    | X         |                      |                      |
-| Ordinal  | =, ≠, <, >                                         | X    | X         | X                    |                      |
-| Interval | =, ≠, <, >, linear transformation                  | X    | (X)       | X                    | X                    |
-| Ratio    | =, ≠, <, >, *, /, +, −                             | X    | (X)       | X                    | X                    |
+| Nominal  | $=, \neq$                                         | X    | X         |                      |                      |
+| Ordinal  | $=, \neq, <, >$                                   | X    | X         | X                    |                      |
+| Interval | $=, \neq, <, >$, linear transformation             | X    | (X)       | X                    | X                    |
+| Ratio    | $=, \neq, <, >, \times, /, +, -$                  | X    | (X)       | X                    | X                    |
 
 <br>
 
@@ -1027,7 +1027,7 @@ Often, the way data is **stored** determines which mathematical operations are p
 
 If treated as a **string**, we can only perform operations such as:
 
-- equality checks (`=` / `≠`)
+- equality checks ($=$ / $\neq$)
 - simple filtering or sorting
 
 This **severely limits analysis**.
