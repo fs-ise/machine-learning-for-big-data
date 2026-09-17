@@ -340,19 +340,26 @@ threshold_risky <- quantile(
 
 risky_20 <- y_prob >= threshold_risky
 
-threshold_safe <- quantile(
-  y_prob,
-  probs = 0.20
-)
-
-safe_20 <- y_prob <= threshold_safe
-
 risky_customers <- df_ec_urban |>
   mutate(
     predicted_default_probability = y_prob,
     risky_20 = risky_20
   ) |>
   filter(risky_20)
+
+threshold_risky
+risky_customers |> slice_head(n = 5)
+```
+
+```{r}
+#| label: solution-threshold-safe
+
+threshold_safe <- quantile(
+  y_prob,
+  probs = 0.20
+)
+
+safe_20 <- y_prob <= threshold_safe
 
 safe_customers <- df_ec_urban |>
   mutate(
@@ -361,9 +368,7 @@ safe_customers <- df_ec_urban |>
   ) |>
   filter(safe_20)
 
-threshold_risky
 threshold_safe
-risky_customers |> slice_head(n = 5)
 safe_customers |> slice_head(n = 5)
 ```
 
@@ -429,7 +434,7 @@ A false positive is a customer predicted to default who does not; this could mea
 
 {{< needspace 5 >}}
 
-### Task 3.2 — Compute key metrics
+### Task 3.2 — Compute evaluation metrics
 
 ::: {.direction}
 Compute and interpret accuracy, precision, and recall. Recall is also called sensitivity or the true-positive rate.
@@ -569,11 +574,11 @@ AUC is not a complete measure of business utility and does not determine the ope
 ROC/AUC evaluates ranking performance across thresholds and supports model comparison before selecting a cutoff. The eventual threshold must still reflect the unequal business costs of false positives and false negatives.
 :::
 
+{{< needspace 12 >}}
+
 # Part 5 — Compare early-career urban borrowers and platform workers
 
 Repeat the same model specification for platform workers, then compare coefficients and discrimination.
-
-{{< needspace 12 >}}
 
 ### Task 5.1 — Fit the second model
 
