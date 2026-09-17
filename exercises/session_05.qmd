@@ -19,8 +19,6 @@ In this exercise, we cover:
 | Wrap-up | Reflection | 5 min |
 | **Overall** | | **60 min** |
 
-Work directly in this Quarto (`.qmd`) exercise using R in RStudio, Positron, or VS Code.
-
 # Case: Rising defaults at LendWise
 
 You are a business analyst working for LendWise, a fintech company that offers fast digital consumer loans.
@@ -36,20 +34,11 @@ You first focus on early-career urban borrowers and build a logistic regression 
 LendWise is interested in questions such as:
 
 - Which factors are associated with a higher probability of default in early-career urban borrowers?
-
-**Your answer:** *Write your answer here.*
-
 - How can predicted probabilities be translated into default/non-default classifications?
-
-**Your answer:** *Write your answer here.*
-
 - How well does the model perform, and how informative are the ROC curve and AUC?
+- Does the model perform equally well across customer categories?
 
-**Your answer:** *Write your answer here.*
-
-- Does a model work equally well across customer categories?
-
-**Your answer:** *Write your answer here.*
+**Reflection:** Think about how you would answer these questions based on your analysis.
 
 ## Data description
 
@@ -129,6 +118,8 @@ glimpse(df_ec_urban)
 ```
 :::
 
+{{< needspace 15 >}}
+
 ### Task 1.2 — Estimate the model
 
 Estimate a logistic regression model for credit default.
@@ -163,7 +154,6 @@ model <- glm(
   family = binomial
 )
 
-coef(model)
 summary(model)
 ```
 
@@ -538,7 +528,6 @@ ggplot(
 auc_ec
 ```
 
-The AUC is approximately **0.801**.
 :::
 
 ### Task 4.1 — Understanding ROC
