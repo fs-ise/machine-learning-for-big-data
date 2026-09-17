@@ -1,5 +1,10 @@
 ---
 title: "{{< meta course.title >}}"
+format:
+  html:
+    include-in-header:
+      - text: |
+          <script src="assets/session-status.js" defer></script>
 ---
 
 ![Course Status](https://img.shields.io/badge/Current%20course--{{< meta course.semester >}}-green)

@@ -41,6 +41,11 @@ class SessionOverviewTest(unittest.TestCase):
 
         self.assertIn('[Session 1: Big Data](slides/session_01.html) <span class="event-badge event-badge-lecture">Lecture</span>', table)
         self.assertIn('| Status | Title | Date | Time | Location | Materials |', table)
+        self.assertIn(
+            '<span class="session-status status-upcoming" '
+            'data-date="2027-01-03">⚪ Upcoming</span>',
+            table,
+        )
         self.assertIn('| 10:00–11:30 | Room 1 |', table)
         self.assertNotIn('Room capacity', table)
 

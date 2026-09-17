@@ -195,12 +195,25 @@ def markdown_table(
     ]
 
     for event in load_events(root):
-        status, _ = session_status(event, today)
+        status, status_class = session_status(event, today)
 
         date_text = str(
             event.get("date")
             or event.get("start_date")
             or "TBD"
+        )
+        date_value = event.get("date") or event.get("start_date")
+        if isinstance(date_value, datetime):
+            data_date = date_value.date().isoformat()
+        elif isinstance(date_value, date):
+            data_date = date_value.isoformat()
+        elif date_value:
+            data_date = datetime.fromisoformat(str(date_value)).date().isoformat()
+        else:
+            data_date = ""
+        status_html = (
+            f'<span class="session-status {status_class}" '
+            f'data-date="{data_date}">{status}</span>'
         )
 
         time_text = (
@@ -219,7 +232,7 @@ def markdown_table(
         materials = material_links(event)
 
         rows.append(
-            f"| {status} | {event_title(event, root)} | {date_text} | "
+            f"| {status_html} | {event_title(event, root)} | {date_text} | "
             f"{time_text} | {location} | {materials} |"
         )
 
