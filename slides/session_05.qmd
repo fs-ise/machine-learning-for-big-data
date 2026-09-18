@@ -959,7 +959,9 @@ function roc(actual, scores, levels, direction):
 
     for threshold in thresholds(scores):
 
-        # direction determines predicted positives
+        # direction specifies the ordering of ground-truth scores
+        # "<": negatives have lower scores than positives
+        # ">": negatives have higher scores than positives
         if direction == "<":
             predicted = scores >= threshold
         else:
