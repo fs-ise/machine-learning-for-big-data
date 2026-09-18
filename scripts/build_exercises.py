@@ -89,6 +89,40 @@ class ExerciseSyntaxError(ValueError):
     """Raised when a semantic fenced Div cannot be parsed safely."""
 
 
+def write_if_changed(path: Path, content: str | bytes) -> bool:
+    """Write *content* only when its bytes differ, preserving stable mtimes."""
+    data = content.encode("utf-8") if isinstance(content, str) else content
+    if path.is_file() and path.read_bytes() == data:
+        return False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
+    return True
+
+
+def copy_if_changed(source: Path, destination: Path) -> bool:
+    """Copy one file without touching an identical destination."""
+    return write_if_changed(destination, source.read_bytes())
+
+
+def sync_tree(source: Path, destination: Path) -> None:
+    """Synchronize a generated resource tree without rewriting equal files."""
+    expected: set[Path] = set()
+    if source.is_dir():
+        for source_file in sorted(path for path in source.rglob("*") if path.is_file()):
+            relative = source_file.relative_to(source)
+            expected.add(relative)
+            copy_if_changed(source_file, destination / relative)
+    if destination.is_dir():
+        for old_file in sorted(path for path in destination.rglob("*") if path.is_file()):
+            if old_file.relative_to(destination) not in expected:
+                old_file.unlink()
+        for directory in sorted(
+            (path for path in destination.rglob("*") if path.is_dir()), reverse=True
+        ):
+            if not any(directory.iterdir()):
+                directory.rmdir()
+
+
 @dataclass(frozen=True)
 class Div:
     line: int
@@ -408,19 +442,16 @@ def build(root: Path) -> list[Path]:
     destination = root / "_generated" / "exercises"
     destination.mkdir(parents=True, exist_ok=True)
     generated_data = destination / "data"
-    shutil.rmtree(generated_data, ignore_errors=True)
     source_data = exercises / "data"
-    if source_data.is_dir():
-        shutil.copytree(source_data, generated_data)
+    sync_tree(source_data, generated_data)
     template_destination = destination / "solution-pdf"
     template_destination.mkdir(exist_ok=True)
     for template_source in SOLUTION_TEMPLATES:
         destination_name = template_source.name.removeprefix("exercise-solution-")
-        shutil.copy2(root / template_source, template_destination / destination_name)
+        copy_if_changed(root / template_source, template_destination / destination_name)
     extensions = destination / "_extensions"
-    shutil.rmtree(extensions, ignore_errors=True)
-    shutil.copytree(root / "_extensions" / "needspace", extensions / "needspace")
-    (destination / "_quarto.yml").write_text(PROJECT_CONFIG, encoding="utf-8", newline="")
+    sync_tree(root / "_extensions" / "needspace", extensions / "needspace")
+    write_if_changed(destination / "_quarto.yml", PROJECT_CONFIG)
     sources = sorted(exercises.glob("session_*.qmd"))
     includes = destination / "includes"
     includes.mkdir(exist_ok=True)
@@ -435,7 +466,7 @@ def build(root: Path) -> list[Path]:
             rendered = sanitize(original, variant, filename=str(source))
             if variant == "solution":
                 rendered = add_solution_metadata(rendered, source.stem)
-            target.write_text(rendered, encoding="utf-8", newline="")
+            write_if_changed(target, rendered)
             written.append(target)
         # Keep pagination markup in a render-only source.  The public variants
         # above deliberately remain free of layout instructions.
@@ -447,15 +478,11 @@ def build(root: Path) -> list[Path]:
             filename=str(source),
             preserve_needspace=True,
         )
-        pdf_target.write_text(
-            add_solution_metadata(pdf_rendered, source.stem), encoding="utf-8", newline=""
-        )
+        write_if_changed(pdf_target, add_solution_metadata(pdf_rendered, source.stem))
         written.append(pdf_target)
         include = includes / f"_{source.stem}_solution.qmd"
         expected.add(include)
-        include.write_text(
-            solution_include(original, filename=str(source)), encoding="utf-8", newline=""
-        )
+        write_if_changed(include, solution_include(original, filename=str(source)))
         written.append(include)
     for stale in destination.glob("session_*_*.qmd"):
         if stale not in expected:
@@ -466,6 +493,24 @@ def build(root: Path) -> list[Path]:
     for stale in includes.glob("_session_*_solution.qmd"):
         if stale not in expected:
             stale.unlink()
+    # Generated render products and published files for removed exercises must
+    # not survive merely because the corresponding Make target disappeared.
+    stems = {source.stem for source in sources}
+    for directory in (destination / "_rendered", root / "_site" / "exercises"):
+        if not directory.is_dir():
+            continue
+        for artifact in directory.glob("session_*"):
+            match = re.match(r"^(session_\d+(?:_[a-z]+)?)_(?:assign|solution)", artifact.name)
+            if match and match.group(1) not in stems:
+                if artifact.is_dir():
+                    shutil.rmtree(artifact)
+                else:
+                    artifact.unlink()
+        for html in directory.glob("session_*.html"):
+            html.unlink()
+        for internal_pdf in directory.glob("pdf_session_*_solution.pdf"):
+            internal_pdf.unlink()
+    sync_tree(source_data, root / "_site" / "exercises" / "data")
     return written
 
 

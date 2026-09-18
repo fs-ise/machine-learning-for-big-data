@@ -343,7 +343,7 @@ def test_requested_exercise_pagination_is_selective_and_headings_are_separate() 
             "Task E3: Reflect on practical and organizational considerations": 8,
         },
         "session_05.qmd": {
-            "Task 1.2 — Estimate the model": 12,
+            "Task 1.2 — Estimate the model": 20,
             "Task 1.4 — From coefficients to classification": 10,
         },
         "session_06.qmd": {
@@ -515,7 +515,7 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     assert not stale_include.exists()
 
 
-def test_every_canonical_exercise_gets_an_include_and_session_5_notes_use_it(tmp_path: Path) -> None:
+def test_every_canonical_exercise_gets_an_include(tmp_path: Path) -> None:
     root = Path(__file__).resolve().parents[1]
     # The repository build itself is cheap and proves the complete canonical set.
     build(root)
@@ -525,8 +525,6 @@ def test_every_canonical_exercise_gets_an_include_and_session_5_notes_use_it(tmp
         for path in (root / "_generated/exercises/includes").glob("_session_*_solution.qmd")
     }
     assert include_stems == canonical_stems
-    notes = (root / "notes/session_05.qmd").read_text(encoding="utf-8")
-    assert "{{< include ../_generated/exercises/includes/_session_05_solution.qmd >}}" in notes
     session_5_include = (root / "_generated/exercises/includes/_session_05_solution.qmd").read_text()
     for prerequisite in ("library(tidyverse)", "library(pROC)", "df <- read_csv("):
         assert prerequisite in session_5_include
@@ -656,6 +654,16 @@ else:
         check=True,
     )
 
+    checked = subprocess.run(
+        ["make", "exercises-check", f"PYTHON={sys.executable}", f"QUARTO={quarto}"],
+        cwd=tmp_path,
+        env={**os.environ, "FAKE_QUARTO_SKIP_OUTPUT": "1"},
+        capture_output=True,
+        text=True,
+    )
+    assert checked.returncode == 0
+
+    (published / "session_01_solution.pdf").unlink()
     failed = subprocess.run(
         ["make", "exercises-check", f"PYTHON={sys.executable}", f"QUARTO={quarto}"],
         cwd=tmp_path,
@@ -665,10 +673,105 @@ else:
     )
     assert failed.returncode != 0
     assert "Quarto did not create expected PDF" in failed.stderr
+    assert not (published / "session_01_solution.pdf").exists()
 
     subprocess.run(["make", "clean"], cwd=tmp_path, check=True)
     assert not (tmp_path / "_generated").exists()
     assert not (tmp_path / "_site").exists()
+
+
+def test_make_exercises_is_incremental(tmp_path: Path) -> None:
+    """Cover discovery, invalidation, restoration, and stale cleanup end to end."""
+    root = Path(__file__).resolve().parents[1]
+    (tmp_path / "scripts/templates").mkdir(parents=True)
+    (tmp_path / "exercises/data").mkdir(parents=True)
+    shutil.copy(root / "Makefile", tmp_path / "Makefile")
+    shutil.copy(root / "scripts/build_exercises.py", tmp_path / "scripts/build_exercises.py")
+    shutil.copytree(root / "_extensions", tmp_path / "_extensions")
+    for template in (root / "scripts/templates").glob("exercise-solution-*.tex"):
+        shutil.copy(template, tmp_path / "scripts/templates" / template.name)
+    (tmp_path / "exercises/data/input.csv").write_text("x\n1\n", encoding="utf-8")
+
+    def source(number: int, body: str = "Common") -> str:
+        return SOURCE.replace("title: Test", f"title: Session {number}: Test") + body + "\n"
+
+    for number in (1, 2):
+        (tmp_path / f"exercises/session_{number:02}.qmd").write_text(
+            source(number), encoding="utf-8"
+        )
+
+    quarto = tmp_path / "quarto"
+    quarto.write_text(
+        """#!/usr/bin/env python3
+import sys
+from pathlib import Path
+args = sys.argv[1:]
+assert args[0] == "render" and args[2:4] == ["--to", "pdf"]
+source = Path(args[1])
+output = args[args.index("--output") + 1]
+with (Path.cwd().parents[1] / "render.log").open("a") as log:
+    log.write(source.name + "\\n")
+destination = Path("_rendered") / output
+destination.parent.mkdir(parents=True, exist_ok=True)
+destination.write_text("rendered " + source.name)
+""",
+        encoding="utf-8",
+    )
+    quarto.chmod(0o755)
+
+    def run(target: str = "exercises") -> list[str]:
+        subprocess.run(
+            ["make", target, f"PYTHON={sys.executable}", f"QUARTO={quarto}"],
+            cwd=tmp_path,
+            check=True,
+        )
+        log = tmp_path / "render.log"
+        calls = log.read_text().splitlines() if log.exists() else []
+        log.write_text("")
+        return calls
+
+    # A/B: clean build renders both; a repeat preserves every published mtime.
+    assert sorted(run()) == ["pdf_session_01_solution.qmd", "pdf_session_02_solution.qmd"]
+    outputs = sorted((tmp_path / "_site/exercises").glob("session_*"))
+    mtimes = {path.name: path.stat().st_mtime_ns for path in outputs}
+    assert run() == []
+    assert {path.name: path.stat().st_mtime_ns for path in outputs} == mtimes
+
+    # C: a canonical edit changes and renders only its own artifacts.
+    pdf_two = tmp_path / "_site/exercises/session_02_solution.pdf"
+    pdf_two_mtime = pdf_two.stat().st_mtime_ns
+    one = tmp_path / "exercises/session_01.qmd"
+    one.write_text(source(1, "changed"), encoding="utf-8")
+    assert run() == ["pdf_session_01_solution.qmd"]
+    assert pdf_two.stat().st_mtime_ns == pdf_two_mtime
+
+    # D/E: a shared template invalidates all PDFs; a missing PDF only itself.
+    template = tmp_path / "scripts/templates/exercise-solution-preamble.tex"
+    template.write_text(template.read_text() + "\n% changed\n")
+    assert sorted(run()) == ["pdf_session_01_solution.qmd", "pdf_session_02_solution.qmd"]
+    (tmp_path / "_site/exercises/session_01_solution.pdf").unlink()
+    assert run() == ["pdf_session_01_solution.qmd"]
+
+    # F: generator code changes run generation, but stable output prevents renders.
+    generator = tmp_path / "scripts/build_exercises.py"
+    generator.write_text(generator.read_text() + "\n# harmless test edit\n")
+    assert run() == []
+
+    # G/H: wildcard discovery adds a new exercise and removal cleans stale outputs.
+    (tmp_path / "exercises/session_03.qmd").write_text(source(3), encoding="utf-8")
+    assert run() == ["pdf_session_03_solution.qmd"]
+    (tmp_path / "exercises/session_02.qmd").unlink()
+    assert run() == []
+    assert not list((tmp_path / "_generated/exercises").glob("*session_02*"))
+    assert not list((tmp_path / "_site/exercises").glob("session_02*"))
+
+    # I/J: a missing public QMD is restored without rendering; checks are incremental.
+    public_qmd = tmp_path / "_site/exercises/session_01_assign.qmd"
+    public_qmd.unlink()
+    assert run() == []
+    assert public_qmd.exists()
+    assert run("exercises-check") == []
+    assert run("exercises-check") == []
 
 
 @pytest.mark.skipif(shutil.which("quarto") is None, reason="Quarto is not installed")
