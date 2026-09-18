@@ -117,7 +117,7 @@ Also: AI vs ML vs deep learning (see https://www.youtube.com/watch?v=chfwJiXvBMA
 
 . . .
 
-**Note**: Our focus will be primarily on supervised machine learning:
+Our focus will be on supervised machine learning:
 
 $$\underbrace{\text{Dataset}}_\text{Features, Targets} + \underbrace{\text{Learning Algorithm}}_\text{Model Class + Objective + Optimizer } \to \text{Predictive Model}$$
 
@@ -169,14 +169,14 @@ TODO: note: our focus will be on machine learning. in the big-data section, we w
 
 ![](../images/slides_117.png){fig-align=center}
 
-## Over- and underfitting
+## Powerful machine learning models increase the risk of overfitting
+
+<br><br>
 
 ![](../images/slides_131.png){fig-align=center}
 
-Due to the problem of overfitting, the main goal is to maximize the prediction quality and not to fit the data that is used for the model estimation as well as possible.
-This is equivalent to minimizing the risk that the model will have weak predictive ability.
-
 <!--
+To avoid overfitting, the goal is not to fit the training data as closely as possible, but to maximize predictive performance on unseen data (generalization).
 
     ## Creation and Use of Models
 
@@ -187,7 +187,7 @@ This is equivalent to minimizing the risk that the model will have weak predicti
 ## Best fit vs. best generalization
 
 ::: {.highlight_must_learn}
-![](../images/slides_129.png){fig-align=center}
+![](../images/best_fit_vs_generalization.png){fig-align=center width="70%"}
 :::
 
 ## The bias-variance tradeoff
@@ -201,11 +201,13 @@ The prediction error is influenced by three components:
 
 **Error = Bias + Variance + Noise**
 
-- Bias is the inability of the used method to learn the relevant relations between the inputs and the outputs.
-  It reflects the method quality, e.g. if a method only produces linear models.
-- Variance represents the deviation resulting from the sensitivity of the created model to small fluctuations in the data.
-- Typically, there is a tradeoff between bias and variance.
-- Noise is everything that arises from random variations in the data. It cannot be controlled.
+- **Bias**: Systematic prediction error resulting from model assumptions or limitations (e.g., fitting a linear model to a nonlinear relationship).
+- **Variance**: Sensitivity of the fitted model to changes in the training data.
+  High variance means different training samples can produce substantially different predictions.
+- **Noise**: Unpredictable variation in the outcome that cannot be explained by the available inputs.
+
+More flexible models can reduce bias but often increase variance. The objective is to balance both to minimize prediction error on unseen data.
+
 :::
 
 :::
@@ -240,15 +242,19 @@ To answer this, we need a way to **separate learning from evaluation** and test 
 
 # The machine learning workflow {data-stack-name="The workflow"}
 
-
-The workflow separates model development from reliable evaluation on unseen data.
-Preprocessing, model selection, and validation must preserve that separation.
-
 ## The supervised machine learning workflow
+
 
 <br><br>
 
 ![](../images/slides_126_new.png){width=70% fig-align=center}
+
+::: aside
+
+The workflow separates model training from model testing on unseen data.
+Preprocessing, model selection, and validation must preserve that separation.
+
+:::
 
 <!--
 Introduce the high-level pipeline (Modern Analytics Process)
@@ -306,6 +312,8 @@ Data is partitioned into **training** and **test sets** to assess whether a mode
 * Its performance is **evaluated** on the test data
 
 If performance is substantially worse on the test data, the model is likely **overfitting**—capturing patterns specific to the training data rather than general relationships.
+
+<br>
 
 **How can the data be split?**
 
@@ -489,19 +497,38 @@ Once the model type and its optimal parameters have been selected, a final model
 ## Cross validation and grid search
 
 ::: {.highlight_must_learn}
-![](../images/cross_validation_grid_search.png){width=70% fig-align=center}
+![](../images/cross_validation_grid_search.png){width=65% fig-align=center}
 :::
 
-## Cross validation and grid search in R
+
+## Cross-validation and grid search in R
 
 ```r
+library(tidymodels)
+# 1. Specify the model
+model_spec <- logistic_reg(
+  penalty = tune(),  # Strength of hyperparameter regularization (λ)
+  mixture = 1        # Type: 1 = Lasso, 0 = Ridge
+) |>
+  set_engine("glmnet") |>
+  set_mode("classification")
+
+# 2. Create 10 folds
 folds <- vfold_cv(training_data, v = 10, strata = outcome)
 
-workflow() |>
-  add_recipe(model_recipe) |>
-  add_model(model_spec) |>
+# 3. Define the workflow
+model_workflow <- workflow() |>
+  add_recipe(model_recipe) |>  # Pre-processing specification
+  add_model(model_spec)
+
+# 4. Evaluate 20 hyperparameter values across the folds
+results <- model_workflow |>
   tune_grid(resamples = folds, grid = 20)
+
+# 5. Compare results
+collect_metrics(results)
 ```
+
 
 <!--
 ## Variants of hyperparameter optimization
@@ -515,13 +542,11 @@ A random search on the other hand does not iterate over the entire search space.
 
 ## Feature leakage
 
-::: {.highlight_must_learn}
 Feature leakage occurs when a model uses **information that would not be available at prediction time**.
 The model appears to perform very well on training/test data, but fails in real-world application.
-:::
+
 . . .
 
-::: {.highlight_must_learn}
 Typical causes:
 
 1. Using future information or features that are proxies of the target
@@ -538,7 +563,6 @@ Typical causes:
 ::: {.callout-note title="Examples"}
 - Scaling (mean/std) computed on the full dataset
 - Feature selection using all data before splitting
-:::
 :::
 
 ::: notes
@@ -650,21 +674,19 @@ linear models → feature engineering critical
 ::: {.highlight_must_learn}
 **1. Transformation**
 
-- Convert features (e.g., birthdate → age)
-- Build lag structures (e.g., time-lags)
 - Normalization / standardization / scaling
+- Convert features (e.g., birthdate → age)
+<!-- - Build lag structures (e.g., time-lags) -->
 
 **2. Type conversion**
 
 - If numerical type is needed, transform categorical into numerical data using dummy features
-- If categorical type is needed or more informative, discretize numerical features (e.g., income → poor / rich classes)
+- If categorical type is needed or more informative, discretize numerical features (e.g., income → low / high classes)
 
 **3. Feature combination**
 
-- Create interaction features (e.g., `school_score` = `num_schools` $\times$ `median_school`
-  with `num_schools` = number of schools within 5 miles of a property and
-  median_school = median quality score of those schools)
-- Combine categories (e.g., when there are very few observations or too many dummy features)
+- Create interaction features
+<!-- - Combine categories (e.g., when there are very few observations or too many dummy features) -->
 
 **4. Feature composition**
 
@@ -711,7 +733,7 @@ Many machine learning algorithms cannot work with categorical data directly. To 
 
 **One hot encoding** is a representation of a categorical variable as binary vectors. Every categorical value is assigned to an artificial binary variable. If the corresponding categorical value occurs in a data row the value of its binary replacement is equal to 1 else 0, e.g.
 
-![](../images/slides_147_new.png){fig-align=center}
+![](../images/feature_engineering_dummy.png){fig-align=center width=40%}
 
 It is usual when creating dummy variables to have one less variable than the number of categories present to avoid perfect collinearity (dummy variable trap).
 
@@ -741,13 +763,18 @@ So, we will combine the latitude and the longitude to make one feature.
 In other cases, it might be appropriate to transform latitude and longitude into categories which reflect regions, for example.
 
 
-
 <!--
 The map is produced with `osmdata`, `sf`, and `leaflet`.
 TODO: categories like "center", "industrial", "..."
 
 ![](../images/slides_185.png){fig-align=center}
 -->
+
+<br>
+
+:::: {.columns}
+
+::: {.column width="60%"}
 
 ```{python}
 #| label: example-of-feature-engineering-ii-import-geopandas-as-gpd
@@ -964,6 +991,16 @@ m.get_root().html.add_child(
 m
 
 ```
+
+:::
+
+::: {.column width="40%" .fragment}
+
+![](../images/feature_engineering_geo_gisco.png){width=85% fig-align=center}
+
+:::
+
+::::
 
 ## Example of feature engineering (III)
 

@@ -36,8 +36,29 @@ Reminder: In the earlier lectures, we already saw appropriate evaluation measure
 
 Highlight: The *objective function* typically includes a *loss function* (e.g., RSS in OLS) that quantifies how well or poorly the model fits the observed data. (May also include regularization terms)
 
+## Traditional analytics process
+
+- Sampling from the general population
+- **Primarily**: Algorithms or analytical models with few variables (Modellsparsamkeit????)
+
+
+## Best fit vs best generalization
+
+Model flexibility (complexity) can increase through:
+
+- Adding more variables (e.g., to the logistic regression) always improves $R^2$.
+- Adding interaction effects (dimensions), ...
+- ...
+
+Powerful machine learning models may even "remember" all of the observations.
 
 ## Bias-Variance tradeoff
+
+Why can a model that fits the training data better perform worse on unseen data?
+
+- The bias–variance tradeoff explains this apparent contradiction.
+- Underfitting: model not flexible enough -> **high bias**
+- Overfitting: model too flexible -> **high variance** (sensitive to fluctuations in the training data)
 
 Variance: draw many training datasets from the population, train the model on each one, analyze fluctuation in predictions
 
@@ -87,6 +108,25 @@ Key point:
 - Grid search performs **model selection**.
 - Cross-validation provides a more reliable estimate of **generalization performance** during that selection process.
 - A final untouched test set helps address remaining model-selection bias.
+
+## Cross-validation/Grid-search
+
+k=5 folds in the cross-validation datasets (meaning two observations for the validation)
+
+| Problem | How cross-validation helps |
+|---|---|
+| Overfitting | Reveals when a model fits training data well but performs poorly on validation data. |
+| Model selection | Compares model configurations using out-of-fold predictions rather than training performance. |
+| Dependence on a particular split | Averages performance across multiple training/validation splits. |
+
+In the model_spec, control with `tune()` what should be optimized. This is how we would tune `mixture` too:
+
+```r
+model_spec <- logistic_reg(
+  penalty = tune(),  # Regularization strength
+  mixture = tune()   # Regularization type
+)
+```
 
 ## Exercise facilitation
 
