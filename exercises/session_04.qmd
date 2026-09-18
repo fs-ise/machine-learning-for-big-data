@@ -412,6 +412,7 @@ for (dept in departments) {
 }
 ```
 :::
+
 {{< needspace 8 >}}
 
 ## Task D2: Compare the subgroup models
@@ -490,6 +491,7 @@ saveRDS(
 )
 ```
 :::
+
 ## Task E2 (optional): Load the model and predict a new case
 
 ::: {.direction}
@@ -577,6 +579,7 @@ Responsible use requires aligning technical implementation with legal requiremen
 :::
 
 :::{.direction}
+
 ## Wrap-up {#wrap-up}
 
 🎉🎈 You have completed the exercise—good work! 🎈🎉

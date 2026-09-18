@@ -3,3 +3,10 @@ repos:
     rev: v3.9.0  # use `pre-commit autoupdate` to bump
     hooks:
       - id: panache-lint
+  - repo: local
+    hooks:
+      - id: check-exercise-structure
+        name: check exercise structure
+        entry: python scripts/check_exercise_structure.py
+        language: system
+        files: ^exercises/session_.*\.qmd$

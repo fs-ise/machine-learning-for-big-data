@@ -180,28 +180,34 @@ coefficient_table
 - Which variables have positive associations with default?
 
 ::: {.sol}
+
 ::: {.callout-tip title="Solution"}
 `missed_payments_12m` and `credit_utilization` have positive coefficients. Holding the other predictors constant:
 
 - one additional missed payment multiplies the estimated odds of default by about **3.06** (coefficient 1.119, p < 0.001);
 - a one-unit increase in credit utilization—from 0 to 1—multiplies the estimated odds by about **6.47** (coefficient 1.867, p $\approx$ 0.019). A smaller change, such as 0.10, has a more realistic interpretation.
 :::
+
 :::
 
 - Which variables have negative associations with default?
 
 ::: {.sol}
+
 ::: {.callout-tip title="Solution"}
 `income`, `debt_to_income`, and `months_with_company` have negative estimates. The evidence is weak at the 5% level for these three predictors: income is close (p $\approx$ 0.067), while debt-to-income and tenure have larger p-values. The debt-to-income estimate is very close to zero relative to its uncertainty.
 :::
+
 :::
 
 - Can the largest raw coefficient automatically be called the most important predictor?
 
 ::: {.sol}
+
 ::: {.callout-tip title="Solution"}
 No. Predictors use different units: income is measured in euros, missed payments as a count, and utilization as a proportion. Raw coefficient magnitudes are therefore not directly comparable. Interpret directions, uncertainty, odds ratios, and changes in substantively meaningful units instead.
 :::
+
 :::
 
 {{< needspace 10 >}}
@@ -461,17 +467,21 @@ LendWise is trying to grow its customer base aggressively.
 - Why might the company accept more false negatives temporarily?
 
 ::: {.sol}
+
 ::: {.callout-tip title="Solution"}
 An aggressive growth strategy may use a **higher default-risk threshold**. Fewer customers are flagged, so more may be approved, but more actual defaults can be missed. The resulting growth comes with greater credit risk.
 :::
+
 :::
 
 - Why might LendWise lower the threshold during an economic downturn?
 
 ::: {.sol}
+
 ::: {.callout-tip title="Solution"}
 A risk-control strategy may use a **lower threshold**. More customers are flagged, reducing false negatives and default exposure, at the cost of more false positives and potentially fewer approvals.
 :::
+
 :::
 
 # Part 4 — ROC curve and AUC
@@ -728,6 +738,7 @@ The early-career urban model has the higher in-sample AUC: approximately **0.801
 :::
 
 ::: {.direction}
+
 # 🧩 Wrap-up {#wrap-up}
 
 🎉🎈 You have completed the exercise—good work! 🎈🎉

@@ -13,6 +13,7 @@ execute:
 ---
 
 ::: {.callout-important}
+
 ## Work together
 
 Work through this exercise with the person next to you. Compare what you see in RStudio and help each other when something behaves differently.
@@ -35,6 +36,7 @@ After this exercise, you should be able to:
 - restart R and reproduce the complete analysis by rendering the document from top to bottom.
 
 ::: {.callout-note}
+
 ## How to work through this exercise
 
 For now, **do not render the complete document** and do not enable **Render on Save**.
@@ -85,6 +87,7 @@ mean(c(4, 6, 8, 10))
 ```
 
 ::: {.callout-tip}
+
 ### Exercise: console versus document
 
 1. Run `2^10` directly in the **Console**.
@@ -111,6 +114,7 @@ A Quarto document combines formatted text, links, lists, code, and computational
 Replace the placeholder below with your own content.
 
 ::: {.callout-tip}
+
 ### Exercise: add content in Visual mode
 
 Using the Visual editor toolbar and menus, add all of the following below the placeholder:
@@ -169,6 +173,7 @@ class(setup_complete)
 You should also see these objects in RStudio's **Environment** pane.
 
 ::: {.callout-tip}
+
 ### Exercise: create and remove an object
 
 1. Create an object called `answer` containing the result of `6 * 7`.
@@ -218,6 +223,7 @@ packageVersion("tidyverse")
 ```
 
 ::: {.callout-tip}
+
 ### Exercise: package help
 
 Open the help page for `read_csv()` interactively:
@@ -272,6 +278,7 @@ glimpse(students_tbl)
 ```
 
 ::: {.callout-tip}
+
 ### Exercise: inspect the data
 
 Use R functions to answer the following questions:
@@ -328,6 +335,7 @@ glimpse(students)
 ```
 
 ::: {.callout-tip}
+
 ### Exercise: compare different views
 
 Compare:
@@ -373,6 +381,7 @@ file.exists("students.csv")
 Find `students.csv` in RStudio's **Files** pane and inspect it.
 
 ::: {.callout-tip}
+
 ### Exercise: file versus memory
 
 At this point, the same data exists in two different forms:
@@ -433,6 +442,7 @@ glimpse(penguins)
 The basic workflow is the same: `read_csv()` reads data from a source and creates an object in the current R session.
 
 ::: {.callout-tip}
+
 ### Exercise: modify and save data
 
 Create a new object called `students_updated` in which every student receives 2 additional points. Then save it as `students_updated.csv`.
@@ -469,6 +479,7 @@ rm(list = ls())
 This affects objects in memory; it does **not** delete your `.qmd` or CSV files.
 
 ::: {.callout-warning}
+
 ### Do not rely on a saved workspace
 
 The durable record of your analysis should be your **code and data files**, not whatever happens to be present in memory. Restarting R helps reveal missing steps and hidden dependencies.
@@ -494,6 +505,7 @@ ls()
 ```
 
 ::: {.callout-note}
+
 ### Interactive execution versus rendering
 
 Use **individual code-cell execution** while developing and exploring an analysis. Use **Render** to verify that the complete document can be reproduced from a clean R session.
@@ -502,6 +514,7 @@ Once you are comfortable with this distinction, features such as **Render on Sav
 :::
 
 ::: {.callout-tip}
+
 ### Optional challenge
 
 Without looking back at the earlier code, write the shortest sequence of commands that:

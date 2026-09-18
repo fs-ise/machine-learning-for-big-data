@@ -687,6 +687,7 @@ Document the locked workflow and evaluation, assess fairness and operational cos
 :::
 
 ::: {.direction}
+
 ## Wrap-up
 
 🎉🎈 You have completed the exercise—good work! 🎈🎉

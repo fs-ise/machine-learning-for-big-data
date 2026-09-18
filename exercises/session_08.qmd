@@ -298,6 +298,7 @@ nonzero_features
 
 Sparse features are relatively interpretable because they reveal words and phrases. They remain lexical, however, and do not fully encode context, irony, negation, or paraphrase.
 :::
+
 ## Task 2.4 — Retrieve similar reviews with TF-IDF
 
 ::: {.direction}
@@ -674,6 +675,7 @@ model_comparison
 | Semantic relationships | Limited to lexical co-occurrence | Captures broader co-occurrence structure |
 
 Do not assume dense representations win. Compare measured performance with representation cost and analytical purpose.
+
 # Part 5 — Qualitative edge-case analysis {#part-5}
 
 Synthetic difficult examples are useful for discussing failures, not measuring general performance.
@@ -776,6 +778,7 @@ Discuss which examples fail and why. TF-IDF may overreact to visible words such 
 :::
 
 ::: {.direction}
+
 # Wrap-up {#wrap-up}
 
 | Representation | Main idea | Strength | Limitation |
