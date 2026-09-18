@@ -13,14 +13,6 @@ format: html
 | 46–68      | 22       | The Machine Learning Workflow   |                      |
 | 68–90      | 22       | Performance                     |                      |
 
-TODO:
-
-- Suggest code reading/understanding exercises (e.g., "what are the next steps of the procedure?", "annotate what is done in the code blocks", "give pseudocode", "are there any errors (e.g., switched code blocks)?")
-
-## Group work topics
-
-Check which topics were selected by groups, identify potential overlap and guide topic selection.
-
 ## Supervised ML
 
 Note: moved unsupervised ML (clustering) to EDA (mention here only as an example of unsupervised ML)
@@ -39,8 +31,7 @@ Highlight: The *objective function* typically includes a *loss function* (e.g., 
 ## Traditional analytics process
 
 - Sampling from the general population
-- **Primarily**: Algorithms or analytical models with few variables (Modellsparsamkeit????)
-
+- **Primarily**: Algorithms or analytical models with few variables (parsimony)
 
 ## Best fit vs best generalization
 
@@ -70,6 +61,8 @@ How can we improve *generalization* (performance on unseen data)?
 - Use train/test splits (or cross-validation) to evaluate generalization performance
 - Control model complexity through regularization by modifying the objective/loss function
    (e.g., penalizing too many features or overly complex nonlinear relationships)
+
+Note: usually, we do not collect new data to evaluate an ML model, but we split into train/test.
 
 Emphasize the objective-function connection mathematically:
 
@@ -114,7 +107,7 @@ Key point:
 k=5 folds in the cross-validation datasets (meaning two observations for the validation)
 
 | Problem | How cross-validation helps |
-|---|---|
+|---|-------|
 | Overfitting | Reveals when a model fits training data well but performs poorly on validation data. |
 | Model selection | Compares model configurations using out-of-fold predictions rather than training performance. |
 | Dependence on a particular split | Averages performance across multiple training/validation splits. |
@@ -128,12 +121,31 @@ model_spec <- logistic_reg(
 )
 ```
 
+## Problem sets
+
+### Case 1
+
+- **Problem:** Model evaluated on training data. Training accuracy is not an independent estimate of generalization performance and may be optimistic.
+- **Correction:** Predict on `test` (`predict(..., newdata=test, ...)`) and compare predictions with true values from test set (`roc(response=test$default, ...)`).
+
+### Case 2
+
+
+
+- **Problem:** Feature selection uses the entire dataset (`loans`), including the test observations and their outcomes. This introduces data leakage.
+- **Correction:** Select features using only `train`. During cross-validation, feature selection must be repeated within each training fold.
+
+### Case 3
+
+- **Problem:** The test data are used for model selection. Reporting the maximum test accuracy introduces selection-induced optimism.
+
+- **Correction:**
+
+1. Compare and select models using cross-validation on the training data.
+2. Refit the selected model on the full training data.
+3. Evaluate once on the untouched test set.
+
 ## Exercise facilitation
-
-The authoritative exercise is `../exercises/session_06.qmd`. It remains an imported outline at this stage; do not fill the missing practical detail until the dedicated R/content-review stage.
-
-
-2026-04-20: 75 min (`Data Analytics with Python.pdf` : partitioning (p.20) and cross-validation (p.41).)
 
 Note: this exercise should be a focused work-through-a-full-cross-validation effort.
 Announce that we will treat ML algorithms as black boxes for now (except for using their specific hyperparameters).

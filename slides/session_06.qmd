@@ -117,7 +117,7 @@ Also: AI vs ML vs deep learning (see https://www.youtube.com/watch?v=chfwJiXvBMA
 
 . . .
 
-Our focus will be on supervised machine learning:
+Our focus will be on **supervised machine learning**:
 
 $$\underbrace{\text{Dataset}}_\text{Features, Targets} + \underbrace{\text{Learning Algorithm}}_\text{Model Class + Objective + Optimizer } \to \text{Predictive Model}$$
 
@@ -341,7 +341,7 @@ TODO/TBD: add stratified sampling example and SMOTE?!
 ![](../images/slides_187.png){fig-align=center}
 -->
 
-## Problems with fixed training and test samples
+## Problems with using test data for model development
 
 :::: {.columns}
 
@@ -353,22 +353,24 @@ TODO/TBD: add stratified sampling example and SMOTE?!
 
 **Problematic use of test data for two purposes:**
 
-<span style="color: red;">1. Optimize the model training</span>  
-<span style="color: blue;">2. Select the best model via testing the model quality</span>
+<span style="color: red;">1. Optimize models using test data.</span>
 
-This contradicts the idea of independent testing and results in:
+<span style="color: blue;">2. Select models based on test performance.</span>
 
-  - Endogenization of the test data
-  - Selection bias
+This compromises independent evaluation and can result in:
 
-**Rule: NEVER use any information from the test data for model training!**
+- **Test-set leakage:** Test information influences model development.
+- **Selection bias:** Selecting the model with the best test performance can produce overly optimistic estimates.
+
+**Rule: NEVER use test data for model development or selection. Reserve it for independent final evaluation!**
 
 :::
 
 :::
-
 
 ::: {.column width="50%"}
+
+<br><br>
 
 ![](../images/train_test_data.png)
 
@@ -377,12 +379,12 @@ This contradicts the idea of independent testing and results in:
 ::::
 
 
-## Addressing the endogeneity problem
+## Addressing test-set contamination
 
 <br>
 
 ::: {.highlight_must_learn}
-![](../images/addressing_endogeneity.png){width=60% fig-align=center}
+![](../images/addressing_test_set_contamination.png){width=60% fig-align=center}
 :::
 
 ## Selection bias
@@ -1023,7 +1025,82 @@ To avoid transforming into too many and maybe dominating dummy features, we can 
 If there exist some remaining sparse classes which cannot be assigned in a meaningful way they can be joined into a single "other" class.
 
 
+# Problem sets {data-stack-name="Problem sets"}
 
+## Spot the problem (I)
+
+**Discussion**: Examine the code and ML workflow. Identify potential evaluation problems and explain how you would address them.
+
+<br>
+
+```r
+model <- glm(
+  default ~ income + debt,
+  data = train,
+  family = binomial()
+)
+
+prob <- predict(
+  model,
+  newdata = train,
+  type = "response"
+)
+
+roc_object <- pROC::roc(
+  response = train$default,
+  predictor = prob,
+  levels = c(0, 1),
+  direction = "<",
+)
+
+print(pROC::auc(roc_object))
+```
+
+## Spot the problem (II)
+
+**Discussion**: Examine the code and ML workflow. Identify potential evaluation problems and explain how you would address them.
+
+<br>
+
+```r
+# Identify the strongest predictor (highest absolute correlation with the target)
+features <- c("income", "debt", "age")
+scores <- abs(cor(loans[features], loans$default))
+best_feature <- features[which.max(scores)]
+
+model <- glm(
+  reformulate(best_feature, response = "default"),
+  data = train,
+  family = binomial()
+)
+```
+
+## Spot the problem (III)
+
+**Discussion**: Examine the code and ML workflow. Identify potential evaluation problems and explain how you would address them.
+
+<br>
+
+```r
+model_a <- glm(default ~ income,
+               data = train, family = binomial())
+
+model_b <- glm(default ~ income + debt + age,
+               data = train, family = binomial())
+
+accuracy_a <- mean(
+  (predict(model_a, test, type = "response") >= 0.5) ==
+    test$default
+)
+
+accuracy_b <- mean(
+  (predict(model_b, test, type = "response") >= 0.5) ==
+    test$default
+)
+
+# Report the best result
+reported_accuracy <- max(accuracy_a, accuracy_b)
+```
 
 <!--
 TODO: develop/add the following

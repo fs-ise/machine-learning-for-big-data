@@ -14,6 +14,12 @@ session_id: session-04
 | 68–79      | 11       | Next steps             |                      |
 | 79–90      | 11       | Deployment             |                      |
 
+## Group work topics
+
+Check which topics were selected by groups, identify potential overlap and guide topic selection.
+
+## Intro
+
 Explicitly discuss "why do we focus on/start with regression? (boring/want ML/AI)"
 
 - Simplest form of a model, where we can see principles (like fitting/overfitting/...)

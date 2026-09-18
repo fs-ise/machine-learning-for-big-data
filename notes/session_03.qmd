@@ -42,8 +42,6 @@ For the last part (long data preparation):
 
 TODO: check: date conversion did not handle all?!? - understand logic of the function
 
-TODO/TBD: {{< include ../exercises/.qmd >}}
-
 ## In-class exercise
 
 Ask students to open a new `.qmd` file and run the statistics from the slides (when there are many, select one).
