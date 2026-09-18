@@ -143,4 +143,5 @@ Notes:
 
 Checks:
 
-- Part 1: if data loading and factor creation was successful, the `glimpse(df)` should show `no_default`, `default`, ... for the first values (if not: the `levels` argument may be switchted)
+- Part 1: if data loading and factor creation was successful, the `glimpse(df)` should show `no_default`, `default`, ... for the first values (if not: the `levels` argument may be switchted).
+- Part 2: make sure the `step_normalize()` is called before the `step_dummy()` (otherwise, dummy variables are interpreted as numeric and then normalized).
