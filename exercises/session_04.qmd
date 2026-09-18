@@ -214,6 +214,7 @@ Because `remote_share` ranges from 0 to 1, a one-unit increase means moving from
 :::
 
 :::
+
 # Part B — Regression inference and model summary {#inference}
 
 Base R's `lm()` provides estimation, prediction, and statistical inference in the same fitted model. We can examine coefficient uncertainty and overall model fit without refitting the model through another library.

@@ -239,6 +239,11 @@ logistic_spec <- logistic_reg() |>
   set_engine("glm") |>
   set_mode("classification")
 
+logistic_spec
+```
+
+```{r}
+#| label: task-3-1-specify-the-models-tree-spec
 tree_spec <- decision_tree(
   cost_complexity = tune(),
   tree_depth = tune(),
@@ -247,9 +252,9 @@ tree_spec <- decision_tree(
   set_engine("rpart") |>
   set_mode("classification")
 
-logistic_spec
 tree_spec
 ```
+
 :::
 
 # Part 4 — Bundle preprocessing and models {#workflows}
@@ -284,6 +289,7 @@ logistic_workflow
 tree_workflow
 ```
 :::
+
 # Part 5 — Cross-validation on training data only {#cross-validation}
 
 Cross-validation creates temporary analysis and assessment partitions **inside the training data**. These folds support model comparison and tuning; they do not replace the final held-out test set.
@@ -380,6 +386,7 @@ logistic_cv_metrics
 
 These are validation estimates aggregated across folds—not training performance and not final test performance.
 :::
+
 # Part 7 — Tune the decision tree {#tuning}
 
 The tree's hyperparameters control flexibility. We use a deliberately small grid so the exercise remains fast and interpretable.
@@ -543,8 +550,9 @@ selected_model <- if_else(
 selected_model
 ```
 
-The comparison is deliberately computed rather than hard-coded: model selection must follow the observed validation results. Differences should be interpreted alongside their fold-to-fold uncertainty, not only by ranking means.
+Model selection must follow the observed validation results. Differences should be interpreted alongside their fold-to-fold uncertainty, not only by ranking means.
 :::
+
 # Part 9 — Finalize and evaluate once on the test set {#final-test}
 
 Only now do we use the held-out test observations. We finalize the selected workflow, refit it on all training observations, and evaluate exactly once on `test_data` through `last_fit()`.

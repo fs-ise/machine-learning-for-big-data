@@ -74,19 +74,6 @@ That equation often helps students understand that regularization literally chan
 
 Highlight: tabular data (features in rows). Only for deep learning, unstructured data can be used as an input (learns patterns automatically)
 
-## Problems with fixed training and test samples
-
-Optimizing the model training: refers to
-
-- Hyperparameter tuning
-- Feature engineering decisions
-- Model design choices
-- Training procedure tweaks
-
-Problem: the test data does not remain "unseen"
-
-“Endogenization of the test data” means that the test set—supposed to be an external, independent benchmark—becomes internally involved in the model-building process.
-
 ### Selection bias
 
 > **Model-selection bias** occurs when a model appears better simply because many hyperparameter configurations were tried and the best-performing one was selected.
@@ -147,6 +134,13 @@ model_spec <- logistic_reg(
 
 ## Exercise facilitation
 
-Note: this exercise should be a focused work-through-a-full-cross-validation effort.
-Announce that we will treat ML algorithms as black boxes for now (except for using their specific hyperparameters).
-They all have to be implemented according to the same workflow.
+Notes:
+
+- This exercise should be a focused work-through-a-full-cross-validation effort.
+- Announce that we will treat ML algorithms as black boxes for now (except for using their specific hyperparameters).
+  They all have to be implemented according to the same workflow.
+- Context: the same as in the previous sheet (LendWise).
+
+Checks:
+
+- Part 1: if data loading and factor creation was successful, the `glimpse(df)` should show `no_default`, `default`, ... for the first values (if not: the `levels` argument may be switchted)

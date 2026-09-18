@@ -60,6 +60,7 @@ Output: 1 value
 The model has two hidden layers and three trainable dense layers. With `[32, 16, 8]`, it has three hidden layers with those widths and a final `8 -> 1` layer. It expects a fixed-length feature vector. Flattening media removes explicit spatial and temporal relationships, which CNNs and sequence architectures are designed to preserve.
 
 :::
+
 # Part 2: Match architectures to media use cases {#part-2}
 
 ::: {.direction}

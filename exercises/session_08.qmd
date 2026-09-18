@@ -483,6 +483,7 @@ ggplot(
 
 Two principal components retain only part of a 100-dimensional representation. Apparent overlap does not imply that the full space contains no useful sentiment information, and apparent clusters may reflect topic or writing style rather than sentiment.
 :::
+
 # Part 4 — Classification with two representations {#part-4}
 
 We hold the classifier family fixed—a ridge logistic model—and vary only the representation. This isolates the representational comparison. `glmnet` accepts sparse TF-IDF matrices directly and avoids expanding them into a dense data frame.
