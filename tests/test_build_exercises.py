@@ -184,6 +184,56 @@ glimpse(df)
     assert "#| output: false" in include
 
 
+def test_assignment_removes_labels_only_from_executable_chunks() -> None:
+    source = """````{r load-data, echo=FALSE}
+#| label: yaml-r-label
+#| warning: false
+x <- 1 # unchanged
+````
+~~~{python fit_model}
+  #| label: yaml-python-label
+#| echo: true
+print("unchanged")
+~~~
+````qmd
+```{r example-label}
+#| label: literal-example
+```
+````
+```text
+#| label: ordinary-code
+```
+"""
+
+    assignment = sanitize(source, "assign")
+    solution = sanitize(source, "solution")
+
+    assert "````{r, echo=FALSE}" in assignment
+    assert "~~~{python}" in assignment
+    assert "yaml-r-label" not in assignment
+    assert "yaml-python-label" not in assignment
+    for unchanged in (
+        "#| warning: false",
+        "#| echo: true",
+        "x <- 1 # unchanged",
+        'print("unchanged")',
+        "```{r example-label}",
+        "#| label: literal-example",
+        "#| label: ordinary-code",
+    ):
+        assert unchanged in assignment
+
+    for original_label in (
+        "````{r load-data, echo=FALSE}",
+        "#| label: yaml-r-label",
+        "~~~{python fit_model}",
+        "#| label: yaml-python-label",
+    ):
+        assert original_label in solution
+
+    assert sanitize(assignment, "assign") == assignment
+
+
 def test_canonical_setup_suppression_preserves_task_results() -> None:
     root = Path(__file__).resolve().parents[1]
     session_5 = (root / "exercises/session_05.qmd").read_text(encoding="utf-8")
@@ -191,7 +241,8 @@ def test_canonical_setup_suppression_preserves_task_results() -> None:
     solution = sanitize(session_5, "solution", filename="session_05.qmd")
 
     setup_label = "#| label: package-setup-load-packages"
-    start = assignment.index(setup_label)
+    assert setup_label not in assignment
+    start = assignment.index("library(tidyverse)")
     assignment_setup = assignment[start : assignment.index("```", start)]
     assert "#| output: false" not in assignment_setup
     start = solution.index(setup_label)
@@ -390,6 +441,9 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     canonical = exercises / "session_01.qmd"
     canonical.write_text(
         SOURCE
+        + "\n```{r generated-r-label}\n#| label: generated-yaml-label\n"
+        + "#| echo: false\nvalue <- 42\n```\n"
+        + "~~~{python generated-python-label}\nprint(42)\n~~~\n"
         + "\n{{< needspace 8 >}}\n"
         + "`{{< needspace 3 >}}`\n"
         + "```qmd\n{{< needspace >}}\n```\n",
@@ -417,6 +471,16 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     assert 'exercise-number: "01"' in solution
     assert 'exercise-variant: "Solution"' in solution
     assert 'exercise-topic: "Test"' in solution
+    assert "generated-r-label" not in assignment
+    assert "generated-yaml-label" not in assignment
+    assert "generated-python-label" not in assignment
+    assert "```{r}\n#| echo: false\nvalue <- 42\n```" in assignment
+    for label in (
+        "```{r generated-r-label}",
+        "#| label: generated-yaml-label",
+        "~~~{python generated-python-label}",
+    ):
+        assert label in solution
     assert not include.startswith("---")
     assert "Directions" not in include
     assert "Solution" in include

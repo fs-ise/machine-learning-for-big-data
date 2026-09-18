@@ -60,6 +60,15 @@ SESSION_FILENAME = re.compile(r"^session_(?P<number>\d+)(?:_(?P<suffix>[a-z]+))?
 DIV_OPEN = re.compile(r"^(?P<indent>[ \t]*)(?P<fence>:{3,})[ \t]*(?P<attrs>(?!:)\S.*?)[ \t]*(?:\r?\n)?$")
 DIV_CLOSE = re.compile(r"^[ \t]*:{3,}[ \t]*(?:\r?\n)?$")
 CODE_FENCE = re.compile(r"^[ \t]*(?P<fence>`{3,}|~{3,})")
+EXECUTABLE_CODE_FENCE = re.compile(
+    r"^(?P<prefix>[ \t]*(?P<fence>`{3,}|~{3,})[ \t]*\{(?P<engine>r|python))"
+    r"(?P<body>[^}\r\n]*)(?P<suffix>\}[^\r\n]*(?:\r?\n)?)$",
+    re.IGNORECASE,
+)
+CHUNK_LABEL = re.compile(r"^[ \t]*#\|[ \t]*label:[^\r\n]*(?:\r?\n)?$")
+FENCE_IDENTIFIER = re.compile(
+    r"^[ \t]+[A-Za-z][\w.-]*(?P<rest>[ \t]*,.*|[ \t]*)$"
+)
 CLASS = re.compile(r"\.([A-Za-z_][\w-]*)")
 NEEDSPACE = re.compile(
     r"^[ \t]*\{\{<[ \t]*needspace(?:[ \t]+\d+)?[ \t]*>\}\}[ \t]*(?:\r?\n)?$"
@@ -187,6 +196,46 @@ def _apply_solution_setup_convention(source: str, variant: Variant) -> str:
     return "".join(output)
 
 
+def _strip_assignment_chunk_labels(source: str) -> str:
+    """Remove explicit labels from executable R and Python chunks only."""
+    output: list[str] = []
+    code_fence: tuple[str, int, bool] | None = None
+
+    for line in source.splitlines(keepends=True):
+        if code_fence is not None:
+            closing = CODE_FENCE.match(line)
+            if (
+                closing
+                and closing.group("fence")[0] == code_fence[0]
+                and len(closing.group("fence")) >= code_fence[1]
+            ):
+                code_fence = None
+                output.append(line)
+            elif not code_fence[2] or not CHUNK_LABEL.match(line):
+                output.append(line)
+            continue
+
+        opening = EXECUTABLE_CODE_FENCE.match(line)
+        if not opening:
+            fence = CODE_FENCE.match(line)
+            if fence:
+                marker = fence.group("fence")
+                code_fence = (marker[0], len(marker), False)
+            output.append(line)
+            continue
+
+        fence = opening.group("fence")
+        code_fence = (fence[0], len(fence), True)
+        body = opening.group("body")
+        identifier = FENCE_IDENTIFIER.fullmatch(body)
+        if identifier:
+            rest = identifier.group("rest")
+            body = rest if "," in rest else ""
+        output.append(opening.group("prefix") + body + opening.group("suffix"))
+
+    return "".join(output)
+
+
 def sanitize(
     source: str,
     variant: Variant,
@@ -263,7 +312,10 @@ def sanitize(
         raise ExerciseSyntaxError(
             f"{filename}:{frame.line}: unclosed .{frame.semantic} fenced Div"
         )
-    return _apply_solution_setup_convention("".join(output), variant)
+    rendered = _apply_solution_setup_convention("".join(output), variant)
+    if variant == "assign":
+        rendered = _strip_assignment_chunk_labels(rendered)
+    return rendered
 
 
 def _yaml_scalar(value: str) -> str:
