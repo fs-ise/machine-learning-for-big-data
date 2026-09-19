@@ -9,17 +9,17 @@ format:
 
 In this exercise, we cover:
 
-| Part | Topic | Time (min) |
-|---|---|---:|
-| 1 | Define the problem and split the data | 12 |
-| 2 | Specify preprocessing without leakage | 10 |
-| 3–4 | Specify models and workflows | 10 |
-| 5–6 | Cross-validation and baseline evaluation | 15 |
-| 7 | Tune a decision tree | 15 |
-| 8 | Compare and select models | 8 |
-| 9 | Final held-out test evaluation | 12 |
-| 10 | Generalization reflection | 8 |
-| **Overall** | | **90** |
+| Part        | Topic                                    | Time (min) |
+|-------------|------------------------------------------|-----------:|
+| 1           | Define the problem and split the data    |         12 |
+| 2           | Specify preprocessing without leakage    |         10 |
+| 3–4         | Specify models and workflows             |         10 |
+| 5–6         | Cross-validation and baseline evaluation |         15 |
+| 7           | Tune a decision tree                     |         15 |
+| 8           | Compare and select models                |          8 |
+| 9           | Final held-out test evaluation           |         12 |
+| 10          | Generalization reflection                |          8 |
+| **Overall** |                                          |     **90** |
 
 ## Learning objective
 
@@ -57,17 +57,20 @@ library(tidyverse)
 library(tidymodels)
 ```
 
+We use the `tidymodels` ecosystem to implement the machine-learning workflow.
+It includes `yardstick`, which provides functions for evaluating model performance (e.g., accuracy, sensitivity, ROC AUC, and confusion matrices).
+In Session 5, we calculated some of these metrics manually.
+Here, we use standardized functions to evaluate models consistently across cross-validation and final testing.
+
 # Part 1 — Define the problem and split the data {#split}
 
-We use the complete `credit_default.csv` dataset and retain `customer_category` as a predictor. This lets the recipe demonstrate categorical preprocessing while preserving continuity with Session 5.
-
-The event of interest is **default**. Yardstick treats the first outcome factor level as the event by default, so we deliberately place `default` first.
+We use the complete `credit_default.csv` dataset and retain `customer_category` as a predictor. The event of interest is **default**.  We therefore define `default` as the first factor level, following the convention used by our evaluation functions.
 
 ::: {.direction}
 
 ## Task 1.1 — Load and inspect the data
 
-1. Load `https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/credit_default.csv`.
+1. Load the csv from `https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/credit_default.csv`.
 2. Convert the numeric outcome to a factor whose levels are ordered `default`, then `no_default`.
 3. Inspect the data, row count, and outcome proportions.
 
@@ -92,14 +95,14 @@ df <- read_csv(
       labels = c("default", "no_default")
     )
   )
-
 glimpse(df)
 count(df, default)
 prop.table(table(df$default))
 levels(df$default)
 ```
 
-The level order confirms that `default` is the event used for ROC AUC and sensitivity.
+The factor-level order confirms that `default` is treated as the positive class (ground truth) when calculating ROC AUC and sensitivity.
+
 :::
 
 ## Task 1.2 — Create a held-out test set
@@ -145,12 +148,12 @@ split_summary <- tibble(
 split_summary
 ```
 
-Stratification keeps the outcome distribution approximately consistent across partitions. The test set must remain untouched because it is reserved for one independent estimate of generalization performance. Repeatedly consulting it would make model choices adapt to this particular sample and introduce selection bias.
+Stratification keeps the outcome distribution consistent across partitions. The test set must remain untouched because it is reserved for one independent estimate of generalization performance. Repeatedly consulting it would make model choices adapt to this particular sample and introduce selection bias.
 :::
 
 # Part 2 — Specify preprocessing without leakage {#recipe}
 
-A recipe records what transformations should happen. It does not estimate normalization statistics until a workflow is fitted. During cross-validation, those statistics are learned separately from each analysis fold and then applied to its assessment fold.
+A [recipe](https://recipes.tidymodels.org/reference/recipe.html) records what transformations should happen. It does not estimate normalization statistics until a workflow is fitted. During cross-validation, those statistics are learned separately from each analysis fold and then applied to its assessment fold.
 
 ::: {.direction}
 
@@ -180,38 +183,32 @@ model_recipe <- recipe(
 ) |>
   step_normalize(all_numeric_predictors()) |>
   step_dummy(all_nominal_predictors())
-
 model_recipe
 ```
+
+::: {.callout-tip}
+
+## Order of preprocessing steps matters
+
+`step_dummy()` creates numeric 0/1 variables. If followed by
+
+`step_normalize(all_numeric_predictors())`, these dummy variables
+
+are normalized too.
+
+**To preserve 0/1 encoding:** Normalize numeric predictors **before**
+
+creating dummy variables.
+
 :::
 
-::: {.callout-important title="Why order matters"}
-The following conceptual order is **wrong**:
-
-```{r}
-#| label: task-2-1-create-the-recipe-empty-response
-#| eval: false
-# WRONG:
-# 1. estimate normalization values from the full dataset
-# 2. split the already-normalized data into training and test sets
-```
-
-Why is it wrong? The means and standard deviations would contain information from test observations. Even though no outcome is copied directly, test information has influenced model development: this is **data leakage**.
-
-The correct pattern is:
-
-```text
-split
-→ define preprocessing
-→ learn preprocessing within training/resampling
-→ select a model
-→ evaluate once on the final test set
-```
 :::
+
+{{< needspace 10 >}}
 
 # Part 3 — Specify two model classes {#models}
 
-We compare two deliberately different model classes:
+We deliberately compare two different model classes:
 
 - logistic regression is relatively constrained and represents effects through a linear log-odds function;
 - a decision tree can represent nonlinear relationships and interactions, but greater flexibility can increase overfitting risk.
@@ -257,11 +254,13 @@ tree_spec
 
 :::
 
+{{< needspace 20 >}}
+
 # Part 4 — Bundle preprocessing and models {#workflows}
 
-A workflow bundles a recipe and model specification. This ensures the same transformations are applied consistently in resampling, final fitting, and prediction.
-
 ::: {.direction}
+
+A [workflow](https://workflows.tidymodels.org/) bundles a recipe and model specification. This ensures the same transformations are applied consistently in resampling, final fitting, and prediction.
 
 ## Task 4.1 — Create two workflows
 
@@ -275,26 +274,32 @@ Create `logistic_workflow` and `tree_workflow` by combining the shared recipe wi
 
 ::: {.sol}
 
+We bundle two separate workflow objects and check their summaries:
+
 ```{r}
 #| label: task-4-1-create-two-workflows-logistic-workflow
 logistic_workflow <- workflow() |>
   add_recipe(model_recipe) |>
   add_model(logistic_spec)
 
+logistic_workflow
+```
+
+```{r}
+#| label: task-4-1-create-two-workflows-tree-workflow
 tree_workflow <- workflow() |>
   add_recipe(model_recipe) |>
   add_model(tree_spec)
 
-logistic_workflow
 tree_workflow
 ```
 :::
 
-# Part 5 — Cross-validation on training data only {#cross-validation}
-
-Cross-validation creates temporary analysis and assessment partitions **inside the training data**. These folds support model comparison and tuning; they do not replace the final held-out test set.
+# Part 5 — Cross-validation {#cross-validation}
 
 ::: {.direction}
+
+Cross-validation creates temporary analysis and assessment partitions **inside the training data**. These folds support model comparison and tuning; they do not replace the final held-out test set.
 
 ## Task 5.1 — Create stratified folds
 
@@ -305,22 +310,11 @@ Create five reproducible folds from `train_data`, stratified by `default`. Confi
 # YOUR CODE HERE
 ```
 
-Discuss:
-
-1. What role do the assessment portions of the folds play?
-
-**Your answer:** *Write your answer here.*
-
-2. How do they differ from `test_data`?
-
-**Your answer:** *Write your answer here.*
-
-3. Why would repeated model selection using test performance bias the reported final result?
-
-**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
+
+We create five folds from `train_data`, stratified by `default`:
 
 ```{r}
 #| label: task-5-1-create-stratified-folds-set-seed
@@ -333,19 +327,50 @@ folds <- vfold_cv(
 )
 
 folds
-nrow(folds)
 ```
+:::
 
-1. Each assessment fold provides validation observations not used to fit that fold's model.
-2. Fold assessments are reused for development across CV iterations; `test_data` is reserved for the final evaluation only.
-3. Choosing repeatedly by test performance adapts decisions to random peculiarities of that test sample. The resulting estimate becomes optimistically biased through selection.
+Discuss:
+
+1. What role do the assessment portions of the folds play?
+
+::: {.direction}
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+The data are split into analysis and assessment folds. The analysis portion is used to train the model, while the assessment portion evaluates its performance on observations not used for fitting that fold’s model.
+:::
+
+2. How do they differ from `test_data`?
+
+::: {.direction}
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+Fold assessments are reused for development across CV iterations; `test_data` is reserved for the final evaluation only.
+:::
+
+3. Why would repeated model selection using test performance bias the reported final result?
+
+::: {.direction}
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+Choosing repeatedly by test performance adapts decisions to random peculiarities of that test sample. The resulting estimate becomes optimistically biased through selection.
 :::
 
 {{< needspace 10 >}}
 
 # Part 6 — Evaluate the logistic baseline {#baseline}
 
-We use a small metric set: ROC AUC, accuracy, and sensitivity. Because `default` is the first factor level, ROC AUC and sensitivity treat default as the event.
+We now evaluate the logistic regression model using `yardstick`.
+
+Instead of calculating metrics manually, `metric_set()` combines ROC AUC, accuracy, and sensitivity into a reusable collection of evaluation metrics.
+
+We apply the same metrics during cross-validation, model tuning, and final testing.
 
 ::: {.direction}
 
@@ -384,18 +409,40 @@ logistic_cv_metrics <- collect_metrics(logistic_resamples)
 logistic_cv_metrics
 ```
 
+::: {.callout-tip}
+## Understanding `fit_resamples()`
+
+- **`object`** (`logistic_workflow`): The workflow containing the preprocessing recipe and model.
+- **`resamples`** (`folds`): The cross-validation splits. For each split, the model is trained on the analysis portion and evaluated on the assessment portion.
+- **`metrics`** (`classification_metrics`): The performance measures to calculate (ROC AUC, accuracy, sensitivity).
+- **`control`**: Additional settings. `save_pred = TRUE` retains assessment predictions for later inspection using `collect_predictions()`.
+
+`collect_metrics()` then summarizes the performance metrics across folds.
+
 These are validation estimates aggregated across folds—not training performance and not final test performance.
+
+[Documentation: `fit_resamples()`](https://tune.tidymodels.org/reference/fit_resamples.html)
 :::
+
+:::
+
+{{< needspace 15 >}}
 
 # Part 7 — Tune the decision tree {#tuning}
 
-The tree's hyperparameters control flexibility. We use a deliberately small grid so the exercise remains fast and interpretable.
+The tree's hyperparameters control its flexibility:
+
+- **`cost_complexity`:** Penalizes complex trees. Higher values encourage smaller trees.
+- **`tree_depth`:** Maximum number of splits along a path. Higher values allow deeper trees.
+- **`min_n`:** Minimum number of observations required in a node to attempt a split. Higher values restrict splitting.
+
+We will examine the decision-tree algorithm in the next session. For now, we use a small tuning grid to keep computation time short.
 
 ::: {.direction}
 
 ## Task 7.1 — Create and evaluate a tuning grid
 
-Create all combinations of:
+Use [expand_grid](https://tidyr.tidyverse.org/reference/expand_grid.html) to create all combinations of:
 
 - `cost_complexity`: 0.0001, 0.001, 0.01;
 - `tree_depth`: 2, 4, 6;
@@ -408,9 +455,6 @@ Evaluate the grid using the **same training folds and metrics**. Select the conf
 # YOUR CODE HERE
 ```
 
-At any point in this task, did the tree see `test_data`?
-
-**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
@@ -424,7 +468,6 @@ tree_grid <- expand_grid(
 )
 
 set.seed(42)
-
 tree_results <- tune_grid(
   tree_workflow,
   resamples = folds,
@@ -433,87 +476,127 @@ tree_results <- tune_grid(
   control = control_grid(save_pred = TRUE)
 )
 
-best_tree <- select_best(
-  tree_results,
-  metric = "roc_auc"
-)
-
+best_tree <- select_best(tree_results, metric = "roc_auc")
 best_tree
 show_best(tree_results, metric = "roc_auc", n = 5)
 ```
 
-No. Every tuning decision uses only cross-validation partitions created from `train_data`.
+:::
+
+At any point in this task, did the tree see `test_data`?
+
+::: {.direction}
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+- No. Every tuning decision uses only cross-validation partitions created from `train_data`.
 :::
 
 ## Task 7.2 — Visualize tuning results
 
-::: {.sol}
-
-```{r}
-#| label: task-7-2-visualize-tuning-results-collect-metrics
-#| out-width: 88%
-collect_metrics(tree_results) |>
-  filter(.metric == "roc_auc") |>
-  mutate(min_n = factor(min_n)) |>
-  ggplot(
-    aes(
-      x = tree_depth,
-      y = mean,
-      color = min_n,
-      group = min_n
-    )
-  ) +
-  geom_line() +
-  geom_point() +
-  facet_wrap(
-    vars(cost_complexity),
-    labeller = label_both
-  ) +
-  labs(
-    title = "Decision-tree cross-validation results",
-    x = "Maximum tree depth",
-    y = "Mean validation ROC AUC",
-    color = "Minimum n"
-  )
-```
-
-Look for strong mean performance, but also use `std_err` in the collected results to judge uncertainty and stability across folds.
-:::
-
-# Part 8 — Compare and select models {#comparison}
-
-Model selection happens using validation results. A more flexible model is not automatically better: it must demonstrate stronger generalization across the folds.
+Visualize how maximum tree depth affects predictive performance.
 
 ::: {.direction}
 
-## Task 8.1 — Compare validation ROC AUC
+Use `collect_metrics(tree_results)` to retrieve the results and:
 
-Build a two-row comparison containing the logistic baseline and best tree. Include mean ROC AUC and its standard error. Select the model with the higher mean value.
+- Keep only ROC AUC results.
+
+- Fix `min_n = 25` and `cost_complexity = 0.001`.
+
+- Plot `tree_depth` on the X-axis and mean ROC AUC on the Y-axis.
+
+- Connect the points to illustrate changes in performance.
 
 ```{r}
-#| label: task-8-1-compare-validation-roc-auc-student-response
+#| label: task-7-2-visualize-tuning-results-student-response
 # YOUR CODE HERE
 ```
 
-Ask:
-
-- Which model has the higher mean validation ROC AUC?
-
-**Your answer:** *Write your answer here.*
-
-- How uncertain are the estimates across folds?
-
-**Your answer:** *Write your answer here.*
-
-- Is the tree clearly better, or might its flexibility be unnecessary?
-
-**Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
 
 ```{r}
-#| label: task-8-1-compare-validation-roc-auc-logistic-summary
+#| label: task-7-2-visualize-tuning-results
+#| out-width: 57%
+#| fig-align: center
+
+collect_metrics(tree_results) |>
+  filter(
+    .metric == "roc_auc",
+    min_n == 25,
+    cost_complexity == 0.001
+  ) |>
+  ggplot(aes(x = tree_depth, y = mean)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Effect of tree depth on predictive performance",
+    x = "Maximum tree depth",
+    y = "Mean validation ROC AUC"
+  )
+```
+
+::: {.direction}
+**Interpret the results:**
+
+1. Which tree depth achieves the highest mean ROC AUC?
+2. Does increasing tree depth always improve performance?
+:::
+
+::: {.sol}
+**Interpretation:**
+
+- Increasing maximum tree depth from 2 to 4 improves mean ROC AUC (approximately 0.61 to 0.64).
+- Increasing it further to 6 reduces performance (approximately 0.63).
+- Greater model flexibility does not necessarily improve generalization.
+
+**Conclusion:** For the fixed values of `min_n = 25` and
+`cost_complexity = 0.001`, a maximum tree depth of 4 achieves
+the highest observed mean ROC AUC.
+
+Different patterns may emerge for other hyperparameter combinations.
+We therefore use the complete tuning results to select the
+hyperparameter combination with the highest mean ROC AUC.
+:::
+
+:::
+
+{{< needspace 8 >}}
+
+# Part 8 — Compare and select models {#comparison}
+
+::: {.direction}
+
+We now compare the logistic regression baseline with the tuned decision tree.
+Model selection uses cross-validation results, **not** the held-out test set.
+We compare mean ROC AUC and consider the uncertainty of the estimates.
+
+:::
+
+## Task 8.1 — Compare validation ROC AUC
+
+::: {.direction}
+
+Work through the provided code step by step. Inspect the intermediate results
+and focus on what the comparison means rather than writing another transformation
+pipeline from scratch.
+
+:::
+
+**Step 1 — Prepare the logistic regression results**
+
+::: {.direction}
+
+Inspect `logistic_cv_metrics`. Then keep ROC AUC with `filter()` and
+use `transmute()` to create consistently named columns.
+
+```{r}
+#| label: task-8-1-logistic-summary-assignment
+logistic_cv_metrics
+
 logistic_summary <- logistic_cv_metrics |>
   filter(.metric == "roc_auc") |>
   transmute(
@@ -521,7 +604,38 @@ logistic_summary <- logistic_cv_metrics |>
     mean_roc_auc = mean,
     std_err = std_err
   )
+logistic_summary
+```
 
+:::
+
+::: {.sol}
+
+```{r}
+#| label: task-8-1-logistic-summary-solution
+logistic_cv_metrics
+
+logistic_summary <- logistic_cv_metrics |>
+  filter(.metric == "roc_auc") |>
+  transmute(
+    model = "Logistic regression",
+    mean_roc_auc = mean,
+    std_err = std_err
+  )
+logistic_summary
+```
+
+:::
+
+**Step 2 — Retrieve the best decision tree**
+
+::: {.direction}
+
+`show_best()` retrieves the configuration with the highest mean validation
+ROC AUC across the entire tuning grid. The column names must match Step 1.
+
+```{r}
+#| label: task-8-1-tree-summary-assignment
 tree_summary <- show_best(
   tree_results,
   metric = "roc_auc",
@@ -532,7 +646,39 @@ tree_summary <- show_best(
     mean_roc_auc = mean,
     std_err = std_err
   )
+tree_summary
+```
 
+:::
+
+::: {.sol}
+
+```{r}
+#| label: task-8-1-tree-summary-solution
+tree_summary <- show_best(
+  tree_results,
+  metric = "roc_auc",
+  n = 1
+) |>
+  transmute(
+    model = "Decision tree",
+    mean_roc_auc = mean,
+    std_err = std_err
+  )
+tree_summary
+```
+
+:::
+
+**Step 3 — Compare and select**
+
+::: {.direction}
+
+`bind_rows()` combines the summaries and `arrange()` sorts the models.
+The selection is stored in `selected_model` for Part 9.
+
+```{r}
+#| label: task-8-1-select-model-assignment
 model_comparison <- bind_rows(
   logistic_summary,
   tree_summary
@@ -550,8 +696,55 @@ selected_model <- if_else(
 selected_model
 ```
 
-Model selection must follow the observed validation results. Differences should be interpreted alongside their fold-to-fold uncertainty, not only by ranking means.
+**Interpret the results:**
+
+1. Which model has the higher mean validation ROC AUC, and how large is the difference?
+2. What do the standard errors tell us about the precision of the estimated mean ROC AUC values?
+3. Does the observed improvement justify the additional complexity of the tree, or could logistic regression be sufficient?
+
+Remember: the reported standard errors describe uncertainty in the individual
+estimated means, **not directly in their difference**.
+
 :::
+
+::: {.sol}
+
+```{r}
+#| label: task-8-1-select-model-solution
+model_comparison <- bind_rows(
+  logistic_summary,
+  tree_summary
+) |>
+  arrange(desc(mean_roc_auc))
+
+model_comparison
+
+selected_model <- if_else(
+  model_comparison$model[1] == "Decision tree",
+  "decision_tree",
+  "logistic_regression"
+)
+
+selected_model
+```
+
+**Interpretation:**
+
+- Identify the model with the higher observed mean ROC AUC and report the difference.
+- Interpret the standard errors as uncertainty in each model's estimated mean;
+  they do not establish whether the difference is statistically significant.
+- Consider the performance difference alongside model complexity. The tree's
+  tuning results were used to select its hyperparameters, so its reported
+  mean may also be optimistic due to selection.
+
+The predefined selection rule chooses the model with the higher mean
+validation ROC AUC. This is a development decision, not proof that the
+selected model is statistically superior. The held-out test set remains
+untouched until Part 9.
+
+:::
+
+{{< needspace 20 >}}
 
 # Part 9 — Finalize and evaluate once on the test set {#final-test}
 
@@ -567,6 +760,7 @@ If the tree won, insert `best_tree` into `tree_workflow`. Otherwise, use `logist
 #| label: task-9-1-finalize-the-selected-workflow-student-response
 # YOUR CODE HERE
 ```
+
 :::
 
 ::: {.sol}
@@ -581,53 +775,52 @@ if (selected_model == "decision_tree") {
 } else {
   final_workflow <- logistic_workflow
 }
-
 set.seed(42)
-
 final_fit <- last_fit(
   final_workflow,
   split = data_split,
   metrics = classification_metrics
 )
-
 final_test_metrics <- collect_metrics(final_fit)
 final_test_metrics
 ```
 
 These test metrics estimate performance on unseen observations. They are for reporting and reflection, not another round of tuning.
+
 :::
 
 ## Task 9.2 — Inspect final predictions
 
-Use yardstick to create a test confusion matrix and ROC curve. Do not recreate the manual calculations from Session 5.
+Use yardstick to create a test confusion matrix and ROC curve.
 
 ::: {.sol}
 
 ```{r}
 #| label: task-9-2-inspect-final-predictions
-final_predictions <- collect_predictions(final_fit)
+#| out-width: 60%
+#| fig-align: center
 
+final_predictions <- collect_predictions(final_fit)
 final_confusion_matrix <- final_predictions |>
   conf_mat(
     truth = default,
     estimate = .pred_class
   )
-
 final_confusion_matrix
-
 autoplot(final_confusion_matrix, type = "heatmap")
 ```
 
 ```{r}
 #| label: task-9-2-inspect-final-predictions-roc
-#| out-width: 63%
+#| out-width: 40%
+#| fig-align: center
+
 final_roc <- final_predictions |>
   roc_curve(
     truth = default,
     .pred_default,
     event_level = "first"
   )
-
 final_roc |>
   autoplot() +
   geom_abline(
@@ -635,11 +828,11 @@ final_roc |>
     slope = 1,
     linetype = "dashed"
   ) +
-  coord_equal() +
   labs(title = "Final held-out test ROC curve")
 ```
 
 The `.pred_default` column corresponds to the explicitly defined event level. CV metrics supported model development; this confusion matrix and ROC curve describe the one-time held-out evaluation.
+
 :::
 
 {{< needspace 8 >}}
@@ -647,43 +840,67 @@ The `.pred_default` column corresponds to the explicitly defined event level. CV
 # Part 10 — Reflect on generalization {#reflection}
 
 ::: {.direction}
+
 Answer the following questions concisely.
+
 :::
 
 1. Why could training accuracy be misleading?
 
 ::: {.sol}
+
 A model is optimized on training observations and can learn their noise as well as their signal. High training accuracy may therefore reflect overfitting rather than performance on new customers.
+
 :::
 
 2. Why must preprocessing be inside the workflow and resampling process?
 
 ::: {.sol}
+
 Each normalization or encoding step must be estimated without assessment-fold or test information. A workflow re-estimates preprocessing on each analysis fold and applies it to the corresponding assessment fold, preventing information leakage.
+
 :::
 
 3. Why should the test set be used only after model choices are finalized?
 
 ::: {.sol}
+
 If model type, hyperparameters, or preprocessing are chosen based on repeated test results, choices adapt to that sample. This selection bias makes the reported test performance too optimistic and destroys its role as an independent estimate.
+
 :::
 
 4. Why can a more flexible model perform worse on unseen observations?
 
 ::: {.sol}
+
 Flexibility can reduce training bias but increase variance by fitting sample-specific fluctuations. This bias–variance trade-off means a simpler model can generalize better even when the flexible model fits training data more closely.
+
 :::
 
 5. What is the role of cross-validation?
 
 ::: {.sol}
+
 Cross-validation repeatedly estimates validation performance within the training data. It supports model and hyperparameter selection while preserving the independent test set, and it reveals variability across different training/validation partitions.
+
 :::
 
 6. What should happen after final test evaluation and before deployment?
 
 ::: {.sol}
-Document the locked workflow and evaluation, assess fairness and operational costs, validate data requirements, define monitoring and retraining rules, and obtain appropriate organizational and legal review. Do not keep tuning against the same test result; future development requires new independent evidence.
+
+Before deployment, anticipate challenges beyond predictive performance:
+
+- **Data quality:** Will the required predictors be available, reliable, and consistent for new customers?
+- **Operational costs:** What are the consequences of false positives and false negatives, and how should classification thresholds be chosen?
+- **Fairness:** Does the model perform differently across customer groups, potentially leading to unequal outcomes?
+- **Monitoring:** How will we detect changes in customer characteristics, default patterns, or model performance over time?
+- **Governance:** Who is responsible for approving, documenting, monitoring, and updating the model?
+
+Document and lock the selected workflow, preprocessing steps, and final evaluation. Define monitoring and retraining procedures and obtain appropriate organizational and legal review.
+
+**Importantly:** Do not repeatedly tune the model against the same test set. Further development requires new independent data for evaluation.
+
 :::
 
 ::: {.direction}
@@ -702,9 +919,13 @@ split → recipe → workflows → training-data cross-validation
 You also connected each step to generalization, overfitting, leakage, selection bias, and the bias–variance trade-off.
 
 <!--
+
 ::: {.callout-tip title="Session 6 survey"}
+
 {{< survey session_06 exercise >}}
+
 :::
+
 -->
 
 :::
