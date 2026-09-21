@@ -208,12 +208,12 @@ TODO: illustrate ridge regression geometrically?
 
 ## Relationship of $\lambda$ and complexity
 
-$\lambda \rightarrow \infty$: Lowest complexity
+$\lambda = 0$: Relative high complexity (linear model).
+The penalty term has no effect, and ridge regression will produce the least squares estimates.
+
+$\lambda \rightarrow \infty$: Lowest complexity.
 The ridge regression coefficients are equal to zero.
 For every input, the result is $\beta_0$.
-
-$\lambda = 0$: Relative high complexity (linear model)
-The penalty term has no effect, and ridge regression will produce the least squares estimates.
 
 Example:
 
@@ -245,6 +245,8 @@ The method operates by identifying the *k* most similar observations to a given 
 :::
 
 ::: {.column width="40%"}
+
+<br><br>
 
 ![](../images/knn_classification.png)
 
@@ -308,16 +310,756 @@ TODO: switch to M&A decision example
 
 -->
 
-## Which one is better?
+## Comparing decision trees
 
 The following decision trees predict whether a person will respond to recent advertisements:
 
-![](../images/slides_199_new.png){fig-align=center}
+<br>
 
+```{r}
+#| include: false
+
+library(partykit)
+library(grid)
+
+# Construct a tree from specified class frequencies.
+make_stump <- function(
+    variable,
+    threshold,
+    left_value,
+    right_value,
+    left_counts,
+    right_counts,
+    reverse = FALSE
+) {
+
+  make_leaf <- function(value, counts) {
+    data.frame(
+      x = rep(value, sum(counts)),
+      respond = factor(
+        rep(names(counts), times = counts),
+        levels = c("no", "yes")
+      )
+    )
+  }
+
+  data <- rbind(
+    make_leaf(left_value, left_counts),
+    make_leaf(right_value, right_counts)
+  )
+
+  names(data)[1] <- variable
+
+  # Reverse the interval mapping when the larger
+  # values should appear on the left.
+  split_index <- if (reverse) {
+    c(2L, 1L)
+  } else {
+    c(1L, 2L)
+  }
+
+  nodes <- partynode(
+    id = 1L,
+    split = partysplit(
+      varid = 1L,
+      breaks = threshold,
+      right = FALSE,
+      index = split_index
+    ),
+    kids = list(
+      partynode(2L),
+      partynode(3L)
+    )
+  )
+
+  tree <- party(
+    node = nodes,
+    data = data,
+    fitted = data.frame(
+      "(fitted)" = fitted_node(nodes, data),
+      "(response)" = data$respond,
+      check.names = FALSE
+    ),
+    terms = terms(respond ~ ., data = data)
+  )
+
+  as.constparty(tree)
+}
+
+
+# Define the exact two trees.
+
+income_tree <- make_stump(
+  variable = "income",
+  threshold = 1000,
+  left_value = 1500,
+  right_value = 500,
+  left_counts = c(no = 20L, yes = 30L),
+  right_counts = c(no = 30L, yes = 20L),
+  reverse = TRUE
+)
+
+age_tree <- make_stump(
+  variable = "age",
+  threshold = 25,
+  left_value = 20,
+  right_value = 30,
+  left_counts = c(no = 42L, yes = 10L),
+  right_counts = c(no = 8L, yes = 40L)
+)
+
+
+# Verify the displayed frequencies.
+
+node_counts <- function(tree, id) {
+  as.integer(
+    table(
+      factor(
+        data_party(tree, id = id)$respond,
+        levels = c("no", "yes")
+      )
+    )
+  )
+}
+
+stopifnot(
+  identical(node_counts(income_tree, 1L), c(50L, 50L)),
+  identical(node_counts(income_tree, 2L), c(20L, 30L)),
+  identical(node_counts(income_tree, 3L), c(30L, 20L)),
+  identical(node_counts(age_tree, 1L), c(50L, 50L)),
+  identical(node_counts(age_tree, 2L), c(42L, 10L)),
+  identical(node_counts(age_tree, 3L), c(8L, 40L))
+)
+
+
+# Shared node design.
+
+class_colors <- c(
+  no = "#3264C8",
+  yes = "#17A85A"
+)
+
+make_node_panel <- function(tree, split_label) {
+
+  function(node) {
+
+    id <- id_node(node)
+
+    counts <- table(
+      factor(
+        data_party(tree, id = id)$respond,
+        levels = c("no", "yes")
+      )
+    )
+
+    n <- sum(counts)
+    proportions <- as.numeric(counts) / n
+
+    # Root: splitting variable.
+    # Leaves: majority-class prediction.
+
+    if (id == 1L) {
+      label <- split_label
+      header_fill <- "#EAF0F7"
+    } else {
+      label <- paste(
+        "Predict:",
+        names(which.max(counts))
+      )
+      header_fill <- "#F0F5F1"
+    }
+
+    # Node background
+    grid.rect(
+      width = 0.96,
+      height = 0.90,
+      gp = gpar(
+        fill = "white",
+        col = "#64748B",
+        lwd = 1
+      )
+    )
+
+    # Header background
+    grid.rect(
+      x = 0.5,
+      y = 0.81,
+      width = 0.96,
+      height = 0.24,
+      gp = gpar(
+        fill = header_fill,
+        col = NA
+      )
+    )
+
+    # Header label
+    grid.text(
+      label,
+      x = 0.5,
+      y = 0.81,
+      gp = gpar(
+        fontsize = 12,
+        fontface = "bold",
+        col = "#26354A"
+      )
+    )
+
+    # Class distribution
+    row_y <- c(0.51, 0.28)
+
+    for (i in seq_along(counts)) {
+
+      class_name <- names(counts)[i]
+
+      grid.text(
+        sprintf(
+          "%s %d (%.0f%%)",
+          class_name,
+          counts[i],
+          100 * proportions[i]
+        ),
+        x = 0.04,
+        y = row_y[i],
+        just = "left",
+        gp = gpar(
+          fontsize = 11,
+          col = "#26354A"
+        )
+      )
+
+      # Horizontal bar
+      if (proportions[i] > 0) {
+
+        grid.rect(
+          x = 0.73,
+          y = row_y[i],
+          width = 0.23 * proportions[i],
+          height = 0.14,
+          just = c("left", "centre"),
+          gp = gpar(
+            fill = class_colors[class_name],
+            col = NA
+          )
+        )
+      }
+    }
+  }
+}
+
+
+# Shared plotting function.
+
+plot_stump <- function(tree, label) {
+
+  panel <- make_node_panel(tree, label)
+
+  plot(
+    tree,
+    inner_panel = panel,
+    terminal_panel = panel,
+    edge_panel = edge_simple,
+    ep_args = list(
+      just = "equal",
+      fill = "white"
+    ),
+    drop_terminal = FALSE,
+    tnex = 1,
+    gp = gpar(
+      fontsize = 12,
+      col = "#334155"
+    )
+  )
+}
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r}
+#| echo: false
+#| dev: svg
+#| fig-width: 6.3
+#| fig-height: 3.1
+#| out-width: 100%
+#| fig-align: center
+
+plot_stump(income_tree, "Income")
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+#| echo: false
+#| dev: svg
+#| fig-width: 6.3
+#| fig-height: 3.1
+#| out-width: 100%
+#| fig-align: center
+
+plot_stump(age_tree, "Age")
+```
+
+:::
+
+::::
+
+<div style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5em;
+  font-size: 0.7em;
+  margin-top: 0.2em;
+">
+  <strong>Respond to Advertisement:</strong>
+
+  <span>
+    <span style="
+      display: inline-block;
+      width: 0.8em;
+      height: 0.8em;
+      background: #3264C8;
+      margin-right: 0.3em;
+    "></span>
+    No
+  </span>
+
+  <span>
+    <span style="
+      display: inline-block;
+      width: 0.8em;
+      height: 0.8em;
+      background: #17A85A;
+      margin-right: 0.3em;
+    "></span>
+    Yes
+  </span>
+</div>
+
+<br>
+
+**Which one is better?**
 
 ## Introductory example
 
-![](../images/slides_225.png){fig-align=center}
+```{r}
+#| echo: false
+#| message: false
+#| dev: svg
+#| fig-width: 16
+#| fig-height: 7.2
+#| out-width: 92%
+#| fig-align: center
+
+library(partykit)
+library(grid)
+
+# 1. Reconstruct data from terminal-node counts --------------------
+
+leaves <- data.frame(
+  customer = c(
+    "yes", "yes", "yes", "yes",
+    "yes", "yes", "no", "no"
+  ),
+  income = c(
+    20000, 40000, 40000, 40000,
+    40000, 40000, 40000, 40000
+  ),
+  age = c(
+    35, 35, 35, 35,
+    35, 50, 25, 35
+  ),
+  university_degree = c(
+    "no", "yes", "no", "no",
+    "no", "no", "no", "no"
+  ),
+  house_owner = c(
+    "no", "no", "yes", "no",
+    "no", "no", "no", "no"
+  ),
+  children = c(
+    "no", "no", "no", "yes",
+    "no", "no", "no", "no"
+  ),
+  no = c(32, 4, 4, 0, 6, 14, 16, 43),
+  yes = c(16, 24, 9, 1, 0, 8, 12, 10)
+)
+
+customers <- do.call(
+  rbind,
+  lapply(seq_len(nrow(leaves)), function(i) {
+
+    counts <- c(leaves$no[i], leaves$yes[i])
+
+    observations <- leaves[
+      rep(i, sum(counts)),
+      1:6,
+      drop = FALSE
+    ]
+
+    observations$respond <- factor(
+      rep(c("no", "yes"), times = counts),
+      levels = c("no", "yes")
+    )
+
+    observations
+  })
+)
+
+rownames(customers) <- NULL
+
+customers$customer <- factor(
+  customers$customer,
+  levels = c("yes", "no")
+)
+
+customers$university_degree <- factor(
+  customers$university_degree,
+  levels = c("yes", "no")
+)
+
+customers$house_owner <- factor(
+  customers$house_owner,
+  levels = c("yes", "no")
+)
+
+customers$children <- factor(
+  customers$children,
+  levels = c("yes", "no")
+)
+
+# 2. Construct the exact decision tree -----------------------------
+
+nodes <- partynode(
+  id = 1L,
+  split = partysplit(1L, index = 1:2),
+  kids = list(
+
+    # Customer = yes
+    partynode(
+      id = 2L,
+      split = partysplit(
+        2L,
+        breaks = 30000,
+        right = FALSE
+      ),
+      kids = list(
+
+        # Income < 30000
+        partynode(3L),
+
+        # Income >= 30000
+        partynode(
+          id = 4L,
+          split = partysplit(
+            3L,
+            breaks = 42,
+            right = FALSE
+          ),
+          kids = list(
+
+            # Age < 42
+            partynode(
+              id = 5L,
+              split = partysplit(
+                4L,
+                index = 1:2
+              ),
+              kids = list(
+
+                # University degree = yes
+                partynode(6L),
+
+                # University degree = no
+                partynode(
+                  id = 7L,
+                  split = partysplit(
+                    5L,
+                    index = 1:2
+                  ),
+                  kids = list(
+
+                    # House owner = yes
+                    partynode(8L),
+
+                    # House owner = no
+                    partynode(
+                      id = 9L,
+                      split = partysplit(
+                        6L,
+                        index = 1:2
+                      ),
+                      kids = list(
+                        partynode(10L),
+                        partynode(11L)
+                      )
+                    )
+                  )
+                )
+              )
+            ),
+
+            # Age >= 42
+            partynode(12L)
+          )
+        )
+      )
+    ),
+
+    # Customer = no
+    partynode(
+      id = 13L,
+      split = partysplit(
+        3L,
+        breaks = 30,
+        right = FALSE
+      ),
+      kids = list(
+        partynode(14L),
+        partynode(15L)
+      )
+    )
+  )
+)
+
+# 3. Create the partykit object ------------------------------------
+
+tree <- party(
+  node = nodes,
+  data = customers,
+  fitted = data.frame(
+    "(fitted)" = fitted_node(nodes, customers),
+    "(response)" = customers$respond,
+    check.names = FALSE
+  ),
+  terms = terms(
+    respond ~ .,
+    data = customers
+  )
+)
+
+tree <- as.constparty(tree)
+
+# 4. Labels and colors ---------------------------------------------
+
+split_names <- c(
+  "1"  = "Customer",
+  "2"  = "Income",
+  "4"  = "Age",
+  "5"  = "University degree",
+  "7"  = "House owner",
+  "9"  = "Children",
+  "13" = "Age"
+)
+
+class_colors <- c(
+  no  = "#3264C8",
+  yes = "#17A85A"
+)
+
+# 5. Improved node panel -------------------------------------------
+
+node_panel <- function(node) {
+
+  id <- id_node(node)
+
+  observations <- data_party(tree, id = id)
+
+  counts <- table(
+    factor(
+      observations$respond,
+      levels = c("no", "yes")
+    )
+  )
+
+  n <- sum(counts)
+  proportions <- as.numeric(counts) / n
+  percentages <- round(100 * proportions)
+
+  if (as.character(id) %in% names(split_names)) {
+    label <- split_names[as.character(id)]
+    header_fill <- "#EAF0F7"
+  } else {
+    prediction <- names(which.max(counts))
+    label <- sprintf("Predict: %s", prediction)
+    header_fill <- "#F0F5F1"
+  }
+
+  # node box
+  grid.rect(
+    x = 0.5,
+    y = 0.5,
+    width = 0.95,
+    height = 0.92,
+    gp = gpar(
+      fill = "white",
+      col = "#64748B",
+      lwd = 1
+    )
+  )
+
+  # header
+  grid.rect(
+    x = 0.5,
+    y = 0.81,
+    width = 0.95,
+    height = 0.24,
+    gp = gpar(
+      fill = header_fill,
+      col = NA
+    )
+  )
+
+  grid.text(
+    label,
+    x = 0.5,
+    y = 0.81,
+    gp = gpar(
+      fontsize = 12,
+      fontface = "bold",
+      col = "#26354A"
+    )
+  )
+
+  # separator
+  grid.lines(
+    x = c(0.03, 0.97),
+    y = c(0.68, 0.68),
+    gp = gpar(
+      col = "#CBD5E1",
+      lwd = 0.8
+    )
+  )
+
+  # class rows
+  row_y <- c(0.51, 0.28)
+
+  for (i in seq_along(counts)) {
+
+    class_name <- names(counts)[i]
+
+    grid.text(
+      sprintf(
+        "%s %d (%d%%)",
+        class_name,
+        counts[i],
+        percentages[i]
+      ),
+      x = 0.04,
+      y = row_y[i],
+      just = "left",
+      gp = gpar(
+        fontsize = 11,
+        col = "#26354A"
+      )
+    )
+
+    if (proportions[i] > 0) {
+      grid.rect(
+        x = 0.70,
+        y = row_y[i],
+        width = 0.26 * proportions[i],
+        height = 0.14,
+        just = c("left", "centre"),
+        gp = gpar(
+          fill = class_colors[class_name],
+          col = NA
+        )
+      )
+    }
+  }
+}
+
+# 6. Plot -----------------------------------------------------------
+
+plot(
+  tree,
+  inner_panel = node_panel,
+  terminal_panel = node_panel,
+  edge_panel = edge_simple,
+  ep_args = list(
+    just = "equal",
+    fill = "white"
+  ),
+  drop_terminal = FALSE,
+  tnex = 1,
+  margins = c(0.5, 0.5, 0.5, 0.5),
+  gp = gpar(
+    fontsize = 12,
+    col = "#334155"
+  )
+)
+
+# 7. Add class legend -----------------------------------------------
+
+# Return to the root viewport
+grid::upViewport(0)
+
+# Position legend in the bottom-right area
+grid::pushViewport(
+  grid::viewport(
+    x = 0.77,
+    y = 0.16,
+    width = unit(2.7, "in"),
+    height = unit(1.1, "in"),
+    just = c("left", "bottom")
+  )
+)
+
+# Legend background
+grid::grid.rect(
+  gp = grid::gpar(
+    fill = "white",
+    col = "#64748B",
+    lwd = 1
+  )
+)
+
+# Title
+grid::grid.text(
+  "Respond to Advertisement",
+  x = 0.06,
+  y = 0.82,
+  just = "left",
+  gp = grid::gpar(
+    fontsize = 13,
+    fontface = "bold"
+  )
+)
+
+# Class labels and colored squares
+for (i in seq_along(class_colors)) {
+
+  y <- c(0.53, 0.23)[i]
+
+  grid::grid.rect(
+    x = 0.12,
+    y = y,
+    width = 0.09,
+    height = 0.20,
+    gp = grid::gpar(
+      fill = class_colors[i],
+      col = NA
+    )
+  )
+
+  grid::grid.text(
+    names(class_colors)[i],
+    x = 0.21,
+    y = y,
+    just = "left",
+    gp = grid::gpar(
+      fontsize = 12,
+      fontface = "bold"
+    )
+  )
+}
+
+grid::popViewport()
+```
 
 ::: aside
 Proportions in the leaves can be interpreted as probabilities.
@@ -362,9 +1104,7 @@ for a given combination of predictor values, an observation follows a specific p
 Decision trees make **few assumptions** about the functional form of relationships or data distributions.
 In contrast to parametric models (e.g., linear regression), they can capture **nonlinear patterns**, **interactions**, and **complex structures** in the data that are difficult to model with linear approaches.
 
-<br>
-
-![](../images/slides_241.png){height=320px fig-align=center}
+![](../images/decision_tree_illustration.png){height=500px fig-align=center}
 
 <!--
 Note: already covered in previous illustration?
@@ -381,17 +1121,148 @@ Note: already covered in previous illustration?
 
 <br><br>
 
-| Name | CART | ID3 | C5.0 | CHAID | Random forests |
-| :-- | :-- | :-- | :-- | :-- | :-- |
-| **Idea** | Choose the attribute with the highest information content | One of the first methods from Quinlan; uses the concept of information gain | Like ID3 based on the concept of information gain | Choose the attribute that is most dependent on the target variable | Construct many trees with different sets of features and samples (randomly). The result is obtained by voting. |
-| **Measure used** | Gini-Index | Information gain (entropy) | Ratio of information gain | Chi-square split | Optional, mostly Gini-Index |
-| **Type of Splitting** | Binary | Complete, pruning | Complete, pruning | Complete, pruning | Complete |
-
-
+| Name | Idea | Measure used | Type of splitting |
+|:--|:-----|:---|:---|
+| **CART** | Select the split that maximizes impurity reduction | Gini index | Binary |
+| **ID3** | A foundational decision-tree algorithm that selects splits by maximizing information gain | Information gain (entropy) | Multiway; no pruning |
+| **C5.0** | An extension of ID3 with improved splitting and pruning | Gain ratio | Binary or multiway; pruning |
+| **CHAID** | Select the attribute most strongly associated with the target variable | Chi-square test | Multiway; pre-pruning |
+| **Random forests** | Construct many trees using randomly selected samples and features; aggregate predictions by voting | Usually Gini index | Binary; typically unpruned |
 
 ## Introductory example
 
-![](../images/slides_205_new.png){fig-align=center}
+<br><br>
+
+<style>
+.tennis-table {
+  border-collapse: collapse;
+  width: auto !important;
+  margin: 0 auto;
+  font-size: 0.72em;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.tennis-table thead th {
+  background: #ffd6ad;
+  font-weight: normal;
+}
+
+.tennis-table th,
+.tennis-table tbody td {
+  border: 1px solid #333;
+  padding: 2px 9px;
+  white-space: nowrap;
+}
+
+.tennis-table .day {
+  background: #ffffaa;
+}
+
+/* Ensure the bottom border of the final data row is visible */
+.tennis-table tbody tr:last-child td {
+  border-bottom: 2px solid #333 !important;
+}
+
+.tennis-table tfoot td {
+  border: none !important;
+  background: transparent;
+  padding: 3px 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+.tennis-table .brace {
+  display: block;
+  width: 94%;
+  height: 20px;
+  margin: 0 auto 3px;
+}
+
+.tennis-table .annotation {
+  vertical-align: top;
+}
+</style>
+
+<table class="tennis-table">
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th>Outlook</th>
+      <th>Temperature</th>
+      <th>Humidity</th>
+      <th>Wind</th>
+      <th>Play tennis</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr><td class="day">1</td><td>sunny</td><td>hot</td><td>high</td><td>light</td><td>no</td></tr>
+    <tr><td class="day">2</td><td>sunny</td><td>hot</td><td>high</td><td>strong</td><td>no</td></tr>
+    <tr><td class="day">3</td><td>overcast</td><td>hot</td><td>high</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">4</td><td>rainy</td><td>mild</td><td>high</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">5</td><td>rainy</td><td>cold</td><td>normal</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">6</td><td>rainy</td><td>cold</td><td>normal</td><td>strong</td><td>no</td></tr>
+    <tr><td class="day">7</td><td>overcast</td><td>cold</td><td>normal</td><td>strong</td><td>yes</td></tr>
+    <tr><td class="day">8</td><td>sunny</td><td>mild</td><td>high</td><td>light</td><td>no</td></tr>
+    <tr><td class="day">9</td><td>sunny</td><td>cold</td><td>normal</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">10</td><td>rainy</td><td>mild</td><td>normal</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">11</td><td>sunny</td><td>mild</td><td>normal</td><td>strong</td><td>yes</td></tr>
+    <tr><td class="day">12</td><td>overcast</td><td>mild</td><td>high</td><td>strong</td><td>yes</td></tr>
+    <tr><td class="day">13</td><td>overcast</td><td>hot</td><td>normal</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">14</td><td>rainy</td><td>mild</td><td>high</td><td>strong</td><td>no</td></tr>
+  </tbody>
+
+  <tfoot>
+    <tr>
+      <td></td>
+
+      <!-- Features: columns 2–5 -->
+      <td colspan="4" class="annotation">
+        <svg class="brace"
+             viewBox="0 0 100 14"
+             preserveAspectRatio="none"
+             aria-hidden="true">
+          <path
+            d="M 1 1
+               C 1 7, 5 7, 12 7
+               L 42 7
+               C 48 7, 50 9, 50 13
+               C 50 9, 52 7, 58 7
+               L 88 7
+               C 95 7, 99 7, 99 1"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            vector-effect="non-scaling-stroke"/>
+        </svg>
+        Features
+      </td>
+
+      <!-- Class variable: column 6 -->
+      <td class="annotation">
+        <svg class="brace"
+             viewBox="0 0 100 14"
+             preserveAspectRatio="none"
+             aria-hidden="true">
+          <path
+            d="M 1 1
+               C 1 7, 5 7, 12 7
+               L 42 7
+               C 48 7, 50 9, 50 13
+               C 50 9, 52 7, 58 7
+               L 88 7
+               C 95 7, 99 7, 99 1"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            vector-effect="non-scaling-stroke"/>
+        </svg>
+        Class variable
+      </td>
+    </tr>
+  </tfoot>
+</table>
 
 
 ## Splitting with entropy in ID3
@@ -442,13 +1313,6 @@ $$
 
 ::::
 
-::: {.learning_note .fragment}
-No need to memorize the formula.
-However, you should be able to calculate entropy and
-apply the algorithm on paper when the formula and data are provided.
-This also applies to C5.0.
-:::
-
 ## Calculating the information gain
 
 The information gain is a measure that shows (by combination of the entropies) the appropriateness of an attribute for splitting:
@@ -463,14 +1327,14 @@ $$
 where
 
 - m = number of values (here two: light, strong)
-- $t_i$ = number of data sets with strong or light wind (8 resp. 6)
-- t = total number of data sets (14) and
+- $t_i$ = number of observations with strong or light wind (8 resp. 6)
+- t = total number of observations (14) and
 - entropy(t) = entropy before splitting.
 
 ![](../images/slides_207_2_new.png){width=600px fig-align=center}
 
 $$
-\text{Information gain} =
+\text{Information gain(wind)} =
 0.94 -
 \left(
 \frac{8}{14} \cdot 0.811
@@ -482,9 +1346,9 @@ $$
 
 ## Decision using ID3
 
+- Information gain (wind) = 0.048
 - Information gain (outlook) = 0.246
 - Information gain (humidity) = 0.151
-- Information gain (windy) = 0.048
 - Information gain (temperature) = 0.029
 
 We choose the attribute with the largest information gain
@@ -493,6 +1357,9 @@ We choose the attribute with the largest information gain
 
 ## How ID3 builds the tree
 
+:::: {.columns}
+
+::: {.column width="45%"}
 ID3 is a **greedy, recursive procedure**:
 
 At each node:
@@ -507,9 +1374,244 @@ This continues until:
 - nodes are pure, or
 - no attributes remain
 
-As a solution we, obtain the following tree:
+This produces this decision tree:
 
-![](../images/slides_243.png){height=220px fig-align=center}
+:::
+
+::: {.column width="55%"}
+
+<br>
+
+```{r}
+#| echo: false
+#| message: false
+#| dev: svg
+#| out-width: 100%
+#| fig-align: center
+
+library(partykit)
+library(grid)
+
+# 1. Play Tennis dataset -------------------------------------------
+
+tennis <- data.frame(
+  outlook = factor(
+    c("sunny", "sunny", "overcast", "rainy", "rainy",
+      "rainy", "overcast", "sunny", "sunny", "rainy",
+      "sunny", "overcast", "overcast", "rainy"),
+    levels = c("sunny", "overcast", "rainy")
+  ),
+  humidity = factor(
+    c("high", "high", "high", "high", "normal",
+      "normal", "normal", "high", "normal", "normal",
+      "normal", "high", "normal", "high"),
+    levels = c("high", "normal")
+  ),
+  wind = factor(
+    c("light", "strong", "light", "light", "light",
+      "strong", "strong", "light", "light", "light",
+      "strong", "strong", "light", "strong"),
+    levels = c("light", "strong")
+  ),
+  play = factor(
+    c("no", "no", "yes", "yes", "yes",
+      "no", "yes", "no", "yes", "yes",
+      "yes", "yes", "yes", "no"),
+    levels = c("no", "yes")
+  )
+)
+
+# 2. Construct the exact ID3 tree -----------------------------------
+
+nodes <- partynode(
+  id = 1L,
+  split = partysplit(1L, index = 1:3),
+  kids = list(
+
+    # Outlook = sunny -> Humidity
+    partynode(
+      id = 2L,
+      split = partysplit(2L, index = 1:2),
+      kids = list(
+        partynode(3L),  # High -> No
+        partynode(4L)   # Normal -> Yes
+      )
+    ),
+
+    # Outlook = overcast -> Yes
+    partynode(5L),
+
+    # Outlook = rainy -> Wind
+    partynode(
+      id = 6L,
+      split = partysplit(3L, index = 1:2),
+      kids = list(
+        partynode(7L),  # Light -> Yes
+        partynode(8L)   # Strong -> No
+      )
+    )
+  )
+)
+
+tree <- party(
+  node = nodes,
+  data = tennis,
+  fitted = data.frame(
+    "(fitted)" = fitted_node(nodes, tennis),
+    "(response)" = tennis$play,
+    check.names = FALSE
+  ),
+  terms = terms(play ~ ., data = tennis)
+)
+
+tree <- as.constparty(tree)
+
+
+# 3. Define node labels ---------------------------------------------
+
+split_names <- c(
+  "1" = "Outlook",
+  "2" = "Humidity",
+  "6" = "Wind"
+)
+
+class_colors <- c(
+  "no" = "#0000FF",
+  "yes" = "#00EE00"
+)
+
+
+# 4. Compact node panel ---------------------------------------------
+
+node_panel <- function(node) {
+
+  id <- id_node(node)
+
+  # Retrieve observations belonging to this node
+  node_data <- data_party(tree, id = id)
+
+  counts <- table(
+    factor(node_data$play, levels = c("no", "yes"))
+  )
+
+  n <- sum(counts)
+  proportions <- as.numeric(counts) / n
+  percentages <- round(100 * proportions)
+
+  # Split variable for internal nodes;
+  # sample size only for terminal nodes
+  if (as.character(id) %in% names(split_names)) {
+    label <- sprintf(
+      "%s (n = %d)",
+      split_names[as.character(id)],
+      n
+    )
+  } else {
+    label <- sprintf("n = %d", n)
+  }
+
+  # Compact node viewport
+  pushViewport(
+    viewport(
+      width = unit(0.94, "npc"),
+      height = unit(0.85, "in")
+    )
+  )
+
+  # Node background and border
+  grid.rect(
+    gp = gpar(
+      fill = "white",
+      col = "#333333",
+      lwd = 1
+    )
+  )
+
+  # Two class rows
+  row_y <- c(0.76, 0.46)
+
+  for (i in seq_along(counts)) {
+
+    class_name <- names(counts)[i]
+
+    # Class label, count, and percentage
+    grid.text(
+      sprintf(
+        "%s: %d (%d%%)",
+        class_name,
+        counts[i],
+        percentages[i]
+      ),
+      x = 0.04,
+      y = row_y[i],
+      just = "left",
+      gp = gpar(fontsize = 10)
+    )
+
+    # Horizontal class-distribution bar
+    if (proportions[i] > 0) {
+
+      grid.rect(
+        x = 0.68,
+        y = row_y[i],
+        width = 0.27 * proportions[i],
+        height = 0.17,
+        just = c("left", "centre"),
+        gp = gpar(
+          fill = class_colors[class_name],
+          col = NA
+        )
+      )
+    }
+  }
+
+  # Split variable BELOW the class distributions
+  grid.text(
+    label,
+    x = 0.5,
+    y = 0.14,
+    gp = gpar(
+      fontsize = 11,
+      fontface = "bold"
+    )
+  )
+
+  popViewport()
+}
+
+
+# 5. Plot using native partykit layout ------------------------------
+
+plot(
+  tree,
+
+  # Custom contents, automatic node positioning
+  inner_panel = node_panel,
+  terminal_panel = node_panel,
+
+  # Native branch labels
+  edge_panel = edge_simple,
+  ep_args = list(
+    just = "equal"
+  ),
+
+  # Keep early terminal nodes at their natural depth
+  drop_terminal = FALSE,
+
+  # Compact terminal nodes
+  tnex = 1,
+
+  # Margins
+  margins = c(1, 1, 1, 1),
+
+  # Typography
+  gp = gpar(fontsize = 12)
+)
+```
+
+:::
+
+::::
 
 
 ## Decision using C5.0
@@ -528,10 +1630,10 @@ $$
 }
 $$
 
-In the case of our example the information gain ratio of *windy* is
+In the case of our example the information gain ratio of *wind* is
 
 $$
-\text{Information gain ratio (windy)} =
+\text{Information gain ratio (wind)} =
 \frac{0.048}{
 - \frac{6}{14} \cdot \log_2\left(\frac{6}{14}\right)
 - \frac{8}{14} \cdot \log_2\left(\frac{8}{14}\right)
@@ -743,21 +1845,39 @@ Voting principle of random forest:
 
 :::: {.columns}
 
-::: {.column width="60%"}
-Some of the tree approaches can be used for regression too.
-They can be used for nonlinear multiple regression.
-The output must be numerical.
+::: {.column width="70%"}
 
-The figure shows a regression tree for predicting the salary of a baseball player, based on the number of years that he has played in the major leagues and the number of hits that he made in the previous year.
-The predicted salary is given by the mean value of the salaries in the corresponding leaf, e.g. for the players in the data set with Years<4.5, the mean (log-scaled) salary is 5.11, and so we make a prediction of $e^{5.11}$ thousands of dollars, i.e. $165,670, for these players.
+Regression trees predict a **numerical target variable** and can capture nonlinear relationships involving multiple predictors.
 
-Players with Years>=4.5 are assigned to the right branch, and then that group is further subdivided by Hits.
-The predicted salaries for the resulting two groups are $1,000*e^{6.00} =\$403,428$ and $1,000*e^{6.74} =\$845,346$.
+The figure shows a regression tree predicting the **natural logarithm of a baseball player's salary** (in thousands of dollars), based on:
+
+- Years played in the major leagues
+- Number of hits in the previous year
+
+Each leaf predicts the **mean log-salary** of the training observations in that region.
+
+. . . 
+
+For players with Years < 4.5, the predicted log-salary is 5.11. We convert this back into dollars using the exponential function:
+
+$$
+\widehat{\text{Salary}} = 1{,}000 \cdot e^{5.11}
+\approx \$165{,}670
+$$
+
+Players with Years $\geq 4.5$ are assigned to the right branch and further subdivided by Hits.
+
+The predicted salaries for the resulting two groups are approximately:
+
+- Hits < 117.5: $1{,}000 \cdot e^{6.00} \approx \$403{,}000$
+- Hits $\geq$ 117.5: $1{,}000 \cdot e^{6.74} \approx \$846{,}000$
 
 :::
 
-::: {.column width="40%"}
+::: {.column width="30%"}
+
 ![](../images/regression_tree_baseball.png){fig-align=center}
+
 :::
 
 ::::
@@ -800,19 +1920,24 @@ Source: @James2013, pp. 305
 
 ## Constructing a regression tree (II)
 
-For any feature $j$ and cutpoint $s$, we seek the value of $j$ and $s$ that minimizes
+At each node, we evaluate **all available features $j$ and possible cutpoints $s$** and select the combination that minimizes the residual sum of squares (RSS):
 
 $$
+RSS(j,s) =
 \sum_{i: x_i \in R_1(j,s)} \left(y_i - \bar{y}_{R_1}\right)^2
 \;+\;
 \sum_{i: x_i \in R_2(j,s)} \left(y_i - \bar{y}_{R_2}\right)^2
 $$
 
-where $\bar{y}_{R_1}$ is the mean value for the training observations in $R_1(j,s)$, and $\bar{y}_{R_2}$ is the mean value for the training observations in $R_2(j,s)$.
-After splitting, we repeat the process, looking for the best feature and best cutpoint in order to split the data further so as to minimize the RSS within each of the resulting regions.
-The process continues until a stopping criterion is reached; for instance, we may continue until no region contains more than five observations.
-Once the regions R1, . . . , RJ have been created, we predict the objects from the test set.
-To handle the problem of overfitting, pruning methods exist even for regression trees.
+where $\bar{y}_{R_1}$ and $\bar{y}_{R_2}$ are the mean target values of the training observations in the two resulting regions.
+
+**Recursive splitting:** After selecting the best feature and cutpoint, we repeat this search independently within each child node, again considering all available features and cutpoints.
+
+The process continues until a stopping criterion is reached (e.g., a minimum number of observations per leaf).
+
+Each terminal region $R_1, \ldots, R_J$ predicts the mean target value of its training observations.
+
+To reduce overfitting, tree complexity can be controlled through stopping criteria or pruning.
 
 ::: aside
 @James2013, pp.307
@@ -882,7 +2007,7 @@ The predictions are:
 - Class +1 if $w^\top x + b > 0$
 - Class −1 if $w^\top x + b < 0$
 
-## The key insight: maximize the margin
+## The key principle: maximize the margin
 
 SVM doesn’t pick *just any* separating line. It chooses the one with the **largest margin** (distance to the closest points).
 
