@@ -10,11 +10,20 @@ import yaml
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPOSITORY_ROOT))
 
-from scripts.combine_notes import DOCUMENT_TITLE, combine_notes, latex_escape
+from scripts.combine_notes import (
+    DOCUMENT_TITLE,
+    combine_notes,
+    latex_escape,
+    session_page_prefix,
+)
 
 
-def write_note(path: Path, title: str, body: str = "Body") -> None:
-    metadata = yaml.safe_dump({"title": title, "session_id": "test"}, sort_keys=False)
+def write_note(
+    path: Path, title: str, body: str = "Body", session_id: str = "session-01"
+) -> None:
+    metadata = yaml.safe_dump(
+        {"title": title, "session_id": session_id}, sort_keys=False
+    )
     path.write_text(f"---\n{metadata}---\n\n{body}\n", encoding="utf-8")
 
 
@@ -25,8 +34,8 @@ def write_checklist(path: Path, title: str = "Teaching checklist") -> None:
 def test_orders_sessions_and_extracts_yaml_titles(tmp_path: Path) -> None:
     later = tmp_path / "session_10.qmd"
     earlier = tmp_path / "session_02.qmd"
-    write_note(later, "Session Ten")
-    write_note(earlier, "Session Two")
+    write_note(later, "Session Ten", session_id="session-10")
+    write_note(earlier, "Session Two", session_id="session-02")
 
     result = combine_notes([later, earlier])
 
@@ -38,8 +47,8 @@ def test_checklist_precedes_sorted_sessions_and_appears_once(tmp_path: Path) -> 
     later = tmp_path / "session_10.qmd"
     earlier = tmp_path / "session_02.qmd"
     write_checklist(checklist)
-    write_note(later, "Session Ten")
-    write_note(earlier, "Session Two")
+    write_note(later, "Session Ten", session_id="session-10")
+    write_note(earlier, "Session Two", session_id="session-02")
 
     result = combine_notes([later, earlier], checklist=checklist)
 
@@ -61,6 +70,42 @@ def test_checklist_has_own_footer_and_page_break(tmp_path: Path) -> None:
         r"{MLBD -- Before class \& support}" in result
     )
     assert result.count("```{=latex}\n\\clearpage") == 2
+    assert r"\renewcommand{\thepage}{Checklist/p\arabic{page}}" in result
+    assert r"\renewcommand{\thepage}{Session-1/p\arabic{page}}" in result
+    assert result.count(r"\setcounter{page}{1}") == 2
+
+
+@pytest.mark.parametrize(
+    "session_id, expected",
+    [
+        ("session-03", "Session-3"),
+        ("session-000", "Session-0"),
+        ("session-09-deployment", "Session-9"),
+    ],
+)
+def test_extracts_session_page_prefix(
+    tmp_path: Path, session_id: str, expected: str
+) -> None:
+    assert (
+        session_page_prefix({"session_id": session_id}, tmp_path / "note.qmd")
+        == expected
+    )
+
+
+@pytest.mark.parametrize(
+    "metadata, message",
+    [
+        ({}, "requires a session_id"),
+        ({"session_id": 3}, "requires a session_id"),
+        ({"session_id": "session-three"}, "invalid session_id"),
+        ({"session_id": "session-03!"}, "invalid session_id"),
+    ],
+)
+def test_rejects_missing_or_invalid_session_id(
+    tmp_path: Path, metadata: dict[str, object], message: str
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        session_page_prefix(metadata, tmp_path / "note.qmd")
 
 
 def test_combines_without_optional_checklist(tmp_path: Path) -> None:
@@ -109,6 +154,14 @@ def test_document_configuration_and_course_specific_footer(tmp_path: Path) -> No
     assert "execute:\n  enabled: true" in result
     assert "execute: false" not in result
     assert r"\usepackage{scrlayer-scrpage}" in result
+    assert r"\DeclareTOCStyleEntry[" in result
+    assert "pagenumberwidth=8em," in result
+    assert "rightindent=9em" in result
+    assert "]{tocline}{section}" in result
+    assert r"\AfterTOCHead[toc]{%" in result
+    assert r"\noindent\textbf{Section}\hfill\textbf{Pages start with}\par" in result
+    assert r"\hypersetup" not in result
+    assert r"\theHpage" not in result
     assert "fancyhdr" not in result
     assert r"\clearpairofpagestyles" in result
     assert r"\ifoot[\teachingnotesfooterlabel]{\teachingnotesfooterlabel}" in result
@@ -140,12 +193,13 @@ def test_escapes_title_for_latex_footer(tmp_path: Path) -> None:
     result = combine_notes([note])
 
     footer_command = (
-        r"\renewcommand{\teachingnotesfooterlabel}"
-        f"{{MLBD -- {latex_escape(title)}}}"
+        r"\renewcommand{\teachingnotesfooterlabel}" f"{{MLBD -- {latex_escape(title)}}}"
     )
     session_opening = (
         "```{=latex}\n"
         "\\clearpage\n"
+        "\\renewcommand{\\thepage}{Session-1/p\\arabic{page}}\n"
+        "\\setcounter{page}{1}\n"
         f"{footer_command}\n"
         "```\n\n"
         f"# {title}"
@@ -157,11 +211,16 @@ def test_escapes_title_for_latex_footer(tmp_path: Path) -> None:
 def test_starts_every_session_on_a_new_page(tmp_path: Path) -> None:
     notes = [tmp_path / f"session_0{i}.qmd" for i in (1, 2, 3)]
     for index, note in enumerate(notes, 1):
-        write_note(note, f"Session {index}")
+        write_note(note, f"Session {index}", session_id=f"session-{index:02d}")
 
     result = combine_notes(notes)
 
     assert result.count("```{=latex}\n\\clearpage") == 3
+    assert result.count(r"\setcounter{page}{1}") == 3
+    for index in (1, 2, 3):
+        assert (
+            rf"\renewcommand{{\thepage}}{{Session-{index}/p\arabic{{page}}}}" in result
+        )
     assert result.index("```{=latex}\n\\clearpage") < result.index("# Session 1")
 
 
@@ -220,7 +279,15 @@ def test_requested_teaching_note_headings_have_selective_needspace() -> None:
 
 @pytest.mark.parametrize(
     "contents, message",
-    [("No front matter", "missing YAML"), ("---\nsession_id: one\n---\n", "title")],
+    [
+        ("No front matter", "missing YAML"),
+        ("---\nsession_id: one\n---\n", "title"),
+        ("---\ntitle: Session\n---\n", "session_id"),
+        (
+            "---\ntitle: Session\nsession_id: lecture-01\n---\n",
+            "invalid session_id",
+        ),
+    ],
 )
 def test_validates_front_matter(tmp_path: Path, contents: str, message: str) -> None:
     note = tmp_path / "session_01.qmd"
