@@ -826,7 +826,59 @@ Run the supplied helper and comparison code. It retrieves ROC AUC, accuracy, and
 
 ```{r}
 #| label: task-7-1-collect-each-model-s-best-metrics-student-response
-# YOUR CODE HERE: create the comparison helper described above.
+collect_best_metrics <- function(results, best_parameters, model_name) {
+  all_metrics <- collect_metrics(results)
+  parameter_names <- intersect(
+    names(best_parameters),
+    names(all_metrics)
+  ) |>
+    setdiff(".config")
+
+  all_metrics |>
+    inner_join(
+      best_parameters,
+      by = parameter_names
+    ) |>
+    mutate(model = model_name) |>
+    select(
+      model,
+      .metric,
+      mean,
+      std_err,
+      any_of(parameter_names)
+    )
+}
+
+validation_comparison <- bind_rows(
+  collect_best_metrics(
+    regularized_results,
+    best_regularized,
+    "Regularized logistic"
+  ),
+  collect_best_metrics(
+    knn_results,
+    best_knn,
+    "k-NN"
+  ),
+  collect_best_metrics(
+    tree_results,
+    best_tree,
+    "Decision tree"
+  ),
+  collect_best_metrics(
+    rf_results,
+    best_rf,
+    "Random forest"
+  ),
+  collect_best_metrics(
+    svm_results,
+    best_svm,
+    "RBF SVM"
+  )
+)
+
+validation_comparison |>
+  arrange(.metric, desc(mean))
 ```
 :::
 
@@ -945,29 +997,33 @@ Typical properties—not absolute rules—include:
 ::: {.direction}
 Answer:
 
-1. Which model has the strongest mean validation ROC AUC?
+1. Inspect the full comparison table—not only the ROC AUC ranking. Which model has the strongest mean validation ROC AUC? Is there a model with a competitive ROC AUC but clearly problematic accuracy or sensitivity?
 
 **Your answer:** *Write your answer here.*
 
-2. Are differences large relative to their standard errors?
+2. What does `sens = 0` mean substantively for LendWise?
 
 **Your answer:** *Write your answer here.*
 
-3. Which models naturally capture nonlinear relationships?
+3. How can a model obtain a reasonably strong ROC AUC while predicting no defaults at the standard classification threshold?
 
 **Your answer:** *Write your answer here.*
 
-4. Is the most flexible model necessarily best here?
+4. Are ROC AUC differences large relative to their standard errors? Which models naturally capture nonlinear relationships, and is the most flexible model necessarily best here?
 
 **Your answer:** *Write your answer here.*
 
-5. What matters for LendWise besides the highest score?
+5. What matters for LendWise besides the highest score when choosing a model and its operating threshold?
 
 **Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
-The output determines the numerical ranking. Treat small differences relative to fold uncertainty cautiously. Trees, forests, k-NN, and the RBF SVM can capture nonlinear structure in different ways, but flexibility does not guarantee better generalization. LendWise should also consider sensitivity to actual defaults, stability, computation, transparent explanations for credit decisions, preprocessing requirements, and governance.
+The RBF SVM has the highest mean validation ROC AUC, about 0.730, but the full table reveals an important anomaly. The ROC-AUC-optimal regularized logistic regression (`penalty = 10`, `mixture = 0`, or ridge) is almost tied at about 0.729 ROC AUC—a difference of only about 0.001—yet its sensitivity is 0 and its accuracy is about 0.538. That threshold-based behavior differs much more substantially than the two models' ROC AUC values do. A sensitivity of 0 for the event class `default` means that, at the operating threshold used to create `.pred_class`, the model identifies none of the applicants who actually default as defaults. It predicts no observations as `default`, which would make it operationally useless for detecting risky applicants at that threshold.
+
+This is not a defect in ROC AUC. ROC AUC evaluates how well predicted scores rank defaults above non-defaults over all possible thresholds; it does not evaluate classifications at one particular threshold. Accuracy and sensitivity computed from `.pred_class`, in contrast, describe the classifications at the software's standard threshold. Heavy ridge shrinkage can pull predicted probabilities toward the center—and, here, keep them on the `no_default` side of that threshold—while preserving enough ordering among applicants to achieve a reasonably strong ROC AUC. A model can therefore rank cases reasonably well while making unusable classifications at an inappropriate operating threshold.
+
+The roughly 0.001 ROC-AUC gap should also be treated cautiously relative to fold-to-fold uncertainty. Trees, forests, k-NN, and the RBF SVM can capture nonlinear structure in different ways, but greater flexibility does not guarantee better generalization. LendWise should consider stability, computation, preprocessing, calibration, transparent explanations and governance for credit decisions, as well as the intended operating point and the costs of missed defaults and false alarms. Sensitivity, specificity, and other threshold-specific measures should be assessed at that operating point, and the threshold may need tuning on validation data rather than assuming 0.5 is appropriate. Ranking performance, model-family selection, and operating-threshold selection are related but distinct decisions; the held-out test set must remain untouched until all three have been fixed.
 :::
 
 {{< needspace 8 >}}
