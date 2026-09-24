@@ -1,5 +1,6 @@
 ---
-title: "Session 9B Supplement: Deployment in Organizations"
+session: "Session 9"
+title: "Deployment in Organizations"
 session_id: session-09-deployment
 format: html
 ---

@@ -1,5 +1,6 @@
 ---
-title: "Session 6: Machine Learning Foundations — Workflow"
+session: "Session 6"
+title: "Machine Learning Foundations — Workflow"
 session_id: session-06
 format:
   html: default
@@ -410,6 +411,7 @@ logistic_cv_metrics
 ```
 
 ::: {.callout-tip}
+
 ## Understanding `fit_resamples()`
 
 - **`object`** (`logistic_workflow`): The workflow containing the preprocessing recipe and model.

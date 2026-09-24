@@ -23,6 +23,7 @@ from scripts.build_exercises import (
 
 
 SOURCE = """---
+session: Session 1
 title: Test
 ---
 Common
@@ -56,32 +57,21 @@ def test_variant_semantics_and_clean_wrappers() -> None:
     assert all(class_name not in text for text in variants.values() for class_name in (".direction", ".sol"))
 
 
-@pytest.mark.parametrize(
-    ("stem", "title", "number", "topic"),
-    [
-        ("session_01", "Exercise: R Setup", "01", "R Setup"),
-        ("session_03", "Session 3: EDA", "03", "EDA"),
-        ("session_09_b", "Session 9B Supplement: Deployment", "09B", "Deployment"),
-    ],
-)
-def test_solution_pdf_metadata_is_derived_from_filename_and_title(
-    stem: str, title: str, number: str, topic: str
-) -> None:
-    source = f'---\ntitle: "{title}"\n---\nBody\n'
-    assert solution_metadata(source, stem) == {
+def test_solution_pdf_metadata_only_adds_pdf_fields() -> None:
+    source = '---\nsession: "Session 3"\ntitle: "EDA"\n---\nBody\n'
+    assert solution_metadata(source) == {
         "course-title": "Machine Learning for Big Data",
-        "exercise-number": number,
         "exercise-variant": "Solution",
-        "exercise-topic": topic,
     }
 
 
 def test_pdf_metadata_is_added_only_when_explicitly_building_solution() -> None:
-    source = '---\ntitle: "Session 3: EDA"\nformat:\n  html: default\n---\nBody\n'
-    generated = add_solution_metadata(source, "session_03")
-    assert 'title: "Session 3: EDA"' in generated
-    assert 'exercise-number: "03"' in generated
-    assert 'exercise-topic: "EDA"' in generated
+    source = '---\nsession: "Session 3"\ntitle: "EDA"\nformat:\n  html: default\n---\nBody\n'
+    generated = add_solution_metadata(source)
+    assert 'session: "Session 3"' in generated
+    assert 'title: "EDA"' in generated
+    assert 'exercise-number:' not in generated
+    assert 'exercise-topic:' not in generated
     assert generated.endswith("Body\n")
 
 
@@ -111,10 +101,25 @@ def test_pdf_config_and_templates_use_static_preamble_and_dynamic_body() -> None
     assert r"\ohead[" in body
     assert r"\ofoot[\pagemark]{\pagemark}" in body
     assert r"\thispagestyle{scrheadings}" in body
-    for field in ("$course-title$", "$exercise-number$", "$exercise-variant$"):
+    for field in ("$course-title$", "$session$", "$title$", "$exercise-variant$"):
         assert field in body
-    assert r"\section*{$exercise-topic$}" in body
+    assert r"\section*{$title$}" in body
+    assert "$exercise-number$" not in body
+    assert "$exercise-topic$" not in body
     assert r"\Large" not in preamble + body
+
+
+def test_canonical_exercises_use_separate_session_and_topic_titles() -> None:
+    exercises = REPOSITORY_ROOT / "exercises"
+    sources = sorted(exercises.glob("session_*.qmd"))
+
+    assert sources
+    for source in sources:
+        front_matter = source.read_text(encoding="utf-8").split("---", 2)[1]
+        assert re.search(r'^session:\s*["\']?Session\s+\d+[A-Za-z]?["\']?\s*$', front_matter, re.MULTILINE)
+        title = re.search(r'^title:\s*["\']?(?P<title>.+?)["\']?\s*$', front_matter, re.MULTILINE)
+        assert title is not None
+        assert not re.match(r"Session\s+\d+[A-Za-z]?\s*:", title.group("title"))
 
 
 def test_pdf_wrapping_covers_a_long_quoted_highlighted_url() -> None:
@@ -464,13 +469,15 @@ def test_build_is_deterministic_removes_stale_and_never_changes_source(tmp_path:
     include = (generated / "includes/_session_01_solution.qmd").read_text(encoding="utf-8")
     pdf_source = (generated / "pdf_session_01_solution.qmd").read_text(encoding="utf-8")
     assert "title: Test" in assignment
-    for field in ("course-title", "exercise-number", "exercise-variant", "exercise-topic"):
+    for field in ("course-title", "exercise-variant"):
         assert f"{field}:" not in assignment
+    assert "session: Session 1" in assignment
     assert "title: Test" in solution
+    assert "session: Session 1" in solution
     assert 'course-title: "Machine Learning for Big Data"' in solution
-    assert 'exercise-number: "01"' in solution
     assert 'exercise-variant: "Solution"' in solution
-    assert 'exercise-topic: "Test"' in solution
+    assert "exercise-number:" not in solution
+    assert "exercise-topic:" not in solution
     assert "generated-r-label" not in assignment
     assert "generated-yaml-label" not in assignment
     assert "generated-python-label" not in assignment

@@ -60,6 +60,12 @@ def material_source_path(path: str) -> str:
     if material_path.suffix == ".html":
         return str(material_path.with_suffix(".qmd"))
 
+    if material_path.parent.name == "exercises" and material_path.suffix == ".qmd":
+        canonical_name = re.sub(
+            r"_(?:assign|solution)$", "", material_path.stem
+        )
+        return str(material_path.with_name(f"{canonical_name}.qmd"))
+
     return path
 
 
@@ -69,24 +75,24 @@ def read_material_title(root: Path, path: str) -> str | None:
     if not source.exists() or not source.is_file():
         return None
 
-    in_front_matter = False
+    lines = source.read_text(encoding="utf-8").splitlines()
+    if not lines or lines[0].strip() != "---":
+        return None
 
-    for line in source.read_text(encoding="utf-8").splitlines():
-        stripped = line.strip()
+    try:
+        end = next(
+            index for index, line in enumerate(lines[1:], 1) if line.strip() == "---"
+        )
+    except StopIteration:
+        return None
 
-        if stripped == "---":
-            if in_front_matter:
-                break
-
-            in_front_matter = True
-            continue
-
-        if not in_front_matter:
-            continue
-
-        if stripped.startswith("title:"):
-            return stripped.split(":", 1)[1].strip().strip('"\'')
-
+    metadata = yaml.safe_load("\n".join(lines[1:end])) or {}
+    title = metadata.get("title")
+    session = metadata.get("session")
+    if session and title:
+        return f"{session}: {title}"
+    if title:
+        return str(title)
     return None
 
 
@@ -147,19 +153,14 @@ def event_title(event: dict[str, Any], root: Path = ROOT) -> str:
         title = read_material_title(root, str(material["path"]))
 
     title = title or event.get("title") or event.get("event_id") or "Event"
-    badge = event_badge(str(event.get("type", "event")))
-
-    if material and material.get("path"):
-        return f"[{title}]({material['path']}) {badge}"
-
-    return f"{title} {badge}"
+    return str(title)
 
 
 def material_links(session: dict[str, Any]) -> str:
     labels = {
         "slides": "Slides",
         "notes": "Notes",
-        "exercise": "Exercise",
+        "exercise": "Notebook",
     }
 
     links = []
@@ -190,8 +191,8 @@ def markdown_table(
     today: date | None = None,
 ) -> str:
     rows = [
-        "| Status | Title | Date | Time | Location | Materials |",
-        "|---|---|---|---|---|---|",
+        "| Status | | Title | Date | Time | Location | Materials |",
+        "|---|---:|---|---|---|---|---|",
     ]
 
     for event in load_events(root):
@@ -232,8 +233,9 @@ def markdown_table(
         materials = material_links(event)
 
         rows.append(
-            f"| {status_html} | {event_title(event, root)} | {date_text} | "
-            f"{time_text} | {location} | {materials} |"
+            f"| {status_html} | {event_badge(str(event.get('type', 'event')))} | "
+            f"{event_title(event, root)} | {date_text} | {time_text} | "
+            f"{location} | {materials} |"
         )
 
     return "\n".join(rows)

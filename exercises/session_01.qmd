@@ -1,5 +1,6 @@
 ---
-title: "Exercise: R Setup, Quarto, and Basic Data Workflow"
+session: "Session 1"
+title: "R Setup, Quarto, and Basic Data Workflow"
 subtitle: "From individual code cells to a reproducible analysis"
 format:
   html:

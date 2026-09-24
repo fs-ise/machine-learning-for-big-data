@@ -1,5 +1,6 @@
 ---
-title: "Session 3: EDA"
+session: "Session 3"
+title: "EDA"
 session_id: session-03
 format:
   html: default

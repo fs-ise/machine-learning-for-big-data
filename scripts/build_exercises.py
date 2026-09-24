@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 import re
 import shutil
 from dataclasses import dataclass
@@ -52,11 +51,9 @@ SOLUTION_TEMPLATES = (
     Path("scripts/templates/exercise-solution-before-body.tex"),
 )
 FRONT_MATTER = re.compile(r"\A---[ \t]*\r?\n(?P<body>.*?)^---[ \t]*$", re.MULTILINE | re.DOTALL)
-TITLE = re.compile(r'^title:[ \t]*(?P<title>.+?)[ \t]*$', re.MULTILINE)
 HEADING = re.compile(
     r"^(?P<indent>[ \t]*)(?P<marks>#{1,6})(?P<rest>[ \t]+[^\r\n]*)(?P<ending>\r?\n)?$"
 )
-SESSION_FILENAME = re.compile(r"^session_(?P<number>\d+)(?:_(?P<suffix>[a-z]+))?$")
 DIV_OPEN = re.compile(r"^(?P<indent>[ \t]*)(?P<fence>:{3,})[ \t]*(?P<attrs>(?!:)\S.*?)[ \t]*(?:\r?\n)?$")
 DIV_CLOSE = re.compile(r"^[ \t]*:{3,}[ \t]*(?:\r?\n)?$")
 CODE_FENCE = re.compile(r"^[ \t]*(?P<fence>`{3,}|~{3,})")
@@ -352,51 +349,25 @@ def sanitize(
     return rendered
 
 
-def _yaml_scalar(value: str) -> str:
-    """Read the simple quoted or plain scalar used by canonical exercise titles."""
-    value = value.strip()
-    if value.startswith('"') and value.endswith('"'):
-        return json.loads(value)
-    if value.startswith("'") and value.endswith("'"):
-        return value[1:-1].replace("''", "'")
-    return value
-
-
-def solution_metadata(source: str, stem: str) -> dict[str, str]:
-    """Derive PDF-only semantic metadata from canonical filename and title."""
-    session = SESSION_FILENAME.fullmatch(stem)
+def solution_metadata(source: str) -> dict[str, str]:
+    """Return the PDF-only metadata added to canonical exercise metadata."""
     front_matter = FRONT_MATTER.match(source)
-    title = TITLE.search(front_matter.group("body")) if front_matter else None
-    if session is None or title is None:
+    if front_matter is None:
         raise ExerciseSyntaxError(
-            f"{stem}: solution PDF metadata requires a session_XX filename and YAML title"
+            "solution PDF metadata requires canonical YAML front matter"
         )
-
-    number = session.group("number")
-    suffix = session.group("suffix")
-    if suffix:
-        number += suffix.upper()
-    canonical_title = _yaml_scalar(title.group("title"))
-    topic = re.sub(
-        r"^(?:Session\s+\d+[A-Za-z]?(?:\s+Supplement)?|Exercise)\s*:\s*",
-        "",
-        canonical_title,
-        flags=re.IGNORECASE,
-    )
     return {
         "course-title": COURSE_TITLE,
-        "exercise-number": number,
         "exercise-variant": "Solution",
-        "exercise-topic": topic,
     }
 
 
-def add_solution_metadata(source: str, stem: str) -> str:
+def add_solution_metadata(source: str) -> str:
     """Add metadata consumed only by the shared PDF title partial."""
-    metadata = solution_metadata(source, stem)
+    metadata = solution_metadata(source)
     front_matter = FRONT_MATTER.match(source)
     assert front_matter is not None  # validated by solution_metadata
-    fields = "".join(f"{key}: {json.dumps(value)}\n" for key, value in metadata.items())
+    fields = "".join(f'{key}: "{value}"\n' for key, value in metadata.items())
     insert_at = front_matter.end("body")
     return source[:insert_at] + fields + source[insert_at:]
 
@@ -465,7 +436,7 @@ def build(root: Path) -> list[Path]:
             expected.add(target)
             rendered = sanitize(original, variant, filename=str(source))
             if variant == "solution":
-                rendered = add_solution_metadata(rendered, source.stem)
+                rendered = add_solution_metadata(rendered)
             write_if_changed(target, rendered)
             written.append(target)
         # Keep pagination markup in a render-only source.  The public variants
@@ -478,7 +449,7 @@ def build(root: Path) -> list[Path]:
             filename=str(source),
             preserve_needspace=True,
         )
-        write_if_changed(pdf_target, add_solution_metadata(pdf_rendered, source.stem))
+        write_if_changed(pdf_target, add_solution_metadata(pdf_rendered))
         written.append(pdf_target)
         include = includes / f"_{source.stem}_solution.qmd"
         expected.add(include)
