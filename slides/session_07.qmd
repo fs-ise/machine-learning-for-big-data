@@ -1082,7 +1082,7 @@ A decision tree consists of:
 - **internal (decision) nodes** (perform splits based on features)
 - **leaf nodes** (terminal nodes containing predictions)
 
-Each internal node splits the data into **disjoint subsets** based on a feature and a **splitting criterion** (e.g., Gini index, entropy, or RSS).
+Each internal node splits the data into **disjoint subsets** based on a feature and a **splitting criterion** (e.g., entropy, Gini index).
 
 The tree is built **recursively**:
 
@@ -1308,7 +1308,78 @@ $$
 :::
 
 ::: {.column width="30%"}
-![](../images/table_day_wind_tennis.png){fig-align=center}
+
+<style>
+.wind-table {
+  border-collapse: collapse;
+  width: auto !important;
+  margin: 0 auto;
+  font-size: 0.9em;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.wind-table thead th {
+  background: #ffd6ad;
+  font-weight: normal;
+}
+
+.wind-table th,
+.wind-table tbody td {
+  border: 1px solid #333;
+  padding: 4px 18px;
+  white-space: nowrap;
+}
+
+.wind-table .day {
+  background: #ffffaa;
+}
+
+.wind-table .strong {
+  background: #c8c8c8;
+}
+
+.wind-table tbody tr:last-child td {
+  border-bottom: 2px solid #333 !important;
+}
+</style>
+
+<table class="wind-table">
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th>wind</th>
+      <th>play tennis</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr><td class="day">1</td><td>light</td><td>no</td></tr>
+    <tr><td class="day">2</td><td class="strong">strong</td><td>no</td></tr>
+    <tr><td class="day">3</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">4</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">5</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">6</td><td class="strong">strong</td><td>no</td></tr>
+    <tr><td class="day">7</td><td class="strong">strong</td><td>yes</td></tr>
+    <tr><td class="day">8</td><td>light</td><td>no</td></tr>
+    <tr><td class="day">9</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">10</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">11</td><td class="strong">strong</td><td>yes</td></tr>
+    <tr><td class="day">12</td><td class="strong">strong</td><td>yes</td></tr>
+    <tr><td class="day">13</td><td>light</td><td>yes</td></tr>
+    <tr><td class="day">14</td><td class="strong">strong</td><td>no</td></tr>
+  </tbody>
+</table>
+
+```{r}
+#| echo: false
+#| message: false
+#| dev: svg
+#| out-width: 80%
+#| fig-align: left
+
+source("../images/_play_tennis_tree.R")
+```
 :::
 
 ::::
@@ -1327,11 +1398,17 @@ $$
 where
 
 - m = number of values (here two: light, strong)
-- $t_i$ = number of observations with strong or light wind (8 resp. 6)
+- $t_i$ = number of observations with light or strong wind (8 resp. 6)
 - t = total number of observations (14) and
 - entropy(t) = entropy before splitting.
 
-![](../images/slides_207_2_new.png){width=600px fig-align=center}
+<br>
+
+:::: {.columns}
+
+::: {.column width="60%"}
+
+<br>
 
 $$
 \text{Information gain(wind)} =
@@ -1343,6 +1420,24 @@ $$
 \right)
 = 0.048
 $$
+
+:::
+
+::: {.column width="40%"}
+
+```{r}
+#| echo: false
+#| message: false
+#| dev: svg
+#| out-width: 80%
+#| fig-align: center
+
+source("../images/_play_tennis_tree.R")
+```
+
+:::
+
+::::
 
 ## Decision using ID3
 
@@ -1380,7 +1475,7 @@ This produces this decision tree:
 
 ::: {.column width="55%"}
 
-<br>
+<br><br><br><br><br><br><br><br>
 
 ```{r}
 #| echo: false
