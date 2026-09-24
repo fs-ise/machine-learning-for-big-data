@@ -147,7 +147,9 @@ Layers:
 - Hidden neurons: the weights and biases store abstract representations learned from the data (e.g., edges, parts of an image)
 - Output neuron: prediction (e.g., one neuron for binary, multiple for multi-class)
 
+<!--
 Note: the number of layers and neurons is specified ex-ante and does not change in the training process.
+-->
 
 :::
 
@@ -161,7 +163,7 @@ Note: the number of layers and neurons is specified ex-ante and does not change 
 :::
 
 ::: {.learning_note .fragment}
-🎥 Grant Anderson (3Blue1Brown) provides a series of instructive
+🎥 Grant Anderson (3Blue1Brown) provides a series of instructive  
 animated explanations, including one on [Neural Networks](https://www.youtube.com/watch?v=aircAruvnKk).
 :::
 
@@ -178,7 +180,7 @@ animated explanations, including one on [Neural Networks](https://www.youtube.co
 :::
 
 ::: aside
-In a classical perceptron, the activation is typically binary (0 or 1), representing whether the neuron “fires.”
+In a classical perceptron, the activation is typically binary (0 or 1), representing whether the neuron “fires.”  
 In modern neural networks, activations are usually continuous-valued scalars determined by the activation function.
 :::
 
@@ -384,7 +386,6 @@ TODO: cover example of backpropagation? http://hmkcode.github.io/ai/backpropagat
 Basic neural networks are often introduced as **fully connected feed-forward networks**.
 Specialized architectures go beyond this and differ in the following design choices:
 
-<br>
 <div class="smaller">
 
 <!--
@@ -405,7 +406,6 @@ Specialized architectures go beyond this and differ in the following design choi
 
 
 </div>
-<br>
 
 **Focus in this section**: We use **CNNs**, **RNNs**, and **Transformers** as key examples because they show three central architectural ideas:
 
@@ -445,6 +445,8 @@ TBD: similar to SVM: kernels facilitate learning in higher-dimensional transform
 ![](../images/recurrent_neural_network.png){width=70% fig-align=center}
 
 ## Transformers
+
+<br>
 
 ![](../images/transformer_architecture.png){width=80% fig-align=center}
 
@@ -545,7 +547,6 @@ $$
 Typical range:
 $10^{-3}$ to $10^{-4}$
 
-<br><br>
 :::
 
 
@@ -563,7 +564,7 @@ $10^{-3}$ to $10^{-4}$
   penalizes large weights
 - **Early stopping**
   stops before overfitting
-<br><br><br><br>
+<br><br>
 
 :::
 
@@ -593,7 +594,7 @@ However, feature engineering does not disappear. We still need to decide:
 
 :::
 
-![](../images/neural_networks_features.png){width=55% fig-align=center}
+![](../images/neural_networks_features.png){width=50% fig-align=center}
 
 ## R code example
 
