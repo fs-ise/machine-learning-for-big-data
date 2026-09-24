@@ -1,8 +1,8 @@
 ---
-title: "Session 10: Groupwork Presentation"
+title: "Group Work Presentations"
 title-slide-image: "../images/cover_slide/analytics.png"
 subtitle: "Lecture Slides"
-section_label: "Groupwork Presentation"
+section_label: "Group Work Presentations"
 session: "Session 10"
 date: "2026-10-02"
 format: revealjs

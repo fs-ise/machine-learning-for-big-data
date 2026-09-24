@@ -1,7 +1,7 @@
 ---
 title: "Machine Learning for Non-Tabular Data"
 title-slide-image: "../images/cover_slide/ml-image-audio-video.png"
-section_label: "ML for Non-Tabular Data"
+section_label: "Machine Learning for Non-Tabular Data"
 session: "Session 8"
 date: "2026-09-25"
 format: revealjs

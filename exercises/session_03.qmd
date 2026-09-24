@@ -1,6 +1,6 @@
 ---
 session: "Session 3"
-title: "EDA"
+title: "Exploratory Data Analysis"
 session_id: session-03
 format:
   html: default

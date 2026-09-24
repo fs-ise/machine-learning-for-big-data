@@ -1,6 +1,6 @@
 ---
 session: "Session 6"
-title: "Machine Learning Foundations — Workflow"
+title: "Machine Learning Foundations: Workflow"
 session_id: session-06
 format:
   html: default

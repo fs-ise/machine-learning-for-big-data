@@ -1,5 +1,5 @@
 ---
-title: "Notes: Session 6: ML Foundations (Workflow)"
+title: "Notes: Session 6: Machine Learning Foundations: Workflow"
 session_id: session-06
 format: html
 ---

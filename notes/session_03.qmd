@@ -1,5 +1,5 @@
 ---
-title: "Notes: Session 3: Exploratory data analysis"
+title: "Notes: Session 3: Exploratory Data Analysis"
 session_id: session-03
 ---
 

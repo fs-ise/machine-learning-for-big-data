@@ -1,7 +1,7 @@
 ---
-title: "Machine learning foundations: workflow"
+title: "Machine Learning Foundations: Workflow"
 title-slide-image: "../images/cover_slide/workflow.png"
-section_label: "ML Foundations (Workflow)"
+section_label: "Machine Learning Foundations: Workflow"
 session: "Session 6"
 date: "2026-09-18"
 format: revealjs

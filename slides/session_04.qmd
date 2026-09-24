@@ -1,7 +1,7 @@
 ---
-title: "Machine learning baselines: regression"
+title: "Machine Learning Baselines: Regression"
 title-slide-image: "../images/cover_slide/regression.png"
-section_label: "ML Baselines (Regression)"
+section_label: "Machine Learning Baselines: Regression"
 session: "Session 4"
 date: "2026-09-11"
 format: revealjs

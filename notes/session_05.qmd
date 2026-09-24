@@ -1,5 +1,5 @@
 ---
-title: "Notes: Session 5: Classification"
+title: "Notes: Session 5: Machine Learning Baselines: Classification"
 session_id: session-05
 format: html
 ---
