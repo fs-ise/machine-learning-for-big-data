@@ -9,7 +9,12 @@ SRC_SLIDES_DIR := slides
 OUT_DIR := _site
 SLIDES_DIR := $(OUT_DIR)/slides
 
-SLIDES_QMD := $(shell find $(SRC_SLIDES_DIR) -type f -name '*.qmd' 2>/dev/null)
+SLIDES_QMD := $(shell find $(SRC_SLIDES_DIR) \
+	-type f \
+	-name '*.qmd' \
+	! -name '_*' \
+	2>/dev/null)
+
 SLIDES_HTML := $(patsubst $(SRC_SLIDES_DIR)/%.qmd,$(SLIDES_DIR)/%.html,$(SLIDES_QMD))
 SLIDES_PDF := $(SLIDES_HTML:.html=.pdf)
 NOTE_SOURCES := $(sort $(wildcard notes/session_*.qmd))
