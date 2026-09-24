@@ -35,10 +35,22 @@ After this exercise, you should be able to:
 
 ::: {.callout-note title="Data and package setup"}
 
-This exercise uses only publicly downloadable, GitHub-hosted data. **You do not need Kaggle, a Kaggle account, or the Kaggle API.** The two sources are:
+This exercise uses two datasets with different underlying structures: images and temporal sequences. They let us compare a generic MLP with architectures that preserve those structures, because observations are not always naturally represented as unordered feature vectors.
 
-1. **Fashion-MNIST:** the official [Zalando Research GitHub repository](https://github.com/zalandoresearch/fashion-mnist). It contains labeled $28 \times 28$ grayscale images of ten clothing categories, which let us compare a flat-pixel MLP with a CNN that preserves spatial structure. Download its four original compressed IDX files directly from `https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/`.
-2. **Store Item Demand Forecasting:** the [GitHub repository](https://github.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge). Its `train.csv` contains daily sales by date, store, and item, which lets us compare flat lag features with an ordered sequence for next-day demand forecasting. Download [`train.csv`](https://raw.githubusercontent.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge/master/train.csv) from GitHub.
+| Dataset | Underlying structure | Prediction task | Comparison |
+|---|---|---|---|
+| Fashion-MNIST | $28 \times 28$ image | Product category | Flattened MLP versus CNN |
+| Store Item Demand | Ordered daily sales | Next-day sales | Lag-vector MLP versus RNN |
+
+**Fashion-MNIST** contains 60,000 training and 10,000 test images. Each is a $28 \times 28$ grayscale image with one of 10 product-category labels. An MLP can flatten the pixels into 784 features; the values remain, but their two-dimensional neighborhoods are no longer explicit. A CNN instead uses local filters and shared weights on the image grid, providing a clean MLP-versus-CNN comparison.
+
+**Store Item Demand Forecasting** contains five years of daily sales for 10 stores and 50 items, with columns for date, store, item, and sales. Although stored as a CSV table, it becomes a sequential task here: 28 consecutive days from one store-item series predict the next day. An MLP treats the lags as separate features; an RNN processes them in order while maintaining a recurrent hidden state.
+
+The same underlying observations can often be represented as a flat vector, but specialized neural-network architectures encode useful assumptions about spatial or sequential structure.
+
+### Download the data
+
+The Fashion-MNIST dataset comes from the official [Zalando Research repository](https://github.com/zalandoresearch/fashion-mnist), and Store Item Demand [`train.csv`](https://raw.githubusercontent.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge/master/train.csv) from [GitHub](https://github.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge).
 
 From the folder containing this notebook, create exactly this structure:
 
@@ -73,6 +85,8 @@ curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/d
 curl -L https://raw.githubusercontent.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge/master/train.csv \
   -o data/store-item-demand/train.csv
 ```
+
+### Packages
 
 Install the required R packages and the torch runtime once:
 
