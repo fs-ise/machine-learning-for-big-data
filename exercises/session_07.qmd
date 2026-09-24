@@ -272,34 +272,32 @@ A larger penalty constrains coefficients more strongly and reduces flexibility. 
 ## Task 2.2 — Compare unregularized, ridge, and lasso coefficients
 
 ::: {.direction}
-The supplied code chooses the ROC-AUC-optimal penalty separately for ridge (`mixture = 0`) and lasso (`mixture = 1`). It fits those models and an unregularized logistic regression to all training observations using the same scaled recipe, then combines their coefficients. Complete the plot by mapping coefficient `term` to the y-axis and `estimate` to the x-axis.
+Task 2.1 used cross-validation to choose tuning parameters for predictive model selection. Here, instead, use one shared, moderate penalty chosen for a clear conceptual comparison. Keeping the penalty strength fixed lets you attribute differences between ridge and lasso coefficients to the type of penalty rather than to two different CV-selected penalty values.
+
+The supplied code uses `comparison_penalty <- 0.05` for both ridge and lasso and fits all three models to `train_data` with `scaled_recipe`. This value gives more instructive contrast than the initial value of `0.01` without collapsing the ridge coefficients. Complete the plot by mapping coefficient `term` to the y-axis and `estimate` to the x-axis.
 
 ```{r}
 #| label: task-2-2-compare-ridge-and-lasso-coefficients-student-response
-ridge_lasso_best <- collect_metrics(regularized_results) |>
-  filter(
-    .metric == "roc_auc",
-    mixture %in% c(0, 1)
-  ) |>
-  group_by(mixture) |>
-  slice_max(mean, n = 1, with_ties = FALSE) |>
-  ungroup() |>
-  select(penalty, mixture)
+comparison_penalty <- 0.05
 
-penalized_coefficients <- ridge_lasso_best |>
+penalized_coefficients <- tibble(
+  model = c("Ridge", "Lasso"),
+  mixture = c(0, 1)
+) |>
   mutate(
-    model = if_else(mixture == 0, "Ridge", "Lasso"),
-    fitted_workflow = map2(
-      penalty,
+    fitted_workflow = map(
       mixture,
-      \(penalty_value, mixture_value) {
-        finalize_workflow(
-          regularized_workflow,
-          tibble(
-            penalty = penalty_value,
-            mixture = mixture_value
-          )
-        ) |>
+      \(mixture_value) {
+        workflow() |>
+          add_recipe(scaled_recipe) |>
+          add_model(
+            logistic_reg(
+              penalty = comparison_penalty,
+              mixture = mixture_value
+            ) |>
+              set_engine("glmnet") |>
+              set_mode("classification")
+          ) |>
           fit(data = train_data)
       }
     ),
@@ -351,7 +349,7 @@ coefficient_comparison <- bind_rows(
 # YOUR CODE HERE: plot estimate by term, colored by model.
 ```
 
-Compare ridge and lasso with the unregularized baseline. Which predictors are shrunk most strongly? Does the selected lasso set any coefficients exactly to zero? If not, why does lasso's ability to perform variable selection not guarantee zeros at the ROC-AUC-optimal penalty for this dataset? Finally, how does increasing the penalty reduce model flexibility?
+Compare ridge and lasso with the unregularized baseline. How does ridge shrink the coefficients while retaining meaningful contributions across predictors? Under the **same penalty strength**, how does lasso differ from ridge, and does it set any coefficients exactly to zero? Why does ridge usually keep all coefficients nonzero while lasso can perform variable selection? Finally, why is this teaching penalty appropriate for conceptual comparison but not a replacement for the cross-validation used for predictive model selection in Task 2.1?
 
 **Your answer:** *Write your answer here.*
 :::
@@ -360,30 +358,26 @@ Compare ridge and lasso with the unregularized baseline. Which predictors are sh
 
 ```{r}
 #| label: task-2-2-compare-ridge-and-lasso-coefficients-fit-and-plot
-ridge_lasso_best <- collect_metrics(regularized_results) |>
-  filter(
-    .metric == "roc_auc",
-    mixture %in% c(0, 1)
-  ) |>
-  group_by(mixture) |>
-  slice_max(mean, n = 1, with_ties = FALSE) |>
-  ungroup() |>
-  select(penalty, mixture)
+comparison_penalty <- 0.05
 
-penalized_coefficients <- ridge_lasso_best |>
+penalized_coefficients <- tibble(
+  model = c("Ridge", "Lasso"),
+  mixture = c(0, 1)
+) |>
   mutate(
-    model = if_else(mixture == 0, "Ridge", "Lasso"),
-    fitted_workflow = map2(
-      penalty,
+    fitted_workflow = map(
       mixture,
-      \(penalty_value, mixture_value) {
-        finalize_workflow(
-          regularized_workflow,
-          tibble(
-            penalty = penalty_value,
-            mixture = mixture_value
-          )
-        ) |>
+      \(mixture_value) {
+        workflow() |>
+          add_recipe(scaled_recipe) |>
+          add_model(
+            logistic_reg(
+              penalty = comparison_penalty,
+              mixture = mixture_value
+            ) |>
+              set_engine("glmnet") |>
+              set_mode("classification")
+          ) |>
           fit(data = train_data)
       }
     ),
@@ -433,7 +427,8 @@ coefficient_comparison <- bind_rows(
   )
 
 coefficient_comparison |>
-  ggplot(aes(x = estimate, y = reorder(term, estimate), color = model)) +
+  mutate(term = fct_reorder(term, abs(estimate), .fun = max)) |>
+  ggplot(aes(x = estimate, y = term, color = model)) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "grey60") +
   geom_point(position = position_dodge(width = 0.65), size = 2) +
   labs(
@@ -448,7 +443,9 @@ coefficient_comparison |>
   select(term, estimate)
 ```
 
-Use the unregularized estimates as the baseline when identifying the largest changes in magnitude. Increasing the penalty pulls coefficients toward zero and reduces model flexibility. Ridge typically retains every predictor with a smaller coefficient. Because lasso uses an L1 penalty, it *can* set coefficients exactly to zero and thereby perform variable selection; however, the penalty selected for the best cross-validation ROC AUC need not be strong enough to produce a sparse model. Report zeros only when they appear in the printed output, rather than assuming that lasso must remove a predictor.
+Use the unregularized estimates as the baseline when identifying the largest changes in magnitude. At the common penalty of `r comparison_penalty`, ridge visibly shrinks the coefficients but retains meaningful nonzero contributions across predictors. Lasso applies stronger, selective shrinkage under that same penalty; use the printed output to report which coefficients, if any, are exactly zero.
+
+Ridge's L2 penalty continuously reduces coefficient magnitudes and usually does not make them exactly zero. Lasso's L1 penalty can make coefficients exactly zero, so it can perform variable selection. The shared penalty here was deliberately chosen to make those different behaviors interpretable; it is not claimed to be the best predictive penalty. For predictive model selection, use the cross-validated ROC AUC procedure in Task 2.1.
 :::
 
 {{< needspace 8 >}}
