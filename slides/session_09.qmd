@@ -1,5 +1,5 @@
 ---
-title: "Deployment in organizations"
+title: "Deployment in Organizations"
 title-slide-image: "../images/cover_slide/deployment.png"
 section_label: "Deployment in Organizations"
 session: "Session 9"

@@ -1,9 +1,9 @@
 ---
-title: "Optional Session 9: Neural-network training and interactive exploration"
+title: "Optional Session 8: Neural-network training and interactive exploration"
 format: html
 ---
 
-This supplement preserves the detailed training and implementation material imported with Session 9. It is not part of the core image, video, and audio flow.
+This supplement preserves the detailed training and implementation material imported with Session 8. It is not part of the core non-tabular architecture flow.
 
 ## Loss and backpropagation
 

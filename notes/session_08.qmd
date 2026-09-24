@@ -1,116 +1,83 @@
 ---
-title: "Notes: Session 8: ML for Non-Tabular Data (Text)"
+title: "Notes: Session 8: Machine Learning for Non-Tabular Data"
 session_id: session-08
 format: html
 ---
 
-TODO: after the Big-Data/Architectures slides were removed (compared to analytics-and-big-data), this session may need to be expanded.
+2026-05-04 source delivery: 80 minutes. The recomposed core is planned for 90 minutes; use the discussion prompts to adjust pace.
 
-| Time (min) | Duration | Topic | Additional materials |
-|------------|----------|-------|----------------------|
-| 0–40       | 40       | Text analytics | |
+| Time (min) | Duration | Topic |
+|---:|---:|---|
+| 0–15 | 15 | Why modality and structure matter |
+| 15–40 | 25 | Neural-network foundations and training |
+| 40–52 | 12 | MLPs and CNNs |
+| 52–65 | 13 | Video, RNNs, and audio |
+| 65–75 | 10 | Transformers and multimodality |
+| 75–90 | 15 | Architecture-choice discussion |
 
-TODO:
+: {tbl-colwidths="[20,40,40]"}
 
-- Extend text analytics slides to illustrate "Relevance today" (moving towards a system perspective; used in LLMs (as input); RAG (explain), information retrieval (e.g., obsidian))
-- Explain how big data environments reshape model development, validation, and deployment. This creates continuity with: Generalization problem, Overfitting, Model evaluation
+## Teaching emphasis
 
-## Text analytics: Sparse vectors
+The main teaching point is that specialized networks encode assumptions about **data structure**. CNNs reuse local filters over spatial data; RNNs reuse recurrent cells over time; Transformers compare positions through attention. Do not present them as isolated model definitions.
 
-Aka. first-generation / bag of words models
+Neural networks are inspired by natural systems, but an artificial neuron is only a loose analogy to a biological neuron. The foundations are about 80 years old; recent progress followed from larger datasets, greater computing power (especially GPUs/TPUs), and improved architectures. Mention multimodal AI as a motivation without turning the session into an implementation survey.
 
-**TF-IDF:**
+## Foundations and training
 
-Explain how $idf_i$ changes:
+- Inputs loosely correspond to dendrites and outputs to axons.
+- A single classical perceptron learns a linear boundary.
+- Hidden layers and nonlinear activations make abstract intermediate representations possible.
+- Explain a forward pass as data flowing layer by layer to a prediction.
+- Explain training mathematically as well as conceptually: work through the loss, gradient, learning rate, backpropagation, and parameter update material retained in the slides.
+- The number of layers and neurons is specified before training; weights and biases are learned.
+- Sigmoid is smooth and supports gradient-based optimization; ReLU is commonly used for efficient hidden-layer computation.
 
-- when $\frac{N}{df_i}$ gets smaller and approaches 1, the log approaches 0 and the $tf_{ij}$ will have low weights in the TF-IDF
-- if the term is very rare, the $\frac{N}{df_i}$ gets large and the terms will have more weight in the TF-IDF (at the same time, `log` ensures that outliers/very rare terms do not have an excessive influence on TF-IDF)
+The detailed derivations, gradient-descent mechanics, architecture/training choices, and R implementation examples remain in the core slides. `optional/session_08_neural_network_training.qmd` contains the worked external backpropagation and TensorFlow Playground activities.
 
-**Example with a mini corpus after preprocessing**
+## Architecture and modality explanations
 
-<div class="smaller">
+### MLPs and tabular data
 
-| Document | Tokens                              |
-| -------- | ----------------------------------- |
-| D1       | `service helpful quick experience`  |
-| D2       | `service experience delay shipping` |
-| D3       | `service rude refund`    |
+An MLP's dense connections are a natural starting point for fixed-length feature vectors. Do not imply that it always beats established tabular models. Flattening an image or sequence makes an MLP possible, but hides location or order and can require many parameters.
 
-</div>
+### CNNs, images, and video
 
-<br>
+Use the moving-filter diagram to explain local receptive fields and weight sharing. A $28 \times 28$ grayscale image with 32 filters can produce $28 \times 28 \times 32$ activations; this illustrates feature maps rather than independent input variables.
 
-Vocabulary:
+For video, ask students to identify two structures: spatial relationships inside frames and temporal relationships between frames. A CNN can extract frame features, followed by recurrence or attention over time. Avoid requiring students to memorize Inception-ResNet-v2; the architecture figure only shows how complex combinations of layers can become.
 
-<div style="font-family: monospace; font-size: 0.75em;">
-\[delay, experience, helpful, quick, refund, rude, service, shipping\]
-</div>
+### RNNs and sequential data
 
-<br>
+Describe recurrence as **memory through a hidden state**. The same cell is reused over ordered elements. Suitable examples include time series, audio, language, and user-interaction sequences. A key misconception is to treat sequence positions as interchangeable columns: changing order can change meaning.
 
-Sparse vector for **D1**:
+### Transformers
 
-<div style="
-display: grid;
-grid-template-columns: repeat(8, 1fr);
-gap: 0.35em;
-font-family: monospace;
-font-size: 0.7em;
-text-align: center;
-">
+Describe **attention** as directly relating sequence positions, including distant positions. A Transformer is not merely an RNN with more memory. Tokens can represent language units, image patches, or audio/video segments, which explains the move toward multimodal applications.
 
-<div>delay</div>
-<div>experience</div>
-<div>helpful</div>
-<div>quick</div>
-<div>refund</div>
-<div>rude</div>
-<div>service</div>
-<div>shipping</div>
+### Audio
 
-<div style="background:#eeeeee; padding:0.35em; border-radius:6px;">0</div>
-<div style="background:#cfe8d6; padding:0.35em; border-radius:6px;">1</div>
-<div style="background:#cfe8d6; padding:0.35em; border-radius:6px;">1</div>
-<div style="background:#cfe8d6; padding:0.35em; border-radius:6px;">1</div>
-<div style="background:#eeeeee; padding:0.35em; border-radius:6px;">0</div>
-<div style="background:#eeeeee; padding:0.35em; border-radius:6px;">0</div>
-<div style="background:#cfe8d6; padding:0.35em; border-radius:6px;">1</div>
-<div style="background:#eeeeee; padding:0.35em; border-radius:6px;">0</div>
+Audio is a useful case because representation changes the modeling choice. A waveform or feature stream is sequential; a spectrogram has local time-frequency structure and can be processed like an image. CNNs, RNNs, and Transformers can therefore all be sensible, alone or combined.
 
-</div>
+## Common misconceptions and discussion prompts
 
-<br>
+- **“One architecture belongs to exactly one modality.”** Correct this with spectrograms, video pipelines, and multimodal Transformers.
+- **“Deep learning removes feature engineering.”** Hidden layers learn representations, but practitioners still choose inputs, encodings, normalization, and domain transformations.
+- **“A larger network is always better.”** Capacity must match the problem and increases overfitting and computational risk.
+- **“Output design follows the input modality.”** Architecture follows input structure; output neurons, activation, and loss follow the prediction task.
+- Ask: What information disappears if pixels or frames are shuffled?
+- Ask: What is one observation, and what is one input unit, in each modality?
 
-<div class="smaller">
+## Exercise facilitation
 
-| Representation    | Vector for D1                      |
-| ----------------- | ---------------------------------- |
-| Binary occurrence | `[0, 1, 1, 1, 0, 0, 1, 0]`         |
-| Term occurrence   | `[0, 1, 1, 1, 0, 0, 1, 0]`         |
-| Term frequency    | `[0, .25, .25, .25, 0, 0, .25, 0]` |
-| TF-IDF            | `[0, 0.18, .48, .48, 0, 0, 0, 0]`     |
+Allow approximately 20 minutes for reading the R torch MLP object and 50 minutes for the NovaStream modality cases, leaving 10 minutes for synthesis. Students should inspect how the module, loss, optimizer, and training loop correspond to the conceptual steps.
 
-</div>
+For each use case, insist on three elements: input representation, expected output, and architectural assumption. Cases such as churn should surface that an MLP is not automatically preferable to logistic regression or tree models. Subtitle generation, next-item prediction, cover-image classification, and chat moderation make the sequence/spatial distinctions concrete.
 
-Note: using $log_{10}$ for ease of calculation; libraries often use the natural logarithm.
+The original broader NovaStream quiz also included recommendation, anomaly detection, pricing optimization, route optimization, association rules, and clustering. Those cases were omitted from the core because they do not directly reinforce Session 8's non-tabular architecture goal.
 
-* $w_{Experience;D1} = 1\times log(\frac{3}{2}) = 0.18$
-* $w_{Helpful;D1} = 1\times log(\frac{3}{1}) = 0.48$
-* $w_{Quick;D1} = 1\times log(\frac{3}{1}) = 0.48$
-* $w_{Service;D1} = 1\times log(\frac{3}{3}) = 0$
+## Follow-up review
 
-Note: `Service` has $idf=0$ and will be eliminated from TF-IDF.
-
-Most entries are zero because each document only uses a small part of the full vocabulary.
-
-### Dense representations
-
-Highlight that dense representations allow us to determine semantic similarity based on mathematical operations.
-
-## Exercises
-
-2026-05-04: 70 min
-
-TODO
-
-- Reduce the IMDB dataset to 1500 or 2000 ? (faster computations of the dense vectors)
+- Clarify RNN and Transformer explanations after observing student questions.
+- Add a substantive video task or dataset during later content redevelopment; the imported exercise contained modality-selection scenarios but no hands-on media dataset.
+- Keep the R torch implementation aligned with the conceptual network diagrams when revising the session later.

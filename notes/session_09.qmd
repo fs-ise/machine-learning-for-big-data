@@ -1,83 +1,98 @@
 ---
-title: "Notes: Session 9: ML for Non-Tabular Data (Image, Video, Audio)"
+title: "Notes: Session 9: Deployment in Organizations"
 session_id: session-09
 format: html
 ---
 
-2026-05-04 source delivery: 80 minutes. The recomposed core is planned for 90 minutes; use the discussion prompts to adjust pace.
+Source delivery: 85–90 minutes for the lecture and approximately 75–80 minutes for group work.
 
-| Time (min) | Duration | Topic |
-|---:|---:|---|
-| 0–15 | 15 | Why modality and structure matter |
-| 15–40 | 25 | Neural-network foundations and training | 
-| 40–52 | 12 | MLPs and CNNs | 
-| 52–65 | 13 | Video, RNNs, and audio |
-| 65–75 | 10 | Transformers and multimodality |
-| 75–90 | 15 | Architecture-choice discussion |
+| Time (min) | Duration | Topic | Teaching emphasis |
+|---:|---:|---|---|
+| 0–20 | 20 | Business value and industry evidence | Müller et al. (2018); Oesterreich et al. (2022); distinguish analytics assets from complementary capabilities. |
+| 20–45 | 25 | Organizational value-creation paths | Kunz et al. (2025); decisions, actions, outcomes, feedback, and analytics maturity. |
+| 45–60 | 15 | Augmentation, automation, and people | Compare the hospital examples and discuss appropriate human involvement. |
+| 60–82 | 22 | Governance, boundaries, and explainability | Accountability, optimization boundaries, stakeholder-specific explanations, and contestability. |
+| 82–90 | 8 | Risk and regulatory frameworks | NIST AI RMF, GDPR, EU AI Act, and closing synthesis. |
 
-: {tbl-colwidths="[20,40,40]"}
+## Business value and organizational capabilities
 
-## Teaching emphasis
+The firm-performance studies establish that analytics can contribute to value but that analytics assets alone are insufficient. Explain the Cobb–Douglas-style production model as a log-linear model, not logistic regression. Fixed effects give each firm its own intercept and help address omitted-variable bias. The high $R^2$ should not be read as “BDA explains 97.7% of sales.”
 
-The main teaching point is that specialized networks encode assumptions about **data structure**. CNNs reuse local filters over spatial data; RNNs reuse recurrent cells over time; Transformers compare positions through attention. Do not present them as isolated model definitions.
+Contrast the two evidence perspectives. Müller et al. examine objective live BDA assets and productivity in panel data; Oesterreich et al. synthesize firm-level studies of technical resources, human resources, management capabilities, data quality, culture, and external pressure. Emphasize the substantial heterogeneity and the implication that context matters.
 
-Neural networks are inspired by natural systems, but an artificial neuron is only a loose analogy to a biological neuron. The foundations are about 80 years old; recent progress followed from larger datasets, greater computing power (especially GPUs/TPUs), and improved architectures. Mention multimodal AI as a motivation without turning the session into an implementation survey.
+Use the TDWI maturity model to show that an analytics portfolio is not merely a set of techniques or software. It depends on organizational processes, culture, skills, leadership, funding, data management, and governance aligned with strategy.
 
-## Foundations and training
+{{< needspace 12 >}}
 
-- Inputs loosely correspond to dendrites and outputs to axons.
-- A single classical perceptron learns a linear boundary.
-- Hidden layers and nonlinear activations make abstract intermediate representations possible.
-- Explain a forward pass as data flowing layer by layer to a prediction.
-- Explain training mathematically as well as conceptually: work through the loss, gradient, learning rate, backpropagation, and parameter update material retained in the slides.
-- The number of layers and neurons is specified before training; weights and biases are learned.
-- Sigmoid is smooth and supports gradient-based optimization; ReLU is commonly used for efficient hidden-layer computation.
+## Organizational value creation
 
-The detailed derivations, gradient-descent mechanics, architecture/training choices, and R implementation examples remain in the core slides. `optional/session_09_neural_network_training.qmd` contains the worked external backpropagation and TensorFlow Playground activities.
+Kunz, Spohrer, and Heinzl shift from variance explanations to sequences connecting data, information, knowledge, decisions, actions, and process outcomes. Ask: **How would you expect machine learning to affect this value-creation process?**
 
-## Architecture and modality explanations
+Use the emergency-department examples in the slide notes:
 
-### MLPs and tabular data
+- the dashboard supports the canonical information-processing path;
+- the deterioration-risk score augments a physician’s decision;
+- automatic diversion when congestion crosses a threshold illustrates decision automation;
+- delayed-discharge insights accumulate organizational knowledge;
+- sharing bottleneck insights transfers knowledge across units;
+- clinician reports and model retraining form a feedback path.
 
-An MLP's dense connections are a natural starting point for fixed-length feature vectors. Do not imply that it always beats established tabular models. Flattening an image or sequence makes an MLP possible, but hides location or order and can require many parameters.
+ML adds **autonomy**, **dynamism**, and **opacity**. Autonomy strengthens reliance on analytical information and enables automation; dynamism strengthens feedback; opacity can restrict understanding, learning, and process improvement.
 
-### CNNs, images, and video
+## Augmentation, automation, and human involvement
 
-Use the moving-filter diagram to explain local receptive fields and weight sharing. A $28 \times 28$ grayscale image with 32 filters can produce $28 \times 28 \times 32$ activations; this illustrates feature maps rather than independent input variables.
+Do not frame “human in the loop” as an automatic solution. Ask which human role is suitable for which task, under which conditions, and with which safeguards. Human involvement can provide judgment, contextual knowledge, intervention, and recourse, but people may also overtrust, undertrust, game, or inappropriately override systems.
 
-For video, ask students to identify two structures: spatial relationships inside frames and temporal relationships between frames. A CNN can extract frame features, followed by recurrence or attention over time. Avoid requiring students to memorize Inception-ResNet-v2; the architecture figure only shows how complex combinations of layers can become.
+Use the people slides to discuss workflow redesign, incentives, culture, professional identity, hiring, and upskilling. The intended conclusion is that AI deployment is a people-and-process transformation: human and technical resources are complements. Treat the BCG figures as source-period survey findings, not timeless forecasts.
 
-### RNNs and sequential data
+## Governance, boundaries, and explainability
 
-Describe recurrence as **memory through a hidden state**. The same cell is reused over ordered elements. Suitable examples include time series, audio, language, and user-interaction sequences. A key misconception is to treat sequence positions as interchangeable columns: changing order can change meaning.
+Responsible deployment asks both “Can this be optimized?” and “Should it be optimized?” Use the examples to distinguish unlawful or unacceptable objectives, vulnerable populations, proxy targets, autonomy and dignity concerns, and externalities. Governance should define system and decision ownership, accountability, monitoring, escalation, incident response, human intervention, and contestability.
 
-### Transformers
+For opacity, distinguish lack of access from lack of comprehensibility. Proprietary systems and trade secrets can create access opacity; complex models can remain difficult to understand even with full access. Explainability is stakeholder-specific:
 
-Describe **attention** as directly relating sequence positions, including distant positions. A Transformer is not merely an RNN with more memory. Tokens can represent language units, image patches, or audio/video segments, which explains the move toward multimodal applications.
+- engineers may need debugging evidence;
+- affected persons need reasons and possible recourse;
+- managers need limitations and oversight rules;
+- auditors need logs and evidence.
 
-### Audio
+Present the taxonomy as a map, not a technical deep dive. Feature importance may be global or local and should not be interpreted causally. Counterfactual explanations are action-oriented. Interactive explanations support what-if probing. Ask which explanation allows each stakeholder to understand, contest, improve, or govern a system.
 
-Audio is a useful case because representation changes the modeling choice. A waveform or feature stream is sequential; a spectrogram has local time-frequency structure and can be processed like an image. CNNs, RNNs, and Transformers can therefore all be sensible, alone or combined.
+{{< needspace 12 >}}
 
-## Common misconceptions and discussion prompts
+## NIST AI RMF and regulatory context
 
-- **“One architecture belongs to exactly one modality.”** Correct this with spectrograms, video pipelines, and multimodal Transformers.
-- **“Deep learning removes feature engineering.”** Hidden layers learn representations, but practitioners still choose inputs, encodings, normalization, and domain transformations.
-- **“A larger network is always better.”** Capacity must match the problem and increases overfitting and computational risk.
-- **“Output design follows the input modality.”** Architecture follows input structure; output neurons, activation, and loss follow the prediction task.
-- Ask: What information disappears if pixels or frames are shuffled?
-- Ask: What is one observation, and what is one input unit, in each modality?
+Use the four NIST AI RMF functions as a portable vocabulary:
+
+- **Govern:** roles, policies, and accountability;
+- **Map:** context, stakeholders, and intended use;
+- **Measure:** performance, bias, robustness, and risk;
+- **Manage:** mitigation, monitoring, and incident response.
+
+Connect these functions to the deployment questions: Who is affected? What decision is supported or automated? What can go wrong? Who is accountable? How will the organization know when to stop or intervene?
+
+The slides retain the source treatment of GDPR Articles 15 and 22 and EU AI Act Articles 27 and 86. Present these as regulatory context for meaningful information, intervention, contestability, transparency, oversight, logging, and fundamental-rights assessment—not as legal advice. The article-specific claims and implementation timelines are time-sensitive and should receive a later substantive/legal review rather than being expanded during this migration.
 
 ## Exercise facilitation
 
-Allow approximately 20 minutes for reading the R torch MLP object and 50 minutes for the NovaStream modality cases, leaving 10 minutes for synthesis. Students should inspect how the module, loss, optimizer, and training loop correspond to the conceptual steps.
+Allow approximately 5 minutes for case choice, 15 for organizational context, 20 for research, 30 for the map, and 10 for peer explanation and refinement. Facilitate small-group formation at the start.
 
-For each use case, insist on three elements: input representation, expected output, and architectural assumption. Cases such as churn should surface that an MLP is not automatically preferable to logistic regression or tree models. Subtitle generation, next-item prediction, cover-image classification, and chat moderation make the sequence/spatial distinctions concrete.
+The activity is the Session 9 exercise and also provides a **group-project scaffold**. Groups should retain the strategy map and use it to connect their chosen organizational problem to the later project narrative. Insist on a concrete analytics-enabled decision and a traceable chain from objective and KPI through data, decision, action, outcome, and feedback.
 
-The original broader NovaStream quiz also included recommendation, anomaly detection, pricing optimization, route optimization, association rules, and clustering. Those cases were omitted from the core because they do not directly reinforce Session 9's image/video/audio architecture goal.
+The strategy-map approach follows the source guidance associated with Peppard, Ward, and Daniel (2007). Public company engineering blogs, annual reports, transparency reports, and credible external reporting can provide starting evidence. Useful examples in the source notes include Netflix personalization, Airbnb, Uber, Spotify, LinkedIn, Meta, DoorDash, and Shopify. Capital One was intentionally excluded because lending decisions were already covered in the lecture.
+
+During debriefing, ask:
+
+- Is the claimed value tied to an observable process and plausible KPI?
+- Which organizational capabilities are prerequisites rather than outcomes?
+- Is the application augmenting or automating a decision, and is the human role credible?
+- Who bears risk and who is accountable?
+- What explanation is useful to each stakeholder?
+- Which NIST, GDPR, or EU AI Act questions require later verification?
+- What evidence is reported, and what did the group infer?
 
 ## Follow-up review
 
-- Clarify RNN and Transformer explanations after observing student questions.
-- Add a substantive video task or dataset during later content redevelopment; the imported exercise contained modality-selection scenarios but no hands-on media dataset.
-- Keep the R torch implementation aligned with the conceptual network diagrams when revising the session later.
+- Verify time-sensitive GDPR and EU AI Act article interpretations and application dates during substantive review.
+- Recheck the 2025 BCG workforce survey examples before future reuse.
+- Decide later whether to distribute a separate editable strategy-map template; the authoritative exercise now contains the complete scaffold and no longer depends on an external source-repository `.docx`.

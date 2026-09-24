@@ -356,9 +356,6 @@ def test_requested_exercise_pagination_is_selective_and_headings_are_separate() 
             "Part 10 — Reflect on generalization": 8,
         },
         "session_07.qmd": {"Part 6 — RBF support vector machine": 10},
-        "session_08.qmd": {
-            "Task 2.1 — Build training vocabulary and sparse matrices": 12
-        },
     }
     for filename, headings in expected.items():
         source = (root / "exercises" / filename).read_text(encoding="utf-8")
@@ -369,7 +366,6 @@ def test_requested_exercise_pagination_is_selective_and_headings_are_separate() 
             )
 
     for filename, heading in (
-        ("session_08.qmd", "# Part 2 — Sparse text representations {#part-2}"),
         ("session_06.qmd", "# Part 2 — Specify preprocessing without leakage {#recipe}"),
     ):
         source = (root / "exercises" / filename).read_text(encoding="utf-8")
