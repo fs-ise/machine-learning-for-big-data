@@ -1,6 +1,6 @@
 ---
 session: "Session 8"
-title: "Neural Networks for Structured Data"
+title: "Machine Learning for Non-Tabular Data"
 session_id: session-08
 format:
   html: default
@@ -29,30 +29,73 @@ After this exercise, you should be able to:
 - select an output layer and loss for classification or regression;
 - compare specialized architectures with an MLP baseline using held-out data.
 
-## Data and package setup
+:::
 
-You do not need a copy of the course repository. Put this notebook in any working folder, open a terminal in that folder, and download the public data into this structure:
+:::: {.direction}
+
+::: {.callout-note title="Data and package setup"}
+
+This exercise uses only publicly downloadable, GitHub-hosted data. **You do not need Kaggle, a Kaggle account, or the Kaggle API.** The two sources are:
+
+1. **Fashion-MNIST:** the official [Zalando Research GitHub repository](https://github.com/zalandoresearch/fashion-mnist). It contains labeled $28 \times 28$ grayscale images of ten clothing categories, which let us compare a flat-pixel MLP with a CNN that preserves spatial structure. Download its four original compressed IDX files directly from `https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/`.
+2. **Store Item Demand Forecasting:** the [GitHub repository](https://github.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge). Its `train.csv` contains daily sales by date, store, and item, which lets us compare flat lag features with an ordered sequence for next-day demand forecasting. Download [`train.csv`](https://raw.githubusercontent.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge/master/train.csv) from GitHub.
+
+From the folder containing this notebook, create exactly this structure:
 
 ```text
 data/
 ├── fashion-mnist/
+│   ├── train-images-idx3-ubyte.gz
+│   ├── train-labels-idx1-ubyte.gz
+│   ├── t10k-images-idx3-ubyte.gz
+│   └── t10k-labels-idx1-ubyte.gz
 └── store-item-demand/
+    └── train.csv
 ```
 
-The Fashion-MNIST files come from the official [`zalandoresearch/fashion-mnist`](https://github.com/zalandoresearch/fashion-mnist) repository. The sales file is a public copy from [`DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge`](https://github.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge). Run:
+Copy and paste these shell commands:
 
 ```bash
 mkdir -p data/fashion-mnist data/store-item-demand
 
-curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/train-images-idx3-ubyte.gz -o data/fashion-mnist/train-images-idx3-ubyte.gz
-curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/train-labels-idx1-ubyte.gz -o data/fashion-mnist/train-labels-idx1-ubyte.gz
-curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/t10k-images-idx3-ubyte.gz -o data/fashion-mnist/t10k-images-idx3-ubyte.gz
-curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/t10k-labels-idx1-ubyte.gz -o data/fashion-mnist/t10k-labels-idx1-ubyte.gz
-curl -L https://raw.githubusercontent.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge/master/train.csv -o data/store-item-demand/train.csv
+curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/train-images-idx3-ubyte.gz \
+  -o data/fashion-mnist/train-images-idx3-ubyte.gz
+
+curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/train-labels-idx1-ubyte.gz \
+  -o data/fashion-mnist/train-labels-idx1-ubyte.gz
+
+curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/t10k-images-idx3-ubyte.gz \
+  -o data/fashion-mnist/t10k-images-idx3-ubyte.gz
+
+curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/t10k-labels-idx1-ubyte.gz \
+  -o data/fashion-mnist/t10k-labels-idx1-ubyte.gz
+
+curl -L https://raw.githubusercontent.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge/master/train.csv \
+  -o data/store-item-demand/train.csv
 ```
 
-Install packages once with `install.packages(c("torch", "readr", "dplyr", "tidyr", "ggplot2", "purrr", "tibble"))`, then install the torch runtime with `torch::install_torch()`.
+Install the required R packages and the torch runtime once:
 
+```r
+install.packages(c(
+  "torch",
+  "readr",
+  "dplyr",
+  "tidyr",
+  "ggplot2",
+  "purrr",
+  "tibble"
+))
+
+torch::install_torch()
+```
+
+:::
+
+::::
+
+::: {.sol}
+The data should have been downloaded from GitHub as described in the exercise instructions.
 :::
 
 ```{r}
@@ -84,7 +127,12 @@ required_files <- c(
   demand_path
 )
 if (!all(file.exists(required_files))) {
-  stop("Download the public data files using the commands in Data and package setup.")
+  missing_files <- required_files[!file.exists(required_files)]
+  stop(
+    "Missing required data file(s):\n- ",
+    paste(missing_files, collapse = "\n- "),
+    "\nReturn to 'Data and package setup' and run the provided shell commands."
+  )
 }
 ```
 
@@ -197,12 +245,12 @@ table(fashion$train$y)
 
 ::: {.direction}
 Complete a `784 -> 64 -> 10` MLP. The hidden layer needs ReLU. The final layer should return ten **raw logits**: `nnf_cross_entropy()` combines the appropriate multiclass transformation and loss, so do not append softmax.
-:::
 
 ```{r}
 #| label: task-1-2-mlp-student-response
 # YOUR CODE HERE: define fashion_mlp with two linear layers and ReLU.
 ```
+:::
 
 ::: {.sol}
 ```{r}
@@ -224,12 +272,12 @@ fashion_mlp <- nn_module(
 
 ::: {.direction}
 Create a small optimizer factory that returns Adam for a model and learning rate. Adam is the gradient-based update rule used throughout the image experiments.
-:::
 
 ```{r}
 #| label: task-1-2-optimizer-student-response
 # YOUR CODE HERE: make_adam <- function(model, lr) ...
 ```
+:::
 
 ::: {.sol}
 ```{r}
@@ -305,12 +353,12 @@ plot_learning_curves <- function(history) {
 
 ::: {.direction}
 Instantiate the model and use your Adam factory by calling `train_classifier()` with `lr = 1e-3`. Train for eight epochs and inspect both curves.
-:::
 
 ```{r}
 #| label: task-1-2-train-student-response
 # YOUR CODE HERE
 ```
+:::
 
 ::: {.sol}
 ```{r}
@@ -364,12 +412,12 @@ make_mlp <- function(hidden_sizes) {
 
 ::: {.direction}
 Specify three configurations: shallow/narrow `784 -> 32 -> 10`, wider `784 -> 128 -> 10`, and deeper `784 -> 128 -> 64 -> 10`. The supplied loop trains each under identical conditions.
-:::
 
 ```{r}
 #| label: task-2-1-configurations-student-response
 # YOUR CODE HERE: architecture_configs <- list(...)
 ```
+:::
 
 ::: {.sol}
 ```{r}
@@ -392,10 +440,10 @@ architecture_results <- imap(architecture_configs, function(hidden, name) {
 }) |> bind_rows()
 
 architecture_results |>
-  filter(split == "validation") |>
-  ggplot(aes(epoch, accuracy, colour = configuration)) +
+  ggplot(aes(epoch, accuracy, colour = configuration, linetype = split)) +
   geom_line(linewidth = 0.9) +
   geom_point() +
+  labs(linetype = "data split") +
   theme_minimal()
 ```
 
@@ -403,12 +451,12 @@ architecture_results |>
 
 ::: {.direction}
 Using the wider architecture, compare learning rates `1e-2`, `1e-3`, and `1e-4`. Complete only the vector; the loop is supplied.
-:::
 
 ```{r}
 #| label: task-2-2-learning-rates-student-response
 # YOUR CODE HERE: learning_rates <- ...
 ```
+:::
 
 ::: {.sol}
 ```{r}
@@ -427,11 +475,11 @@ learning_rate_results <- imap_dfr(learning_rates, function(lr, name) {
 })
 
 learning_rate_results |>
-  filter(split == "validation") |>
   pivot_longer(c(loss, accuracy), names_to = "metric", values_to = "value") |>
-  ggplot(aes(epoch, value, colour = learning_rate)) +
+  ggplot(aes(epoch, value, colour = learning_rate, linetype = split)) +
   geom_line(linewidth = 0.9) +
   facet_wrap(~metric, scales = "free_y") +
+  labs(linetype = "data split") +
   theme_minimal()
 ```
 
@@ -453,12 +501,12 @@ Flattening made each image a 784-value vector. A CNN instead receives a one-chan
 
 ::: {.direction}
 Complete the network with a 2D convolution (8 output channels and a `3 x 3` kernel), ReLU, `2 x 2` max pooling, flattening, and a ten-logit output layer. With padding of one, pooling changes `28 x 28` to `14 x 14`.
-:::
 
 ```{r}
 #| label: task-3-1-cnn-student-response
 # YOUR CODE HERE: define fashion_cnn.
 ```
+:::
 
 ::: {.sol}
 ```{r}
@@ -635,12 +683,12 @@ train_regressor <- function(model, loaders, epochs = 20, lr = 1e-3,
 
 ::: {.direction}
 Complete an MLP that treats the 28 lagged observations as a flat vector: `28 -> 32 -> 1`. Use ReLU in the hidden layer and one linear output because sales forecasting is regression.
-:::
 
 ```{r}
 #| label: task-4-2-demand-mlp-student-response
 # YOUR CODE HERE
 ```
+:::
 
 ::: {.sol}
 ```{r}
@@ -662,12 +710,12 @@ demand_mlp_fit <- train_regressor(demand_mlp(), demand_loaders, epochs = 20)
 
 ::: {.direction}
 Complete a small RNN with one feature per time step and 16 hidden units. In `forward()`, pass the sequence through the recurrent layer, select its final hidden representation, and map that representation to one predicted sales value.
-:::
 
 ```{r}
 #| label: task-4-3-rnn-student-response
 # YOUR CODE HERE
 ```
+:::
 
 ::: {.sol}
 ```{r}
@@ -745,9 +793,10 @@ Transformers provide a more general attention-based approach to sequences, as di
 The RNN receives 28 ordered time steps with one feature each; recurrence updates a hidden state at every step, so the final state summarizes earlier observations. The MLP receives positions as separate features and has no shared temporal transition mechanism. A random split lets nearly identical overlapping windows—and potentially future patterns—appear on both sides of the split, exaggerating generalization. The reported test RMSE and MAE determine the winner. An RNN need not win: a short, regular univariate series may be modeled efficiently by lag features, and optimization and sample size also matter.
 :::
 
+::: {.direction}
+
 # Wrap-up {#wrap-up}
 
-::: {.direction}
 Complete the final column using your held-out results.
 
 | Data | Representation | Model | Structural assumption | Task/loss | Validation or test performance |
