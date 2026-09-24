@@ -49,6 +49,25 @@ jobs:
       - name: Install and validate R rendering dependencies
         run: |
           Rscript scripts/install_r_dependencies.R
+          Rscript -e 'torch::install_torch()'
+      - name: Download Session 8 public data
+        run: |
+          mkdir -p exercises/data/fashion-mnist exercises/data/store-item-demand
+          curl --fail --location --retry 3 \
+            https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/train-images-idx3-ubyte.gz \
+            --output exercises/data/fashion-mnist/train-images-idx3-ubyte.gz
+          curl --fail --location --retry 3 \
+            https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/train-labels-idx1-ubyte.gz \
+            --output exercises/data/fashion-mnist/train-labels-idx1-ubyte.gz
+          curl --fail --location --retry 3 \
+            https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/t10k-images-idx3-ubyte.gz \
+            --output exercises/data/fashion-mnist/t10k-images-idx3-ubyte.gz
+          curl --fail --location --retry 3 \
+            https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/t10k-labels-idx1-ubyte.gz \
+            --output exercises/data/fashion-mnist/t10k-labels-idx1-ubyte.gz
+          curl --fail --location --retry 3 \
+            https://raw.githubusercontent.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge/master/train.csv \
+            --output exercises/data/store-item-demand/train.csv
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           tinytex: true

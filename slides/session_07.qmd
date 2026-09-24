@@ -31,7 +31,7 @@ Many models can handle **classification** (predicting categories) and **regressi
 | ----------------------------- | ---------------------------------------------- | ------------------------------------------ |
 | **Linear models**             | Logistic regression (Ridge/Lasso)              | Linear regression (Ridge/Lasso)            |
 | **Distance-based models**     | k-NN (classification)                          | k-NN (regression)                          |
-| **Tree-based models**         | Decision trees, random forest   | Regression trees, random forest |
+| **Tree-based models**         | Decision trees, random forest                  | Regression trees, random forest            |
 | **Margin-based models**       | Support vector machine (SVC)                   | Support vector regression (SVR)            |
 | **Neural networks**           | Neural networks (classification)               | Neural networks (regression)               |
 

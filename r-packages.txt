@@ -1,5 +1,6 @@
 broom
 cluster
+coro
 dplyr
 ggplot2
 glmnet
@@ -9,13 +10,17 @@ kknn
 knitr
 Matrix
 pROC
+purrr
 quanteda
 ranger
 readr
 reticulate
 rmarkdown
 rpart
+tibble
 tidymodels
+tidyr
 tidyverse
+torch
 yardstick
 partykit
