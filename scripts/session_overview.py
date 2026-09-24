@@ -153,19 +153,14 @@ def event_title(event: dict[str, Any], root: Path = ROOT) -> str:
         title = read_material_title(root, str(material["path"]))
 
     title = title or event.get("title") or event.get("event_id") or "Event"
-    badge = event_badge(str(event.get("type", "event")))
-
-    if material and material.get("path"):
-        return f"[{title}]({material['path']}) {badge}"
-
-    return f"{title} {badge}"
+    return str(title)
 
 
 def material_links(session: dict[str, Any]) -> str:
     labels = {
         "slides": "Slides",
         "notes": "Notes",
-        "exercise": "Exercise",
+        "exercise": "Notebook",
     }
 
     links = []
@@ -196,8 +191,8 @@ def markdown_table(
     today: date | None = None,
 ) -> str:
     rows = [
-        "| Status | Title | Date | Time | Location | Materials |",
-        "|---|---|---|---|---|---|",
+        "| Status | | Title | Date | Time | Location | Materials |",
+        "|---|---:|---|---|---|---|---|",
     ]
 
     for event in load_events(root):
@@ -238,8 +233,9 @@ def markdown_table(
         materials = material_links(event)
 
         rows.append(
-            f"| {status_html} | {event_title(event, root)} | {date_text} | "
-            f"{time_text} | {location} | {materials} |"
+            f"| {status_html} | {event_badge(str(event.get('type', 'event')))} | "
+            f"{event_title(event, root)} | {date_text} | {time_text} | "
+            f"{location} | {materials} |"
         )
 
     return "\n".join(rows)
