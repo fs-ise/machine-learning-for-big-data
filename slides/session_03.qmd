@@ -1,7 +1,7 @@
 ---
-title: "Exploratory data analysis"
+title: "Exploratory Data Analysis"
 title-slide-image: "../images/cover_slide/eda.png"
-section_label: "EDA"
+section_label: "Exploratory Data Analysis"
 session: "Session 3"
 date: "2026-09-11"
 format: revealjs

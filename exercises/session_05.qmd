@@ -1,6 +1,6 @@
 ---
 session: "Session 5"
-title: "ML Baselines (Classification)"
+title: "Machine Learning Baselines: Classification"
 session_id: session-05
 format:
   html: default

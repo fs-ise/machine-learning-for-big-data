@@ -1,5 +1,5 @@
 ---
-title: "Notes: Session 7: ML Foundations (Algorithms)"
+title: "Notes: Session 7: Machine Learning Foundations: Algorithms"
 session_id: session-07
 format: html
 ---

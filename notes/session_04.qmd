@@ -1,5 +1,5 @@
 ---
-title: "Notes: Session 4: Regression"
+title: "Notes: Session 4: Machine Learning Baselines: Regression"
 session_id: session-04
 ---
 
