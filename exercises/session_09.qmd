@@ -1,5 +1,6 @@
 ---
-title: "Session 9: ML for Non-Tabular Data (Image, Video, Audio)"
+session: "Session 9"
+title: "ML for Non-Tabular Data (Image, Video, Audio)"
 session_id: session-09
 format:
   html: default

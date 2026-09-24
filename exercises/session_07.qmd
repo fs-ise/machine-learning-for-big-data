@@ -1,5 +1,6 @@
 ---
-title: "Session 7: Machine Learning Foundations — Algorithms"
+session: "Session 7"
+title: "Machine Learning Foundations — Algorithms"
 session_id: session-07
 format:
   html: default
