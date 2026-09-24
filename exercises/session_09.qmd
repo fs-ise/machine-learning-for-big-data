@@ -1,139 +1,139 @@
 ---
 session: "Session 9"
-title: "ML for Non-Tabular Data (Image, Video, Audio)"
+title: "Deployment in Organizations"
 session_id: session-09
-format:
-  html: default
+format: html
 ---
+
+This Session 9 exercise focuses on **Deployment in Organizations**. Your group will analyze how analytics contributes to strategic objectives in an organization. You will identify where analytics enters concrete business processes, which decisions it supports or automates, what data and systems are needed, and how the organization learns from outcomes.
+
+Your group will develop an **Analytics-Enabled Strategy Map** for one selected company. Retain the map as a scaffold for your later group-project work.
 
 ::: {.direction}
 
-| Exercise part | Time |
+| Project stage | Suggested time |
 |---|---:|
-| [Part 1: Read an MLP architecture](#part-1) | 20 min |
-| [Part 2: Match architectures to media use cases](#part-2) | 50 min |
-| [Wrap-up](#wrap-up) | 10 min |
+| [1. Select a case](#select-case) | 5 min |
+| [2. Understand the organization](#understand) | 15 min |
+| [3. Research the deployment](#research) | 20 min |
+| [4. Build the strategy map](#strategy-map) | 30 min |
+| [5. Share and refine](#share) | 10 min |
 | **Total** | **80 min** |
 
 :::
 
-# Part 1: Read an MLP architecture {#part-1}
+# 1. Select a case {#select-case}
 
-::: {.direction}
+Select **one** company from the following list:
 
-Inspect this framework-neutral architecture:
+| Case | Industry |
+|---|---|
+| Netflix | Streaming / entertainment |
+| Meta | Social media / digital platforms |
+| X / Twitter | Social media / digital platforms |
+| Siemens | Manufacturing / industrial technology |
 
-| Layer | Input | Output | Activation |
-|---|---:|---:|---|
-| Dense 1 | 10 | 8 | ReLU |
-| Dense 2 | 8 | 4 | ReLU |
-| Output | 4 | 1 | — |
+# 2. Understand the organization {#understand}
 
-1. Write down the sequence of layers and dimensions.
-2. How many hidden layers and trainable dense layers are present?
+Build a basic understanding of the company:
 
-**Your answer:** *Write your answer here.*
-
-3. What changes for `hidden_layers=[32, 16, 8]`?
+- What is its business model?
 
 **Your answer:** *Write your answer here.*
 
-4. What kind of data structure does this MLP expect? What structural information would be lost if a video were simply flattened into ten features?
+- Who are its main customers or users?
 
 **Your answer:** *Write your answer here.*
 
+- What are its main products, services, or platforms?
+
+**Your answer:** *Write your answer here.*
+
+- What organizational problem, opportunity, or strategic objective seems especially important?
+
+**Your answer:** *Write your answer here.*
+
+- What could be plausible key performance indicators for this objective?
+
+**Your answer:** *Write your answer here.*
+
+Official strategic metrics may not be publicly available. If necessary, infer plausible KPIs and justify your reasoning.
+
+# 3. Research the deployment {#research}
+
+Use at least **three credible public sources**. Prioritize primary sources such as official annual reports, investor presentations, corporate engineering or research publications, transparency reports, product documentation, and regulatory filings. Complement them where necessary with regulatory documents, peer-reviewed research, academic case studies, or high-quality journalism.
+
+Start with the selected company's official investor-relations, engineering/research, and transparency or governance pages. Record the publication date, authoring organization, and whether each statement is direct evidence or your group's interpretation.
+
+For each source, ask:
+
+- What strategic objective does it reveal?
+
+**Your answer:** *Write your answer here.*
+
+- Which business processes and ML/AI capabilities are described or implied?
+
+**Your answer:** *Write your answer here.*
+
+- Which decisions are supported by analytics, and which are automated?
+
+**Your answer:** *Write your answer here.*
+
+- Which data sources or systems are mentioned?
+
+**Your answer:** *Write your answer here.*
+
+- Are there signs of experimentation, feedback, monitoring, governance, or regulation?
+
+**Your answer:** *Write your answer here.*
+
+# 4. Build an Analytics-Enabled Strategy Map {#strategy-map}
+
+Complete the map below for your selected case. Connect the rows into a coherent chain rather than treating them as isolated questions.
+
+**Your task:** Enter your group’s notes in the final column of the table.
+
+| Strategy-map element | Guiding question | Group notes |
+|---|---|---|
+| Organizational problem or opportunity | What concrete problem or opportunity does the organization address? | |
+| Strategic objective and KPIs | What objective is especially relevant, and which operational KPIs indicate progress? | |
+| ML/AI capability | Which specific analytical application contributes to the objective? | |
+| Business process | Where is it used? Describe the process as **decision → data → action → outcome**. | |
+| Expected business value | Does it improve decisions, personalization, efficiency, automation, risk reduction, or organizational learning? | |
+| Complementary organizational capabilities | Which technical and human resources, data infrastructure, management capabilities, culture, roles, or skills are required? | |
+| Augmentation or automation | Does the application augment a human decision, automate it, or combine both? Where and why is a human involved? | |
+| Risks and boundaries | What can go wrong, who is affected, and what should not be optimized? | |
+| Governance and accountability | Who owns the system and decision, and which oversight, monitoring, escalation, contestability, or incident-response mechanisms are needed? | |
+| Explainability | Who needs which explanation—to understand, contest, improve, audit, or govern the system? | |
+| Regulatory considerations | How might the NIST AI RMF, GDPR, or EU AI Act inform the deployment? Identify questions for later verification rather than offering legal advice. | |
+| Feedback and learning | How are outcomes monitored, and how do feedback and accumulated knowledge improve the process or system? | |
+
+::: {.callout-note title="Working principles"}
+Focus on **specific analytics-enabled decisions**, not broad statements such as “the company uses AI.” Some information may not be public; clearly distinguish evidence from your group’s reasoned interpretation.
 :::
 
-::: {.sol}
+# 5. Share and refine {#share}
 
-**Solution**
+Prepare a short explanation of your map. Another group should be able to trace the connection from organizational objective to ML/AI capability, decision, action, value, and feedback.
 
-```text
-Input: 10 features
-Dense: 10 → 8
-Activation: ReLU
-Dense: 8 → 4
-Activation: ReLU
-Dense: 4 → 1
-Output: 1 value
-```
+During feedback, ask:
 
-The model has two hidden layers and three trainable dense layers. With `[32, 16, 8]`, it has three hidden layers with those widths and a final `8 -> 1` layer. It expects a fixed-length feature vector. Flattening media removes explicit spatial and temporal relationships, which CNNs and sequence architectures are designed to preserve.
-
-:::
-
-# Part 2: Match architectures to media use cases {#part-2}
-
-::: {.direction}
-
-**Background.** *NovaStream* offers movies, series, podcasts, music, and livestreams. For each use case:
-
-1. identify the input structure and expected output;
-2. recommend an architecture or analytical approach;
-3. justify how the model's assumptions fit the data;
-4. name a plausible alternative or explain why a standard predictive model is insufficient.
-
-| # | Use case | Recommendation and justification |
-|---:|---|---|
-| 1 | Predict subscriber churn from aggregated viewing, subscription, support, app-usage, and payment features. | |
-| 2 | Generate multilingual subtitles from conversational livestream audio. | |
-| 3 | Classify uploaded podcast cover images as sports, entertainment, education, politics, or technology. | |
-| 4 | Predict the next song, video, or podcast from recent interaction sequences, time of day, device, and consumption history. | |
-| 5 | Detect toxic or abusive livestream chat messages as they are posted. | |
-| 6 | Forecast server demand and bandwidth from historical usage across days, weeks, and special events. | |
-For use cases 2–4, also answer:
-
-- Where is the **spatial** or **sequential** structure?
+1. Is the expected business value plausible and tied to a process and KPI?
 
 **Your answer:** *Write your answer here.*
 
-- Would changing the order or location of input elements change their meaning?
+2. Are the required complementary capabilities visible?
 
 **Your answer:** *Write your answer here.*
 
-- For audio or video, would you combine more than one architecture? Why?
+3. Is the proposed division of work between humans and AI justified?
 
 **Your answer:** *Write your answer here.*
 
-- What are the likely units of input (features, pixels, frames, waveform samples, spectrogram regions, or tokens)?
+4. Are accountability, explanation, risk, and regulatory questions specific enough to guide later project work?
 
 **Your answer:** *Write your answer here.*
 
-:::
+5. Which claims require additional evidence or verification?
 
-::: {.sol}
-
-**Solution**
-
-| # | Input and output | Suitable approach |
-|---:|---|---|
-| 1 | Fixed-length customer feature vector → churn probability | An MLP, logistic regression, or tree ensemble. The inputs are primarily tabular; a specialized media architecture is not automatically beneficial. |
-| 2 | Ordered audio representation → subtitle token sequence | Transformer; an RNN/LSTM remains a conceptual alternative. A CNN can extract local features from a spectrogram before sequence modeling. |
-| 3 | Spatial pixel grid → image category | CNN, because local visual patterns recur across image positions. A vision Transformer is an alternative. |
-| 4 | Ordered interactions → next-item probability | RNN/LSTM or Transformer because temporal order and longer-range dependencies matter. |
-| 5 | Ordered language tokens → toxicity label | Transformer-based language model; simpler text classifiers remain useful baselines. |
-| 6 | Ordered measurements → future demand | Time-series methods, RNN/LSTM, or Transformer, depending on scale and complexity. Classical forecasting should remain a baseline. |
-
-Video typically combines a CNN's spatial feature extraction with an RNN, temporal model, or Transformer across frames. Audio may be modeled as a waveform sequence or as a spectrogram, so its representation can support an RNN/Transformer, a CNN, or a combination.
-
-:::
-
-# Wrap-up {#wrap-up}
-
-::: {.direction}
-
-For one NovaStream case, sketch a pipeline:
-
-```text
-raw modality -> numerical representation -> architecture -> output -> evaluation
-```
-
-Then compare it with a case whose input has a different structure. State which architectural assumption changes.
-
-<!--
-::: {.callout-tip title="Session 9 survey"}
-{{< survey session_09 exercise >}}
-:::
--->
-
-:::
+**Your answer:** *Write your answer here.*

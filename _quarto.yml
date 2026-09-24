@@ -6,6 +6,8 @@ project:
     - "slides/*.qmd"
     - "notes/*.qmd"
     - "optional/*.qmd"
+    - "!slides/_*.qmd"
+    - "!notes/_*.qmd"
     - "!exercises/**"
   resources:
     - "images/cover_slide/*.png"

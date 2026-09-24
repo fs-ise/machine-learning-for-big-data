@@ -1,755 +1,676 @@
 ---
-title: "Machine learning for non-tabular data: text"
-title-slide-image: "../images/cover_slide/ml-text.png"
-section_label: "ML for Non-Tabular Data (Text)"
+title: "Machine Learning for Non-Tabular Data"
+title-slide-image: "../images/cover_slide/ml-image-audio-video.png"
+section_label: "ML for Non-Tabular Data"
 session: "Session 8"
 date: "2026-09-25"
 format: revealjs
 nocite: |
-  @ManningSchutze1999
+    @ZhangEtAl2023
 ---
 
 ## {data-menu-title="Learning objectives" data-state="hide-menubar"}
 
-<br><br><br><br><br>
+<br><br><br>
 
 ::: {.learning-objectives}
-- **Describe** the text analytics pipeline from preprocessing to representation and modeling.
+
+* **Explain and interpret** the core ideas and mathematical operations underlying artificial neural networks
+* **Distinguish** between major neural network architectures (MLP, CNN, RNN, TM) and identify the types of data for which they are most appropriate.
+* **Understand** the design and training process of neural networks, including architecture selection and optimization.
 :::
 
-# Text analytics {data-stack-name="Text analytics"}
+# Foundations {data-stack-name="Foundations"}
 
-## Text analytics
-
-:::: {.columns}
-
-::: {.column width="50%"}
-
-The vast majority of global data is stored in unstructured formats.
-For example:
-
-- emails and internal communication
-- customer support tickets
-- meeting notes and reports
-- product reviews and social media posts
-- annual reports and corporate filings
-- contracts and legal documents
-- job descriptions and résumés
-- scientific and market research reports
-- CRM notes and sales reports
-- helpdesk and incident reports
-
-:::
-
-::: {.column width="50%"}
-**Text analytics** combines methods from natural language processing, machine learning, information retrieval, and statistics to systematically analyze large volumes of textual data and derive actionable insights.
-
-![](../images/text_analytics.png){width=70%}
-
-:::
-
-::::
-
-::: aside
-*Text mining* is often viewed as a subset of the broader field of text analytics, emphasizing the discovery of previously unknown patterns in textual data.
-Here, we use the broader term *text analytics*.
-:::
-
-## Application areas
-
-![](../images/text_analytics_applications.png){fig-align=center width=75%}
-
-## Text preprocessing
-
-:::: {.columns}
-
-::: {.column width="80%"}
-Typical sources of **noise**
-
-- punctuation, HTML tags, URLs, emojis
-- inconsistent casing and formatting
-- very frequent but low-information words (**stopwords**)
-- morphological variants (*user*, *users*, *using*)
-
-Preprocessing options *(choose what fits the analytical approach)*
-
-1. **Text cleanup**
-   remove punctuation / HTML / special characters
-2. **Tokenization**
-   split text into words or *n*-grams
-3. **Stopword removal**
-   remove frequent low-information words
-4. **Stemming / lemmatization**
-   reduce related word forms to a common base
-5. **Advanced linguistic processing**
-   POS tagging, parsing, word sense disambiguation, synonym / pronoun normalization
-
-:::
-
-::: {.column width="20%"}
-
-<div style="position: relative; width: 100%;">
-
-<img src="../images/text_analytics_pipeline.png"
-     style="width:100%; opacity:0.92;">
-
-<!-- subtle highlight -->
-
-<div style="
-position: absolute;
-left: 12%;
-top: 15.5%;
-width: 73%;
-height: 13.5%;
-border: 3px solid #5aa469;
-border-radius: 18px;
-background: rgba(90,164,105,0.05);
-box-shadow: 0 0 10px rgba(90,164,105,0.12);
-">
-</div>
-
-<!-- arrow -->
-
-<div style="
-position:absolute;
-left: 2%;
-top: 16.5%;
-font-size: 1.5em;
-color:#5aa469;
-font-weight:bold;
-line-height:1;
-">
-➜
-</div>
-
-</div>
-
-:::
-
-::::
-
-<!--
-
-![](../images/text_analytics_pipeline.png)
--->
-
-
-## Text processing: Examples
-
-:::: {.columns}
-
-::: {.column width="80%"}
-
-Stopword removal:
-
-```{r}
-#| label: text-processing-examples-load-packages
-#| echo: true
-library(quanteda)
-documents <- "Jupiter is the largest gas planet."
-tokens(documents,remove_punct=TRUE) |>
-  tokens_remove(stopwords("en")) |>
-  dfm() |>
-  featnames()
-```
-
-<!--
-Stemming:
-
-```r
-library(quanteda)
-tokens <- tokens("Jupiter is the largest gas planet",remove_punct=TRUE)
-tokens_wordstem(tokens,language="english")
-```
--->
-
-
-:::
-
-::: {.column width="20%"}
-
-<div style="position: relative; width: 100%;">
-
-<img src="../images/text_analytics_pipeline.png"
-     style="width:100%; opacity:0.92;">
-
-<!-- subtle highlight -->
-
-<div style="
-position: absolute;
-left: 12%;
-top: 15.5%;
-width: 73%;
-height: 13.5%;
-border: 3px solid #5aa469;
-border-radius: 18px;
-background: rgba(90,164,105,0.05);
-box-shadow: 0 0 10px rgba(90,164,105,0.12);
-">
-</div>
-
-<!-- arrow -->
-
-<div style="
-position:absolute;
-left: 2%;
-top: 16.5%;
-font-size: 1.5em;
-color:#5aa469;
-font-weight:bold;
-line-height:1;
-">
-➜
-</div>
-
-</div>
-
-:::
-
-::::
-
-## Feature generation: Sparse representations (classical NLP)
-
-:::: {.columns}
-
-::: {.column width="80%"}
-
-A document is treated as a **bag of words** or terms.
-
-- each word or term becomes a **feature**
-- word order is ignored
-- each document is represented as a **vector**
-- the result is a structured **document-term matrix**
-
-**Key idea**: Text is transformed into numerical features that can be used by classical machine learning models.
+## From biological neurons to artificial neural networks
 
 <br>
-**Ways to create vectors**
 
-<div class="smaller">
-| Technique | Feature value |
-|---|---|
-| **Binary term occurrence** | term appears: yes / no |
-| **Term occurrence** | number of times a term appears |
-| **Term frequency** | occurrences divided by document length |
-| **TF-IDF** | frequency weighted by how distinctive the term is |
-</div>
+![](../images/neuron.jpeg){fig-align=center width=40%}
+
+<!--
+https://pressbooks.cuny.edu/sensationandperception/chapter/how-neurons-work/
+
+TODO: replace illustration with something similar: https://iabac.org/blog/what-are-artificial-neural-networks
+-->
+
+**Key milestones**
+
+- **1943** (Warren McCulloch & Walter Pitts) — Mathematical model of artificial neurons
+- **1958** (Frank Rosenblatt) — Development of the *Perceptron*
+- **2010s** (Geoffrey Hinton, Yann LeCun & Yoshua Bengio) — Revival of modern deep learning
+- **2020s** (GPT models, OpenAI) — Emergence and widespread adoption of large language models (LLMs) and multimodal AI systems
+
+::: notes
+Highlight: multimodal AI (big-data) is closely connected to neural networks
+
+Inputs correspond to dendrites, outputs to axons
+
+The foundations of neural networks were developed 80 years ago.
+Why did we have to wait for the AI breakthroughs for so long?
+
+-> AI-Winters: 1974-1980, 1987-1993
+
+-> availability of computing power and data (next slide)
+:::
+
+
+## Performance of machine learning and neural networks
+
+::: columns
+
+:::: {.column width="50%"}
+<br><br>
+![](../images/neural_networks_performance_comparison_data.png){fig-align=center width=90%}
+
+::::
+
+:::: {.column width="50%"}
+
+**Key drivers of recent progress in neural networks**
+
+- Availability of large-scale datasets
+- Increasing computational power (especially GPUs/TPUs)
+- Advances in algorithms and neural network architectures
+- Specialization of neural networks:
+
+    - Convolutional Neural Networks (CNNs) for image and video recognition
+    - Recurrent Neural Networks (RNNs) for sequential and time-series data
+    - Transformers for language processing and generative AI
+    - Graph Neural Networks (GNNs) for network and relational data
+    - Diffusion Models for image and media generation
+
+::::
 
 :::
 
-::: {.column width="20%"}
+::: aside
+In small-data regimes, experiments are needed to identify algorithms that perform best for a given dataset.
+:::
 
-<div style="position: relative; width: 100%;">
+::: notes
+TPU: Tensor processing unit (for matrix and tensor operations in AI)
+:::
 
-<img src="../images/text_analytics_pipeline.png"
-     style="width:100%; opacity:0.92;">
 
-<!-- subtle highlight -->
+## The perceptron
 
-<div style="
-position: absolute;
-left: 12%;
-top: 30.5%;
-width: 73%;
-height: 14.5%;
-border: 3px solid #5aa469;
-border-radius: 18px;
-background: rgba(90,164,105,0.05);
-box-shadow: 0 0 10px rgba(90,164,105,0.12);
-">
-</div>
+:::: {.columns}
 
-<!-- arrow -->
+::: {.column width="50%"}
+A perceptron is one of the earliest forms of neural networks.
+A **classical perceptron** is characterized by:
 
-<div style="
-position:absolute;
-left: 2%;
-top: 32.5%;
-font-size: 1.5em;
-color:#5aa469;
-font-weight:bold;
-line-height:1;
-">
-➜
-</div>
+$$z = w^T x + b$$
 
-</div>
+followed by a **threshold activation**:
 
+$$\hat{y} =
+\begin{cases}
+1 & \text{if } w^T x + b > 0 \\
+0 & \text{otherwise}
+\end{cases}$$
+
+- This corresponds to a linear classifier
+- The training of the perceptron consists of feeding it multiple training samples and calculating the output for each of them
+- After each sample, the weights $w$ are adjusted to minimize a loss function, which quantifies the difference between the predicted and true outputs
+:::
+
+::: {.column width="50%"}
+<br><br>
+![](../images/neural_network_perceptron_linear_classifier.png){width=70% fig-align=center}
 :::
 
 ::::
 
 
-## Feature generation: TF-IDF example
-
-:::: {.columns}
-
-::: {.column width="80%"}
-
-TF-IDF (term frequency-inverse document frequency) measures how important a term is to a document relative to a corpus
-
-  - $tf$ (term frequency): how often a term appears in a document
-  - $idf$ (inverse document frequency): how rare a term is across the corpus
-
-  $$idf_i = log(\frac{N}{df_i})$$
-
-with $N$: total number of documents
-$df_i$: the number of documents in which $t_i$ appears.
-
-TF-IDF weight:
-
-$$w_{ij} = tf_{ij} \times idf_i$$
-
-- Gives more weight to rare words
-- Gives less weight to common words (domain-specific stopwords)
-
-:::
-
-::: {.column width="20%"}
-
-<div style="position: relative; width: 100%;">
-
-<img src="../images/text_analytics_pipeline.png"
-     style="width:100%; opacity:0.92;">
-
-<!-- subtle highlight -->
-
-<div style="
-position: absolute;
-left: 12%;
-top: 30.5%;
-width: 73%;
-height: 14.5%;
-border: 3px solid #5aa469;
-border-radius: 18px;
-background: rgba(90,164,105,0.05);
-box-shadow: 0 0 10px rgba(90,164,105,0.12);
-">
-</div>
-
-<!-- arrow -->
-
-<div style="
-position:absolute;
-left: 2%;
-top: 32.5%;
-font-size: 1.5em;
-color:#5aa469;
-font-weight:bold;
-line-height:1;
-">
-➜
-</div>
-
-</div>
-
-:::
-
-::::
-
-
-## Feature generation: Dense representations (embeddings)
-
-:::: {.columns}
-
-::: {.column width="80%"}
+## From perceptron to deep neural networks
 
 ::: {.highlight_must_learn}
 
-- Words are represented as **dense vectors** of real numbers, e.g., **50–300 values per word**
-- Dense vectors capture semantic meaning, i.e., similar words get **similar vector representations**
-- Well-known methods: **Word2Vec**, **GloVe**, **fastText**, **BERT**
+:::: {.columns}
 
-![](../images/sparse_dense_vectors.png){width=80% fig-align=center}
+::: {.column width="47%"}
 
-:::
+Limitation of a single perceptron:
+It cannot build abstract intermediate representations and can only learn linear decision boundaries.
 
-<!--
-  - better at handling **synonyms** and related terms than bag-of-words
+Solution:
+Multilayer neural networks combine:
 
-* Motivation: capture **semantic meaning**
+- **Multiple hidden layers**, which enable increasingly abstract representations
+- **Activation functions**, which make nonlinear learning possible
 
-* Introduce embeddings (e.g., BERT)
+Layers:
 
-* Output: **dense vectors → ML / clustering / similarity**
+- Input neurons: raw data (e.g., images, audio, video)
+- Hidden neurons: the weights and biases store abstract representations learned from the data (e.g., edges, parts of an image)
+- Output neuron: prediction (e.g., one neuron for binary, multiple for multi-class)
 
-* Use cases:
-
-  * semantic search
-  * clustering documents
-  * regression/classification
-
-* Key shift: *better features, same analytics logic*
--->
+Note: the number of layers and neurons is specified ex-ante and does not change in the training process.
 
 :::
 
-::: {.column width="20%"}
-
-<div style="position: relative; width: 100%;">
-
-<img src="../images/text_analytics_pipeline.png"
-     style="width:100%; opacity:0.92;">
-
-<!-- subtle highlight -->
-
-<div style="
-position: absolute;
-left: 12%;
-top: 30.5%;
-width: 73%;
-height: 14.5%;
-border: 3px solid #5aa469;
-border-radius: 18px;
-background: rgba(90,164,105,0.05);
-box-shadow: 0 0 10px rgba(90,164,105,0.12);
-">
-</div>
-
-<!-- arrow -->
-
-<div style="
-position:absolute;
-left: 2%;
-top: 32.5%;
-font-size: 1.5em;
-color:#5aa469;
-font-weight:bold;
-line-height:1;
-">
-➜
-</div>
-
-</div>
-
+::: {.column width="53%"}
+<br><br>
+![](../images/neural_network_layers.png)
 :::
 
 ::::
 
+:::
 
-## Feature generation: Dense representations (embeddings)
+::: {.learning_note .fragment}
+🎥 Grant Anderson (3Blue1Brown) provides a series of instructive
+animated explanations, including one on [Neural Networks](https://www.youtube.com/watch?v=aircAruvnKk).
+:::
+
+## Functionality of a neuron
+
+<br>
+
+::: {.highlight_must_learn}
+
+::: {style="text-align: center;"}
+![](/images/neural_network_neuron.png){fig-align=center width=65%}
+:::
+
+:::
+
+::: aside
+In a classical perceptron, the activation is typically binary (0 or 1), representing whether the neuron “fires.”
+In modern neural networks, activations are usually continuous-valued scalars determined by the activation function.
+:::
+
+
+## Types of activation functions
+
+<br>
+
+![](../images/neural_networks_comparison_sigmoid_relu.png){fig-align=center width=70%}
+
+::: aside
+ReLU: Rectified Linear Unit.
+:::
+
+::: notes
+
+Advantage of Sigmoid activation: smooth, supports gradient descent
+Note: in the case of Sigmoid activation, the NN is basically a network of logistic regressions
+ReLU: for efficient computation
+
+:::
+
+## Training of a multilayer perceptron
+
+- Weights are initialized with carefully selected random values
+- For each training item, the predicted output is calculated ("forward pass")
+
+<br>
+
+![](../images/neural_network_design.png){fig-align=center width=70%}
+
+
+<!--
+## Forward pass
+
+TODO: illustrate the use of training data for forward pass (aside: random? initial weights, training sample i)
+-->
+
+## Loss function
 
 :::: {.columns}
 
-::: {.column width="80%"}
+::: {.column width="50%"}
+<br><br><br>
+![](../images/neural_network_loss_function.png)
+:::
 
-The R `text` package provides access to pre-trained models for dense vectors:
+::: {.column width="50%"}
+The network’s prediction error is measured with a **loss function**.
+
+For one training example $i$:
+
+$$E_i = \frac{1}{2} \sum_{j=1}^{m} (o_{ij} - t_{ij})^2$$
+
+This is the squared error loss across all **output neurons $j$**.
+
+Across all $h$ training examples, the total loss is:
+
+$$E = \sum_{i=1}^{h} E_i$$
+
+Backpropagation adjusts the weights to reduce this total loss.
+:::
+
+::::
+
+::: notes
+
+The $1/2$ makes the math cleaner for the derivatives.
+
+:::
+
+## Backpropagation
+
+<!--
+**TODO: Cost function, Learning: gradient descent + back propagation (see slides PR)**
+
+The Backpropagation algorithm is used for calculating the weights.
+In a training phase, the weights are iteratively calculated using training data sets in such a way that the difference between the calculated and the expected (true) results is minimized.
+Because the simultaneous calculation of all weights is not possible, they must be found via a learning process.
+The backpropagation algorithm looks for the minimum of the cost function in weight space using the method of gradient descent.
+-->
+
+::: {.highlight_must_learn}
+
+Backpropagation calculates the gradients of the loss function with respect to the network’s weights. These gradients are then used by an optimizer, to iteratively update the weights and reduce the difference between predicted and true outputs.
+
+<br>
+
+```Markdown
+initialize weights and biases
+
+repeat until stopping criterion is met:
+
+    total_error = 0
+
+    for each training example:
+
+        pass input forward through all layers
+        compare predicted output with target value
+        add error to total_error
+        propagate error backward through all layers
+        update weights and biases
+
+    check whether total_error is small enough
+```
+<br>
+:::
+
+<!--
+
+The procedure in principle:
+
+1. Define the initial weights
+2. Put the training set into the input layer
+3. Calculate the result (value of the output layer) via successive processing one layer after the other
+4. Compare the output values and target values and calculate the difference
+5. Iterate steps (2) to (4) for every training set
+6. Calculate the total error. Adjust the weights beginning with the output layer towards the input layer (backpropagation)
+7. Iterate steps (2) to (6) until the total error reaches the defined error-level or the number of maximum iterations is reached.
+-->
+
+
+## Using the loss function to adjust weights
+
+The loss function $E$ has to be minimized.
+Because it depends on the output neurons $o_j$, it automatically depends on their weights to the precedent layer(s):
+
+$$o_j=f(s(x)_j) \text{    with    } s(x)_j =\sum_k^n w_{jk}\cdot x_k$$
+
+Thus, the weights have to be found where $E$ is minimal.
+
+<br>
+
+Examples of the loss function with **two weights** (simplified):
+
+<br>
+
+![](../images/neuronal_networks_gradient_illustration.png){width=50% fig-align=center}
+
+## Gradient descent
+
+To minimize the loss function $E$ the backpropagation algorithm uses the method of gradient descent.
+This method searches those weights, where the vector containing the partial first derivatives of the loss function $\nabla E$ (gradient) is equal to the zero vector (minimum):
+
+$$
+\nabla E =
+\left(
+\frac{\partial E}{\partial w_1},
+\frac{\partial E}{\partial w_2},
+\ldots,
+\frac{\partial E}{\partial w_m}
+\right)
+$$
+
+To adjust the weight $w_{ij}$, which connects neuron $i$ to neuron $j$, gradient descent updates the weight in the negative gradient direction:
+
+$$
+\Delta w_{ij}
+= -a \cdot \frac{\partial E}{\partial w_{ij}}
+$$
+
+$$
+\Delta w_{ij}
+= -a \cdot \sum_{j=1}^{m}
+(o_{ij} - t_{ij}) \cdot (-x_i)
+= a \cdot \sum_{j=1}^{m}
+(o_{ij} - t_{ij}) \cdot x_i
+$$
+
+where $a$ represents the predefined learning rate.
+The adjusted weight is then computed as:
+
+$$
+w_{ij}^{\text{new}}
+=
+w_{ij}^{\text{old}}
++
+\Delta w_{ij}
+$$
+
+. . .
+
+> Because neural networks have many parameters, each update changes the model in many dimensions at once.
+> The learning rate therefore has to be chosen carefully: large steps can destabilize training, while very small steps can make learning inefficient.
+
+<!--
+TODO: cover example of backpropagation? http://hmkcode.github.io/ai/backpropagation-step-by-step
+-->
+
+# Specialized NNs {data-stack-name="Specialized NNs"}
+
+<!--
+> GPT is based on a huge neural network that essentially represents the language model. While the first GPT-3 has 175 billion parameters, the newer GPT-4 already has 1 trillion parameters. Compared to GPT-3, GPT-4 is therefore more intelligent, can deal with more extensive questions and conversations and makes fewer factual errors.
+-->
+
+## Overview
+
+::: {.highlight_must_learn}
+
+:::: {.columns}
+
+::: {.column width="75%"}
+Basic neural networks are often introduced as **fully connected feed-forward networks**.
+Specialized architectures go beyond this and differ in the following design choices:
+
+<br>
+<div class="smaller">
+
+<!--
+| Design choice | What changes? | Examples |
+|---|--------|----------|
+| **Input structure assumed** | tabular, spatial, sequential, relational, generative/noise-to-data | images, text, time series, graphs, generated media |
+| **Neuron / unit type** | dense units, recurrent cells, gates, attention heads, generator/discriminator modules | MLP, LSTM/GRU, Transformer, GAN |
+| **Layer operation** | matrix multiplication, convolution, recurrence, attention, adversarial training | fully connected, conv, RNN, self-attention |
+| **Connectivity pattern** | all-to-all, local windows, temporal loops, token-to-token comparison | dense layers, moving filters, hidden states, attention |
+-->
+
+| Design choice | How architectures differ |
+|---|---------|
+| **Input structure assumed** | Different architectures are built for different data structures, such as tabular data (MLPs), spatial data and images (CNNs), sequence data (RNNs or Transformers), relational data (graph neural networks), or ; generative tasks (GANs). |
+| **Neuron / unit type** | The basic unit may be a dense neuron, recurrent cell, gated LSTM/GRU cell, attention head, or a generator/discriminator module. |
+| **Layer operation** | Layers may perform matrix multiplication, convolution with moving filters, recurrent state updates, self-attention, or adversarial generator/discriminator training. |
+| **Connectivity pattern** | Information may flow through all-to-all dense connections, local sliding windows, temporal loops with hidden states, or token-to-token attention. |
+
+
+</div>
+<br>
+
+**Focus in this section**: We use **CNNs**, **RNNs**, and **Transformers** as key examples because they show three central architectural ideas:
+
+- **Convolution through moving filters**
+- **Memory through recurrence**, and
+- **Attention**.
+
+:::
+
+::: {.column width="25%"}
+![Example architecture: Inception-ResNet-v2](../images/inception_resnet_v2_network.png)
+:::
+
+::::
+
+:::
+
+::: notes
+This slide should not present CNNs, RNNs, and Transformers as three isolated summaries. The teaching point is that specialized neural networks encode assumptions about data structure. CNNs reuse local filters over spatial data; RNNs reuse recurrent cells over time; Transformers compare tokens through attention. GANs are useful as an additional example because their specialization is not mainly a layer type, but a training setup with two networks: generator and discriminator.
+
+Inception-ResNet-v2: coders basically build DAGs in code and generate the architecture charts as an overview.
+:::
+
+
+## Convolutional neural networks (CNN)
+
+![](../images/convolutional_network_principles.png){width=80% fig-align=center}
+
+::: notes
+Convolution layers: effectively multiply the number of input neurons, e.g., a 28x28x1 grayscale image with 32 filters leads to 28x28x32=25,088 activations.
+
+TBD: similar to SVM: kernels facilitate learning in higher-dimensional transformations.
+:::
+
+## Recurrent neural networks (RNN)
+
+![](../images/recurrent_neural_network.png){width=70% fig-align=center}
+
+## Transformers
+
+![](../images/transformer_architecture.png){width=80% fig-align=center}
+
+# Design and training of neural networks {data-stack-name="Design and training"}
+
+
+## Modeling: choose the architecture and training setup
+
+::: {.highlight_must_learn}
+
+{{< iconify fluent-mdl2:insights >}}  **Best-practice logic**
+Start with choices that are mostly determined by the **data structure** and the **prediction task**.
+Then tune the parts that require experimentation.
+
+
+**Architecture family**
+
+<div class="smaller">
+| Data structure | Typical model | Inductive bias |
+|---|---|---|
+| 📊 Tabular data | MLP | fully connected |
+| 📷 Images | CNN | local / spatial |
+| 🎧 Audio | CNN / RNN / Transformer | local, sequential, attention |
+| ⏱️ Time series | RNN / Transformer | temporal order |
+| 📝 Text / language | Transformer | global attention |
+</div>
+
+
+<br>
+
+
+**Output layer and loss function**
+
+<div class="smaller">
+| Prediction task | Output layer | Output activation | Loss function |
+|---|---:|:---:|---|
+| Regression | 1 neuron | Linear | MSE |
+| Binary classification | 1 neuron | Sigmoid | Binary cross-entropy |
+| Multi-class classification | One neuron per class | Softmax | Categorical cross-entropy |
+</div>
+
+<br>
+
+::: {.fragment}
+**Rule of thumb:** data structure determines the architecture; prediction task determines the output layer and loss.
+:::
+
+
+:::
+
+## Training setup choices
+
+::: {.highlight_must_learn}
+
+Besides the selection of the model type, output layer, and loss function (see previous slide), these choices are usually standardized:
+
+- **Adam** is a strong default optimizer
+- Hidden layers usually start with **ReLU**
+
+These choices require **more experimentation** to tune complexity and parameters:
+
+::: {.columns}
+
+::: {.column width="33%"}
+
+::: {.design-card}
+1. Network structure
+*How much can the model represent?*
+
+**Depth**
+number of layers
+
+- shallow → simple patterns
+- deep → complex abstractions
+
+**Width**
+neurons per layer
+
+Typical starts:
+`32`, `64`, `128`, `256`
+:::
+
+:::
+
+::: {.column width="33%"}
+
+::: {.design-card}
+2. Learning rate $\eta$
+*How large are the update steps?*
+
+$$
+w := w - \eta \nabla_w J
+$$
+
+- too high → unstable
+- too low → slow
+
+Typical range:
+$10^{-3}$ to $10^{-4}$
+
+<br><br>
+:::
+
+
+:::
+
+::: {.column width="33%"}
+
+::: {.design-card}
+3. Regularization
+*How do we reduce overfitting?*
+
+- **Dropout**
+  randomly disables units
+- **Weight decay**
+  penalizes large weights
+- **Early stopping**
+  stops before overfitting
+<br><br><br><br>
+
+:::
+
+:::
+
+:::
+
+
+:::
+
+::: notes
+Optimizer: updates weights (similar to  $w^{new} = w^{old} - a \cdot \frac{\partial E}{\partial w}$, but more advanced: using information from previous gradients).
+:::
+
+## Note: Neural networks and feature engineering
+
+::: {.highlight_must_learn}
+
+Traditional machine learning often relies strongly on **manual feature engineering**:
+humans design useful input variables before training the model.
+Neural networks can reduce this need because hidden layers learn **intermediate representations** from data.
+However, feature engineering does not disappear. We still need to decide:
+
+- which data are provided as input
+- how inputs are encoded and normalized
+- whether domain-specific variables or transformations are added
+
+:::
+
+![](../images/neural_networks_features.png){width=55% fig-align=center}
+
+## R code example
+
+The tidymodels `mlp()` specification provides a basic feedforward network for
+classification or regression. Its engine determines which architectures are available.
 
 <br>
 
 ```r
-library(text)
-text_value <- "Customer reviews mention fast delivery and helpful support."
-dense_vector <- textEmbed(text_value,model="sentence-transformers/all-MiniLM-L6-v2")$texts
-class(dense_vector)
-dim(dense_vector)
-dense_vector[1,1:10]
+library(tidymodels)
+set.seed(42)
+split <- initial_split(data,prop=.75,strata=outcome)
+mlp_spec <- mlp(hidden_units=32,penalty=.0001,epochs=200) |>
+  set_engine("nnet",MaxNWts=10000) |> set_mode("classification")
+model <- workflow() |> add_formula(outcome ~ .) |> add_model(mlp_spec) |>
+  fit(training(split))
 ```
 
-matrix array
-1 384
-\[-0.042  0.018  0.067 ...\]
+## torch for R (I)
 
+For advanced neural networks and production environments, the R `torch` package provides tensors, modules, and automatic differentiation.
 
+::: {.tall-code-box}
+
+```r
+library(torch)
+X <- torch_randn(100,10); y <- X$sum(dim=2,keepdim=TRUE)
+model <- mlp(10,c(32,16),1)
+optimizer <- optim_adam(model$parameters,lr=1e-3)
+for(epoch in 1:100){
+  optimizer$zero_grad(); predictions <- model(X)
+  loss <- nnf_mse_loss(predictions,y); loss$backward(); optimizer$step()
+  cat("Epoch",epoch,"Loss:",loss$item(),"\n")
+}
+```
 :::
 
-::: {.column width="20%"}
-
-<div style="position: relative; width: 100%;">
-
-<img src="../images/text_analytics_pipeline.png"
-     style="width:100%; opacity:0.92;">
-
-<!-- subtle highlight -->
-
-<div style="
-position: absolute;
-left: 12%;
-top: 30.5%;
-width: 73%;
-height: 14.5%;
-border: 3px solid #5aa469;
-border-radius: 18px;
-background: rgba(90,164,105,0.05);
-box-shadow: 0 0 10px rgba(90,164,105,0.12);
-">
-</div>
-
-<!-- arrow -->
-
-<div style="
-position:absolute;
-left: 2%;
-top: 32.5%;
-font-size: 1.5em;
-color:#5aa469;
-font-weight:bold;
-line-height:1;
-">
-➜
-</div>
-
-</div>
-
+::: notes
+The architecture (whether it is a CNN/RNN/Transformer/... is not specified as a parameter, but implied by the design of layers).
 :::
 
-::::
+## torch for R (II)
 
-
-## Feature generation: Transformer-based analytics
-
-:::: {.columns}
-
-::: {.column width="80%"}
-
-Transformer models combine dense vectors with positional encoding:
-
-![](../images/text_analytics_transformers.png)
-
-<!--
-TODO: semantic vectors + positional encoding?! (no stopword removal?)
-
-* Embeddings as foundation for systems:
-
-  * retrieval (finding relevant documents)
-  * similarity-based analytics
-
-* Extend to LLM-based workflows (e.g., GPT-4):
-
-  * direct classification via prompting
-  * information extraction
-  * summarization
-
-* Concept: **Retrieval-Augmented Generation (RAG)**
-
-  * embeddings → retrieve relevant data
-  * LLM → analyze / generate output
-
-* Key shift: *model integrates feature extraction + prediction*
--->
-
+::: {.tall-code-box}
+```r
+library(torch)
+mlp <- nn_module(
+  initialize=function(input_dim,hidden_layers,output_dim){
+    dimensions <- c(input_dim,hidden_layers,output_dim)
+    layers <- list()
+    for(i in seq_len(length(dimensions)-1)){
+      layers <- c(layers,list(nn_linear(dimensions[i],dimensions[i+1])))
+      if(i<length(dimensions)-1) layers <- c(layers,list(nn_relu()))
+    }
+    self$model <- do.call(nn_sequential,layers)
+  },
+  forward=function(x) self$model(x)
+)
+model <- mlp(input_dim=10,hidden_layers=c(32,16),output_dim=1)
+```
 :::
-
-::: {.column width="20%"}
-
-<div style="position: relative; width: 100%;">
-
-<img src="../images/text_analytics_pipeline.png"
-     style="width:100%; opacity:0.92;">
-
-<!-- subtle highlight -->
-
-<div style="
-position: absolute;
-left: 12%;
-top: 30.5%;
-width: 73%;
-height: 14.5%;
-border: 3px solid #5aa469;
-border-radius: 18px;
-background: rgba(90,164,105,0.05);
-box-shadow: 0 0 10px rgba(90,164,105,0.12);
-">
-</div>
-
-<!-- arrow -->
-
-<div style="
-position:absolute;
-left: 2%;
-top: 32.5%;
-font-size: 1.5em;
-color:#5aa469;
-font-weight:bold;
-line-height:1;
-">
-➜
-</div>
-
-</div>
-
-:::
-
-::::
-
-
-
-## Feature selection
-
-:::: {.columns}
-
-::: {.column width="80%"}
-
-In one-hot encoded documents, or in large corpora, feature selection can help to facilitate computation and avoid overfitting.
-Two major feature selection approaches in the context of text analytics are:
-
-**Pruning methods**: removing words that are too infrequent or to frequent, based on absolute or percental thresholds.
-
-**Token filtering based on part-of-speech (POS)**: sometimes, the analyses focus on particular classes of words. For example:
-
-- For **sentiment analysis**, adjectives often carry evaluative meaning
-  - *good*, *bad*, *great*
-- For **clustering**, nouns often define the topic or object
-  - *red cars* and *blue cars* are about cars
-  - *red trousers* and *blue trousers* are about trousers
-
-<!--
-Pruning (p.28): approaches
-particularly relevant for sparse vectors (dense vectors already offer a compressed representation)
--->
-
-:::
-
-::: {.column width="20%"}
-
-<div style="position: relative; width: 100%;">
-
-<img src="../images/text_analytics_pipeline.png"
-     style="width:100%; opacity:0.92;">
-
-<!-- subtle highlight -->
-
-<div style="
-position: absolute;
-left: 12%;
-top: 46.5%;
-width: 73%;
-height: 13.5%;
-border: 3px solid #5aa469;
-border-radius: 18px;
-background: rgba(90,164,105,0.05);
-box-shadow: 0 0 10px rgba(90,164,105,0.12);
-">
-</div>
-
-<!-- arrow -->
-
-<div style="
-position:absolute;
-left: 2%;
-top: 48.5%;
-font-size: 1.5em;
-color:#5aa469;
-font-weight:bold;
-line-height:1;
-">
-➜
-</div>
-
-</div>
-
-:::
-
-::::
-
-
-## Text analytics: Clustering
-
-:::: {.columns}
-
-::: {.column width="80%"}
-
-
-**Typical goal:** find groups of documents that are similar to each other
-
-- Start with a set of documents
-- Represent each document as a vector
-  - sparse vectors: Bag-of-Words, TF-IDF
-  - dense vectors: embeddings
-- Compare documents using a **similarity measure**
-- Use a clustering algorithm to group similar documents
-
-**Similarity measures for text data**
-
-<div class="smaller">
-| Representation | Typical similarity measure | Useful for |
-|---|-----|-----|
-| Bag-of-Words / TF-IDF | **Cosine similarity** | comparing word-use patterns |
-| Sets of words | **Jaccard similarity** | overlap between vocabularies |
-| Dense embeddings | **Cosine similarity** / **Euclidean distance** | semantic similarity |
-</div>
-
-<!--
-Jaccard (p.31, ...) for sparse vectors (distance-based clustering)
-Dense (semantic) vectors: k-means
--->
-
-:::
-
-::: {.column width="20%"}
-
-<div style="position: relative; width: 100%;">
-
-<img src="../images/text_analytics_pipeline.png"
-     style="width:100%; opacity:0.92;">
-
-<!-- subtle highlight -->
-
-<div style="
-position: absolute;
-left: 12%;
-top: 62%;
-width: 73%;
-height: 13.5%;
-border: 3px solid #5aa469;
-border-radius: 18px;
-background: rgba(90,164,105,0.05);
-box-shadow: 0 0 10px rgba(90,164,105,0.12);
-">
-</div>
-
-<!-- arrow -->
-
-<div style="
-position:absolute;
-left: 2%;
-top: 63.5%;
-font-size: 1.5em;
-color:#5aa469;
-font-weight:bold;
-line-height:1;
-">
-➜
-</div>
-
-</div>
-
-:::
-
-::::
-
 
 ::: aside
-Besides clustering, text-based features can also be used for classification or regression.
+See the R torch documentation for `nn_module()` and its inherited methods.
 :::
-
-<!--
-## Classification
-
-TODO (sentiment??)
-
-## Regression
-
-TODO (?)^
-
-## **One-line narrative**
-
-> “We move from manually structuring text for models → to learning representations → to using AI systems that directly turn language into insights.”
-
-## TODO Deployment
-
-Cover ML Ops pipelines, scaling (parallel architectures)
--->
-
 
 ## Summary {data-state="hide-menubar"}
 
-* Text analytics turns unstructured text into analyzable data through a pipeline of **preprocessing**, **feature generation**, **feature selection**, and **modeling**.
-  Classical approaches rely on sparse document-term matrices such as Bag-of-Words and TF-IDF.
+- Neural networks transform inputs into outputs through **weighted connections**, **biases**, and **activation functions**.
+  A single perceptron can only learn **linear decision boundaries**; multilayer networks with nonlinear activations can model more complex patterns.
 
-* Dense embeddings and Transformer-based models shift text analytics from manually engineered features toward **semantic representations** and integrated AI workflows.
-  These representations support retrieval, similarity analysis, clustering, classification, summarization, information extraction, and RAG-based systems.
+- Training consists of a **forward pass**, loss calculation, **backpropagation**, and parameter updates via an optimizer such as gradient descent or Adam.
 
+- Different neural network architectures encode different assumptions about data:
+  **MLPs** for tabular data, **CNNs** for spatial data, **RNNs** for sequences, and **Transformers** for attention-based language tasks.
+
+- Designing neural networks means choosing the architecture, output layer, loss function, learning rate, optimizer, and regularization strategy, then iteratively evaluating and adjusting these choices.
 
 {{< survey session_08 slide >}}
 

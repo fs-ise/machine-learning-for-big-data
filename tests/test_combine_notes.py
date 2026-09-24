@@ -80,7 +80,7 @@ def test_checklist_has_own_footer_and_page_break(tmp_path: Path) -> None:
     [
         ("session-03", "Session-3"),
         ("session-000", "Session-0"),
-        ("session-09-deployment", "Session-9"),
+        ("session-09-optional", "Session-9"),
     ],
 )
 def test_extracts_session_page_prefix(
@@ -265,7 +265,7 @@ def test_canonical_notes_and_exercises_have_no_layout_only_page_breaks() -> None
 def test_requested_teaching_note_headings_have_selective_needspace() -> None:
     expected = {
         "session_01.qmd": {"Output": 8},
-        "session_09_b.qmd": {
+        "session_09.qmd": {
             "Organizational value creation": 12,
             "NIST AI RMF and regulatory context": 12,
         },
