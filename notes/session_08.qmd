@@ -35,6 +35,8 @@ Neural networks are inspired by natural systems, but an artificial neuron is onl
 
 The detailed derivations, gradient-descent mechanics, architecture/training choices, and R implementation examples remain in the core slides. `optional/session_08_neural_network_training.qmd` contains the worked external backpropagation and TensorFlow Playground activities.
 
+Note: the number of layers and neurons is specified ex-ante and does not change in the training process.
+
 ## Architecture and modality explanations
 
 ### MLPs and tabular data
