@@ -1104,7 +1104,7 @@ for a given combination of predictor values, an observation follows a specific p
 Decision trees make **few assumptions** about the functional form of relationships or data distributions.
 In contrast to parametric models (e.g., linear regression), they can capture **nonlinear patterns**, **interactions**, and **complex structures** in the data that are difficult to model with linear approaches.
 
-![](../images/decision_tree_illustration.png){height=500px fig-align=center}
+![](../images/decision_tree_illustration.png){height=420px fig-align=center}
 
 <!--
 Note: already covered in previous illustration?
@@ -2041,7 +2041,7 @@ y = np.hstack((np.ones(n), -np.ones(n)))
 
 # moderately large C → tight but visible margin
 model = svm.SVC(kernel="linear", C=100)
-model.fit(X, y)
+model.fit(X, y);
 
 fig, ax = plt.subplots(figsize=(6, 5))
 
@@ -2067,12 +2067,12 @@ YY, XX = np.meshgrid(yy, xx)
 xy = np.vstack([XX.ravel(), YY.ravel()]).T
 Z = model.decision_function(xy).reshape(XX.shape)
 
-ax.contour(XX, YY, Z, levels=[0], linewidths=2)
-ax.contour(XX, YY, Z, levels=[-1, 1], linestyles="--")
+ax.contour(XX, YY, Z, levels=[0], linewidths=2);
+ax.contour(XX, YY, Z, levels=[-1, 1], linestyles="--");
 
 # zoom in → makes margins visually closer
-ax.set_xlim(3.8, 6.8)
-ax.set_ylim(3.8, 6.8)
+ax.set_xlim(3.8, 6.8);
+ax.set_ylim(3.8, 6.8);
 
 ax.set_xlabel("Team size")
 ax.set_ylabel("Experience")
@@ -2243,7 +2243,7 @@ X = np.linspace(1, 15, 60).reshape(-1, 1)
 y = -(X.ravel() - 8)**2 + 50 + np.random.normal(0, 3, 60)
 
 model = SVR(kernel='rbf', C=100, epsilon=2)
-model.fit(X, y)
+model.fit(X, y);
 
 X_plot = np.linspace(1, 15, 200).reshape(-1, 1)
 y_pred = model.predict(X_plot)
@@ -2273,7 +2273,7 @@ X = np.linspace(0, 10, 50).reshape(-1, 1)
 y = 10 * np.log1p(X).ravel() + np.random.normal(0, 0.5, 50)
 
 model = SVR(kernel='rbf', C=100, epsilon=0.5)
-model.fit(X, y)
+model.fit(X, y);
 
 X_plot = np.linspace(0, 10, 200).reshape(-1, 1)
 y_pred = model.predict(X_plot)
@@ -2303,7 +2303,7 @@ X = np.linspace(1, 20, 60).reshape(-1, 1)
 y = 100 / (X.ravel() + 2) + np.random.normal(0, 2, 60)
 
 model = SVR(kernel='rbf', C=100, epsilon=1)
-model.fit(X, y)
+model.fit(X, y);
 
 X_plot = np.linspace(1, 20, 200).reshape(-1, 1)
 y_pred = model.predict(X_plot)

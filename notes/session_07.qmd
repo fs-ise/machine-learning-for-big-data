@@ -27,7 +27,7 @@ Entropy is a measure of **how mixed or impure the labels** in a dataset are.
 * If all observations belong to the same class → **low entropy (0)** → perfectly pure
 * If observations are evenly distributed across classes → **high entropy** → maximum uncertainty
 
-Formally, for a dataset with (K) classes and class probabilities (p_1, \dots, p_K):
+Formally, for a dataset with (K) classes and class probabilities ($p_1, \dots, p_K$):
 
 $$H = - \sum_{i=1}^{K} p_i \log_2 p_i$$
 
