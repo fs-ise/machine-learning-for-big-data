@@ -277,7 +277,7 @@ Task 2.1 used cross-validation to choose tuning parameters for predictive model 
 The supplied code uses `comparison_penalty <- 0.05` for both ridge and lasso and fits all three models to `train_data` with `scaled_recipe`. This value gives more instructive contrast than the initial value of `0.01` without collapsing the ridge coefficients. Complete the plot by mapping coefficient `term` to the y-axis and `estimate` to the x-axis.
 
 ```{r}
-#| label: task-2-2-compare-ridge-and-lasso-coefficients-student-response
+#| label: task-2-2-compare-ridge-and-lasso-coefficients
 comparison_penalty <- 0.05
 
 penalized_coefficients <- tibble(
@@ -345,9 +345,13 @@ coefficient_comparison <- bind_rows(
     term = unregularized_coefficients$term,
     fill = list(estimate = 0)
   )
+```
 
+```{r}
+#| label: task-2-2-compare-ridge-and-lasso-coefficients-student-response
 # YOUR CODE HERE: plot estimate by term, colored by model.
 ```
+
 
 Compare ridge and lasso with the unregularized baseline. How does ridge shrink the coefficients while retaining meaningful contributions across predictors? Under the **same penalty strength**, how does lasso differ from ridge, and does it set any coefficients exactly to zero? Why does ridge usually keep all coefficients nonzero while lasso can perform variable selection? Finally, why is this teaching penalty appropriate for conceptual comparison but not a replacement for the cross-validation used for predictive model selection in Task 2.1?
 

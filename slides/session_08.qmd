@@ -107,8 +107,8 @@ followed by a **threshold activation**:
 
 $$\hat{y} =
 \begin{cases}
-1 & \text{if } w^T x + b > 0 \\
-0 & \text{otherwise}
+1 & \text{if } z > 0 \\
+0 & \text{if } z \le 0 
 \end{cases}$$
 
 - This corresponds to a linear classifier
@@ -605,7 +605,9 @@ classification or regression. Its engine determines which architectures are avai
 
 ```r
 library(tidymodels)
+
 set.seed(42)
+
 split <- initial_split(data,prop=.75,strata=outcome)
 mlp_spec <- mlp(hidden_units=32,penalty=.0001,epochs=200) |>
   set_engine("nnet",MaxNWts=10000) |> set_mode("classification")
@@ -621,12 +623,18 @@ For advanced neural networks and production environments, the R `torch` package 
 
 ```r
 library(torch)
-X <- torch_randn(100,10); y <- X$sum(dim=2,keepdim=TRUE)
+
+X <- torch_randn(100,10)
+y <- X$sum(dim=2,keepdim=TRUE)
 model <- mlp(10,c(32,16),1)
 optimizer <- optim_adam(model$parameters,lr=1e-3)
+
 for(epoch in 1:100){
-  optimizer$zero_grad(); predictions <- model(X)
-  loss <- nnf_mse_loss(predictions,y); loss$backward(); optimizer$step()
+  optimizer$zero_grad()
+  predictions <- model(X)
+  loss <- nnf_mse_loss(predictions,y)
+  loss$backward()
+  optimizer$step()
   cat("Epoch",epoch,"Loss:",loss$item(),"\n")
 }
 ```
@@ -641,6 +649,7 @@ The architecture (whether it is a CNN/RNN/Transformer/... is not specified as a 
 ::: {.tall-code-box}
 ```r
 library(torch)
+
 mlp <- nn_module(
   initialize=function(input_dim,hidden_layers,output_dim){
     dimensions <- c(input_dim,hidden_layers,output_dim)
@@ -653,6 +662,7 @@ mlp <- nn_module(
   },
   forward=function(x) self$model(x)
 )
+
 model <- mlp(input_dim=10,hidden_layers=c(32,16),output_dim=1)
 ```
 :::
