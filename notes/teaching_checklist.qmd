@@ -20,6 +20,13 @@
 - [ ] Direct institutional account, network, and access problems to Frankfurt School IT Support.
 - [ ] Refer course-specific questions to the instructor or the established course communication channel.
 
+
+In Terminal, run
+
+```shell
+quarto check
+```
+
 ### Student advising and support resources
 
 - [ ] For academic and organizational issues, refer students to their [study advisor](https://www.frankfurt-school.de/home/study/advice) or [Student Services](https://www.frankfurt-school.de/home/study/student-services).
