@@ -14,17 +14,32 @@ format: html
 
 -->
 
+## Introduction
+
+Previous session: ML algorithms as a black box. How the workflow should be set up to estimate generalization performance (how we can identify overfitting: when performance in training is high and declines in testing).
+
+This and the next session: 
+  
+  1. Mechanics of ML algorithms, including trees, SVMs
+  2. Model-specific mechanisms to actively prevent overfitting and reduce model complexity (regularization, pruning, early stopping, limiting tree depth, feature selection, ...). This can happen in cross-validation where hyperparameter can be tuned to achieve an appropriate level of complexity.
+
+## Relationship of $\lambda$ and complexity
+
+Figure p.11: left: high complexity (small $\lambda$), right: low complexity (higher $\lambda$).
+
+To compare with p.10, we need to switch: on p.10, low complexity/high $\lambda$ is on the left.
+
 ## Decision trees
 
 ### Which one is better
 
-**Answer**: The one with more homogenous leafs! For the heterogeneous leafs, we do not know much more than before.
+**Answer**: The one with more homogenous leafs! For the heterogeneous leafs, we do not know much more than before. Our predictions would not improve.
 
 In **Decision Tree (II)**, highlight that the DT algorithm will introduce more and more splits until every leaf (area) has perfect homogeneity (overfitting).
 
 ### ID3 algorithm (entropy)
 
-#### 1) Intuition and Definition
+#### Intuition and Definition
 
 Entropy is a measure of **how mixed or impure the labels** in a dataset are.
 
@@ -37,8 +52,9 @@ $$H = - \sum_{i=1}^{K} p_i \log_2 p_i$$
 
 This captures the **expected amount of information (uncertainty)** in the labels.
 
+<!--
 
-#### 2) Key Teaching Insight: What Is the Maximum Entropy?
+#### 2) What Is the Maximum Entropy?
 
 A common misconception is that entropy is always between 0 and 1 — this is only true for **binary classification**.
 In general, entropy depends on the **number of classes (K)**.
@@ -74,6 +90,7 @@ $$H = \log_2 K$$
   - $K = 2 \Rightarrow H = 1$
   - $K = 4 \Rightarrow H = 2$
   - $K = 8 \Rightarrow H = 3$
+
 
 
 ## TODO :  slide example?! p. 21-25
@@ -129,6 +146,17 @@ Entropy is best understood as:
 - **Maximum entropy = $\log_2(K)$** → depends on how many classes exist
 
 This is exactly why decision trees aim to **reduce entropy** through splits (information gain).
+-->
+
+## Decision using C5.0
+
+Assume we have attributes with many different values, even one distinct value for each observation. ID3 would immediately use this attribute to achieve perfect impurity.
+
+- Tennis example: add unique dates
+- ID3: thank you very much, I will build a tree using date. It achieves perfect purity in all nodes. Nodes are cheap - I dont care how many we build.
+- Problem? Overfitting?
+- Possible solutions? Feature engineering (e.g., convert to day of week)
+- Model-specific mechanism: C5.0: penalize for many nodes with few observations
 
 ## Regression trees
 

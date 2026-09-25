@@ -13,6 +13,7 @@ format: revealjs
 
 ::: {.learning-objectives}
 - **Explain** the core mechanics of selected algorithms, including regularization in linear models, distance-based prediction (k-NN), recursive partitioning (decision trees), ensemble learning (random forests), and margin maximization (SVMs).
+- **Explain** how model-specific mechanisms constrain complexity and reduce overfitting, including regularization, tree depth, ensemble averaging, and margin control in SVMs.
 - **Select and justify** an appropriate modeling approach for a given predictive task, considering data characteristics, performance metrics, and the trade-off between interpretability and predictive power.
 :::
 
@@ -23,7 +24,7 @@ characteristics: (e.g., dimensionality, non-linearity, class imbalance)
 
 ## Models for classification vs. regression
 
-Many models can handle **classification** (predicting categories) and **regression** (predicting numeric values).
+Machine learning models can often handle both **classification** (predicting categories) and **regression** (predicting numeric values):
 
 <br>
 
@@ -83,10 +84,14 @@ The figure illustrates the risk of applying OLS when the number of features $p$ 
 The model's $R^2$ increases to 1 as the number of features increases, and the training set MSE decreases to 0.
 At the same time, the MSE on a test set becomes extremely large as the number of features increases.
 
-![](../images/high-dimensionality.png){height=400 fig-align=center}
+<br>
 
+![](../images/high-dimensionality.png){height=450 fig-align=center}
+
+<!--
 In contrast, methods like ridge regression are particularly useful for performing regression in the high-dimensional setting.
 Essentially, these approaches avoid overfitting by using a less flexible fitting approach than the least squares.
+-->
 
 ::: aside
 Source: @James2013, pp.240
@@ -108,15 +113,13 @@ This is problematic because this perfect fit will almost certainly lead to overf
 Source: @James2013, pp. 239.
 :::
 
-## Core idea of regularization
+## Regularization
 
-Prefer **simpler models** that fit the data *well enough*
-
-<br>
+Core idea of regularization: Prefer **simpler models** that fit the data *well enough*:
 
 ::: {.highlight_must_learn}
 
-We modify the objective or loss function (in linear regression: minimizing RSS / OLS):
+We modify the objective or loss function:
 
 
 $$
@@ -144,6 +147,9 @@ $$
 > Good models balance **fit and simplicity**
 > → Regularization helps control complexity and improve generalization
 
+::: aside
+In linear regression, the loss function optimized by OLS is $RSS=\sum_{i=1}^n(y_i - \hat{y}_i)^2$.
+:::
 
 ::: notes
 > Regularization is not limited to linear models:
@@ -208,12 +214,10 @@ TODO: illustrate ridge regression geometrically?
 
 ## Relationship of $\lambda$ and complexity
 
-$\lambda = 0$: Relative high complexity (linear model).
-The penalty term has no effect, and ridge regression will produce the least squares estimates.
-
-$\lambda \rightarrow \infty$: Lowest complexity.
-The ridge regression coefficients are equal to zero.
-For every input, the result is $\beta_0$.
+| Regularization strength | Model complexity | Effect |
+|:---:|-----|--------|
+| $\lambda = 0$ | Relatively high | The penalty has no effect; ridge regression produces the ordinary least squares estimates. |
+| $\lambda \rightarrow \infty$ | Lowest | The slope coefficients approach zero, so predictions approach the intercept: $\hat{y} = \beta_0$. |
 
 Example:
 
@@ -626,7 +630,9 @@ $$
 
 where $p_i$ is the **relative frequency** of observations in node $t$ that belong to class $i$.
 
-**Attribute: Wind**
+<br>
+
+We take the attribute **Wind** as an example:
 
 - **light**: 6 $\times$ yes, 2 $\times$ no
 
@@ -755,7 +761,19 @@ where
 
 ::: {.column width="60%"}
 
-<br>
+At the root node, there are **9 × yes** and **5 × no**:
+
+$$
+\text{entropy(root)} =
+- \left(
+\frac{9}{14} \cdot \log_2\left(\frac{9}{14}\right)
++
+\frac{5}{14} \cdot \log_2\left(\frac{5}{14}\right)
+\right)
+= 0.940
+$$
+
+. . . 
 
 $$
 \text{Information gain(wind)} =
@@ -1176,10 +1194,10 @@ TODO: summarize/structure more clearly
 -->
 
 Due to the usage of means as predictors a regression tree usually simplifies the true relationship between the inputs and the output.
-The advantage over traditional statistical methods is, that it can give valuable insights about which variables are important and where.
+The advantage over traditional statistical methods is, that it can give valuable **insights about which variables are important and where**.
 But the prediction ability is poor compared to other regression approaches.
 
-A much better prediction quality can be achieved with the creation of an ensemble of trees, use them for prediction and averaging their results.
+A much **better prediction quality can be achieved with the creation of an ensemble of trees**, use them for prediction and averaging their results.
 This is done, when applying the random forests approach to a regression task.
 
 Regression forests are an ensemble of different regression trees and are used for nonlinear multiple regression.
@@ -1203,13 +1221,13 @@ TODO: remove or explain reference to "bootstrap trees"
 TODO: summarize/structure more clearly
 -->
 
-When applied to regression problems, tree methods have the limitation that they cannot exceed the range of values of the target variable used in training.
+When applied to regression problems, tree methods have the limitation that they **cannot exceed the range of values of the target variable used in training**.
 The reason for this lies in their design principle, how the leaves of the trees are created.
 
 Thus, random forests may perform poorly when the target data is out of the range of the original training data, e.g. in the case of data with persistent trends.
 A solution may be a frequent re-training in this case.
 
-An important strength of random forests is that they are able to perform still well in the case of missing data. According to their construction principle, not every tree is using the same features.
+An important strength of random forests is that they are able to **perform well in the case of missing data**. According to their construction principle, not every tree is using the same features.
 
 If there is any missing value for a feature during the application there usually are enough trees remaining that do not use this feature to produce accurate predictions.
 
@@ -1226,7 +1244,7 @@ $$w^\top x + b = 0$$
 
 - $x$: data point (features, e.g., income, age)
 - $w$: weight vector (defines orientation)
-- $b$: bias (shifts the line)
+- $b$: bias (shifts the line/hyperplane)
 
 The predictions are:
 
