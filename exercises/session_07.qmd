@@ -95,22 +95,14 @@ df <- read_csv(
 
 set.seed(42)
 
-data_split <- initial_split(
-  df,
-  prop = 0.8,
-  strata = default
-)
+data_split <- initial_split(df, prop = 0.8, strata = default)
 
 train_data <- training(data_split)
 test_data <- testing(data_split)
 
 set.seed(42)
 
-folds <- vfold_cv(
-  train_data,
-  v = 5,
-  strata = default
-)
+folds <- vfold_cv(train_data, v = 5, strata = default)
 
 classification_metrics <- metric_set(
   roc_auc,

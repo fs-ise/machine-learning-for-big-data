@@ -319,7 +319,9 @@ The [`optim_adam()` documentation](https://torch.mlverse.org/docs/reference/opti
 ::: {.sol}
 ```{r}
 #| label: task-1-2-optimizer-solution
-make_adam <- function(model, lr) optim_adam(model$parameters, lr = lr)
+make_adam <- function(model, lr) {
+  optim_adam(model$parameters, lr = lr)
+}
 ```
 :::
 
@@ -370,8 +372,12 @@ train_classifier <- function(model, loaders, epochs = 8, lr = 1e-3,
       loss = c(train_metrics[["loss"]], validation_metrics[["loss"]]),
       accuracy = c(train_metrics[["accuracy"]], validation_metrics[["accuracy"]])
     )
-    if (verbose) message("epoch ", epoch, ": validation accuracy = ",
-                         round(validation_metrics[["accuracy"]], 3))
+    if (verbose) {
+      message(
+        "epoch ", epoch, ": validation accuracy = ",
+        round(validation_metrics[["accuracy"]], 3)
+      )
+    }
   }
   list(model = model, history = bind_rows(history))
 }
@@ -438,11 +444,15 @@ make_mlp <- function(hidden_sizes) {
       layers <- list()
       for (i in seq_len(length(sizes) - 1)) {
         layers <- append(layers, list(nn_linear(sizes[i], sizes[i + 1])))
-        if (i < length(sizes) - 1) layers <- append(layers, list(nn_relu()))
+        if (i < length(sizes) - 1) {
+          layers <- append(layers, list(nn_relu()))
+        }
       }
       self$network <- do.call(nn_sequential, layers)
     },
-    forward = function(x) self$network(x)
+    forward = function(x) {
+      self$network(x)
+    }
   )
 }
 ```
@@ -578,7 +588,9 @@ fashion_cnn <- nn_module(
 
 ```{r}
 #| label: cnn-training-and-comparison
-as_images <- function(x) x$view(c(x$size(1), 1, 28, 28))
+as_images <- function(x) {
+  x$view(c(x$size(1), 1, 28, 28))
+}
 
 torch_manual_seed(42)
 cnn_fit <- train_classifier(fashion_cnn(), fashion_loaders,
@@ -586,7 +598,13 @@ cnn_fit <- train_classifier(fashion_cnn(), fashion_loaders,
 plot_learning_curves(cnn_fit$history)
 
 count_parameters <- function(model) {
-  sum(vapply(model$parameters, function(p) p$numel(), numeric(1)))
+  sum(vapply(
+    model$parameters,
+    function(p) {
+      p$numel()
+    },
+    numeric(1)
+  ))
 }
 
 image_comparison <- tibble(
@@ -628,7 +646,9 @@ demand_raw <- read_csv(demand_path, show_col_types = FALSE) |>
   mutate(date = as.Date(date)) |>
   arrange(store, item, date)
 
-series_sizes <- demand_raw |> count(store, item, name = "n") |> arrange(desc(n))
+series_sizes <- demand_raw |>
+  count(store, item, name = "n") |>
+  arrange(desc(n))
 chosen <- slice_head(series_sizes, n = 1)
 
 sales_series <- demand_raw |>
@@ -645,8 +665,13 @@ scaled_sales <- (sales_series$sales - sales_mean) / sales_sd
 
 window_length <- 28L
 target_rows <- (window_length + 1L):n_days
-windows <- t(vapply(target_rows, function(i) scaled_sales[(i - window_length):(i - 1)],
-                    numeric(window_length)))
+windows <- t(vapply(
+  target_rows,
+  function(i) {
+    scaled_sales[(i - window_length):(i - 1)]
+  },
+  numeric(window_length)
+))
 targets <- scaled_sales[target_rows]
 target_dates <- sales_series$date[target_rows]
 
@@ -750,7 +775,9 @@ demand_mlp <- nn_module(
     self$hidden <- nn_linear(28, 32)
     self$output <- nn_linear(32, 1)
   },
-  forward = function(x) self$output(nnf_relu(self$hidden(x)))
+  forward = function(x) {
+    self$output(nnf_relu(self$hidden(x)))
+  }
 )
 
 torch_manual_seed(42)
@@ -790,7 +817,9 @@ demand_rnn <- nn_module(
   }
 )
 
-as_sequence <- function(x) x$unsqueeze(3)
+as_sequence <- function(x) {
+  x$unsqueeze(3)
+}
 
 torch_manual_seed(42)
 demand_rnn_fit <- train_regressor(demand_rnn(), demand_loaders,
