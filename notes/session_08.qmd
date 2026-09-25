@@ -23,6 +23,10 @@ The main teaching point is that specialized networks encode assumptions about **
 
 Neural networks are inspired by natural systems, but an artificial neuron is only a loose analogy to a biological neuron. The foundations are about 80 years old; recent progress followed from larger datasets, greater computing power (especially GPUs/TPUs), and improved architectures. Mention multimodal AI as a motivation without turning the session into an implementation survey.
 
+## Perceptron
+
+A perceptron first combines all inputs into a weighted score. It then asks only one question: is that score above zero? If yes, predict class 1; otherwise predict class 0. Because the score is a linear combination of the inputs, the resulting decision boundary is linear.
+
 ## Foundations and training
 
 - Inputs loosely correspond to dendrites and outputs to axons.
@@ -34,6 +38,13 @@ Neural networks are inspired by natural systems, but an artificial neuron is onl
 - Sigmoid is smooth and supports gradient-based optimization; ReLU is commonly used for efficient hidden-layer computation.
 
 The detailed derivations, gradient-descent mechanics, architecture/training choices, and R implementation examples remain in the core slides. `optional/session_08_neural_network_training.qmd` contains the worked external backpropagation and TensorFlow Playground activities.
+
+Training process:
+
+- In stochastic gradient descent, weight updates occur after each instance.  
+- Most modern NNs use mini-batch gradient descent (e.g., after a batch size of 32 (epoch), weights are updated)
+
+Note: the number of layers and neurons is specified ex-ante and does not change in the training process.
 
 ## Architecture and modality explanations
 
@@ -75,6 +86,30 @@ Allow approximately 20 minutes for reading the R torch MLP object and 50 minutes
 For each use case, insist on three elements: input representation, expected output, and architectural assumption. Cases such as churn should surface that an MLP is not automatically preferable to logistic regression or tree models. Subtitle generation, next-item prediction, cover-image classification, and chat moderation make the sequence/spatial distinctions concrete.
 
 The original broader NovaStream quiz also included recommendation, anomaly detection, pricing optimization, route optimization, association rules, and clustering. Those cases were omitted from the core because they do not directly reinforce Session 8's non-tabular architecture goal.
+
+
+::: {.callout-warning title="macOS 14 bug: torch"}
+
+```r
+# ACHTUNG: Dieser Chunk darf NICHT bei jedem Rendern laufen (eval: false).
+# Auf macOS 14 ist die aktuelle torch-Version 0.17.0 unbrauchbar: die mitgelieferte
+# LibTorch 2.8.0 wurde gegen das macOS-15-SDK gebaut und laesst sich nicht laden
+# ("Symbol not found ... built for macOS 15.0 which is newer than running OS").
+# Deshalb wird torch hier auf 0.15.1 festgenagelt, das LibTorch 2.5.1 mitbringt.
+
+install.packages(c("readr", "dplyr", "tidyr", "ggplot2", "purrr", "tibble"))
+
+# macOS 14 oder aelter: feste Version aus dem Posit-Snapshot
+options(repos = c(P3M = "https://packagemanager.posit.co/cran/2025-08-20"))
+install.packages("torch", type = "binary")
+torch::install_torch(reinstall = TRUE)
+
+# macOS 15 oder neuer: stattdessen einfach
+# install.packages("torch"); torch::install_torch()
+```
+
+:::
+
 
 ## Follow-up review
 

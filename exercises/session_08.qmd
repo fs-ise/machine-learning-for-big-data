@@ -8,127 +8,892 @@ format:
 
 ::: {.direction}
 
-| Exercise part | Time |
-|---|---:|
-| [Part 1: Read an MLP architecture](#part-1) | 20 min |
-| [Part 2: Match architectures to media use cases](#part-2) | 50 min |
-| [Wrap-up](#wrap-up) | 10 min |
-| **Total** | **80 min** |
+In this exercise, we move from a general-purpose multilayer perceptron (MLP) to architectures that preserve the structure of images and sequences.
+
+| Part | Topic | Time (min) |
+|---|---|---:|
+| 1 | Train a small MLP | 20 |
+| 2 | Architecture and training choices | 20 |
+| 3 | Images: MLP versus CNN | 20 |
+| 4 | Sequences: MLP versus RNN | 25 |
+| Wrap-up | Compare representations and models | 5 |
+| **Overall** | | **90** |
+
+## Learning objectives
+
+You are **not expected to memorize the torch API**. Use the linked official documentation to check constructors, arguments, tensor shapes, and return values; the assessed challenge is choosing and reasoning about the architecture, not recalling function signatures.
+
+After this exercise, you should be able to:
+
+- connect the forward pass, loss, backpropagation, and optimizer update;
+- investigate how depth, width, and learning rate affect training;
+- explain why CNNs preserve spatial structure and RNNs preserve sequential structure;
+- select an output layer and loss for classification or regression;
+- compare specialized architectures with an MLP baseline using held-out data.
 
 :::
 
-# Part 1: Read an MLP architecture {#part-1}
+:::: {.direction}
 
-::: {.direction}
+::: {.callout-note title="Data and package setup"}
 
-Inspect this framework-neutral architecture:
+This exercise uses two datasets with different underlying structures: images and temporal sequences. They let us compare a generic MLP with architectures that preserve those structures, because observations are not always naturally represented as unordered feature vectors.
 
-| Layer | Input | Output | Activation |
-|---|---:|---:|---|
-| Dense 1 | 10 | 8 | ReLU |
-| Dense 2 | 8 | 4 | ReLU |
-| Output | 4 | 1 | — |
+| Dataset | Underlying structure | Prediction task | Comparison |
+|---|---|---|---|
+| Fashion-MNIST | $28 \times 28$ image | Product category | Flattened MLP versus CNN |
+| Store Item Demand | Ordered daily sales | Next-day sales | Lag-vector MLP versus RNN |
 
-1. Write down the sequence of layers and dimensions.
-2. How many hidden layers and trainable dense layers are present?
+**Fashion-MNIST** contains 60,000 training and 10,000 test images. Each is a $28 \times 28$ grayscale image with one of 10 product-category labels. An MLP can flatten the pixels into 784 features; the values remain, but their two-dimensional neighborhoods are no longer explicit. A CNN instead uses local filters and shared weights on the image grid, providing a clean MLP-versus-CNN comparison.
 
-**Your answer:** *Write your answer here.*
+**Store Item Demand Forecasting** contains five years of daily sales for 10 stores and 50 items, with columns for date, store, item, and sales. Although stored as a CSV table, it becomes a sequential task here: 28 consecutive days from one store-item series predict the next day. An MLP treats the lags as separate features; an RNN processes them in order while maintaining a recurrent hidden state.
 
-3. What changes for `hidden_layers=[32, 16, 8]`?
+The same underlying observations can often be represented as a flat vector, but specialized neural-network architectures encode useful assumptions about spatial or sequential structure.
 
-**Your answer:** *Write your answer here.*
+### Download the data
 
-4. What kind of data structure does this MLP expect? What structural information would be lost if a video were simply flattened into ten features?
+The Fashion-MNIST dataset comes from the official [Zalando Research repository](https://github.com/zalandoresearch/fashion-mnist), and Store Item Demand [`train.csv`](https://raw.githubusercontent.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge/master/train.csv) from [GitHub](https://github.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge).
 
-**Your answer:** *Write your answer here.*
-
-:::
-
-::: {.sol}
-
-**Solution**
+From the folder containing this notebook, create exactly this structure:
 
 ```text
-Input: 10 features
-Dense: 10 → 8
-Activation: ReLU
-Dense: 8 → 4
-Activation: ReLU
-Dense: 4 → 1
-Output: 1 value
+data/
+├── fashion-mnist/
+│   ├── train-images-idx3-ubyte.gz
+│   ├── train-labels-idx1-ubyte.gz
+│   ├── t10k-images-idx3-ubyte.gz
+│   └── t10k-labels-idx1-ubyte.gz
+└── store-item-demand/
+    └── train.csv
 ```
 
-The model has two hidden layers and three trainable dense layers. With `[32, 16, 8]`, it has three hidden layers with those widths and a final `8 -> 1` layer. It expects a fixed-length feature vector. Flattening media removes explicit spatial and temporal relationships, which CNNs and sequence architectures are designed to preserve.
+Copy and paste these shell commands:
+
+```bash
+mkdir -p data/fashion-mnist data/store-item-demand
+
+curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/train-images-idx3-ubyte.gz \
+  -o data/fashion-mnist/train-images-idx3-ubyte.gz
+
+curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/train-labels-idx1-ubyte.gz \
+  -o data/fashion-mnist/train-labels-idx1-ubyte.gz
+
+curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/t10k-images-idx3-ubyte.gz \
+  -o data/fashion-mnist/t10k-images-idx3-ubyte.gz
+
+curl -L https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/t10k-labels-idx1-ubyte.gz \
+  -o data/fashion-mnist/t10k-labels-idx1-ubyte.gz
+
+curl -L https://raw.githubusercontent.com/DharitShah13/Kaggle-Store-Item-Demand-Forecasting-Challenge/master/train.csv \
+  -o data/store-item-demand/train.csv
+```
+
+### Packages
+
+Install the required R packages and the torch runtime once:
+
+```r
+install.packages(c(
+  "torch",
+  "readr",
+  "dplyr",
+  "tidyr",
+  "ggplot2",
+  "purrr",
+  "tibble"
+))
+
+torch::install_torch()
+```
 
 :::
 
-# Part 2: Match architectures to media use cases {#part-2}
+::::
+
+::: {.sol}
+The data should have been downloaded from GitHub as described in the exercise instructions.
+:::
+
+```{r}
+#| label: setup
+#| solution-setup: true
+library(torch)
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+library(tibble)
+
+set.seed(42)
+torch_manual_seed(42)
+device <- torch_device(if (cuda_is_available()) "cuda" else "cpu")
+
+fashion_train_images_path <- "data/fashion-mnist/train-images-idx3-ubyte.gz"
+fashion_train_labels_path <- "data/fashion-mnist/train-labels-idx1-ubyte.gz"
+fashion_test_images_path <- "data/fashion-mnist/t10k-images-idx3-ubyte.gz"
+fashion_test_labels_path <- "data/fashion-mnist/t10k-labels-idx1-ubyte.gz"
+demand_path <- "data/store-item-demand/train.csv"
+
+required_files <- c(
+  fashion_train_images_path,
+  fashion_train_labels_path,
+  fashion_test_images_path,
+  fashion_test_labels_path,
+  demand_path
+)
+if (!all(file.exists(required_files))) {
+  missing_files <- required_files[!file.exists(required_files)]
+  stop(
+    "Missing required data file(s):\n- ",
+    paste(missing_files, collapse = "\n- "),
+    "\nReturn to 'Data and package setup' and run the provided shell commands."
+  )
+}
+```
+
+# Part 1 — Train a small MLP {#part-1}
+
+Fashion-MNIST contains grayscale images of Zalando products. A classifier could support catalogue tagging, but here it first provides a controlled setting in which to observe neural-network training.
+
+## Task 1.1 — Prepare one reproducible prediction task
+
+The boilerplate below uses modest, fixed subsets for laptop-friendly training. Pixel intensities are scaled to $[0,1]$. Both the MLP and CNN later receive **exactly these images and labels**.
+
+```{r}
+#| label: fashion-data
+read_idx_integer <- function(connection) {
+  readBin(connection, what = integer(), n = 1, size = 4, endian = "big")
+}
+
+read_idx_images <- function(path) {
+  connection <- gzfile(path, open = "rb")
+  on.exit(close(connection))
+
+  magic_number <- read_idx_integer(connection)
+  n_images <- read_idx_integer(connection)
+  n_rows <- read_idx_integer(connection)
+  n_columns <- read_idx_integer(connection)
+  if (magic_number != 2051L || n_rows != 28L || n_columns != 28L) {
+    stop("Unexpected Fashion-MNIST image-file header: ", path)
+  }
+
+  pixels <- readBin(
+    connection,
+    what = integer(),
+    n = n_images * n_rows * n_columns,
+    size = 1,
+    signed = FALSE
+  )
+  if (length(pixels) != n_images * n_rows * n_columns) {
+    stop("Incomplete Fashion-MNIST image file: ", path)
+  }
+  matrix(pixels, nrow = n_images, byrow = TRUE) / 255
+}
+
+read_idx_labels <- function(path) {
+  connection <- gzfile(path, open = "rb")
+  on.exit(close(connection))
+
+  magic_number <- read_idx_integer(connection)
+  n_labels <- read_idx_integer(connection)
+  if (magic_number != 2049L) {
+    stop("Unexpected Fashion-MNIST label-file header: ", path)
+  }
+
+  labels <- readBin(connection, what = integer(), n = n_labels, size = 1, signed = FALSE)
+  if (length(labels) != n_labels) {
+    stop("Incomplete Fashion-MNIST label file: ", path)
+  }
+  labels + 1L # torch's classification targets are indexed from 1 in R
+}
+
+fashion_all <- list(
+  x = read_idx_images(fashion_train_images_path),
+  y = read_idx_labels(fashion_train_labels_path)
+)
+fashion_test_all <- list(
+  x = read_idx_images(fashion_test_images_path),
+  y = read_idx_labels(fashion_test_labels_path)
+)
+
+stopifnot(
+  identical(dim(fashion_all$x), c(60000L, 784L)),
+  length(fashion_all$y) == 60000L,
+  identical(dim(fashion_test_all$x), c(10000L, 784L)),
+  length(fashion_test_all$y) == 10000L
+)
+
+set.seed(42)
+development_ids <- sample(seq_len(nrow(fashion_all$x)), 9000)
+train_ids <- development_ids[1:8000]
+validation_ids <- development_ids[8001:9000]
+test_ids <- sample(seq_len(nrow(fashion_test_all$x)), 1000)
+
+make_classification_loader <- function(x, y, batch_size = 128, shuffle = FALSE) {
+  dataloader(
+    tensor_dataset(
+      torch_tensor(x, dtype = torch_float()),
+      torch_tensor(y, dtype = torch_long())
+    ),
+    batch_size = batch_size,
+    shuffle = shuffle
+  )
+}
+
+fashion <- list(
+  train = list(x = fashion_all$x[train_ids, ], y = fashion_all$y[train_ids]),
+  validation = list(x = fashion_all$x[validation_ids, ], y = fashion_all$y[validation_ids]),
+  test = list(x = fashion_test_all$x[test_ids, ], y = fashion_test_all$y[test_ids])
+)
+
+fashion_loaders <- list(
+  train = make_classification_loader(fashion$train$x, fashion$train$y, shuffle = TRUE),
+  validation = make_classification_loader(fashion$validation$x, fashion$validation$y),
+  test = make_classification_loader(fashion$test$x, fashion$test$y)
+)
+
+dim(fashion$train$x)
+table(fashion$train$y)
+```
+
+## Task 1.2 — Complete and train the MLP
+
+::: {.callout-tip title="Useful torch documentation and syntax"}
+Read the official references for [`nn_module()`](https://torch.mlverse.org/docs/reference/nn_module.html), [`nn_linear()`](https://torch.mlverse.org/docs/reference/nn_linear.html), and [`nnf_relu()`](https://torch.mlverse.org/docs/reference/nnf_relu.html). This unrelated miniature module shows where layers are created and how data flows through them:
+
+```r
+measurement_net <- nn_module(
+  initialize = function() {
+    self$projection <- nn_linear(4, 2)
+  },
+  forward = function(x) {
+    nnf_relu(self$projection(x))
+  }
+)
+```
+
+`initialize` registers trainable layers; `forward` describes the computation. Adapt the pattern to the dimensions requested below rather than copying those example dimensions.
+:::
 
 ::: {.direction}
+Complete a `784 -> 64 -> 10` MLP. The hidden layer needs ReLU. The final layer should return ten **raw logits**: `nnf_cross_entropy()` combines the appropriate multiclass transformation and loss, so do not append softmax.
 
-**Background.** *NovaStream* offers movies, series, podcasts, music, and livestreams. For each use case:
-
-1. identify the input structure and expected output;
-2. recommend an architecture or analytical approach;
-3. justify how the model's assumptions fit the data;
-4. name a plausible alternative or explain why a standard predictive model is insufficient.
-
-| # | Use case | Recommendation and justification |
-|---:|---|---|
-| 1 | Predict subscriber churn from aggregated viewing, subscription, support, app-usage, and payment features. | |
-| 2 | Generate multilingual subtitles from conversational livestream audio. | |
-| 3 | Classify uploaded podcast cover images as sports, entertainment, education, politics, or technology. | |
-| 4 | Predict the next song, video, or podcast from recent interaction sequences, time of day, device, and consumption history. | |
-| 5 | Detect toxic or abusive livestream chat messages as they are posted. | |
-| 6 | Forecast server demand and bandwidth from historical usage across days, weeks, and special events. | |
-For use cases 2–4, also answer:
-
-- Where is the **spatial** or **sequential** structure?
-
-**Your answer:** *Write your answer here.*
-
-- Would changing the order or location of input elements change their meaning?
-
-**Your answer:** *Write your answer here.*
-
-- For audio or video, would you combine more than one architecture? Why?
-
-**Your answer:** *Write your answer here.*
-
-- What are the likely units of input (features, pixels, frames, waveform samples, spectrogram regions, or tokens)?
-
-**Your answer:** *Write your answer here.*
-
+```{r}
+#| label: task-1-2-mlp-student-response
+# YOUR CODE HERE: define fashion_mlp with two linear layers and ReLU.
+```
 :::
 
 ::: {.sol}
-
-**Solution**
-
-| # | Input and output | Suitable approach |
-|---:|---|---|
-| 1 | Fixed-length customer feature vector → churn probability | An MLP, logistic regression, or tree ensemble. The inputs are primarily tabular; a specialized media architecture is not automatically beneficial. |
-| 2 | Ordered audio representation → subtitle token sequence | Transformer; an RNN/LSTM remains a conceptual alternative. A CNN can extract local features from a spectrogram before sequence modeling. |
-| 3 | Spatial pixel grid → image category | CNN, because local visual patterns recur across image positions. A vision Transformer is an alternative. |
-| 4 | Ordered interactions → next-item probability | RNN/LSTM or Transformer because temporal order and longer-range dependencies matter. |
-| 5 | Ordered language tokens → toxicity label | Transformer-based language model; simpler text classifiers remain useful baselines. |
-| 6 | Ordered measurements → future demand | Time-series methods, RNN/LSTM, or Transformer, depending on scale and complexity. Classical forecasting should remain a baseline. |
-
-Video typically combines a CNN's spatial feature extraction with an RNN, temporal model, or Transformer across frames. Audio may be modeled as a waveform sequence or as a spectrogram, so its representation can support an RNN/Transformer, a CNN, or a combination.
-
+```{r}
+#| label: task-1-2-mlp-solution
+fashion_mlp <- nn_module(
+  initialize = function() {
+    self$hidden <- nn_linear(28 * 28, 64)
+    self$output <- nn_linear(64, 10)
+  },
+  forward = function(x) {
+    x |>
+      self$hidden() |>
+      nnf_relu() |>
+      self$output()
+  }
+)
+```
 :::
+
+::: {.direction}
+Create a small optimizer factory that returns Adam for a model and learning rate. Adam is the gradient-based update rule used throughout the image experiments.
+
+::: {.callout-tip title="Adam syntax"}
+The [`optim_adam()` documentation](https://torch.mlverse.org/docs/reference/optim_adam.html) lists its options. The minimal generic form is `optim_adam(model$parameters, lr = learning_rate)`; the factory should return that optimizer for the model it receives.
+:::
+
+```{r}
+#| label: task-1-2-optimizer-student-response
+# YOUR CODE HERE: make_adam <- function(model, lr) ...
+```
+:::
+
+::: {.sol}
+```{r}
+#| label: task-1-2-optimizer-solution
+make_adam <- function(model, lr) {
+  optim_adam(model$parameters, lr = lr)
+}
+```
+:::
+
+The reusable helpers below handle batching, backpropagation, metric collection, and plotting. They work for any image classifier that returns ten logits; `transform` determines whether a batch is flattened or kept as an image.
+
+```{r}
+#| label: classification-helpers
+evaluate_classifier <- function(model, loader, transform = identity) {
+  model$eval()
+  total_loss <- 0
+  total_correct <- 0
+  total_n <- 0
+  with_no_grad({
+    coro::loop(for (batch in loader) {
+      x <- transform(batch[[1]]$to(device = device))
+      y <- batch[[2]]$to(device = device)
+      logits <- model(x)
+      n <- y$size(1)
+      total_loss <- total_loss + nnf_cross_entropy(logits, y)$item() * n
+      total_correct <- total_correct + (logits$argmax(dim = 2) == y)$sum()$item()
+      total_n <- total_n + n
+    })
+  })
+  c(loss = total_loss / total_n, accuracy = total_correct / total_n)
+}
+
+train_classifier <- function(model, loaders, epochs = 8, lr = 1e-3,
+                             transform = identity, verbose = TRUE) {
+  model <- model$to(device = device)
+  optimizer <- make_adam(model, lr)
+  history <- vector("list", epochs)
+
+  for (epoch in seq_len(epochs)) {
+    model$train()
+    coro::loop(for (batch in loaders$train) {
+      x <- transform(batch[[1]]$to(device = device))
+      y <- batch[[2]]$to(device = device)
+      optimizer$zero_grad()
+      loss <- nnf_cross_entropy(model(x), y)
+      loss$backward()
+      optimizer$step()
+    })
+    train_metrics <- evaluate_classifier(model, loaders$train, transform)
+    validation_metrics <- evaluate_classifier(model, loaders$validation, transform)
+    history[[epoch]] <- tibble(
+      epoch = epoch,
+      split = c("training", "validation"),
+      loss = c(train_metrics[["loss"]], validation_metrics[["loss"]]),
+      accuracy = c(train_metrics[["accuracy"]], validation_metrics[["accuracy"]])
+    )
+    if (verbose) {
+      message(
+        "epoch ", epoch, ": validation accuracy = ",
+        round(validation_metrics[["accuracy"]], 3)
+      )
+    }
+  }
+  list(model = model, history = bind_rows(history))
+}
+
+plot_learning_curves <- function(history) {
+  history |>
+    pivot_longer(c(loss, accuracy), names_to = "metric", values_to = "value") |>
+    ggplot(aes(epoch, value, colour = split)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 1.2) +
+    facet_wrap(~metric, scales = "free_y") +
+    labs(colour = NULL) +
+    theme_minimal()
+}
+```
+
+::: {.direction}
+Instantiate the model and use your Adam factory by calling `train_classifier()` with `lr = 1e-3`. Train for eight epochs and inspect both curves.
+
+```{r}
+#| label: task-1-2-train-student-response
+# YOUR CODE HERE
+```
+:::
+
+::: {.sol}
+```{r}
+#| label: task-1-2-train-solution
+torch_manual_seed(42)
+mlp_fit <- train_classifier(fashion_mlp(), fashion_loaders, epochs = 8, lr = 1e-3)
+plot_learning_curves(mlp_fit$history)
+```
+:::
+
+::: {.direction}
+In this run, identify the code line corresponding to each stage:
+
+1. **forward pass**;
+2. computation of the **loss**;
+3. **backpropagation**;
+4. the Adam **parameter update**.
+
+Why are ten output logits appropriate, and why is cross-entropy preferable to a regression loss for the ten product classes? What do the gap and direction of the training/validation curves suggest?
+
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+The forward pass is `model(x)`, the loss is `nnf_cross_entropy(...)`, `loss$backward()` computes gradients by backpropagation, and `optimizer$step()` uses those gradients to update weights. Ten logits represent scores for ten mutually exclusive classes. Cross-entropy evaluates the probability assigned to the correct class, unlike MSE, which would incorrectly treat class numbers as continuous quantities. Falling losses indicate learning; a widening train-validation gap suggests overfitting, while two high, flat losses suggest insufficient learning or capacity.
+:::
+
+# Part 2 — Experiment with architecture and training {#part-2}
+
+## Task 2.1 — Change depth and width
+
+The lecture distinguishes **width** (units per layer) from **depth** (number of layers). This factory removes repeated model code.
+
+```{r}
+#| label: flexible-mlp
+make_mlp <- function(hidden_sizes) {
+  nn_module(
+    initialize = function() {
+      sizes <- c(784, hidden_sizes, 10)
+      layers <- list()
+      for (i in seq_len(length(sizes) - 1)) {
+        layers <- append(layers, list(nn_linear(sizes[i], sizes[i + 1])))
+        if (i < length(sizes) - 1) {
+          layers <- append(layers, list(nn_relu()))
+        }
+      }
+      self$network <- do.call(nn_sequential, layers)
+    },
+    forward = function(x) {
+      self$network(x)
+    }
+  )
+}
+```
+
+::: {.direction}
+Specify three configurations: shallow/narrow `784 -> 32 -> 10`, wider `784 -> 128 -> 10`, and deeper `784 -> 128 -> 64 -> 10`. The supplied loop trains each under identical conditions.
+
+```{r}
+#| label: task-2-1-configurations-student-response
+# YOUR CODE HERE: architecture_configs <- list(...)
+```
+:::
+
+::: {.sol}
+```{r}
+#| label: task-2-1-configurations-solution
+architecture_configs <- list(
+  narrow = c(32),
+  wider = c(128),
+  deeper = c(128, 64)
+)
+```
+:::
+
+```{r}
+#| label: architecture-experiment
+architecture_results <- imap(architecture_configs, function(hidden, name) {
+  torch_manual_seed(42)
+  fit <- train_classifier(make_mlp(hidden)(), fashion_loaders,
+                          epochs = 5, lr = 1e-3, verbose = FALSE)
+  fit$history |> mutate(configuration = name)
+}) |> bind_rows()
+
+architecture_results |>
+  ggplot(aes(epoch, accuracy, colour = configuration, linetype = split)) +
+  geom_line(linewidth = 0.9) +
+  geom_point() +
+  labs(linetype = "data split") +
+  theme_minimal()
+```
+
+## Task 2.2 — Change the learning rate
+
+::: {.direction}
+Using the wider architecture, compare learning rates `1e-2`, `1e-3`, and `1e-4`. Complete only the vector; the loop is supplied.
+
+```{r}
+#| label: task-2-2-learning-rates-student-response
+# YOUR CODE HERE: learning_rates <- ...
+```
+:::
+
+::: {.sol}
+```{r}
+#| label: task-2-2-learning-rates-solution
+learning_rates <- c(`1e-2` = 1e-2, `1e-3` = 1e-3, `1e-4` = 1e-4)
+```
+:::
+
+```{r}
+#| label: learning-rate-experiment
+learning_rate_results <- imap_dfr(learning_rates, function(lr, name) {
+  torch_manual_seed(42)
+  fit <- train_classifier(make_mlp(128)(), fashion_loaders,
+                          epochs = 5, lr = lr, verbose = FALSE)
+  fit$history |> mutate(learning_rate = name)
+})
+
+learning_rate_results |>
+  pivot_longer(c(loss, accuracy), names_to = "metric", values_to = "value") |>
+  ggplot(aes(epoch, value, colour = learning_rate, linetype = split)) +
+  geom_line(linewidth = 0.9) +
+  facet_wrap(~metric, scales = "free_y") +
+  labs(linetype = "data split") +
+  theme_minimal()
+```
+
+::: {.direction}
+Use the plots—not an assumption—to identify any insufficient capacity, useful added capacity, slow learning, unstable learning, or overfitting. Why is a larger/deeper network not automatically better? Keep one trained MLP (`mlp_fit`) as the baseline for Part 3.
+
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+A model shows insufficient capacity when both training and validation performance plateau at poor values. Added capacity is useful only if validation performance improves. A very small learning rate may improve too slowly within the epoch budget; a large rate may oscillate or worsen because updates overshoot useful parameter regions. Greater depth or width adds parameters and computation, can make optimization harder, and can overfit. The empirical validation curve therefore decides whether the extra capacity helped.
+:::
+
+# Part 3 — Images: MLP versus CNN {#part-3}
+
+Flattening made each image a 784-value vector. A CNN instead receives a one-channel $28 \times 28$ grid, matching the lecture's idea that model architecture should reflect data structure.
+
+## Task 3.1 — Build a small CNN
+
+::: {.direction}
+Complete the network with a 2D convolution (8 output channels and a `3 x 3` kernel), ReLU, `2 x 2` max pooling, flattening, and a ten-logit output layer. With padding of one, pooling changes `28 x 28` to `14 x 14`.
+
+::: {.callout-tip title="CNN syntax and tensor dimensions"}
+Use the official references for [`nn_conv2d()`](https://torch.mlverse.org/docs/reference/nn_conv2d.html) and [`nn_max_pool2d()`](https://torch.mlverse.org/docs/reference/nn_max_pool2d.html). Generic constructor forms are `nn_conv2d(in_channels, out_channels, kernel_size, padding = ...)` and `nn_max_pool2d(kernel_size = ...)`; ReLU uses the function already introduced in Task 1.2.
+
+Track the batch separately through this task:
+
+- input: `(batch, 1, 28, 28)`;
+- after the padded convolution: `(batch, 8, 28, 28)`;
+- after `2 x 2` pooling: `(batch, 8, 14, 14)`;
+- after flattening all non-batch dimensions: `(batch, 8 * 14 * 14)`.
+
+Therefore, derive the final linear layer's input width from the last expression and give it 10 outputs. This shape reasoning is provided so the task remains about spatial architecture, not debugging an opaque matrix-size error.
+:::
+
+```{r}
+#| label: task-3-1-cnn-student-response
+# YOUR CODE HERE: define fashion_cnn.
+```
+:::
+
+::: {.sol}
+```{r}
+#| label: task-3-1-cnn-solution
+fashion_cnn <- nn_module(
+  initialize = function() {
+    self$conv <- nn_conv2d(1, 8, kernel_size = 3, padding = 1)
+    self$pool <- nn_max_pool2d(kernel_size = 2)
+    self$output <- nn_linear(8 * 14 * 14, 10)
+  },
+  forward = function(x) {
+    x <- self$pool(nnf_relu(self$conv(x)))
+    x <- torch_flatten(x, start_dim = 2)
+    self$output(x)
+  }
+)
+```
+:::
+
+```{r}
+#| label: cnn-training-and-comparison
+as_images <- function(x) {
+  x$view(c(x$size(1), 1, 28, 28))
+}
+
+torch_manual_seed(42)
+cnn_fit <- train_classifier(fashion_cnn(), fashion_loaders,
+                            epochs = 8, lr = 1e-3, transform = as_images)
+plot_learning_curves(cnn_fit$history)
+
+count_parameters <- function(model) {
+  sum(vapply(
+    model$parameters,
+    function(p) {
+      p$numel()
+    },
+    numeric(1)
+  ))
+}
+
+image_comparison <- tibble(
+  model = c("MLP", "CNN"),
+  parameters = c(count_parameters(mlp_fit$model), count_parameters(cnn_fit$model)),
+  validation_accuracy = c(
+    evaluate_classifier(mlp_fit$model, fashion_loaders$validation)[["accuracy"]],
+    evaluate_classifier(cnn_fit$model, fashion_loaders$validation, as_images)[["accuracy"]]
+  ),
+  test_accuracy = c(
+    evaluate_classifier(mlp_fit$model, fashion_loaders$test)[["accuracy"]],
+    evaluate_classifier(cnn_fit$model, fashion_loaders$test, as_images)[["accuracy"]]
+  )
+)
+image_comparison
+```
+
+::: {.direction}
+What neighborhood information is no longer explicit after flattening? What spatial assumption does convolution introduce, and how does weight sharing reuse a filter at different locations? Did the CNN actually outperform the MLP in your run? Discuss both accuracy and parameter count; do not assume that the specialized model must win.
+
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+Flattening retains pixel values but no explicit two-dimensional neighborhood: adjacent vector entries are not always adjacent pixels. A convolution assumes that local patterns matter and applies the same learned filter across locations, greatly reducing separate parameters. Whether that inductive bias produces better held-out accuracy is an empirical question answered by `image_comparison`; randomness, subset size, architecture, and training budget can alter the result.
+:::
+
+# Part 4 — Sequential data: MLP versus RNN {#part-4}
+
+The Store Item Demand competition contains five years of daily sales for 50 items in 10 stores. A retailer might use a next-day forecast for replenishment. We select one complete store-item series and use the previous 28 days to predict the next day.
+
+## Task 4.1 — Construct chronological rolling windows
+
+The scaler is fitted on the earliest 70% of observations only. Windows are assigned by their **target date**, giving chronological 70%/15%/15% train/validation/test sets without leaking future targets into training.
+
+```{r}
+#| label: demand-data
+demand_raw <- read_csv(demand_path, show_col_types = FALSE) |>
+  mutate(date = as.Date(date)) |>
+  arrange(store, item, date)
+
+series_sizes <- demand_raw |>
+  count(store, item, name = "n") |>
+  arrange(desc(n))
+chosen <- slice_head(series_sizes, n = 1)
+
+sales_series <- demand_raw |>
+  filter(store == chosen$store, item == chosen$item) |>
+  arrange(date) |>
+  select(date, sales)
+
+n_days <- nrow(sales_series)
+train_end <- floor(0.70 * n_days)
+validation_end <- floor(0.85 * n_days)
+sales_mean <- mean(sales_series$sales[seq_len(train_end)])
+sales_sd <- sd(sales_series$sales[seq_len(train_end)])
+scaled_sales <- (sales_series$sales - sales_mean) / sales_sd
+
+window_length <- 28L
+target_rows <- (window_length + 1L):n_days
+windows <- t(vapply(
+  target_rows,
+  function(i) {
+    scaled_sales[(i - window_length):(i - 1)]
+  },
+  numeric(window_length)
+))
+targets <- scaled_sales[target_rows]
+target_dates <- sales_series$date[target_rows]
+
+window_split <- case_when(
+  target_rows <= train_end ~ "train",
+  target_rows <= validation_end ~ "validation",
+  TRUE ~ "test"
+)
+
+make_regression_loader <- function(split, shuffle = FALSE) {
+  ids <- which(window_split == split)
+  dataloader(
+    tensor_dataset(
+      torch_tensor(windows[ids, , drop = FALSE], dtype = torch_float()),
+      torch_tensor(matrix(targets[ids], ncol = 1), dtype = torch_float())
+    ),
+    batch_size = 64,
+    shuffle = shuffle
+  )
+}
+
+demand_loaders <- list(
+  train = make_regression_loader("train", TRUE),
+  validation = make_regression_loader("validation"),
+  test = make_regression_loader("test")
+)
+
+tibble(split = window_split, date = target_dates) |>
+  group_by(split) |>
+  summarise(first_date = min(date), last_date = max(date), n = n())
+```
+
+## Task 4.2 — Fit the lag-vector MLP baseline
+
+The regression helpers use MSE for optimization and report RMSE in the original sales units. As before, batching and training mechanics are supplied.
+
+```{r}
+#| label: regression-helpers
+evaluate_regressor <- function(model, loader, transform = identity) {
+  model$eval()
+  predictions <- list()
+  observed <- list()
+  with_no_grad({
+    coro::loop(for (batch in loader) {
+      predictions <- append(predictions, list(as.numeric(model(
+        transform(batch[[1]]$to(device = device)))$cpu()
+      )))
+      observed <- append(observed, list(as.numeric(batch[[2]])))
+    })
+  })
+  predicted_scaled <- unlist(predictions)
+  observed_scaled <- unlist(observed)
+  tibble(
+    observed = observed_scaled * sales_sd + sales_mean,
+    predicted = predicted_scaled * sales_sd + sales_mean
+  )
+}
+
+train_regressor <- function(model, loaders, epochs = 20, lr = 1e-3,
+                            transform = identity) {
+  model <- model$to(device = device)
+  optimizer <- optim_adam(model$parameters, lr = lr)
+  history <- vector("list", epochs)
+  for (epoch in seq_len(epochs)) {
+    model$train()
+    coro::loop(for (batch in loaders$train) {
+      x <- transform(batch[[1]]$to(device = device))
+      y <- batch[[2]]$to(device = device)
+      optimizer$zero_grad()
+      loss <- nnf_mse_loss(model(x), y)
+      loss$backward()
+      optimizer$step()
+    })
+    validation_predictions <- evaluate_regressor(model, loaders$validation, transform)
+    history[[epoch]] <- tibble(
+      epoch = epoch,
+      validation_rmse = sqrt(mean((validation_predictions$observed -
+                                   validation_predictions$predicted)^2))
+    )
+  }
+  list(model = model, history = bind_rows(history))
+}
+```
+
+::: {.direction}
+Complete an MLP that treats the 28 lagged observations as a flat vector: `28 -> 32 -> 1`. Use ReLU in the hidden layer and one linear output because sales forecasting is regression.
+
+Refer back to the `nn_module()`, `nn_linear()`, and `nnf_relu()` example in Task 1.2; this task reuses exactly that API pattern with new dimensions and a regression output.
+
+```{r}
+#| label: task-4-2-demand-mlp-student-response
+# YOUR CODE HERE
+```
+:::
+
+::: {.sol}
+```{r}
+#| label: task-4-2-demand-mlp-solution
+demand_mlp <- nn_module(
+  initialize = function() {
+    self$hidden <- nn_linear(28, 32)
+    self$output <- nn_linear(32, 1)
+  },
+  forward = function(x) {
+    self$output(nnf_relu(self$hidden(x)))
+  }
+)
+
+torch_manual_seed(42)
+demand_mlp_fit <- train_regressor(demand_mlp(), demand_loaders, epochs = 20)
+```
+:::
+
+## Task 4.3 — Preserve order with an RNN
+
+::: {.direction}
+Complete a small RNN with one feature per time step and 16 hidden units. In `forward()`, pass the sequence through the recurrent layer, select its final hidden representation, and map that representation to one predicted sales value.
+
+::: {.callout-tip title="RNN syntax and shapes"}
+Consult [`nn_rnn()`](https://torch.mlverse.org/docs/reference/nn_rnn.html), especially its input/output shape section. The generic constructor is `nn_rnn(input_size = feature_count, hidden_size = hidden_count, batch_first = TRUE)`.
+
+Here each batch initially has shape `(batch, 28)`. Add a final singleton feature dimension before the model so the RNN receives `(batch, sequence_length = 28, input_size = 1)`. Setting `batch_first = TRUE` makes that ordering explicit; without it, the RNN expects sequence length before batch. The returned hidden state contains the final representation for each recurrent layer and batch; select the representation for the single layer, then pass its 16 features to the output layer. Reuse the module and linear-layer pattern from Task 1.2.
+:::
+
+```{r}
+#| label: task-4-3-rnn-student-response
+# YOUR CODE HERE
+```
+:::
+
+::: {.sol}
+```{r}
+#| label: task-4-3-rnn-solution
+demand_rnn <- nn_module(
+  initialize = function() {
+    self$rnn <- nn_rnn(input_size = 1, hidden_size = 16, batch_first = TRUE)
+    self$output <- nn_linear(16, 1)
+  },
+  forward = function(x) {
+    recurrent_result <- self$rnn(x)
+    final_hidden <- recurrent_result[[2]][1, , ]
+    self$output(final_hidden)
+  }
+)
+
+as_sequence <- function(x) {
+  x$unsqueeze(3)
+}
+
+torch_manual_seed(42)
+demand_rnn_fit <- train_regressor(demand_rnn(), demand_loaders,
+                                  epochs = 20, transform = as_sequence)
+```
+:::
+
+```{r}
+#| label: sequence-comparison
+validation_curves <- bind_rows(
+  demand_mlp_fit$history |> mutate(model = "MLP"),
+  demand_rnn_fit$history |> mutate(model = "RNN")
+)
+
+validation_curves |>
+  ggplot(aes(epoch, validation_rmse, colour = model)) +
+  geom_line(linewidth = 0.9) +
+  theme_minimal()
+
+mlp_test <- evaluate_regressor(demand_mlp_fit$model, demand_loaders$test) |>
+  mutate(model = "MLP", date = target_dates[window_split == "test"])
+rnn_test <- evaluate_regressor(demand_rnn_fit$model, demand_loaders$test, as_sequence) |>
+  mutate(model = "RNN", date = target_dates[window_split == "test"])
+test_predictions <- bind_rows(mlp_test, rnn_test)
+
+test_predictions |>
+  group_by(model) |>
+  summarise(
+    RMSE = sqrt(mean((observed - predicted)^2)),
+    MAE = mean(abs(observed - predicted))
+  )
+
+test_predictions |>
+  filter(date <= min(date) + 89) |>
+  select(date, model, observed, predicted) |>
+  pivot_longer(c(observed, predicted), names_to = "series", values_to = "sales") |>
+  ggplot(aes(date, sales, colour = series)) +
+  geom_line() +
+  facet_wrap(~model, ncol = 1) +
+  labs(colour = NULL) +
+  theme_minimal()
+```
+
+::: {.direction}
+Answer from the code and output:
+
+1. Where is sequential structure represented in the RNN input, and what is less explicit in the flat MLP input?
+2. How does the recurrent hidden state carry information from earlier days?
+3. Why would randomly splitting overlapping time windows give an unrealistic evaluation?
+4. Which architecture achieved lower held-out RMSE/MAE in your run? Does the specialized architecture actually help on this deliberately simple series?
+
+Transformers provide a more general attention-based approach to sequences, as discussed in the lecture, but are not required here.
+
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+The RNN receives 28 ordered time steps with one feature each; recurrence updates a hidden state at every step, so the final state summarizes earlier observations. The MLP receives positions as separate features and has no shared temporal transition mechanism. A random split lets nearly identical overlapping windows—and potentially future patterns—appear on both sides of the split, exaggerating generalization. The reported test RMSE and MAE determine the winner. An RNN need not win: a short, regular univariate series may be modeled efficiently by lag features, and optimization and sample size also matter.
+:::
+
+::: {.direction}
 
 # Wrap-up {#wrap-up}
 
-::: {.direction}
+Complete the final column using your held-out results.
 
-For one NovaStream case, sketch a pipeline:
+| Data | Representation | Model | Structural assumption | Task/loss | Validation or test performance |
+|---|---|---|---|---|---|
+| Fashion images | flattened pixels | MLP | fully connected | multiclass classification / cross-entropy | |
+| Fashion images | 2D pixels | CNN | local/spatial | multiclass classification / cross-entropy | |
+| Sales history | flattened lag vector | MLP | fully connected | regression / MSE | |
+| Sales history | ordered sequence | RNN | temporal recurrence | regression / MSE | |
 
-```text
-raw modality -> numerical representation -> architecture -> output -> evaluation
-```
-
-Then compare it with a case whose input has a different structure. State which architectural assumption changes.
+**Central takeaway:** **Data structure influences architecture; prediction task determines output layer and loss; architecture and training choices are then evaluated empirically.**
 
 <!--
 ::: {.callout-tip title="Session 8 survey"}

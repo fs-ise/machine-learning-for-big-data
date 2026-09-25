@@ -1,3 +1,5 @@
 /.quarto/
 **/*.quarto_ipynb
 data/students.csv
+data/fashion-mnist/
+data/store-item-demand/

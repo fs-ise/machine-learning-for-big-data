@@ -11,4 +11,8 @@
 \pagestyle{scrheadings}
 \thispagestyle{scrheadings}
 
-\section*{$title$}
+{%
+  \renewcommand*{\raggedsection}{\centering}%
+  \setkomafont{section}{\sffamily\bfseries\LARGE}%
+  \section*{$title$}%
+}

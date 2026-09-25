@@ -95,18 +95,24 @@ def test_pdf_config_and_templates_use_static_preamble_and_dynamic_body() -> None
     assert "breakanywhere=true" in preamble
     assert "breaksymbolleft={}" in preamble
     assert r"\KOMAoptions{headsepline=0.3pt}" in preamble
+    assert r"\setkomafont{section}{\sffamily\bfseries\Large}" in preamble
+    assert r"\setkomafont{subsection}{\sffamily\bfseries\normalsize}" in preamble
+    assert r"\setkomafont{subsubsection}{\sffamily\bfseries\small}" in preamble
+    assert r"\setkomafont{paragraph}{\sffamily\bfseries\small}" in preamble
+    assert r"\setkomafont{subparagraph}{\sffamily\bfseries\footnotesize}" in preamble
     assert "$course-title$" not in preamble
     assert "$exercise-number$" not in preamble
     assert r"\ihead[" in body  # optional argument also configures the plain style
     assert r"\ohead[" in body
     assert r"\ofoot[\pagemark]{\pagemark}" in body
     assert r"\thispagestyle{scrheadings}" in body
+    assert r"\renewcommand*{\raggedsection}{\centering}" in body
+    assert r"\setkomafont{section}{\sffamily\bfseries\LARGE}" in body
     for field in ("$course-title$", "$session$", "$title$", "$exercise-variant$"):
         assert field in body
     assert r"\section*{$title$}" in body
     assert "$exercise-number$" not in body
     assert "$exercise-topic$" not in body
-    assert r"\Large" not in preamble + body
 
 
 def test_canonical_exercises_use_separate_session_and_topic_titles() -> None:

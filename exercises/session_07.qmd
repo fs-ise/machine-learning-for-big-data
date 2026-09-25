@@ -13,12 +13,12 @@ In this exercise, we cover:
 | Part | Topic | Time (min) |
 |---|---|---:|
 | 1 | Common evaluation setup | 10 |
-| 2 | Regularized logistic regression | 12 |
-| 3 | k-nearest neighbors | 10 |
-| 4 | Decision tree | 10 |
+| 2 | Regularized logistic regression | 15 |
+| 3 | k-nearest neighbors | 11 |
+| 4 | Decision tree | 12 |
 | 5 | Random forest | 12 |
-| 6 | RBF support vector machine | 10 |
-| 7 | Validation comparison and recommendation | 14 |
+| 6 | RBF support vector machine | 12 |
+| 7 | Validation comparison and recommendation | 8 |
 | 8 | Final held-out evaluation | 7 |
 | Wrap-up | Reflection | 5 |
 | **Overall** | | **90** |
@@ -51,7 +51,8 @@ install.packages(c(
   "glmnet",
   "kknn",
   "ranger",
-  "kernlab"
+  "kernlab",
+  "rpart.plot"
 ))
 ```
 
@@ -94,22 +95,14 @@ df <- read_csv(
 
 set.seed(42)
 
-data_split <- initial_split(
-  df,
-  prop = 0.8,
-  strata = default
-)
+data_split <- initial_split(df, prop = 0.8, strata = default)
 
 train_data <- training(data_split)
 test_data <- testing(data_split)
 
 set.seed(42)
 
-folds <- vfold_cv(
-  train_data,
-  v = 5,
-  strata = default
-)
+folds <- vfold_cv(train_data, v = 5, strata = default)
 
 classification_metrics <- metric_set(
   roc_auc,
@@ -161,8 +154,8 @@ scaled_recipe <- recipe(
   default ~ .,
   data = train_data
 ) |>
-  step_dummy(all_nominal_predictors()) |>
-  step_normalize(all_numeric_predictors())
+  step_normalize(all_numeric_predictors()) |>
+  step_dummy(all_nominal_predictors())
 
 tree_recipe <- recipe(
   default ~ .,
@@ -181,21 +174,45 @@ Regularized regression, k-NN, and the SVM use `scaled_recipe`. The decision tree
 
 Regularization balances fit and simplicity. `penalty` controls its strength: larger values shrink coefficients more. `mixture = 0` gives ridge, `mixture = 1` gives lasso, and intermediate values give elastic net.
 
-## Task 2.1 — Specify and tune the model
+## Task 2.1 — Tune the model
 
 ::: {.direction}
-Complete the specification and workflow, then tune the nine explicit combinations in `regularized_grid` on the shared folds.
+Run the supplied specification and workflow to tune the 18 explicit combinations in `regularized_grid` on the shared folds. The wider penalty range makes both mild and substantial shrinkage available for comparison.
 
 ```{r}
 #| label: task-2-1-specify-and-tune-the-model-student-response
 regularized_grid <- expand_grid(
-  penalty = c(0.0001, 0.01, 0.1),
+  penalty = c(0.0001, 0.001, 0.01, 0.1, 1, 10),
   mixture = c(0, 0.5, 1)
 )
 
-# YOUR CODE HERE: add regularized_spec and regularized_workflow.
-# Then call tune_grid() with folds, regularized_grid,
-# and classification_metrics.
+regularized_spec <- logistic_reg(
+  penalty = tune(),
+  mixture = tune()
+) |>
+  set_engine("glmnet") |>
+  set_mode("classification")
+
+regularized_workflow <- workflow() |>
+  add_recipe(scaled_recipe) |>
+  add_model(regularized_spec)
+
+set.seed(42)
+
+regularized_results <- tune_grid(
+  regularized_workflow,
+  resamples = folds,
+  grid = regularized_grid,
+  metrics = classification_metrics
+)
+
+best_regularized <- select_best(
+  regularized_results,
+  metric = "roc_auc"
+)
+
+best_regularized
+show_best(regularized_results, metric = "roc_auc", n = 5)
 ```
 
 How does increasing `penalty` change model flexibility? Why is normalization appropriate here?
@@ -219,7 +236,7 @@ regularized_workflow <- workflow() |>
   add_model(regularized_spec)
 
 regularized_grid <- expand_grid(
-  penalty = c(0.0001, 0.01, 0.1),
+  penalty = c(0.0001, 0.001, 0.01, 0.1, 1, 10),
   mixture = c(0, 0.5, 1)
 )
 
@@ -244,6 +261,189 @@ show_best(regularized_results, metric = "roc_auc", n = 5)
 A larger penalty constrains coefficients more strongly and reduces flexibility. Normalization makes the penalty comparable across predictors measured in euros, counts, months, and proportions.
 :::
 
+## Task 2.2 — Compare unregularized, ridge, and lasso coefficients
+
+::: {.direction}
+Task 2.1 used cross-validation to choose tuning parameters for predictive model selection. Here, instead, use one shared, moderate penalty chosen for a clear conceptual comparison. Keeping the penalty strength fixed lets you attribute differences between ridge and lasso coefficients to the type of penalty rather than to two different CV-selected penalty values.
+
+The supplied code uses `comparison_penalty <- 0.05` for both ridge and lasso and fits all three models to `train_data` with `scaled_recipe`. This value gives more instructive contrast than the initial value of `0.01` without collapsing the ridge coefficients. Complete the plot by mapping coefficient `term` to the y-axis and `estimate` to the x-axis.
+
+```{r}
+#| label: task-2-2-compare-ridge-and-lasso-coefficients
+comparison_penalty <- 0.05
+
+penalized_coefficients <- tibble(
+  model = c("Ridge", "Lasso"),
+  mixture = c(0, 1)
+) |>
+  mutate(
+    fitted_workflow = map(
+      mixture,
+      \(mixture_value) {
+        workflow() |>
+          add_recipe(scaled_recipe) |>
+          add_model(
+            logistic_reg(
+              penalty = comparison_penalty,
+              mixture = mixture_value
+            ) |>
+              set_engine("glmnet") |>
+              set_mode("classification")
+          ) |>
+          fit(data = train_data)
+      }
+    ),
+    coefficients = map(
+      fitted_workflow,
+      \(fitted) tidy(extract_fit_parsnip(fitted))
+    )
+  ) |>
+  select(model, coefficients) |>
+  unnest(coefficients) |>
+  filter(term != "(Intercept)")
+
+unregularized_workflow <- workflow() |>
+  add_recipe(scaled_recipe) |>
+  add_model(
+    logistic_reg() |>
+      set_engine("glm") |>
+      set_mode("classification")
+  )
+
+unregularized_coefficients <- unregularized_workflow |>
+  fit(data = train_data) |>
+  extract_fit_parsnip() |>
+  tidy() |>
+  filter(term != "(Intercept)") |>
+  transmute(
+    model = "Unregularized",
+    term,
+    estimate
+  )
+
+coefficient_comparison <- bind_rows(
+  unregularized_coefficients,
+  penalized_coefficients |>
+    select(model, term, estimate)
+) |>
+  mutate(
+    model = factor(
+      model,
+      levels = c("Unregularized", "Ridge", "Lasso")
+    )
+  ) |>
+  complete(
+    model,
+    term = unregularized_coefficients$term,
+    fill = list(estimate = 0)
+  )
+```
+
+```{r}
+#| label: task-2-2-compare-ridge-and-lasso-coefficients-student-response
+# YOUR CODE HERE: plot estimate by term, colored by model.
+```
+
+
+Compare ridge and lasso with the unregularized baseline. How does ridge shrink the coefficients while retaining meaningful contributions across predictors? Under the **same penalty strength**, how does lasso differ from ridge, and does it set any coefficients exactly to zero? Why does ridge usually keep all coefficients nonzero while lasso can perform variable selection? Finally, why is this teaching penalty appropriate for conceptual comparison but not a replacement for the cross-validation used for predictive model selection in Task 2.1?
+
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+
+```{r}
+#| label: task-2-2-compare-ridge-and-lasso-coefficients-fit-and-plot
+comparison_penalty <- 0.05
+
+penalized_coefficients <- tibble(
+  model = c("Ridge", "Lasso"),
+  mixture = c(0, 1)
+) |>
+  mutate(
+    fitted_workflow = map(
+      mixture,
+      \(mixture_value) {
+        workflow() |>
+          add_recipe(scaled_recipe) |>
+          add_model(
+            logistic_reg(
+              penalty = comparison_penalty,
+              mixture = mixture_value
+            ) |>
+              set_engine("glmnet") |>
+              set_mode("classification")
+          ) |>
+          fit(data = train_data)
+      }
+    ),
+    coefficients = map(
+      fitted_workflow,
+      \(fitted) tidy(extract_fit_parsnip(fitted))
+    )
+  ) |>
+  select(model, coefficients) |>
+  unnest(coefficients) |>
+  filter(term != "(Intercept)")
+
+unregularized_workflow <- workflow() |>
+  add_recipe(scaled_recipe) |>
+  add_model(
+    logistic_reg() |>
+      set_engine("glm") |>
+      set_mode("classification")
+  )
+
+unregularized_coefficients <- unregularized_workflow |>
+  fit(data = train_data) |>
+  extract_fit_parsnip() |>
+  tidy() |>
+  filter(term != "(Intercept)") |>
+  transmute(
+    model = "Unregularized",
+    term,
+    estimate
+  )
+
+coefficient_comparison <- bind_rows(
+  unregularized_coefficients,
+  penalized_coefficients |>
+    select(model, term, estimate)
+) |>
+  mutate(
+    model = factor(
+      model,
+      levels = c("Unregularized", "Ridge", "Lasso")
+    )
+  ) |>
+  complete(
+    model,
+    term = unregularized_coefficients$term,
+    fill = list(estimate = 0)
+  )
+
+coefficient_comparison |>
+  mutate(term = fct_reorder(term, abs(estimate), .fun = max)) |>
+  ggplot(aes(x = estimate, y = term, color = model)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey60") +
+  geom_point(position = position_dodge(width = 0.65), size = 2) +
+  labs(
+    title = "Coefficient comparison: unregularized, ridge, and lasso",
+    x = "Coefficient estimate",
+    y = NULL,
+    color = NULL
+  )
+
+coefficient_comparison |>
+  filter(model == "Lasso", estimate == 0) |>
+  select(term, estimate)
+```
+
+Use the unregularized estimates as the baseline when identifying the largest changes in magnitude. At the common penalty of `r comparison_penalty`, ridge visibly shrinks the coefficients but retains meaningful nonzero contributions across predictors. Lasso applies stronger, selective shrinkage under that same penalty; use the printed output to report which coefficients, if any, are exactly zero.
+
+Ridge's L2 penalty continuously reduces coefficient magnitudes and usually does not make them exactly zero. Lasso's L1 penalty can make coefficients exactly zero, so it can perform variable selection. The shared penalty here was deliberately chosen to make those different behaviors interpretable; it is not claimed to be the best predictive penalty. For predictive model selection, use the cross-validated ROC AUC procedure in Task 2.1.
+:::
+
 {{< needspace 8 >}}
 
 # Part 3 — k-nearest neighbors {#knn}
@@ -255,10 +455,14 @@ k-NN predicts from nearby labeled observations. Small `k` produces flexible, hig
 ::: {.direction}
 Use Euclidean distance, rectangular neighbor weights, and candidate values 3, 5, 9, 15, and 25.
 
+::: {.callout-tip title="Useful documentation"}
+See the [`nearest_neighbor()` documentation](https://parsnip.tidymodels.org/reference/nearest_neighbor.html) for its model-specific arguments and engine choices.
+:::
+
 ```{r}
 #| label: task-3-1-tune-the-number-of-neighbors-student-response
 knn_grid <- tibble(
-  neighbors = c(3L, 5L, 9L, 15L, 25L)
+  neighbors = c(3L, 5L, 9L, 15L, 25L, 30L, 40L, 50L)
 )
 
 # YOUR CODE HERE: complete knn_spec, knn_workflow, and knn_results.
@@ -302,9 +506,34 @@ best_knn <- select_best(knn_results, metric = "roc_auc")
 
 best_knn
 show_best(knn_results, metric = "roc_auc", n = 5)
+
+knn_results |>
+  collect_metrics() |>
+  filter(.metric == "roc_auc") |>
+  ggplot(aes(x = neighbors, y = mean)) +
+  geom_line() +
+  geom_point(size = 2) +
+  scale_x_continuous(breaks = knn_grid$neighbors) +
+  labs(
+    title = "k-NN validation performance",
+    x = "Number of neighbors (k)",
+    y = "Mean cross-validation ROC AUC"
+  )
 ```
 
 Distance calculations use numerical differences. Without scaling, a difference of hundreds of euros can overwhelm meaningful differences in utilization or debt ratios merely because of units.
+:::
+
+## Task 3.2 — Interpret model flexibility
+
+::: {.direction}
+Inspect the ROC AUC plot. How do very small and larger values of `k` change the smoothness and flexibility of the decision boundary? Describe the observed validation pattern and explain it using bias, variance, and generalization. Does the most flexible candidate perform best?
+
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+Small `k` creates highly local boundaries with low bias but high variance: individual observations can substantially change predictions. Larger `k` averages over a wider neighborhood, producing a smoother, less variable boundary but potentially increasing bias. Use the plotted ROC AUC values to identify where that trade-off generalizes best; the answer should refer to the observed curve rather than assume that either extreme wins.
 :::
 
 
@@ -363,6 +592,81 @@ show_best(tree_results, metric = "roc_auc", n = 5)
 A single tree is often easy to explain as decision paths, but small changes in data can produce different splits. Complexity controls help limit overfitting.
 :::
 
+## Task 4.2 — Fit and interpret the selected tree
+
+::: {.direction}
+Run the supplied code to finalize the ROC-AUC-optimal tree, fit it to all training observations, and plot it. Interpret one or two important splits in substantive LendWise terms: which applicants are separated, and how do their predicted outcomes differ? Then explain how `tree_depth` and pruning through `cost_complexity` control flexibility.
+
+```{r}
+#| label: task-4-2-fit-and-interpret-the-selected-tree-student-response
+#| fig-width: 14
+#| fig-height: 9
+#| out-width: 100%
+final_tree_workflow <- finalize_workflow(
+  tree_workflow,
+  best_tree
+)
+
+fitted_tree_workflow <- fit(
+  final_tree_workflow,
+  data = train_data
+)
+
+fitted_tree <- extract_fit_engine(fitted_tree_workflow)
+
+rpart.plot::rpart.plot(
+  fitted_tree,
+  type = 4,
+  extra = 104,
+  fallen.leaves = TRUE,
+  tweak = 0.75,
+  varlen = 0,
+  faclen = 0,
+  digits = 3,
+  branch = 0.4,
+  box.palette = "GnBu"
+)
+```
+
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+
+```{r}
+#| label: task-4-2-fit-and-interpret-the-selected-tree-plot
+#| fig-width: 14
+#| fig-height: 9
+#| out-width: 100%
+final_tree_workflow <- finalize_workflow(
+  tree_workflow,
+  best_tree
+)
+
+fitted_tree_workflow <- fit(
+  final_tree_workflow,
+  data = train_data
+)
+
+fitted_tree <- extract_fit_engine(fitted_tree_workflow)
+
+rpart.plot::rpart.plot(
+  fitted_tree,
+  type = 4,
+  extra = 104,
+  fallen.leaves = TRUE,
+  tweak = 0.75,
+  varlen = 0,
+  faclen = 0,
+  digits = 3,
+  branch = 0.4,
+  box.palette = "GnBu"
+)
+```
+
+Begin at the root and state each split as an applicant rule—for example, whether values below or above a displayed threshold move an applicant toward a node with a different default composition. The exact variables and thresholds come from the fitted plot. Larger allowed depth permits more interactions and narrower subgroups; a larger cost-complexity value prunes branches unless they improve fit enough, yielding a less flexible tree that may generalize better.
+:::
+
 # Part 5 — Random forest {#forest}
 
 A random forest aggregates trees trained on bootstrap samples while considering random predictor subsets. Aggregation generally reduces the instability of one tree, but the ensemble is harder to explain as a single decision path.
@@ -371,6 +675,10 @@ A random forest aggregates trees trained on bootstrap samples while considering 
 
 ::: {.direction}
 Keep `trees = 500` fixed. Tune `mtry` over 2, 4, and 6 predictors and `min_n` over 10 and 25.
+
+::: {.callout-tip title="Useful documentation"}
+See the [`rand_forest()` documentation](https://parsnip.tidymodels.org/reference/rand_forest.html) for its model-specific arguments, including `mtry`, `trees`, and `min_n`.
+:::
 
 ```{r}
 #| label: task-5-1-tune-the-forest-student-response
@@ -433,6 +741,10 @@ An SVM seeks a decision boundary with a wide margin. `cost` controls how strongl
 ::: {.direction}
 Tune six combinations: cost 0.25, 1, or 4 and RBF sigma 0.01 or 0.1. Use normalized predictors.
 
+::: {.callout-tip title="Useful documentation"}
+See the [`svm_rbf()` documentation](https://parsnip.tidymodels.org/reference/svm_rbf.html) for model-specific guidance on `cost` and `rbf_sigma`.
+:::
+
 ```{r}
 #| label: task-6-1-tune-cost-and-kernel-scale-student-response
 # YOUR CODE HERE: complete svm_spec, svm_workflow, svm_grid, and svm_results.
@@ -472,9 +784,43 @@ best_svm <- select_best(svm_results, metric = "roc_auc")
 
 best_svm
 show_best(svm_results, metric = "roc_auc", n = 5)
+
+svm_results |>
+  collect_metrics() |>
+  filter(.metric == "roc_auc") |>
+  mutate(rbf_sigma = factor(rbf_sigma)) |>
+  ggplot(
+    aes(
+      x = cost,
+      y = mean,
+      color = rbf_sigma,
+      group = rbf_sigma
+    )
+  ) +
+  geom_line() +
+  geom_point(size = 2) +
+  scale_x_log10(breaks = c(0.25, 1, 4)) +
+  labs(
+    title = "RBF SVM validation performance",
+    x = "Cost (log scale)",
+    y = "Mean cross-validation ROC AUC",
+    color = "RBF sigma"
+  )
 ```
 
 Scaling prevents the margin and RBF distances from being dominated by predictors with numerically large units.
+:::
+
+## Task 6.2 — Interpret the SVM tuning surface
+
+::: {.direction}
+Use the validation plot to answer: which `cost` and `rbf_sigma` combinations allow more local, flexible decision boundaries, and which encourage smoother boundaries? In this grid, does greater flexibility consistently improve validation ROC AUC? Support your answer with the plotted pattern.
+
+**Your answer:** *Write your answer here.*
+:::
+
+::: {.sol}
+A larger `rbf_sigma` makes each training observation's influence more local, permitting a more rapidly changing boundary. A larger `cost` penalizes errors more strongly and usually allows the fitted boundary to follow the training observations more closely. Thus high cost with high sigma is the most flexible corner of this grid, while low cost with low sigma is smoother. The validation plot—not training fit—shows whether that flexibility generalizes; compare all six means and do not assume that the most flexible combination must win.
 :::
 
 # Part 7 — Compare validation performance and recommend a model {#comparison}
@@ -488,7 +834,59 @@ Run the supplied helper and comparison code. It retrieves ROC AUC, accuracy, and
 
 ```{r}
 #| label: task-7-1-collect-each-model-s-best-metrics-student-response
-# YOUR CODE HERE: create the comparison helper described above.
+collect_best_metrics <- function(results, best_parameters, model_name) {
+  all_metrics <- collect_metrics(results)
+  parameter_names <- intersect(
+    names(best_parameters),
+    names(all_metrics)
+  ) |>
+    setdiff(".config")
+
+  all_metrics |>
+    inner_join(
+      best_parameters,
+      by = parameter_names
+    ) |>
+    mutate(model = model_name) |>
+    select(
+      model,
+      .metric,
+      mean,
+      std_err,
+      any_of(parameter_names)
+    )
+}
+
+validation_comparison <- bind_rows(
+  collect_best_metrics(
+    regularized_results,
+    best_regularized,
+    "Regularized logistic"
+  ),
+  collect_best_metrics(
+    knn_results,
+    best_knn,
+    "k-NN"
+  ),
+  collect_best_metrics(
+    tree_results,
+    best_tree,
+    "Decision tree"
+  ),
+  collect_best_metrics(
+    rf_results,
+    best_rf,
+    "Random forest"
+  ),
+  collect_best_metrics(
+    svm_results,
+    best_svm,
+    "RBF SVM"
+  )
+)
+
+validation_comparison |>
+  arrange(.metric, desc(mean))
 ```
 :::
 
@@ -556,6 +954,11 @@ validation_comparison |>
 
 ::: {.direction}
 Create a plot that compares the mean validation metrics across algorithms and includes uncertainty based on the cross-validation standard errors.
+
+::: {.callout-tip title="Plotting hint"}
+Use `geom_errorbar()` for intervals such as `mean ± 1.96 * std_err`. `position_dodge()` can keep metrics from overlapping, and `coord_flip()` can make model names easier to read.
+:::
+
 :::
 
 ::: {.sol}
@@ -607,29 +1010,33 @@ Typical properties—not absolute rules—include:
 ::: {.direction}
 Answer:
 
-1. Which model has the strongest mean validation ROC AUC?
+1. Inspect the full comparison table—not only the ROC AUC ranking. Which model has the strongest mean validation ROC AUC? Is there a model with a competitive ROC AUC but clearly problematic accuracy or sensitivity?
 
 **Your answer:** *Write your answer here.*
 
-2. Are differences large relative to their standard errors?
+2. What does `sens = 0` mean substantively for LendWise?
 
 **Your answer:** *Write your answer here.*
 
-3. Which models naturally capture nonlinear relationships?
+3. How can a model obtain a reasonably strong ROC AUC while predicting no defaults at the standard classification threshold?
 
 **Your answer:** *Write your answer here.*
 
-4. Is the most flexible model necessarily best here?
+4. Are ROC AUC differences large relative to their standard errors? Which models naturally capture nonlinear relationships, and is the most flexible model necessarily best here?
 
 **Your answer:** *Write your answer here.*
 
-5. What matters for LendWise besides the highest score?
+5. What matters for LendWise besides the highest score when choosing a model and its operating threshold?
 
 **Your answer:** *Write your answer here.*
 :::
 
 ::: {.sol}
-The output determines the numerical ranking. Treat small differences relative to fold uncertainty cautiously. Trees, forests, k-NN, and the RBF SVM can capture nonlinear structure in different ways, but flexibility does not guarantee better generalization. LendWise should also consider sensitivity to actual defaults, stability, computation, transparent explanations for credit decisions, preprocessing requirements, and governance.
+The RBF SVM has the highest mean validation ROC AUC, about 0.730, but the full table reveals an important anomaly. The ROC-AUC-optimal regularized logistic regression (`penalty = 10`, `mixture = 0`, or ridge) is almost tied at about 0.729 ROC AUC—a difference of only about 0.001—yet its sensitivity is 0 and its accuracy is about 0.538. That threshold-based behavior differs much more substantially than the two models' ROC AUC values do. A sensitivity of 0 for the event class `default` means that, at the operating threshold used to create `.pred_class`, the model identifies none of the applicants who actually default as defaults. It predicts no observations as `default`, which would make it operationally useless for detecting risky applicants at that threshold.
+
+This is not a defect in ROC AUC. ROC AUC evaluates how well predicted scores rank defaults above non-defaults over all possible thresholds; it does not evaluate classifications at one particular threshold. Accuracy and sensitivity computed from `.pred_class`, in contrast, describe the classifications at the software's standard threshold. Heavy ridge shrinkage can pull predicted probabilities toward the center—and, here, keep them on the `no_default` side of that threshold—while preserving enough ordering among applicants to achieve a reasonably strong ROC AUC. A model can therefore rank cases reasonably well while making unusable classifications at an inappropriate operating threshold.
+
+The roughly 0.001 ROC-AUC gap should also be treated cautiously relative to fold-to-fold uncertainty. Trees, forests, k-NN, and the RBF SVM can capture nonlinear structure in different ways, but greater flexibility does not guarantee better generalization. LendWise should consider stability, computation, preprocessing, calibration, transparent explanations and governance for credit decisions, as well as the intended operating point and the costs of missed defaults and false alarms. Sensitivity, specificity, and other threshold-specific measures should be assessed at that operating point, and the threshold may need tuning on validation data rather than assuming 0.5 is appropriate. Ranking performance, model-family selection, and operating-threshold selection are related but distinct decisions; the held-out test set must remain untouched until all three have been fixed.
 :::
 
 {{< needspace 8 >}}
