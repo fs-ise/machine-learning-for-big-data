@@ -7,6 +7,7 @@ format: html
 <!--
 
 2026-04-20: 95 min (skipped regression trees and support vector regression)
+2026-09-25: 95 min (skipped support vector machines; questions and discussions took a lot of time)
 
 | Time (min) | Duration | Topic | Additional materials |
 |------------|----------|-------|----------------------|

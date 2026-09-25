@@ -162,8 +162,8 @@ scaled_recipe <- recipe(
   default ~ .,
   data = train_data
 ) |>
-  step_dummy(all_nominal_predictors()) |>
-  step_normalize(all_numeric_predictors())
+  step_normalize(all_numeric_predictors()) |>
+  step_dummy(all_nominal_predictors())
 
 tree_recipe <- recipe(
   default ~ .,
@@ -470,7 +470,7 @@ See the [`nearest_neighbor()` documentation](https://parsnip.tidymodels.org/refe
 ```{r}
 #| label: task-3-1-tune-the-number-of-neighbors-student-response
 knn_grid <- tibble(
-  neighbors = c(3L, 5L, 9L, 15L, 25L)
+  neighbors = c(3L, 5L, 9L, 15L, 25L, 30L, 40L, 50L)
 )
 
 # YOUR CODE HERE: complete knn_spec, knn_workflow, and knn_results.
