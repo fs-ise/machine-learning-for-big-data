@@ -21,6 +21,8 @@ In this exercise, we move from a general-purpose multilayer perceptron (MLP) to 
 
 ## Learning objectives
 
+You are **not expected to memorize the torch API**. Use the linked official documentation to check constructors, arguments, tensor shapes, and return values; the assessed challenge is choosing and reasoning about the architecture, not recalling function signatures.
+
 After this exercise, you should be able to:
 
 - connect the forward pass, loss, backpropagation, and optimizer update;
@@ -257,6 +259,23 @@ table(fashion$train$y)
 
 ## Task 1.2 — Complete and train the MLP
 
+::: {.callout-tip title="Useful torch documentation and syntax"}
+Read the official references for [`nn_module()`](https://torch.mlverse.org/docs/reference/nn_module.html), [`nn_linear()`](https://torch.mlverse.org/docs/reference/nn_linear.html), and [`nnf_relu()`](https://torch.mlverse.org/docs/reference/nnf_relu.html). This unrelated miniature module shows where layers are created and how data flows through them:
+
+```r
+measurement_net <- nn_module(
+  initialize = function() {
+    self$projection <- nn_linear(4, 2)
+  },
+  forward = function(x) {
+    nnf_relu(self$projection(x))
+  }
+)
+```
+
+`initialize` registers trainable layers; `forward` describes the computation. Adapt the pattern to the dimensions requested below rather than copying those example dimensions.
+:::
+
 ::: {.direction}
 Complete a `784 -> 64 -> 10` MLP. The hidden layer needs ReLU. The final layer should return ten **raw logits**: `nnf_cross_entropy()` combines the appropriate multiclass transformation and loss, so do not append softmax.
 
@@ -286,6 +305,10 @@ fashion_mlp <- nn_module(
 
 ::: {.direction}
 Create a small optimizer factory that returns Adam for a model and learning rate. Adam is the gradient-based update rule used throughout the image experiments.
+
+::: {.callout-tip title="Adam syntax"}
+The [`optim_adam()` documentation](https://torch.mlverse.org/docs/reference/optim_adam.html) lists its options. The minimal generic form is `optim_adam(model$parameters, lr = learning_rate)`; the factory should return that optimizer for the model it receives.
+:::
 
 ```{r}
 #| label: task-1-2-optimizer-student-response
@@ -516,6 +539,19 @@ Flattening made each image a 784-value vector. A CNN instead receives a one-chan
 ::: {.direction}
 Complete the network with a 2D convolution (8 output channels and a `3 x 3` kernel), ReLU, `2 x 2` max pooling, flattening, and a ten-logit output layer. With padding of one, pooling changes `28 x 28` to `14 x 14`.
 
+::: {.callout-tip title="CNN syntax and tensor dimensions"}
+Use the official references for [`nn_conv2d()`](https://torch.mlverse.org/docs/reference/nn_conv2d.html) and [`nn_max_pool2d()`](https://torch.mlverse.org/docs/reference/nn_max_pool2d.html). Generic constructor forms are `nn_conv2d(in_channels, out_channels, kernel_size, padding = ...)` and `nn_max_pool2d(kernel_size = ...)`; ReLU uses the function already introduced in Task 1.2.
+
+Track the batch separately through this task:
+
+- input: `(batch, 1, 28, 28)`;
+- after the padded convolution: `(batch, 8, 28, 28)`;
+- after `2 x 2` pooling: `(batch, 8, 14, 14)`;
+- after flattening all non-batch dimensions: `(batch, 8 * 14 * 14)`.
+
+Therefore, derive the final linear layer's input width from the last expression and give it 10 outputs. This shape reasoning is provided so the task remains about spatial architecture, not debugging an opaque matrix-size error.
+:::
+
 ```{r}
 #| label: task-3-1-cnn-student-response
 # YOUR CODE HERE: define fashion_cnn.
@@ -698,6 +734,8 @@ train_regressor <- function(model, loaders, epochs = 20, lr = 1e-3,
 ::: {.direction}
 Complete an MLP that treats the 28 lagged observations as a flat vector: `28 -> 32 -> 1`. Use ReLU in the hidden layer and one linear output because sales forecasting is regression.
 
+Refer back to the `nn_module()`, `nn_linear()`, and `nnf_relu()` example in Task 1.2; this task reuses exactly that API pattern with new dimensions and a regression output.
+
 ```{r}
 #| label: task-4-2-demand-mlp-student-response
 # YOUR CODE HERE
@@ -724,6 +762,12 @@ demand_mlp_fit <- train_regressor(demand_mlp(), demand_loaders, epochs = 20)
 
 ::: {.direction}
 Complete a small RNN with one feature per time step and 16 hidden units. In `forward()`, pass the sequence through the recurrent layer, select its final hidden representation, and map that representation to one predicted sales value.
+
+::: {.callout-tip title="RNN syntax and shapes"}
+Consult [`nn_rnn()`](https://torch.mlverse.org/docs/reference/nn_rnn.html), especially its input/output shape section. The generic constructor is `nn_rnn(input_size = feature_count, hidden_size = hidden_count, batch_first = TRUE)`.
+
+Here each batch initially has shape `(batch, 28)`. Add a final singleton feature dimension before the model so the RNN receives `(batch, sequence_length = 28, input_size = 1)`. Setting `batch_first = TRUE` makes that ordering explicit; without it, the RNN expects sequence length before batch. The returned hidden state contains the final representation for each recurrent layer and batch; select the representation for the single layer, then pass its 16 features to the output layer. Reuse the module and linear-layer pattern from Task 1.2.
+:::
 
 ```{r}
 #| label: task-4-3-rnn-student-response

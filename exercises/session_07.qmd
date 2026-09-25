@@ -463,6 +463,10 @@ k-NN predicts from nearby labeled observations. Small `k` produces flexible, hig
 ::: {.direction}
 Use Euclidean distance, rectangular neighbor weights, and candidate values 3, 5, 9, 15, and 25.
 
+::: {.callout-tip title="Useful documentation"}
+See the [`nearest_neighbor()` documentation](https://parsnip.tidymodels.org/reference/nearest_neighbor.html) for its model-specific arguments and engine choices.
+:::
+
 ```{r}
 #| label: task-3-1-tune-the-number-of-neighbors-student-response
 knn_grid <- tibble(
@@ -680,6 +684,10 @@ A random forest aggregates trees trained on bootstrap samples while considering 
 ::: {.direction}
 Keep `trees = 500` fixed. Tune `mtry` over 2, 4, and 6 predictors and `min_n` over 10 and 25.
 
+::: {.callout-tip title="Useful documentation"}
+See the [`rand_forest()` documentation](https://parsnip.tidymodels.org/reference/rand_forest.html) for its model-specific arguments, including `mtry`, `trees`, and `min_n`.
+:::
+
 ```{r}
 #| label: task-5-1-tune-the-forest-student-response
 # YOUR CODE HERE: complete rf_spec, rf_workflow, rf_grid, and rf_results.
@@ -740,6 +748,10 @@ An SVM seeks a decision boundary with a wide margin. `cost` controls how strongl
 
 ::: {.direction}
 Tune six combinations: cost 0.25, 1, or 4 and RBF sigma 0.01 or 0.1. Use normalized predictors.
+
+::: {.callout-tip title="Useful documentation"}
+See the [`svm_rbf()` documentation](https://parsnip.tidymodels.org/reference/svm_rbf.html) for model-specific guidance on `cost` and `rbf_sigma`.
+:::
 
 ```{r}
 #| label: task-6-1-tune-cost-and-kernel-scale-student-response
@@ -950,6 +962,11 @@ validation_comparison |>
 
 ::: {.direction}
 Create a plot that compares the mean validation metrics across algorithms and includes uncertainty based on the cross-validation standard errors.
+
+::: {.callout-tip title="Plotting hint"}
+Use `geom_errorbar()` for intervals such as `mean ± 1.96 * std_err`. `position_dodge()` can keep metrics from overlapping, and `coord_flip()` can make model names easier to read.
+:::
+
 :::
 
 ::: {.sol}
