@@ -302,6 +302,7 @@ Transformation (Quadratic transformation)
 #| label: fig-kernel-2d
 #| fig-cap: "Quadratic transformation enables linear separation"
 #| echo: false
+#| out-width: 70%
 import matplotlib.pyplot as plt
 import numpy as np
 
