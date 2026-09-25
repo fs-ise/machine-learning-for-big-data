@@ -87,6 +87,30 @@ For each use case, insist on three elements: input representation, expected outp
 
 The original broader NovaStream quiz also included recommendation, anomaly detection, pricing optimization, route optimization, association rules, and clustering. Those cases were omitted from the core because they do not directly reinforce Session 8's non-tabular architecture goal.
 
+
+::: {.callout-warning title="macOS 14 bug: torch"}
+
+```r
+# ACHTUNG: Dieser Chunk darf NICHT bei jedem Rendern laufen (eval: false).
+# Auf macOS 14 ist die aktuelle torch-Version 0.17.0 unbrauchbar: die mitgelieferte
+# LibTorch 2.8.0 wurde gegen das macOS-15-SDK gebaut und laesst sich nicht laden
+# ("Symbol not found ... built for macOS 15.0 which is newer than running OS").
+# Deshalb wird torch hier auf 0.15.1 festgenagelt, das LibTorch 2.5.1 mitbringt.
+
+install.packages(c("readr", "dplyr", "tidyr", "ggplot2", "purrr", "tibble"))
+
+# macOS 14 oder aelter: feste Version aus dem Posit-Snapshot
+options(repos = c(P3M = "https://packagemanager.posit.co/cran/2025-08-20"))
+install.packages("torch", type = "binary")
+torch::install_torch(reinstall = TRUE)
+
+# macOS 15 oder neuer: stattdessen einfach
+# install.packages("torch"); torch::install_torch()
+```
+
+:::
+
+
 ## Follow-up review
 
 - Clarify RNN and Transformer explanations after observing student questions.
