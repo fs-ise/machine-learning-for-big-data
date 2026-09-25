@@ -1334,19 +1334,22 @@ That is the reason it fits well into the "margin-based models" family.
 
 ## Support vector regression
 
-Similar to the other regression approaches, support vector regression (SVR) estimates the parameters of the function:
+In the linear case, support vector regression (SVR) estimates the function
 
-$$y_i = \beta_0 + \beta_ix_i+v_i$$
+$$
+\hat y_i = f(x_i) = \beta_0 + \sum_{j=1}^{p}\beta_j x_{ij}
+$$
 
+where $v_i = y_i - \hat y_i$ is the **residual (prediction error)** for observation $i$.
 
-The Goal is to find a robust model with a high generalization ability.
-SVR regards two sources of robustness:
+Nonlinear SVR can be obtained via kernels.
 
-1. Eliminating noise
-2. Handling complexity
+SVR combines two ideas to improve generalization:
+
+1. **Error tolerance:** Prediction errors within an $\varepsilon$-tube are not penalized.
+2. **Complexity control:** Penalize overly complex regression functions.
 
 ## Insensitive loss function (I)
-
 
 :::: {.columns}
 
@@ -1354,48 +1357,64 @@ SVR regards two sources of robustness:
 
 <br><br>
 
-**$\varepsilon$-insensitive loss**
+**OLS / Ridge: squared loss**
 
-$$\xi_i =
+$$
+L(v_i) = v_i^2
+$$
+
+**SVR: $\varepsilon$-insensitive loss**
+
+$$
+L_\varepsilon(v_i) =
 \begin{cases}
-|v_i| - \varepsilon, & \text{if } |v_i| > \varepsilon \\
-0, & \text{otherwise}
-\end{cases}$$
+0, & |v_i| \leq \varepsilon \\
+|v_i| - \varepsilon, & |v_i| > \varepsilon
+\end{cases}
+$$
 
-does not penalize acceptable deviations (defined by $\varepsilon$)
+Errors inside the $\varepsilon$-tube are not penalized.
 
-**OLS / Ridge**
-
-$$\xi_i = v_i^2$$
-
+For observations outside the tube, the excess deviation is represented by the **slack variables** $\xi_i$.
 :::
 
 ::: {.column width="50%"}
-![](../images/svr_insensitive_loss_function.png)
+![](../images/svr_insensitive_loss_function.png){fig-align=center width=90%}
 :::
 
 ::::
 
 ## Insensitive loss function (II)
 
-Using the $\epsilon$-insensitive loss function, only those data objects are considered in the estimation, which have a distance greater than $\epsilon$ from the regression function:
+The $\varepsilon$-insensitive loss treats errors according to their distance from the fitted function:
 
-![](../images/svr_epsilon_insensitive_loss_function.png)
+<br>
 
-Every object inside the $\epsilon$-insensitive region is ignored.
-It is regarded as noise.
+![](../images/svr_epsilon_insensitive_loss_function.png){fig-align=center width=70%}
 
-<!--
-TODO: include minimization (loss function) statement
+- **Inside the tube:** Errors are not penalized.
+- **Outside the tube:** The excess deviation beyond $\varepsilon$ is penalized and represented by $\xi_i$.
+- Observations **on or outside the tube** can become support vectors and determine the fitted function.
 
-TBD/careful: Nonlinearity (I) and Nonlinearity (II): slides present examples of classification (not regression!?)
--->
+## SVR objective
+
+$$
+\min_{\boldsymbol{\beta},\beta_0}
+\frac{1}{2}\lVert\boldsymbol{\beta}\rVert^2
++
+C\sum_{i=1}^{n}L_\varepsilon\!\left(y_i-f(x_i)\right)
+$$
+
+- $\frac{1}{2}\lVert\boldsymbol{\beta}\rVert^2$ controls model complexity.
+- $\sum_i L_\varepsilon(y_i-f(x_i))$ penalizes errors outside the $\varepsilon$-tube.
+- $\varepsilon$ controls the tube width.
+- $C$ controls the trade-off between flatness and fitting violations.
 
 ## Kernel functions
 
 Kernel Functions are used to project n-dimensional input to m-dimensional input, where m is higher than n:
 
-![](../images/svr_kernel_function.png)
+![](../images/kernel_trick.png){fig-align=center width=50%}
 
 Any point x in the original space is mapped into the higher dimensional space.
 For reason of efficiency, the mapping is not performed in real but instead embedded in the model building process via the kernel function:
@@ -1403,7 +1422,7 @@ For reason of efficiency, the mapping is not performed in real but instead embed
 Instead of $\beta_0 + \beta\cdot x = y$ the following is used: $\beta_0 + \beta \cdot \phi(x) = y$.
 
 The main idea to use a kernel is:
-A linear regression curve in higher dimensions becomes a non-linear regression curve in lower dimensions.
+A nonlinear pattern in the original, lower-dimensional space can become linearly separable in a higher-dimensional feature space.
 
 ## SVR examples (I)
 

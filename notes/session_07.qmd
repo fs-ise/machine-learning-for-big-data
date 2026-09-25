@@ -4,17 +4,15 @@ session_id: session-07
 format: html
 ---
 
+<!--
+
 2026-04-20: 95 min (skipped regression trees and support vector regression)
 
 | Time (min) | Duration | Topic | Additional materials |
 |------------|----------|-------|----------------------|
 | 0–90       |       90 |  TODO |                      |
 
-TODO:
-
-- Better prepare the explanation of decision trees (entropy, information gain) (see https://www.cs.cmu.edu/~aarti/Class/10315_Fall20/recs/DecisionTreesBoostingExampleProblem.pdf)
-- Check regression trees carefully
-- Prepare explanation and visualization of SVMs (on the slides)
+-->
 
 ## Decision trees
 
