@@ -17,6 +17,7 @@ readr
 reticulate
 rmarkdown
 rpart
+rpart.plot
 tibble
 tidymodels
 tidyr
