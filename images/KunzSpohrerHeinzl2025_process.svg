@@ -1,42 +1,30 @@
-```{=html}
-<div id="ba-process-diagram-ksh2025" class="ba-process-diagram-ksh2025">
-  <style>
-    #ba-process-diagram-ksh2025 {
-      text-align: center;
-    }
-
-    #ba-process-diagram-ksh2025 svg {
-      width: 92%;
-      height: auto;
-      max-height: 235px;
-      overflow: visible;
-      font-family: Arial, sans-serif;
-    }
-
-    #ba-process-diagram-ksh2025 .ba-process-diagram-ksh2025__box {
+<svg
+    width="1200"
+    height="260"
+    viewBox="0 0 1200 260"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-labelledby="ba-process-diagram-ksh2025-title"
+  >
+    <style>
+.ba-process-diagram-ksh2025__box {
       fill: white;
       stroke: black;
       stroke-width: 1.6;
     }
 
-    #ba-process-diagram-ksh2025 .ba-process-diagram-ksh2025__arrow {
+    .ba-process-diagram-ksh2025__arrow {
       fill: none;
       stroke: black;
       stroke-width: 2;
       marker-end: url(#ba-process-diagram-ksh2025-arrow);
     }
 
-    #ba-process-diagram-ksh2025 .ba-process-diagram-ksh2025__label {
+    .ba-process-diagram-ksh2025__label {
       font-size: 18px;
     }
-  </style>
+    </style>
 
-  <svg
-    viewBox="0 0 1200 260"
-    xmlns="http://www.w3.org/2000/svg"
-    role="img"
-    aria-labelledby="ba-process-diagram-ksh2025-title"
-  >
     <title id="ba-process-diagram-ksh2025-title">
       Business analytics value creation process
     </title>
@@ -89,5 +77,3 @@
     <line class="ba-process-diagram-ksh2025__arrow" x1="845" y1="127" x2="895" y2="127"></line>
     <line class="ba-process-diagram-ksh2025__arrow" x1="1005" y1="127" x2="1060" y2="127"></line>
   </svg>
-</div>
-```

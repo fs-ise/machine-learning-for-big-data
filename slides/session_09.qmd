@@ -235,7 +235,7 @@ This theoretical literature review examines **how business analytics creates val
 
 . . .
 
-{{< include KunzSpohrerHeinzl2025_process.qmd >}}
+![](../images/KunzSpohrerHeinzl2025_process.svg){width=92% fig-align="center"}
 
 ::: notes
 - RQ 1: How does business analytics create value for organizations?
@@ -250,7 +250,35 @@ They also argue that ML changes BA value creation through autonomy, dynamism, an
 
 ## Value creation paths
 
-{{< include KunzSpohrerHeinzl2025_paths.qmd >}}
+```{=html}
+<style>
+  .reveal .ksh-stage-stack {
+    position: relative;
+    width: 100%;
+    height: min(560px, 62vh);
+    overflow: hidden;
+  }
+
+  .reveal .ksh-stage-stack > img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    object-fit: contain;
+  }
+</style>
+<div class="ksh-stage-stack">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_0.svg" alt="Business analytics value creation paths" class="fragment fade-out" data-fragment-index="1">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_1.svg" alt="Business analytics value creation paths: supported and other processes" class="fragment current-visible" data-fragment-index="1">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_2.svg" alt="Business analytics value creation paths: decision augmentation and automation" class="fragment current-visible" data-fragment-index="2">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_3.svg" alt="Business analytics value creation paths: knowledge accumulation and transfer" class="fragment current-visible" data-fragment-index="3">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_4.svg" alt="Business analytics value creation paths: feedback" class="fragment" data-fragment-index="4">
+</div>
+```
 
 ::: notes
 
@@ -293,7 +321,14 @@ TODO: prepare connection from key-KPI/north-star to the use of analytics in diff
 
 ## How machine learning changes value creation
 
-{{< include KunzSpohrerHeinzl2025_paths_change.qmd >}}
+```{=html}
+<div class="ksh-stage-stack">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_change_0.svg" alt="How machine learning changes business analytics value creation" class="fragment fade-out" data-fragment-index="1">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_change_1.svg" alt="Autonomy strengthens decision augmentation and automation" class="fragment current-visible" data-fragment-index="1">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_change_2.svg" alt="Dynamism strengthens feedback" class="fragment current-visible" data-fragment-index="2">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_change_3.svg" alt="Opacity restricts knowledge creation and transfer" class="fragment" data-fragment-index="3">
+</div>
+```
 
 <ul>
   <li class="fragment" data-fragment-index="1">
