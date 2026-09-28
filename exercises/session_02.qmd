@@ -363,6 +363,17 @@ summary(customer_df)
 
 * Implement the data preparation steps in R.
 * Run the code after each step and inspect the results.
+* For `income`, do not only remove the currency label. Extract the numeric amount
+  and currency into separate variables, then harmonize all amounts to EUR before
+  calculating the median or imputing missing values.
+  - Treat an amount without an explicit currency label as EUR.
+  - For this exercise, use the fixed illustrative rate **1 USD = 0.90 EUR**. This
+    is a teaching assumption, not a current market exchange rate.
+  - Treat `NA`, `NaN`, and empty strings as missing, and impute them with the
+    median only after every observed amount has been converted to EUR.
+  - Store the final numeric EUR values in `income` so that the later cleaning
+    steps still work, and add a short check of the USD conversion and missing
+    value handling.
 
 ```{r}
 #| label: 4-optional-challenge-implement-in-r-tidyverse-student-response
@@ -440,7 +451,8 @@ summary(customer_df)
 
 * **Missing values:** impute (e.g., median for income) or remove rows
 * **Implausible / invalid values:** filter out or correct (e.g., negative income, invalid dates)
-* **Inconsistent formats:** standardize (convert income to numeric, parse dates to datetime)
+* **Inconsistent formats:** standardize (extract income amounts and currencies, harmonize
+  all monetary values to EUR, and parse dates to datetime)
 * **Outliers:** inspect and cap or remove extreme values
 * **Inconsistent categorical values:** unify categories (e.g., gender labels, country formats)
 * **Duplicates:** remove duplicates based on `customer_id`
@@ -456,14 +468,58 @@ customer_df <- read_csv(
   show_col_types = FALSE
 )
 
-# --- Income: remove currency labels and parse a numeric value ---
+# --- Income: parse its syntax, then harmonize its meaning ---
+# Removing a label is only syntactic cleansing: 5,000 USD and 5,000 EUR would
+# otherwise both become 5,000 even though they do not represent the same value.
+# Keep the amount and currency separate while converting every amount to EUR.
+# Unlabelled observed amounts are assumed to be EUR. The fixed exchange rate
+# (1 USD = 0.90 EUR) is an illustrative teaching assumption, not a market rate.
 customer_df <- customer_df |>
-  mutate(income = parse_number(income))
+  mutate(
+    income_raw = income,
+    income_amount = parse_number(income_raw),
+    income_currency = str_extract(str_to_upper(income_raw), "\\b(?:EUR|USD)\\b"),
+    income_currency = case_when(
+      is.na(income_amount) ~ NA_character_,
+      is.na(income_currency) ~ "EUR",
+      TRUE ~ income_currency
+    ),
+    income = case_when(
+      income_currency == "USD" ~ income_amount * 0.90,
+      income_currency == "EUR" ~ income_amount,
+      TRUE ~ NA_real_
+    )
+  )
 
-# --- Missing income: replace with the median ---
-income_median <- median(customer_df$income)
+# Validate the semantic harmonization: each USD value should now be 90% of its
+# extracted amount. `converted_correctly` should be TRUE for the displayed rows.
+customer_df |>
+  filter(income_currency == "USD") |>
+  transmute(
+    income_raw,
+    income_amount,
+    income_eur = income,
+    converted_correctly = near(income_eur, income_amount * 0.90)
+  ) |>
+  head()
+
+# Missing strings were read as NA above; parse_number() preserves those missing
+# values. Calculate the median only after conversion, then impute in EUR.
+missing_income_before <- sum(is.na(customer_df$income))
+income_median <- median(customer_df$income, na.rm = TRUE)
 customer_df <- customer_df |>
   mutate(income = replace_na(income, income_median))
+
+# Validate that missing incomes were handled, then remove the temporary parsing
+# columns while retaining the numeric EUR column under its original name.
+tibble(
+  missing_before_imputation = missing_income_before,
+  missing_after_imputation = sum(is.na(customer_df$income)),
+  median_income_eur = income_median
+)
+
+customer_df <- customer_df |>
+  select(-income_raw, -income_amount, -income_currency)
 
 # --- Dates: parse valid ISO and day/month/year values ---
 parse_customer_date <- function(x) {
