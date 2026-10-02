@@ -264,7 +264,7 @@ A probability alone does not explain the reasoning behind the prediction. To und
 Classify each model before continuing.
 
 | Model | Inherently interpretable or black box? | Why? |
-|---|---|---|
+|--|----|---|
 | Logistic regression | | |
 | Shallow decision tree | | |
 | Random forest | | |
@@ -273,11 +273,20 @@ Classify each model before continuing.
 
 ::: {.sol}
 
+```{=latex}
+\begingroup
+\footnotesize
+```
+
 | Model | Inherently interpretable or black box? | Why? |
-|---|---|---|
+|--|----|----|
 | Logistic regression | Inherently interpretable | A small set of coefficients describes how predictors enter the model. |
 | Shallow decision tree | Inherently interpretable | The complete prediction logic can be represented as a small set of decision rules. |
 | Random forest | Black box for practical interpretation | Hundreds of trees contribute to each prediction, so directly tracing the complete model is impractical. |
+
+```{=latex}
+\endgroup
+```
 
 Interpretability is not an absolute property. A very large regression specification or deep decision tree can also become difficult to understand.
 
@@ -304,15 +313,21 @@ model_fits <- list(logistic = logistic_fit, tree = tree_fit, random_forest = rf_
 
 ```{r}
 #| label: task-1-3-solution
-model_fits <- list(logistic = logistic_fit, tree = tree_fit, random_forest = rf_fit)
+logistic_auc <- predict(logistic_fit, test_data, type = "prob") |>
+  bind_cols(test_data |> select(default)) |>
+  roc_auc(truth = default, .pred_default)
 
-auc_tbl <- purrr::imap_dfr(model_fits, \(fit, model_name) {
-  predict(fit, test_data, type = "prob") |>
-    bind_cols(test_data |> select(default)) |>
-    roc_auc(truth = default, .pred_default) |>
-    mutate(model = model_name, .before = 1)
-})
-auc_tbl
+tree_auc <- predict(tree_fit, test_data, type = "prob") |>
+  bind_cols(test_data |> select(default)) |>
+  roc_auc(truth = default, .pred_default)
+
+rf_auc <- predict(rf_fit, test_data, type = "prob") |>
+  bind_cols(test_data |> select(default)) |>
+  roc_auc(truth = default, .pred_default)
+
+logistic_auc
+tree_auc
+rf_auc
 ```
 
 Explanations are useful only if the model is sufficiently valid for its intended use. A much weaker tree can explain its own predictions faithfully, but it is a poor surrogate for the random forest and should not be presented as explaining that forest.
@@ -484,13 +499,14 @@ Which terminal node does the applicant reach, and what does that node tell you?
 
 ```{r}
 #| label: task-3-1-solution
+#| fig-align: center
+
 tree_engine <- extract_fit_engine(tree_fit)
 
 rpart.plot::rpart.plot(
   tree_engine,
   type = 2,
   extra = 104,
-  fallen.leaves = TRUE,
   nn = TRUE
 )
 
@@ -525,12 +541,21 @@ Compare the logistic regression and decision tree.
 
 ::: {.sol}
 
+```{=latex}
+\begingroup
+\footnotesize
+```
+
 | Question | Logistic regression | Decision tree |
 |---|---|---|
 | How is the model represented? | Additive equation on the log-odds scale | Hierarchy of if/then rules |
 | How can we obtain a global understanding? | Inspect all coefficients | Inspect the complete tree |
 | How can we explain one prediction? | Combine the applicant's values with coefficient directions and magnitudes | Follow the applicant's decision path |
 | What could make the model difficult to interpret? | Many predictors, transformations, interactions, or nonlinear terms | A deep or very large tree |
+
+```{=latex}
+\endgroup
+```
 
 Both models expose their internal logic. They differ in the form in which that logic is represented.
 
@@ -543,7 +568,7 @@ The random forest contains hundreds of decision trees. Instead of inspecting the
 DALEX provides a common interface for explaining different predictive models. An `explainer` connects a fitted model, data, observed outcomes, and its prediction function; `DALEXtra` integrates this interface with tidymodels. The random-forest explainer `explainer_rf` has already been prepared for you. Explanations use a held-out test sample so their summaries are not based on the same cases used to fit the model.
 
 | Method | Scope | Main question | DALEX function |
-|---|---|---|---|
+|----|--|-----|---|
 | Permutation importance | Global | Which variables does the model rely on? | `model_parts()` |
 | Partial dependence | Global | How does the average prediction change with X? | `model_profile()` |
 | Individual profile | Local | How would this prediction change if X changed? | `predict_profile()` |
@@ -631,6 +656,8 @@ When predictors are strongly correlated or redundant, one variable may replace i
 
 :::
 
+{{< needspace 20 >}}
+
 # Part 5 — From average effects to individual what-if profiles {#profiles}
 
 Feature importance tells us **whether** a variable matters, but not **how predictions change** as the variable changes.
@@ -671,6 +698,9 @@ For each predictor, describe the overall direction of the relationship, whether 
 
 ```{r}
 #| label: task-5-1-solution
+#| out-width: 80%
+#| fig-align: center
+
 set.seed(42)
 
 partial_profiles <- DALEX::model_profile(
@@ -723,6 +753,8 @@ Suppose the individual profile shows that lower credit utilization would reduce 
 
 ```{r}
 #| label: task-5-2-solution
+#| out-width: 80%
+#| fig-align: center
 individual_profile <- DALEX::predict_profile(
   explainer_rf,
   new_observation = applicant,
@@ -929,8 +961,13 @@ Optional discussion: How should regulation, contestability, and governance shape
 
 ::: {.sol}
 
+```{=latex}
+\begingroup
+\footnotesize
+```
+
 | Method | Global or local? | Model-specific? | Main question answered | Important limitation |
-|---|---|---|---|---|
+|--|--|---|----|----|
 | Logistic coefficients | Primarily global | Yes | How are predictors associated with the model's log-odds? | Assumes the specified functional form; coefficient interpretation depends on units and reference categories |
 | Decision tree | Global and local | Yes | Which explicit rules produce predictions? | Large trees quickly become difficult to understand and can be unstable |
 | Permutation importance | Global | No | Which predictors does the model rely on? | Gives no direction or causality; correlated predictors complicate interpretation |
@@ -938,13 +975,26 @@ Optional discussion: How should regulation, contestability, and governance shape
 | Individual profile | Local | No | How would one prediction vary when one predictor changes? | One-at-a-time changes may be unrealistic and are not causal |
 | SHAP | Local | DALEX sampling: no; TreeSHAP: yes | Which variables contribute to this prediction relative to a baseline? | Attribution depends on the model and background distribution and is not causal |
 
+```{=latex}
+\endgroup
+```
+
 Possible stakeholder choices:
+
+```{=latex}
+\begingroup
+\footnotesize
+```
 
 | Stakeholder | Most useful explanation(s) | Why? |
 |---|---|---|
 | Credit analyst reviewing one case | SHAP, individual profile, or decision path | Provides case-specific evidence that can support review |
 | Applicant affected by a decision | Simplified local explanation derived from SHAP/tree plus carefully validated what-if information | Focuses on factors relevant to the individual and can support understanding or contestability |
 | Model-governance team | Permutation importance, PDP, model structure, plus performance and monitoring evidence | Requires a global view of model behavior rather than only individual predictions |
+
+```{=latex}
+\endgroup
+```
 
 Compare `applicant_outcome` with each thresholded prediction. A match or error for one applicant is only one observation and cannot establish general model quality; use test-set metrics and broader validation.
 

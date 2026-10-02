@@ -15,3 +15,5 @@ Note: It is instructive to see how differently the groups present their work.
 - You often see how presentations were created (Powerpoint, Slides, even Quarto presentations) and whether AI was used.
 
 Suggest "sounding-board prompts" like "You are an academic machine learning expert. Review the slides and identify errors and unusual notation." (maybe even open ChenChan2004; Figure 1)
+
+These questions I will not ask during individual presentations. You already know whether this could be an issue (if you would like to check this using sounding-board-style prompts) afterwards.
