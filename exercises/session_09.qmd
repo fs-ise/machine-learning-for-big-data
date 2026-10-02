@@ -357,7 +357,12 @@ See the [`logistic_reg()` documentation](https://parsnip.tidymodels.org/referenc
 coef_tbl <- logistic_fit |>
   extract_fit_engine() |>
   broom::tidy() |>
-  mutate(estimate = -estimate, odds_ratio = exp(estimate))
+  mutate(
+    # glm models the second outcome level (no_default);
+    # flip signs so coefficients refer to default.
+    estimate = -estimate,
+    odds_ratio = exp(estimate)
+  )
 
 # YOUR CODE HERE
 ```
