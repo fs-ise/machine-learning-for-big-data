@@ -14,6 +14,8 @@ Source delivery: 85–90 minutes for the lecture and approximately 75–80 minut
 | 60–82 | 22 | Governance, boundaries, and explainability | Accountability, optimization boundaries, stakeholder-specific explanations, and contestability. |
 | 82–90 | 8 | Risk and regulatory frameworks | NIST AI RMF, GDPR, EU AI Act, and closing synthesis. |
 
+Note: the research papers on business value analysis are an opportunity to reconnect to descriptive/predictive/prescriptive analytics (observational/non-interventional data).
+
 ## Business value and organizational capabilities
 
 The firm-performance studies establish that analytics can contribute to value but that analytics assets alone are insufficient. Explain the Cobb–Douglas-style production model as a log-linear model, not logistic regression. Fixed effects give each firm its own intercept and help address omitted-variable bias. The high $R^2$ should not be read as “BDA explains 97.7% of sales.”
