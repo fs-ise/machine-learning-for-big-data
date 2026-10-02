@@ -8,12 +8,9 @@ title: "Feedback"
 - Tidy data vocabulary: explain *variable* and *observation*
 - Include an example in tidy data for datasets that combine multiple observational units?
 - Improve slide explanation of scales.
-
-
-- Include `frankfurt_locations.csv` to be able to 
-
+- Include `frankfurt_locations.csv` to be able to demonstrate the exercise (first notebook).
 - Think how the second part of clustering should be presented (hierarchical; distance measures). It was covered (too) quickly in the last session.
-
+- Replace Google Forms with Canvas Quizzes for feedback.
 
 Regression
 

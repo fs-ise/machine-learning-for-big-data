@@ -259,6 +259,8 @@ table(fashion$train$y)
 
 ## Task 1.2 — Complete and train the MLP
 
+::: {.direction}
+
 ::: {.callout-tip title="Useful torch documentation and syntax"}
 Read the official references for [`nn_module()`](https://torch.mlverse.org/docs/reference/nn_module.html), [`nn_linear()`](https://torch.mlverse.org/docs/reference/nn_linear.html), and [`nnf_relu()`](https://torch.mlverse.org/docs/reference/nnf_relu.html). This unrelated miniature module shows where layers are created and how data flows through them:
 
@@ -276,7 +278,6 @@ measurement_net <- nn_module(
 `initialize` registers trainable layers; `forward` describes the computation. Adapt the pattern to the dimensions requested below rather than copying those example dimensions.
 :::
 
-::: {.direction}
 Complete a `784 -> 64 -> 10` MLP. The hidden layer needs ReLU. The final layer should return ten **raw logits**: `nnf_cross_entropy()` combines the appropriate multiclass transformation and loss, so do not append softmax.
 
 ```{r}

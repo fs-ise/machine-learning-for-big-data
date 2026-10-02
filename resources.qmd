@@ -73,7 +73,6 @@ https://www.tidymodels.org/start/resampling/
 - Check for NLP assignments: https://github.com/microsoft/ai-for-beginners
 - https://juliasilge.github.io/tidytext/
 
-
 ### Neural Networks
 
 - [3Blue1Brown neural-network explanation](https://www.youtube.com/watch?v=aircAruvnKk)
@@ -81,11 +80,12 @@ https://www.tidymodels.org/start/resampling/
 - [Dive into Deep Learning](https://d2l.ai/)
 - [Microsoft AI for Beginners](https://github.com/microsoft/ai-for-beginners)
 
-
 ### Organizational deployment
 
 - Ethics/Fairness: https://developers.google.com/machine-learning/crash-course/fairness
 - https://github.com/cs124/labs/blob/main/Lab2_LogisticRegression_Solutions.md#ethics-discussion
+
+- [Interpretable Machine Learning (Book)](https://christophm.github.io/interpretable-ml-book/)
 
 AI for generating and understanding analytical code.
 

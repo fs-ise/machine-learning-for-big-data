@@ -235,7 +235,7 @@ This theoretical literature review examines **how business analytics creates val
 
 . . .
 
-{{< include KunzSpohrerHeinzl2025_process.qmd >}}
+![](../images/KunzSpohrerHeinzl2025_process.svg){width=92% fig-align="center"}
 
 ::: notes
 - RQ 1: How does business analytics create value for organizations?
@@ -250,7 +250,35 @@ They also argue that ML changes BA value creation through autonomy, dynamism, an
 
 ## Value creation paths
 
-{{< include KunzSpohrerHeinzl2025_paths.qmd >}}
+```{=html}
+<style>
+  .reveal .ksh-stage-stack {
+    position: relative;
+    width: 100%;
+    height: min(560px, 62vh);
+    overflow: hidden;
+  }
+
+  .reveal .ksh-stage-stack > img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    object-fit: contain;
+  }
+</style>
+<div class="ksh-stage-stack">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_0.svg" alt="Business analytics value creation paths" class="fragment fade-out" data-fragment-index="1">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_1.svg" alt="Business analytics value creation paths: supported and other processes" class="fragment current-visible" data-fragment-index="1">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_2.svg" alt="Business analytics value creation paths: decision augmentation and automation" class="fragment current-visible" data-fragment-index="2">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_3.svg" alt="Business analytics value creation paths: knowledge accumulation and transfer" class="fragment current-visible" data-fragment-index="3">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_4.svg" alt="Business analytics value creation paths: feedback" class="fragment" data-fragment-index="4">
+</div>
+```
 
 ::: notes
 
@@ -293,7 +321,14 @@ TODO: prepare connection from key-KPI/north-star to the use of analytics in diff
 
 ## How machine learning changes value creation
 
-{{< include KunzSpohrerHeinzl2025_paths_change.qmd >}}
+```{=html}
+<div class="ksh-stage-stack">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_change_0.svg" alt="How machine learning changes business analytics value creation" class="fragment fade-out" data-fragment-index="1">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_change_1.svg" alt="Autonomy strengthens decision augmentation and automation" class="fragment current-visible" data-fragment-index="1">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_change_2.svg" alt="Dynamism strengthens feedback" class="fragment current-visible" data-fragment-index="2">
+  <img src="../images/KunzSpohrerHeinzl2025_paths_change_3.svg" alt="Opacity restricts knowledge creation and transfer" class="fragment" data-fragment-index="3">
+</div>
+```
 
 <ul>
   <li class="fragment" data-fragment-index="1">
@@ -346,7 +381,132 @@ A central implication is that analytics maturity depends on the alignment betwee
     https://go.tdwi.org/rs/626-EMC-557/images/TDWI_Analytics-Maturity-Model-Assessment-Guide_2020.pdf
 -->
 
+# People perspectives  {data-stack-name="People"}
 
+
+## A discourse perspective on organizational deployment
+
+<br>
+
+![](../images/org_deployment_discourse.png){width=70% fig-align=center}
+
+## EU AI Act: High-risk AI systems
+
+The AI Act establishes specific requirements for AI systems classified as **high-risk**:
+
+> **“High-risk AI systems shall comply with the requirements laid down in this Section.”**
+>
+> — Regulation (EU) 2024/1689, Art. 8(1)
+
+High-risk systems must address requirements concerning:
+
+- **Risk management** — Art. 9
+- **Data and data governance** — Art. 10
+- **Technical documentation** — Art. 11
+- **Record-keeping and logging** — Art. 12
+- **Transparency and information to deployers** — Art. 13
+- **Human oversight** — Art. 14
+- **Accuracy, robustness, and cybersecurity** — Art. 15
+
+**High-risk does not mean “prohibited” — it means subject to a comprehensive regulatory regime.**
+
+::: aside
+Source: [Regulation (EU) 2024/1689 — EU Artificial Intelligence Act, 
+Chapter III, Section 2, Arts. 8–15](https://eur-lex.europa.eu/eli/reg/2024/1689/2026-07-27/eng)
+:::
+
+
+## EU AI Act: Which systems are high-risk?
+
+Article 6 identifies two main routes to classification as **high-risk**:
+
+1. AI used as a safety component of certain regulated products  
+  *(Art. 6(1); Annex I)*
+
+2. AI used for specified consequential purposes  
+   *(Art. 6(2); Annex III)*
+
+. . . 
+
+<br>
+
+**Examples of relevant areas:**
+
+| Area | Examples of high-risk use |
+|---|-------------|
+| **Finance** | **Evaluating a person's creditworthiness or establishing a credit score — e.g., supporting a loan application decision** |
+| Insurance | Risk assessment and pricing for **life and health insurance** |
+| Recruitment | Filtering applications, evaluating candidates, targeted job advertising |
+| Worker management | Decisions about promotion or termination; task allocation; monitoring and evaluating employee performance |
+| Critical infrastructure | AI used as a safety component in critical digital infrastructure or energy, water, and transport infrastructure |
+
+::: aside
+
+Source: [Regulation (EU) 2024/1689 — Art. 6 and Annex III](https://eur-lex.europa.eu/eli/reg/2024/1689/2026-07-27/eng)
+
+:::
+
+<!--
+Note: fraud-detection systems are expressly excluded from the creditworthiness
+category in Annex III, point 5(b). Art. 6(3) also provides a limited exception
+for certain Annex III systems that do not pose a significant risk or materially
+influence decision-making.
+-->
+
+## GDPR: Limits on automated individual decisions
+
+**Article 22 — Automated individual decision-making, including profiling**
+
+> A data subject has a right not to be subject to a decision **“based solely on automated processing”** when that decision produces legal effects or otherwise similarly significantly affects the person.
+
+<!--
+For a loan application, this is particularly concrete:
+**Recital 71 explicitly uses automated rejection of an online credit
+application as an example.**
+-->
+
+. . .
+
+**Article 22 does not simply prohibit all automation.**
+
+Exceptions include decisions that are:
+
+- necessary for entering into or performing a contract,
+- authorized by Union or Member State law with appropriate safeguards, or
+- based on explicit consent.
+
+Where the relevant exceptions apply, safeguards include at least:
+
+- **human intervention**
+- the opportunity to **express one's point of view**
+- the opportunity to **contest the decision**
+
+::: aside
+Source: Regulation (EU) 2016/679 (GDPR),
+Art. 22(1)–(4); Recital 71.
+See also Art. 15(1)(h) on information concerning automated decision-making.
+:::
+
+::: notes
+Article 22 is narrower than a general requirement to make every algorithm
+explainable. Its core trigger is a decision that is:
+
+1. based solely on automated processing, and
+2. has legal or similarly significant effects.
+
+This is a useful distinction for the loan case:
+
+**AI Act**
+→ regulates the high-risk system and the organizational arrangements
+around its deployment.
+
+**GDPR**
+→ protects the individual where personal-data processing and automated
+decision-making affect them.
+
+Together they motivate the subsequent discussion of human oversight,
+contestability, and explainability.
+:::
 
 
 
@@ -378,15 +538,13 @@ Advanced analytics increasingly becomes part of **AI systems** when it informs, 
 :::
 :::
 
-. . .
+::: notes
 
 The *GDPR* (Art. 15 and 22) and the *AI Act* (Art. 27 and 86) require organizations to support responsible use of consequential automated decisions:
 affected persons need meaningful information, human intervention and contestability, while deployers of high-risk AI systems need transparency, oversight, logging, and fundamental-rights assessments.
 
-::: notes
 This slide connects the maturity-model idea to responsible analytics. Analytics deployment is not only about technical maturity or portfolio maturity.
 It also requires risk-management maturity. NIST is useful because it gives students a vocabulary that travels across analytics, machine learning, and AI governance.
-
 
 
 - **GDPR Art. 15 and Art. 22: automated decision-making**
@@ -405,46 +563,47 @@ In employment settings, consent is often problematic because of the power imbala
 GDPR also requires purpose limitation, data minimization, transparency, retention limits, and accountability.
 :::
 
-## Boundaries: what should not be optimized?
+<!--
+  ## Boundaries: what should not be optimized?
 
-Analytics creates value only within legitimate organizational, ethical, and legal boundaries.
+  Analytics creates value only within legitimate organizational, ethical, and legal boundaries.
 
-<br>
+  <br>
 
-::: columns
-::: {.column width="50%"}
-**Possible boundaries**
+  ::: columns
+  ::: {.column width="50%"}
+  **Possible boundaries**
 
-- Privacy and purpose limitation
-- Non-discrimination and fairness
-- Safety and reliability
-- Human autonomy and dignity
-- Legal compliance
-- Organizational values
-:::
+  - Privacy and purpose limitation
+  - Non-discrimination and fairness
+  - Safety and reliability
+  - Human autonomy and dignity
+  - Legal compliance
+  - Organizational values
+  :::
 
-::: {.column width="50%"}
-**Examples**
+  ::: {.column width="50%"}
+  **Examples**
 
-| Use case | Boundary question |
-|---|---|
-| Employee analytics | Does this become surveillance? |
-| Credit scoring | Who is disadvantaged? |
-| Medical triage | What happens in edge cases? |
-| Dynamic pricing | When is personalization exploitative? |
-| Fraud detection | How are false positives handled? |
-:::
-:::
+  | Use case | Boundary question |
+  |---|---|
+  | Employee analytics | Does this become surveillance? |
+  | Credit scoring | Who is disadvantaged? |
+  | Medical triage | What happens in edge cases? |
+  | Dynamic pricing | When is personalization exploitative? |
+  | Fraud detection | How are false positives handled? |
+  :::
+  :::
 
-::: notes
-A useful deployment rule: define **red lines**, **review zones**, and **routine-use zones** before the system goes live.
+  ::: notes
+  A useful deployment rule: define **red lines**, **review zones**, and **routine-use zones** before the system goes live.
 
-This slide should slow down the “more analytics is always better” assumption. It also prepares the transition to explainability and human oversight:
-if boundaries exist, someone must be able to recognize when they are being crossed.
+  This slide should slow down the “more analytics is always better” assumption. It also prepares the transition to explainability and human oversight:
+  if boundaries exist, someone must be able to recognize when they are being crossed.
 
-See "Move fast and break things" mentality
-:::
-
+  See "Move fast and break things" mentality
+  :::
+-->
 
 ## The black box of modern analytics
 
@@ -664,8 +823,6 @@ Post-hoc, user-driven exploration combining static explanations with what-if cha
 
 ::::
 
-
-# People perspectives  {data-stack-name="People"}
 
 ## Human resources for analytics
 
