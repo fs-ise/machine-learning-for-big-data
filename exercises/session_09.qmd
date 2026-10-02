@@ -333,7 +333,7 @@ The interpretation depends on the predictor's unit. Coefficients for dummy varia
 
 ::: {.direction}
 
-Use the applicant's values together with the coefficient table.
+Use the applicant's encoded values (and reference categories) together with the coefficient table. A coefficient's sign alone is not an applicant-specific contribution: its relevance also depends on the applicant's value.
 
 Which characteristics of this applicant appear to push the logistic-regression prediction toward **higher** default risk, and which push it toward **lower** risk?
 
@@ -347,7 +347,7 @@ Why is this explanation **not** evidence that changing one of these variables wo
 
 ::: {.sol}
 
-The coefficient signs tell us which observed characteristics the fitted model associates with higher or lower predicted default risk.
+Combining coefficient signs with the applicant's encoded values and the relevant reference categories indicates which observed characteristics the fitted model associates with higher or lower predicted default risk. A sign by itself is not an applicant-specific contribution.
 
 However, the model estimates predictive associations. The coefficients do not establish causal effects. A predictor can be associated with default because of confounding, selection effects, correlated variables, or other characteristics represented in the training data.
 
@@ -438,11 +438,21 @@ Both models expose their internal logic. They differ in the form in which that l
 
 The random forest contains hundreds of decision trees. Instead of inspecting the complete model, we now use **model-agnostic post-hoc explanations**.
 
+DALEX provides a common interface for explaining different predictive models. An `explainer` connects a fitted model, data, observed outcomes, and its prediction function; `DALEXtra` integrates this interface with tidymodels. The random-forest explainer `explainer_rf` has already been prepared for you.
+
+| Method | Scope | Main question | DALEX function |
+|---|---|---|---|
+| Permutation importance | Global | Which variables does the model rely on? | `model_parts()` |
+| Partial dependence | Global | How does the average prediction change with X? | `model_profile()` |
+| Individual profile | Local | How would this prediction change if X changed? | `predict_profile()` |
+| SHAP | Local | Which variables contributed to this prediction? | `predict_parts()` |
+
 Permutation feature importance asks:
 
 > How much worse does the model become when the information in one predictor is destroyed?
 
 The predictor is randomly shuffled while the fitted model remains unchanged.
+With `type = "difference"`, its importance is the resulting increase in loss relative to the full model.
 
 ## Task 4.1 — Calculate permutation importance
 
@@ -458,6 +468,13 @@ See the [DALEX model-parts documentation](https://modeloriented.github.io/DALEX/
 
 ```{r}
 #| label: task-4-1-student
+importance <- DALEX::model_parts(
+  explainer_rf,
+  type = "difference",
+  B = 10
+)
+
+# Plot importance
 # YOUR CODE HERE
 ```
 
@@ -475,6 +492,7 @@ set.seed(42)
 
 importance <- DALEX::model_parts(
   explainer_rf,
+  type = "difference",
   B = 10
 )
 
@@ -516,6 +534,8 @@ We investigate two complementary views:
 
 - a **partial-dependence profile (PDP)** summarizes average model predictions;
 - an **individual profile** changes one predictor for one applicant while holding the applicant's other characteristics constant.
+
+A PDP averages many individual what-if profiles and is therefore global. An individual profile instead keeps one observation fixed and varies one predictor at a time.
 
 ## Task 5.1 — Partial-dependence profiles
 
@@ -568,6 +588,8 @@ Unlike logistic-regression coefficients, the resulting relationship does not hav
 :::: {.direction}
 
 Now calculate individual profiles for the same two variables and the selected `applicant`.
+
+This is a **what-if (ceteris-paribus) analysis**, not a counterfactual explanation.
 
 ::: {.callout-tip title="Useful documentation"}
 See [Ceteris-paribus / individual profiles](https://ema.drwhy.ai/ceterisParibus.html).
@@ -622,7 +644,7 @@ We now ask:
 
 > Why did the random forest assign this particular probability to this applicant?
 
-SHAP attributes the difference between a **baseline prediction** and the applicant's prediction to the applicant's predictor values.
+SHAP explains one prediction relative to a **baseline prediction**. Each feature receives a contribution showing how much it pushes the prediction above or below that baseline. Together, the contributions explain the difference between the baseline and the prediction. DALEX approximates Shapley values by sampling feature orderings.
 
 ## Task 6.1 — Calculate a SHAP explanation
 
@@ -634,14 +656,22 @@ Use `DALEX::predict_parts()` with:
 - `type = "shap"`;
 - `B = 25`.
 
-Plot the resulting explanation.
+Here, `B = 25` controls the number of sampled orderings used in the approximation. Plot the resulting explanation.
 
 ::: {.callout-tip title="Useful documentation"}
-See the [`predict_parts()` documentation](https://modeloriented.github.io/DALEX/reference/predict_parts.html).
+See the [conceptual Shapley-value documentation](https://ema.drwhy.ai/shapley.html) and the DALEX [`predict_parts()` reference](https://modeloriented.github.io/DALEX/reference/predict_parts.html).
 :::
 
 ```{r}
 #| label: task-6-1-student
+shap_explanation <- DALEX::predict_parts(
+  explainer_rf,
+  new_observation = applicant,
+  type = "shap",
+  B = 25
+)
+
+# Plot the explanation
 # YOUR CODE HERE
 ```
 
