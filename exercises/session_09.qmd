@@ -1,139 +1,755 @@
 ---
 session: "Session 9"
-title: "Deployment in Organizations"
+title: "Deployment in Organizations: Explainable AI"
 session_id: session-09
 format: html
 ---
 
-This Session 9 exercise focuses on **Deployment in Organizations**. Your group will analyze how analytics contributes to strategic objectives in an organization. You will identify where analytics enters concrete business processes, which decisions it supports or automates, what data and systems are needed, and how the organization learns from outcomes.
+::: {.direction}
 
-Your group will develop an **Analytics-Enabled Strategy Map** for one selected company. Retain the map as a scaffold for your later group-project work.
+In this exercise, we return to the **LendWise loan-default case** from previous sessions. The bank has developed several predictive models. Before deploying them, we need to understand how their predictions are produced and how they can be explained to different stakeholders.
+
+We first examine models that are **inherently interpretable**, where the model structure itself provides an explanation. We then treat a random forest as a black box and apply **post-hoc explainability methods**.
+
+| Part | Topic | Time (min) |
+|---|---|---:|
+| 1 | Three models, one applicant | 10 |
+| 2 | Logistic regression: coefficients as explanations | 15 |
+| 3 | Decision tree: decision rules as explanations | 15 |
+| 4 | Global post-hoc explanation: permutation importance | 15 |
+| 5 | Global and individual effects: PDP and individual profiles | 15 |
+| 6 | Local post-hoc explanation: SHAP | 15 |
+| Wrap-up | Compare explanation methods | 5 |
+| **Overall** | | **90** |
+
+## Learning objectives
+
+After this exercise, you should be able to:
+
+- distinguish **inherently interpretable models** from **post-hoc explanations**;
+- distinguish **global** from **local** explanations;
+- interpret logistic-regression coefficients and shallow decision trees;
+- use permutation importance to investigate which variables a black-box model relies on;
+- use partial-dependence and individual profiles to investigate how predictions change;
+- use SHAP values to explain an individual prediction;
+- identify important limitations of model explanations;
+- select explanation methods for different organizational stakeholders.
+
+### Package setup
+
+Run this command once in the R console. You can skip this step if the packages are already installed.
+
+```{r}
+#| label: package-setup-install
+#| eval: false
+install.packages(c(
+  "tidymodels",
+  "DALEX",
+  "DALEXtra",
+  "ranger",
+  "rpart",
+  "rpart.plot"
+))
+```
+
+:::
+
+```{r}
+#| label: setup
+#| solution-setup: true
+library(tidyverse)
+library(tidymodels)
+
+tidymodels_prefer()
+
+df <- read_csv(
+  "https://raw.githubusercontent.com/fs-ise/machine-learning-for-big-data/main/exercises/data/credit_default.csv",
+  show_col_types = FALSE
+) |>
+  mutate(
+    customer_category = factor(customer_category),
+    default = factor(
+      default,
+      levels = c(1, 0),
+      labels = c("default", "no_default")
+    )
+  )
+
+set.seed(42)
+
+data_split <- initial_split(
+  df,
+  prop = 0.8,
+  strata = default
+)
+
+train_data <- training(data_split)
+test_data <- testing(data_split)
+
+logistic_recipe <- recipe(default ~ ., data = train_data) |>
+  step_dummy(all_nominal_predictors())
+
+tree_recipe <- recipe(default ~ ., data = train_data)
+
+logistic_spec <- logistic_reg() |>
+  set_engine("glm")
+
+tree_spec <- decision_tree(
+  tree_depth = 3,
+  min_n = 20,
+  cost_complexity = 0
+) |>
+  set_engine("rpart") |>
+  set_mode("classification")
+
+rf_spec <- rand_forest(
+  trees = 500,
+  mtry = 3,
+  min_n = 10
+) |>
+  set_engine("ranger") |>
+  set_mode("classification")
+
+logistic_fit <- workflow() |>
+  add_recipe(logistic_recipe) |>
+  add_model(logistic_spec) |>
+  fit(data = train_data)
+
+tree_fit <- workflow() |>
+  add_recipe(tree_recipe) |>
+  add_model(tree_spec) |>
+  fit(data = train_data)
+
+set.seed(42)
+
+rf_fit <- workflow() |>
+  add_recipe(tree_recipe) |>
+  add_model(rf_spec) |>
+  fit(data = train_data)
+
+predict_default_probability <- function(model, new_data) {
+  predict(
+    model,
+    new_data = new_data,
+    type = "prob"
+  ) |>
+    pull(.pred_default)
+}
+
+rf_test_probability <- predict_default_probability(
+  rf_fit,
+  test_data
+)
+
+applicant_index <- which.min(
+  abs(rf_test_probability - 0.5)
+)
+
+applicant <- test_data |>
+  slice(applicant_index) |>
+  select(-default)
+
+applicant_outcome <- test_data$default[[applicant_index]]
+
+set.seed(42)
+
+explanation_data <- train_data |>
+  slice_sample(
+    n = min(500, nrow(train_data))
+  )
+
+explainer_rf <- DALEXtra::explain_tidymodels(
+  rf_fit,
+  data = explanation_data |> select(-default),
+  y = as.numeric(explanation_data$default == "default"),
+  predict_function = predict_default_probability,
+  label = "Random forest",
+  type = "classification",
+  verbose = FALSE
+)
+```
+
+# Part 1 — Three models, one applicant {#models}
+
+The three models solve exactly the same prediction problem:
+
+- **logistic regression** uses one additive equation;
+- the **decision tree** uses explicit decision rules;
+- the **random forest** combines predictions from 500 trees.
+
+Throughout the exercise, we explain the same applicant.
+
+## Task 1.1 — Compare the predictions
 
 ::: {.direction}
 
-| Project stage | Suggested time |
-|---|---:|
-| [1. Select a case](#select-case) | 5 min |
-| [2. Understand the organization](#understand) | 15 min |
-| [3. Research the deployment](#research) | 20 min |
-| [4. Build the strategy map](#strategy-map) | 30 min |
-| [5. Share and refine](#share) | 10 min |
-| **Total** | **80 min** |
+Inspect `applicant`.
+
+Then calculate the predicted probability of default for the applicant using:
+
+- `logistic_fit`;
+- `tree_fit`;
+- `rf_fit`.
+
+The helper function
+
+```r
+predict_default_probability(model, applicant)
+```
+
+returns the probability of default.
+
+```{r}
+#| label: task-1-1-student
+applicant
+
+# YOUR CODE HERE
+```
+
+Do the three models produce exactly the same prediction?
+
+**Your answer:** *Write your answer here.*
+
+Can the predicted probability by itself explain **why** the model produced the prediction?
+
+**Your answer:** *Write your answer here.*
 
 :::
 
-# 1. Select a case {#select-case}
+::: {.sol}
 
-Select **one** company from the following list:
+```{r}
+#| label: task-1-1-solution
+applicant
 
-| Case | Industry |
-|---|---|
-| Netflix | Streaming / entertainment |
-| Meta | Social media / digital platforms |
-| X / Twitter | Social media / digital platforms |
-| Siemens | Manufacturing / industrial technology |
+tibble(
+  model = c(
+    "Logistic regression",
+    "Decision tree",
+    "Random forest"
+  ),
+  default_probability = c(
+    predict_default_probability(logistic_fit, applicant),
+    predict_default_probability(tree_fit, applicant),
+    predict_default_probability(rf_fit, applicant)
+  )
+)
+```
 
-# 2. Understand the organization {#understand}
+The predictions need not be identical because the models represent relationships differently.
 
-Build a basic understanding of the company:
+A probability alone does not explain the reasoning behind the prediction. To understand the prediction, we need information about the model structure or an additional explanation method.
 
-- What is its business model?
+:::
 
-**Your answer:** *Write your answer here.*
+## Task 1.2 — Classify the models
 
-- Who are its main customers or users?
+::: {.direction}
 
-**Your answer:** *Write your answer here.*
+Classify each model before continuing.
 
-- What are its main products, services, or platforms?
-
-**Your answer:** *Write your answer here.*
-
-- What organizational problem, opportunity, or strategic objective seems especially important?
-
-**Your answer:** *Write your answer here.*
-
-- What could be plausible key performance indicators for this objective?
-
-**Your answer:** *Write your answer here.*
-
-Official strategic metrics may not be publicly available. If necessary, infer plausible KPIs and justify your reasoning.
-
-# 3. Research the deployment {#research}
-
-Use at least **three credible public sources**. Prioritize primary sources such as official annual reports, investor presentations, corporate engineering or research publications, transparency reports, product documentation, and regulatory filings. Complement them where necessary with regulatory documents, peer-reviewed research, academic case studies, or high-quality journalism.
-
-Start with the selected company's official investor-relations, engineering/research, and transparency or governance pages. Record the publication date, authoring organization, and whether each statement is direct evidence or your group's interpretation.
-
-For each source, ask:
-
-- What strategic objective does it reveal?
-
-**Your answer:** *Write your answer here.*
-
-- Which business processes and ML/AI capabilities are described or implied?
-
-**Your answer:** *Write your answer here.*
-
-- Which decisions are supported by analytics, and which are automated?
-
-**Your answer:** *Write your answer here.*
-
-- Which data sources or systems are mentioned?
-
-**Your answer:** *Write your answer here.*
-
-- Are there signs of experimentation, feedback, monitoring, governance, or regulation?
-
-**Your answer:** *Write your answer here.*
-
-# 4. Build an Analytics-Enabled Strategy Map {#strategy-map}
-
-Complete the map below for your selected case. Connect the rows into a coherent chain rather than treating them as isolated questions.
-
-**Your task:** Enter your group’s notes in the final column of the table.
-
-| Strategy-map element | Guiding question | Group notes |
+| Model | Inherently interpretable or black box? | Why? |
 |---|---|---|
-| Organizational problem or opportunity | What concrete problem or opportunity does the organization address? | |
-| Strategic objective and KPIs | What objective is especially relevant, and which operational KPIs indicate progress? | |
-| ML/AI capability | Which specific analytical application contributes to the objective? | |
-| Business process | Where is it used? Describe the process as **decision → data → action → outcome**. | |
-| Expected business value | Does it improve decisions, personalization, efficiency, automation, risk reduction, or organizational learning? | |
-| Complementary organizational capabilities | Which technical and human resources, data infrastructure, management capabilities, culture, roles, or skills are required? | |
-| Augmentation or automation | Does the application augment a human decision, automate it, or combine both? Where and why is a human involved? | |
-| Risks and boundaries | What can go wrong, who is affected, and what should not be optimized? | |
-| Governance and accountability | Who owns the system and decision, and which oversight, monitoring, escalation, contestability, or incident-response mechanisms are needed? | |
-| Explainability | Who needs which explanation—to understand, contest, improve, audit, or govern the system? | |
-| Regulatory considerations | How might the NIST AI RMF, GDPR, or EU AI Act inform the deployment? Identify questions for later verification rather than offering legal advice. | |
-| Feedback and learning | How are outcomes monitored, and how do feedback and accumulated knowledge improve the process or system? | |
+| Logistic regression | | |
+| Shallow decision tree | | |
+| Random forest | | |
 
-::: {.callout-note title="Working principles"}
-Focus on **specific analytics-enabled decisions**, not broad statements such as “the company uses AI.” Some information may not be public; clearly distinguish evidence from your group’s reasoned interpretation.
 :::
 
-# 5. Share and refine {#share}
+::: {.sol}
 
-Prepare a short explanation of your map. Another group should be able to trace the connection from organizational objective to ML/AI capability, decision, action, value, and feedback.
+| Model | Inherently interpretable or black box? | Why? |
+|---|---|---|
+| Logistic regression | Inherently interpretable | A small set of coefficients describes how predictors enter the model. |
+| Shallow decision tree | Inherently interpretable | The complete prediction logic can be represented as a small set of decision rules. |
+| Random forest | Black box for practical interpretation | Hundreds of trees contribute to each prediction, so directly tracing the complete model is impractical. |
 
-During feedback, ask:
+Interpretability is not an absolute property. A very large regression specification or deep decision tree can also become difficult to understand.
 
-1. Is the expected business value plausible and tied to a process and KPI?
+:::
+
+# Part 2 — Logistic regression: coefficients as explanations {#logistic}
+
+A logistic regression exposes its internal structure directly. Each predictor has a coefficient determining how it changes the **log-odds** of default, holding other predictors constant.
+
+## Task 2.1 — Inspect the coefficients
+
+:::: {.direction}
+
+Extract the fitted `glm` model with `extract_fit_engine()` and inspect its coefficients using `broom::tidy()`.
+
+Add an `odds_ratio` column using:
+
+```r
+exp(estimate)
+```
+
+::: {.callout-tip title="Useful documentation"}
+See the [`logistic_reg()` documentation](https://parsnip.tidymodels.org/reference/logistic_reg.html).
+:::
+
+```{r}
+#| label: task-2-1-student
+coefficients <- logistic_fit |>
+  extract_fit_engine() |>
+  broom::tidy()
+
+# YOUR CODE HERE
+```
+
+Identify one predictor associated with **higher** predicted default risk and one associated with **lower** predicted default risk.
 
 **Your answer:** *Write your answer here.*
 
-2. Are the required complementary capabilities visible?
+What does an odds ratio greater than `1` mean?
 
 **Your answer:** *Write your answer here.*
 
-3. Is the proposed division of work between humans and AI justified?
+::::
+
+::: {.sol}
+
+```{r}
+#| label: task-2-1-solution
+coefficients <- logistic_fit |>
+  extract_fit_engine() |>
+  broom::tidy() |>
+  mutate(
+    odds_ratio = exp(estimate)
+  )
+
+coefficients
+```
+
+Positive coefficients increase the predicted log-odds of default; negative coefficients decrease them, holding the other predictors constant.
+
+An odds ratio above `1` means that a one-unit increase in the predictor multiplies the odds of default by a factor greater than one. An odds ratio below `1` reduces the odds.
+
+The interpretation depends on the predictor's unit. Coefficients for dummy variables are interpreted relative to the omitted reference category.
+
+:::
+
+## Task 2.2 — Explain the applicant
+
+::: {.direction}
+
+Use the applicant's values together with the coefficient table.
+
+Which characteristics of this applicant appear to push the logistic-regression prediction toward **higher** default risk, and which push it toward **lower** risk?
 
 **Your answer:** *Write your answer here.*
 
-4. Are accountability, explanation, risk, and regulatory questions specific enough to guide later project work?
+Why is this explanation **not** evidence that changing one of these variables would causally change the applicant's default risk?
 
 **Your answer:** *Write your answer here.*
 
-5. Which claims require additional evidence or verification?
+:::
+
+::: {.sol}
+
+The coefficient signs tell us which observed characteristics the fitted model associates with higher or lower predicted default risk.
+
+However, the model estimates predictive associations. The coefficients do not establish causal effects. A predictor can be associated with default because of confounding, selection effects, correlated variables, or other characteristics represented in the training data.
+
+:::
+
+# Part 3 — Decision tree: rules as explanations {#tree}
+
+A shallow decision tree provides another form of inherent interpretability. Instead of coefficients, it represents the prediction as a sequence of **if/then rules**.
+
+## Task 3.1 — Visualize the tree
+
+:::: {.direction}
+
+Extract the fitted `rpart` model and visualize it.
+
+::: {.callout-tip title="Useful documentation"}
+See the [`decision_tree()` documentation](https://parsnip.tidymodels.org/reference/decision_tree.html) and [`rpart.plot`](https://cran.r-project.org/package=rpart.plot).
+:::
+
+```{r}
+#| label: task-3-1-student
+tree_engine <- extract_fit_engine(tree_fit)
+
+# YOUR CODE HERE
+```
+
+Trace the applicant manually through the tree.
+
+Which variables determine the path?
 
 **Your answer:** *Write your answer here.*
+
+Which terminal node does the applicant reach, and what does that node tell you?
+
+**Your answer:** *Write your answer here.*
+
+::::
+
+::: {.sol}
+
+```{r}
+#| label: task-3-1-solution
+tree_engine <- extract_fit_engine(tree_fit)
+
+rpart.plot::rpart.plot(
+  tree_engine,
+  type = 2,
+  extra = 104,
+  fallen.leaves = TRUE
+)
+```
+
+The applicant can be explained by following the applicable split at each node until reaching a leaf.
+
+The variables encountered on that path constitute a compact local explanation of this prediction. The leaf summarizes the class distribution and prediction for training observations satisfying the same rules.
+
+:::
+
+## Task 3.2 — Compare two forms of inherent interpretability
+
+::: {.direction}
+
+Compare the logistic regression and decision tree.
+
+| Question | Logistic regression | Decision tree |
+|---|---|---|
+| How is the model represented? | | |
+| How can we obtain a global understanding? | | |
+| How can we explain one prediction? | | |
+| What could make the model difficult to interpret? | | |
+
+:::
+
+::: {.sol}
+
+| Question | Logistic regression | Decision tree |
+|---|---|---|
+| How is the model represented? | Additive equation on the log-odds scale | Hierarchy of if/then rules |
+| How can we obtain a global understanding? | Inspect all coefficients | Inspect the complete tree |
+| How can we explain one prediction? | Combine the applicant's values with coefficient directions and magnitudes | Follow the applicant's decision path |
+| What could make the model difficult to interpret? | Many predictors, transformations, interactions, or nonlinear terms | A deep or very large tree |
+
+Both models expose their internal logic. They differ in the form in which that logic is represented.
+
+:::
+
+# Part 4 — Global post-hoc explanation: permutation importance {#importance}
+
+The random forest contains hundreds of decision trees. Instead of inspecting the complete model, we now use **model-agnostic post-hoc explanations**.
+
+Permutation feature importance asks:
+
+> How much worse does the model become when the information in one predictor is destroyed?
+
+The predictor is randomly shuffled while the fitted model remains unchanged.
+
+## Task 4.1 — Calculate permutation importance
+
+:::: {.direction}
+
+Use `DALEX::model_parts()` with the prepared `explainer_rf`.
+
+Use `B = 10` permutations. Then plot the result.
+
+::: {.callout-tip title="Useful documentation"}
+See the [DALEX model-parts documentation](https://modeloriented.github.io/DALEX/reference/model_parts.html).
+:::
+
+```{r}
+#| label: task-4-1-student
+# YOUR CODE HERE
+```
+
+Which predictors does the random forest rely on most strongly?
+
+**Your answer:** *Write your answer here.*
+
+::::
+
+::: {.sol}
+
+```{r}
+#| label: task-4-1-solution
+set.seed(42)
+
+importance <- DALEX::model_parts(
+  explainer_rf,
+  B = 10
+)
+
+plot(importance)
+importance
+```
+
+Variables with a larger deterioration in model performance after permutation are more important to the random forest's predictions.
+
+:::
+
+## Task 4.2 — Interpret importance carefully
+
+::: {.direction}
+
+Does permutation importance tell you whether increasing a variable increases or decreases default risk, whether the variable causes default, or whether the variable is important for this particular applicant?
+
+**Your answer:** *Write your answer here.*
+
+What could happen to importance estimates when two predictors contain very similar information?
+
+**Your answer:** *Write your answer here.*
+
+:::
+
+::: {.sol}
+
+Permutation importance measures **global predictive reliance**. It does not provide the direction of an effect, establish causality, or explain one particular applicant.
+
+When predictors are strongly correlated or redundant, one variable may replace information removed from another. Importance can therefore be distributed across correlated predictors or appear smaller than expected.
+
+:::
+
+# Part 5 — From average effects to individual what-if profiles {#profiles}
+
+Feature importance tells us **whether** a variable matters, but not **how predictions change** as the variable changes.
+
+We investigate two complementary views:
+
+- a **partial-dependence profile (PDP)** summarizes average model predictions;
+- an **individual profile** changes one predictor for one applicant while holding the applicant's other characteristics constant.
+
+## Task 5.1 — Partial-dependence profiles
+
+:::: {.direction}
+
+Create partial-dependence profiles for `debt_to_income` and `credit_utilization`.
+
+Use `N = 200` observations to keep computation fast.
+
+::: {.callout-tip title="Useful documentation"}
+See [Partial-dependence profiles](https://ema.drwhy.ai/partialDependenceProfiles.html).
+:::
+
+```{r}
+#| label: task-5-1-student
+# YOUR CODE HERE
+```
+
+For each predictor, describe the overall direction of the relationship, whether it appears approximately linear, and any regions where predictions change particularly strongly.
+
+**Your answer:** *Write your answer here.*
+
+::::
+
+::: {.sol}
+
+```{r}
+#| label: task-5-1-solution
+partial_profiles <- DALEX::model_profile(
+  explainer_rf,
+  variables = c(
+    "debt_to_income",
+    "credit_utilization"
+  ),
+  type = "partial",
+  N = 200
+)
+
+plot(partial_profiles)
+```
+
+The profiles show how the random forest's prediction changes **on average** when the selected predictor is varied while averaging over the remaining observations.
+
+Unlike logistic-regression coefficients, the resulting relationship does not have to be linear or monotonic.
+
+:::
+
+## Task 5.2 — Explain the same applicant with an individual profile
+
+:::: {.direction}
+
+Now calculate individual profiles for the same two variables and the selected `applicant`.
+
+::: {.callout-tip title="Useful documentation"}
+See [Ceteris-paribus / individual profiles](https://ema.drwhy.ai/ceterisParibus.html).
+:::
+
+```{r}
+#| label: task-5-2-student
+# YOUR CODE HERE
+```
+
+Compare the individual profile with the partial-dependence profile. Where do they answer different questions?
+
+**Your answer:** *Write your answer here.*
+
+Suppose the individual profile shows that lower credit utilization would reduce the model's predicted default probability. Why should this **not automatically be presented as advice** to the applicant?
+
+**Your answer:** *Write your answer here.*
+
+::::
+
+::: {.sol}
+
+```{r}
+#| label: task-5-2-solution
+individual_profile <- DALEX::predict_profile(
+  explainer_rf,
+  new_observation = applicant,
+  variables = c(
+    "debt_to_income",
+    "credit_utilization"
+  )
+)
+
+plot(
+  individual_profile,
+  variables = c(
+    "debt_to_income",
+    "credit_utilization"
+  )
+)
+```
+
+The PDP asks how the model's **average prediction** changes as a predictor changes. The individual profile asks how **this applicant's prediction** changes when one predictor changes while the other characteristics remain fixed.
+
+Neither establishes causality. One-at-a-time changes can also create unrealistic combinations of characteristics, so a model-based what-if result is not automatically valid real-world advice or actionable recourse.
+
+:::
+
+# Part 6 — Local post-hoc explanation with SHAP {#shap}
+
+We now ask:
+
+> Why did the random forest assign this particular probability to this applicant?
+
+SHAP attributes the difference between a **baseline prediction** and the applicant's prediction to the applicant's predictor values.
+
+## Task 6.1 — Calculate a SHAP explanation
+
+:::: {.direction}
+
+Use `DALEX::predict_parts()` with:
+
+- `new_observation = applicant`;
+- `type = "shap"`;
+- `B = 25`.
+
+Plot the resulting explanation.
+
+::: {.callout-tip title="Useful documentation"}
+See the [`predict_parts()` documentation](https://modeloriented.github.io/DALEX/reference/predict_parts.html).
+:::
+
+```{r}
+#| label: task-6-1-student
+# YOUR CODE HERE
+```
+
+Which applicant characteristics push the prediction most strongly toward default and away from default?
+
+**Your answer:** *Write your answer here.*
+
+::::
+
+::: {.sol}
+
+```{r}
+#| label: task-6-1-solution
+set.seed(42)
+
+shap_explanation <- DALEX::predict_parts(
+  explainer_rf,
+  new_observation = applicant,
+  type = "shap",
+  B = 25
+)
+
+plot(shap_explanation)
+shap_explanation
+```
+
+Positive contributions move the prediction above the baseline prediction; negative contributions move it below the baseline.
+
+The SHAP explanation is **local**: it explains this prediction rather than the behavior of the model as a whole.
+
+:::
+
+## Task 6.2 — Compare the local explanations
+
+::: {.direction}
+
+Compare the explanations produced for this applicant by logistic regression, the decision tree, and SHAP applied to the random forest.
+
+Do the three approaches emphasize broadly similar characteristics?
+
+**Your answer:** *Write your answer here.*
+
+Which explanation would be easiest to communicate to a nontechnical applicant?
+
+**Your answer:** *Write your answer here.*
+
+Does the SHAP explanation tell us what **caused** the applicant's predicted default risk?
+
+**Your answer:** *Write your answer here.*
+
+:::
+
+::: {.sol}
+
+The models may emphasize similar predictors, but agreement is not guaranteed because they represent relationships differently.
+
+The logistic regression and shallow tree expose their prediction logic directly. SHAP provides a compact attribution for an otherwise difficult-to-inspect random forest.
+
+A stakeholder-facing explanation would normally translate these technical outputs into concise, meaningful language rather than displaying a raw coefficient table, decision tree, or SHAP plot.
+
+SHAP attributes a **model prediction**. It does not establish that the attributed characteristics causally determine default risk.
+
+:::
+
+# Wrap-up — Match the explanation to the question {#wrap-up}
+
+::: {.direction}
+
+Complete the comparison.
+
+| Method | Global or local? | Model-specific? | Main question answered | Important limitation |
+|---|---|---|---|---|
+| Logistic coefficients | | | | |
+| Decision tree | | | | |
+| Permutation importance | | | | |
+| Partial dependence | | | | |
+| Individual profile | | | | |
+| SHAP | | | | |
+
+Finally, select the explanation you would prioritize for each stakeholder.
+
+| Stakeholder | Most useful explanation(s) | Why? |
+|---|---|---|
+| Credit analyst reviewing one case | | |
+| Applicant affected by a decision | | |
+| Model-governance team | | |
+
+:::
+
+::: {.sol}
+
+| Method | Global or local? | Model-specific? | Main question answered | Important limitation |
+|---|---|---|---|---|
+| Logistic coefficients | Primarily global | Yes | How are predictors associated with the model's log-odds? | Assumes the specified functional form; coefficient interpretation depends on units and reference categories |
+| Decision tree | Global and local | Yes | Which explicit rules produce predictions? | Large trees quickly become difficult to understand and can be unstable |
+| Permutation importance | Global | No | Which predictors does the model rely on? | Gives no direction or causality; correlated predictors complicate interpretation |
+| Partial dependence | Global | No | How does the average prediction vary with a predictor? | Can hide heterogeneous effects and create unrealistic combinations |
+| Individual profile | Local | No | How would one prediction vary when one predictor changes? | One-at-a-time changes may be unrealistic and are not causal |
+| SHAP | Local | No | Which variables contribute to this prediction relative to a baseline? | Attribution depends on the model and background distribution and is not causal |
+
+Possible stakeholder choices:
+
+| Stakeholder | Most useful explanation(s) | Why? |
+|---|---|---|
+| Credit analyst reviewing one case | SHAP, individual profile, or decision path | Provides case-specific evidence that can support review |
+| Applicant affected by a decision | Simplified local explanation derived from SHAP/tree plus carefully validated what-if information | Focuses on factors relevant to the individual and can support understanding or contestability |
+| Model-governance team | Permutation importance, PDP, model structure, plus performance and monitoring evidence | Requires a global view of model behavior rather than only individual predictions |
+
+The central lesson is that **explainability is question-dependent**. There is no single explanation that is appropriate for every model, stakeholder, or deployment decision.
+
+:::

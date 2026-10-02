@@ -25,3 +25,5 @@ tidyverse
 torch
 yardstick
 partykit
+DALEX
+DALEXtra
