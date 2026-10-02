@@ -75,24 +75,6 @@ The slides retain the source treatment of GDPR Articles 15 and 22 and EU AI Act 
 
 ## Exercise facilitation
 
-Allow approximately 5 minutes for case choice, 15 for organizational context, 20 for research, 30 for the map, and 10 for peer explanation and refinement. Facilitate small-group formation at the start.
-
-The activity is the Session 9 exercise and also provides a **group-project scaffold**. Groups should retain the strategy map and use it to connect their chosen organizational problem to the later project narrative. Insist on a concrete analytics-enabled decision and a traceable chain from objective and KPI through data, decision, action, outcome, and feedback.
-
-The strategy-map approach follows the source guidance associated with Peppard, Ward, and Daniel (2007). Public company engineering blogs, annual reports, transparency reports, and credible external reporting can provide starting evidence. Useful examples in the source notes include Netflix personalization, Airbnb, Uber, Spotify, LinkedIn, Meta, DoorDash, and Shopify. Capital One was intentionally excluded because lending decisions were already covered in the lecture.
-
-During debriefing, ask:
-
-- Is the claimed value tied to an observable process and plausible KPI?
-- Which organizational capabilities are prerequisites rather than outcomes?
-- Is the application augmenting or automating a decision, and is the human role credible?
-- Who bears risk and who is accountable?
-- What explanation is useful to each stakeholder?
-- Which NIST, GDPR, or EU AI Act questions require later verification?
-- What evidence is reported, and what did the group infer?
-
-## Follow-up review
-
-- Verify time-sensitive GDPR and EU AI Act article interpretations and application dates during substantive review.
-- Recheck the 2025 BCG workforce survey examples before future reuse.
-- Decide later whether to distribute a separate editable strategy-map template; the authoritative exercise now contains the complete scaffold and no longer depends on an external source-repository `.docx`.
+motivate dalex as an emerging package:
+https://uc-r.github.io/dalex
+-> now also supports shapley values...
