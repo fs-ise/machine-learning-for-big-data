@@ -1,0 +1,17 @@
+---
+title: "Notes: Session 10: Presentations"
+session_id: session-10
+format: html
+---
+
+## Expectations
+
+- Discuss challenges, open questions (presentation will not be graded)
+- Engage with the other presentations (constructively, respectfully)
+
+Note: It is instructive to see how differently the groups present their work.
+
+- Ask yourselves: What would you adopt and what would you do differently? Why?
+- You often see how presentations were created (Powerpoint, Slides, even Quarto presentations) and whether AI was used.
+
+Suggest "sounding-board prompts" like "You are an academic machine learning expert. Review the slides and identify errors and unusual notation." (maybe even open ChenChan2004; Figure 1)
