@@ -13,16 +13,16 @@ We first examine models that are **inherently interpretable**, where the model s
 
 | Part | Topic | Time (min) |
 |---|---|---:|
-| 1 | Three models, one applicant | 10 |
+| 1 | Three models, one applicant | 15 |
 | 2 | Logistic regression: coefficients as explanations | 15 |
-| 3 | Decision tree: decision rules as explanations | 15 |
+| 3 | Decision tree: rules as explanations | 10 |
 | 4 | Global post-hoc explanation: permutation importance | 15 |
-| 5 | Global and individual effects: PDP and individual profiles | 15 |
-| 6 | Local post-hoc explanation: SHAP | 15 |
-| Wrap-up | Compare explanation methods | 5 |
+| 5 | From average effects to individual what-if profiles | 15 |
+| 6 | Local post-hoc explanation with SHAP | 10 |
+| Wrap-up | Match the explanation to the question | 10 |
 | **Overall** | | **90** |
 
-## Learning objectives
+### Learning objectives
 
 After this exercise, you should be able to:
 
@@ -43,6 +43,7 @@ Run this command once in the R console. You can skip this step if the packages a
 #| label: package-setup-install
 #| eval: false
 install.packages(c(
+  "tidyverse",
   "tidymodels",
   "DALEX",
   "DALEXtra",
@@ -153,9 +154,10 @@ applicant_outcome <- test_data$default[[applicant_index]]
 
 set.seed(42)
 
-explanation_data <- train_data |>
+explanation_data <- test_data |>
+  slice(-applicant_index) |>
   slice_sample(
-    n = min(500, nrow(train_data))
+    n = min(500, nrow(test_data) - 1)
   )
 
 explainer_rf <- DALEXtra::explain_tidymodels(
@@ -169,6 +171,17 @@ explainer_rf <- DALEXtra::explain_tidymodels(
 )
 ```
 
+::: {.direction}
+
+Inspect the variables to familiarize yourself with the predictors and outcome.
+
+```{r}
+#| label: inspect-data-student
+glimpse(df)
+```
+
+:::
+
 # Part 1 — Three models, one applicant {#models}
 
 The three models solve exactly the same prediction problem:
@@ -177,7 +190,9 @@ The three models solve exactly the same prediction problem:
 - the **decision tree** uses explicit decision rules;
 - the **random forest** combines predictions from 500 trees.
 
-Throughout the exercise, we explain the same applicant.
+Throughout the exercise, we explain the same applicant. It was selected because the random-forest probability is closest to 0.5, making it a borderline case rather than an obviously easy prediction. The shallow tree uses depth 3 and `min_n = 20`.
+
+An **inherently interpretable** model exposes understandable prediction logic; a **post-hoc** method explains a fitted model after training. **Global** explanations describe behavior across cases, while **local** explanations describe one case. **Model-specific** methods use a particular model structure; **model-agnostic** methods use inputs and predictions and can be applied across model types.
 
 ## Task 1.1 — Compare the predictions
 
@@ -206,7 +221,7 @@ applicant
 # YOUR CODE HERE
 ```
 
-Do the three models produce exactly the same prediction?
+At a 0.5 threshold, which class does each model predict? Even when predictions agree, could the reasons behind them differ?
 
 **Your answer:** *Write your answer here.*
 
@@ -236,7 +251,7 @@ tibble(
 )
 ```
 
-The predictions need not be identical because the models represent relationships differently.
+The probabilities need not be identical because the models represent relationships differently. At a 0.5 threshold, probabilities at least 0.5 predict `default`; models can agree on that class while relying on different relationships.
 
 A probability alone does not explain the reasoning behind the prediction. To understand the prediction, we need information about the model structure or an additional explanation method.
 
@@ -268,6 +283,42 @@ Interpretability is not an absolute property. A very large regression specificat
 
 :::
 
+## Task 1.3 — Check predictive quality
+
+::: {.direction}
+
+Compute test-set ROC AUC for all three models with yardstick. Why does model quality matter before explaining a model, and what would a much weaker tree imply about the fidelity of its explanation to the random forest?
+
+```{r}
+#| label: task-1-3-student
+model_fits <- list(logistic = logistic_fit, tree = tree_fit, random_forest = rf_fit)
+
+# YOUR CODE HERE
+```
+
+**Your answer:** *Write your answer here.*
+
+:::
+
+::: {.sol}
+
+```{r}
+#| label: task-1-3-solution
+model_fits <- list(logistic = logistic_fit, tree = tree_fit, random_forest = rf_fit)
+
+auc_tbl <- purrr::imap_dfr(model_fits, \(fit, model_name) {
+  predict(fit, test_data, type = "prob") |>
+    bind_cols(test_data |> select(default)) |>
+    roc_auc(truth = default, .pred_default) |>
+    mutate(model = model_name, .before = 1)
+})
+auc_tbl
+```
+
+Explanations are useful only if the model is sufficiently valid for its intended use. A much weaker tree can explain its own predictions faithfully, but it is a poor surrogate for the random forest and should not be presented as explaining that forest.
+
+:::
+
 # Part 2 — Logistic regression: coefficients as explanations {#logistic}
 
 A logistic regression exposes its internal structure directly. Each predictor has a coefficient determining how it changes the **log-odds** of default, holding other predictors constant.
@@ -278,11 +329,9 @@ A logistic regression exposes its internal structure directly. Each predictor ha
 
 Extract the fitted `glm` model with `extract_fit_engine()` and inspect its coefficients using `broom::tidy()`.
 
-Add an `odds_ratio` column using:
+Because raw `glm` models the second factor level (`no_default`) while tidymodels treats the first level (`default`) as the event, negate `estimate` first. Then add `odds_ratio = exp(estimate)` to obtain effects for the odds of **default**.
 
-```r
-exp(estimate)
-```
+Ignore `(Intercept)`, inspect `p.value`, and remember that coefficient magnitudes are not comparable across predictors on different scales unless predictors are standardized. Check the reference level with `levels(train_data$customer_category)`.
 
 ::: {.callout-tip title="Useful documentation"}
 See the [`logistic_reg()` documentation](https://parsnip.tidymodels.org/reference/logistic_reg.html).
@@ -290,14 +339,19 @@ See the [`logistic_reg()` documentation](https://parsnip.tidymodels.org/referenc
 
 ```{r}
 #| label: task-2-1-student
-coefficients <- logistic_fit |>
+coef_tbl <- logistic_fit |>
   extract_fit_engine() |>
-  broom::tidy()
+  broom::tidy() |>
+  mutate(estimate = -estimate, odds_ratio = exp(estimate))
 
 # YOUR CODE HERE
 ```
 
 Identify one predictor associated with **higher** predicted default risk and one associated with **lower** predicted default risk.
+
+**Your answer:** *Write your answer here.*
+
+As a sanity check, does each direction agree with the tree or partial-dependence profile?
 
 **Your answer:** *Write your answer here.*
 
@@ -311,21 +365,22 @@ What does an odds ratio greater than `1` mean?
 
 ```{r}
 #| label: task-2-1-solution
-coefficients <- logistic_fit |>
+coef_tbl <- logistic_fit |>
   extract_fit_engine() |>
   broom::tidy() |>
   mutate(
+    estimate = -estimate,
     odds_ratio = exp(estimate)
   )
 
-coefficients
+coef_tbl
 ```
 
 Positive coefficients increase the predicted log-odds of default; negative coefficients decrease them, holding the other predictors constant.
 
 An odds ratio above `1` means that a one-unit increase in the predictor multiplies the odds of default by a factor greater than one. An odds ratio below `1` reduces the odds.
 
-The interpretation depends on the predictor's unit. Coefficients for dummy variables are interpreted relative to the omitted reference category.
+Use `p.value` as evidence about sampling uncertainty, not as a measure of practical importance. Ignore the intercept when identifying characteristics, and sanity-check directions against the tree or a PDP. The interpretation depends on the predictor's unit; magnitudes across different scales are not directly comparable. Dummy variables are interpreted relative to the omitted reference category, which `levels(train_data$customer_category)` helps identify.
 
 :::
 
@@ -333,7 +388,15 @@ The interpretation depends on the predictor's unit. Coefficients for dummy varia
 
 ::: {.direction}
 
-Use the applicant's encoded values (and reference categories) together with the coefficient table. A coefficient's sign alone is not an applicant-specific contribution: its relevance also depends on the applicant's value.
+Use the applicant's encoded values (and reference categories) together with `coef_tbl`. Here, a **contribution** is a term's change from its training-average value: coefficient × value relative to zero is usually uninformative for uncentered variables.
+
+```{r}
+#| label: task-2-2-student
+# Bake the applicant with the fitted recipe.
+# Obtain per-term predictions and compare them with training-average terms.
+# Flip signs because glm terms refer to no_default.
+# YOUR CODE HERE
+```
 
 Which characteristics of this applicant appear to push the logistic-regression prediction toward **higher** default risk, and which push it toward **lower** risk?
 
@@ -347,7 +410,35 @@ Why is this explanation **not** evidence that changing one of these variables wo
 
 ::: {.sol}
 
-Combining coefficient signs with the applicant's encoded values and the relevant reference categories indicates which observed characteristics the fitted model associates with higher or lower predicted default risk. A sign by itself is not an applicant-specific contribution.
+```{r}
+#| label: task-2-2-solution
+baked_applicant <- extract_recipe(logistic_fit) |>
+  bake(applicant)
+baked_train <- extract_recipe(logistic_fit) |>
+  bake(train_data)
+
+applicant_terms <- predict(
+  extract_fit_engine(logistic_fit),
+  newdata = baked_applicant,
+  type = "terms"
+)
+training_terms <- predict(
+  extract_fit_engine(logistic_fit),
+  newdata = baked_train,
+  type = "terms"
+)
+
+term_contributions <- tibble(
+  term = colnames(applicant_terms),
+  contribution_default_log_odds = -as.numeric(
+    applicant_terms[1, ] - colMeans(training_terms)
+  )
+) |>
+  arrange(desc(abs(contribution_default_log_odds)))
+term_contributions
+```
+
+Positive values push toward default and negative values toward no default, relative to the training-average term contributions. Combining these corrected signs with the applicant's encoded values and the relevant reference categories indicates which observed characteristics the fitted model associates with higher or lower predicted default risk. A sign by itself is not an applicant-specific contribution.
 
 However, the model estimates predictive associations. The coefficients do not establish causal effects. A predictor can be associated with default because of confounding, selection effects, correlated variables, or other characteristics represented in the training data.
 
@@ -361,7 +452,7 @@ A shallow decision tree provides another form of inherent interpretability. Inst
 
 :::: {.direction}
 
-Extract the fitted `rpart` model and visualize it.
+Extract the fitted `rpart` model and visualize it. With `extra = 104`, each node shows the predicted class, class probabilities, and percentage of observations; the probability for the first response level, `default`, is listed first. Use `nn = TRUE` to number nodes, and `rpart.plot::rpart.predict(..., nn = TRUE)` to check the applicant's leaf.
 
 ::: {.callout-tip title="Useful documentation"}
 See the [`decision_tree()` documentation](https://parsnip.tidymodels.org/reference/decision_tree.html) and [`rpart.plot`](https://cran.r-project.org/package=rpart.plot).
@@ -370,6 +461,7 @@ See the [`decision_tree()` documentation](https://parsnip.tidymodels.org/referen
 ```{r}
 #| label: task-3-1-student
 tree_engine <- extract_fit_engine(tree_fit)
+applicant
 
 # YOUR CODE HERE
 ```
@@ -379,6 +471,8 @@ Trace the applicant manually through the tree.
 Which variables determine the path?
 
 **Your answer:** *Write your answer here.*
+
+A shallow tree may predict `no_default` in most leaves when defaults are rare.
 
 Which terminal node does the applicant reach, and what does that node tell you?
 
@@ -396,8 +490,16 @@ rpart.plot::rpart.plot(
   tree_engine,
   type = 2,
   extra = 104,
-  fallen.leaves = TRUE
+  fallen.leaves = TRUE,
+  nn = TRUE
 )
+
+applicant_leaf <- rpart.plot::rpart.predict(
+  tree_engine,
+  newdata = applicant,
+  nn = TRUE
+)
+applicant_leaf
 ```
 
 The applicant can be explained by following the applicable split at each node until reaching a leaf.
@@ -438,7 +540,7 @@ Both models expose their internal logic. They differ in the form in which that l
 
 The random forest contains hundreds of decision trees. Instead of inspecting the complete model, we now use **model-agnostic post-hoc explanations**.
 
-DALEX provides a common interface for explaining different predictive models. An `explainer` connects a fitted model, data, observed outcomes, and its prediction function; `DALEXtra` integrates this interface with tidymodels. The random-forest explainer `explainer_rf` has already been prepared for you.
+DALEX provides a common interface for explaining different predictive models. An `explainer` connects a fitted model, data, observed outcomes, and its prediction function; `DALEXtra` integrates this interface with tidymodels. The random-forest explainer `explainer_rf` has already been prepared for you. Explanations use a held-out test sample so their summaries are not based on the same cases used to fit the model.
 
 | Method | Scope | Main question | DALEX function |
 |---|---|---|---|
@@ -452,7 +554,7 @@ Permutation feature importance asks:
 > How much worse does the model become when the information in one predictor is destroyed?
 
 The predictor is randomly shuffled while the fitted model remains unchanged.
-With `type = "difference"`, its importance is the resulting increase in loss relative to the full model.
+For classification, DALEX uses `1 - AUC` as its default loss; with `type = "difference"`, importance is the AUC lost relative to the full model. `_full_model_` is the unpermuted loss, `_baseline_` is the loss after all predictors are removed, and the boxplots show variation across repeated permutations.
 
 ## Task 4.1 — Calculate permutation importance
 
@@ -468,13 +570,8 @@ See the [DALEX model-parts documentation](https://modeloriented.github.io/DALEX/
 
 ```{r}
 #| label: task-4-1-student
-importance <- DALEX::model_parts(
-  explainer_rf,
-  type = "difference",
-  B = 10
-)
+set.seed(42)
 
-# Plot importance
 # YOUR CODE HERE
 ```
 
@@ -508,7 +605,15 @@ Variables with a larger deterioration in model performance after permutation are
 
 ::: {.direction}
 
-Does permutation importance tell you whether increasing a variable increases or decreases default risk, whether the variable causes default, or whether the variable is important for this particular applicant?
+Does permutation importance tell you whether increasing a variable increases or decreases default risk?
+
+**Your answer:** *Write your answer here.*
+
+Does it show that the variable causes default?
+
+**Your answer:** *Write your answer here.*
+
+Does it show that the variable is important for this particular applicant?
 
 **Your answer:** *Write your answer here.*
 
@@ -522,7 +627,7 @@ What could happen to importance estimates when two predictors contain very simil
 
 Permutation importance measures **global predictive reliance**. It does not provide the direction of an effect, establish causality, or explain one particular applicant.
 
-When predictors are strongly correlated or redundant, one variable may replace information removed from another. Importance can therefore be distributed across correlated predictors or appear smaller than expected.
+When predictors are strongly correlated or redundant, one variable may replace information removed from another. Importance can therefore be distributed across correlated predictors or appear smaller than expected. Moreover, independently permuting one variable can create unrealistic predictor combinations.
 
 :::
 
@@ -546,11 +651,13 @@ Create partial-dependence profiles for `debt_to_income` and `credit_utilization`
 Use `N = 200` observations to keep computation fast.
 
 ::: {.callout-tip title="Useful documentation"}
-See [Partial-dependence profiles](https://ema.drwhy.ai/partialDependenceProfiles.html).
+See [Partial-dependence profiles](https://ema.drwhy.ai/partialDependenceProfiles.html). A minimal call is `DALEX::model_profile(explainer_rf, variables = "debt_to_income", type = "partial")`; use `plot(..., geom = "profiles")` to reveal individual lines under the average.
 :::
 
 ```{r}
 #| label: task-5-1-student
+set.seed(42)
+
 # YOUR CODE HERE
 ```
 
@@ -564,6 +671,8 @@ For each predictor, describe the overall direction of the relationship, whether 
 
 ```{r}
 #| label: task-5-1-solution
+set.seed(42)
+
 partial_profiles <- DALEX::model_profile(
   explainer_rf,
   variables = c(
@@ -579,7 +688,7 @@ plot(partial_profiles)
 
 The profiles show how the random forest's prediction changes **on average** when the selected predictor is varied while averaging over the remaining observations.
 
-Unlike logistic-regression coefficients, the resulting relationship does not have to be linear or monotonic.
+Unlike logistic-regression coefficients, the resulting relationship does not have to be linear or monotonic. PDPs can mislead when predictors are correlated because they may average predictions for unrealistic combinations.
 
 :::
 
@@ -589,10 +698,10 @@ Unlike logistic-regression coefficients, the resulting relationship does not hav
 
 Now calculate individual profiles for the same two variables and the selected `applicant`.
 
-This is a **what-if (ceteris-paribus) analysis**, not a counterfactual explanation.
+A **counterfactual explanation** seeks the smallest feasible change that flips a decision; a **ceteris-paribus profile** varies one variable while holding the others fixed. Here we create the latter.
 
 ::: {.callout-tip title="Useful documentation"}
-See [Ceteris-paribus / individual profiles](https://ema.drwhy.ai/ceterisParibus.html).
+See [Ceteris-paribus / individual profiles](https://ema.drwhy.ai/ceterisParibus.html). Use `predict_profile()` with arguments `new_observation` and `variables`.
 :::
 
 ```{r}
@@ -600,7 +709,7 @@ See [Ceteris-paribus / individual profiles](https://ema.drwhy.ai/ceterisParibus.
 # YOUR CODE HERE
 ```
 
-Compare the individual profile with the partial-dependence profile. Where do they answer different questions?
+Overlay the applicant profile and the PDP when comparing them. Where do they answer different questions?
 
 **Your answer:** *Write your answer here.*
 
@@ -629,7 +738,15 @@ plot(
     "debt_to_income",
     "credit_utilization"
   )
-)
+) +
+  ingredients::show_aggregated_profiles(
+    partial_profiles$agr_profiles,
+    variables = c(
+      "debt_to_income",
+      "credit_utilization"
+    ),
+    size = 1
+  )
 ```
 
 The PDP asks how the model's **average prediction** changes as a predictor changes. The individual profile asks how **this applicant's prediction** changes when one predictor changes while the other characteristics remain fixed.
@@ -644,11 +761,41 @@ We now ask:
 
 > Why did the random forest assign this particular probability to this applicant?
 
-SHAP explains one prediction relative to a **baseline prediction**. Each feature receives a contribution showing how much it pushes the prediction above or below that baseline. Together, the contributions explain the difference between the baseline and the prediction. DALEX approximates Shapley values by sampling feature orderings.
+SHAP explains one prediction relative to a **baseline prediction**. Each feature receives a contribution showing how much it pushes the prediction above or below that baseline. Together, the contributions explain the difference between the baseline and the prediction.
+
+:::: {.direction}
+
+Suppose the model's **baseline probability of default is 20%**, while it predicts **55%** for one applicant.
+
+SHAP distributes this difference across the applicant's feature values:
+
+| Component | Contribution |
+|---|---:|
+| **Baseline prediction** | **20%** |
+| High debt-to-income ratio | +18 pp |
+| High credit utilization | +12 pp |
+| Long customer relationship | −4 pp |
+| Other features | +9 pp |
+| **Prediction** | **55%** |
+
+$$\text{Prediction} = \text{Baseline} + \sum_{j=1}^{p} \text{SHAP}_j$$
+
+In this example:
+
+$$55\% = 20\% + 18\% + 12\% - 4\% + 9\%$$
+
+**Interpretation:** Positive SHAP values push this prediction **above** the baseline; negative values push it **below** the baseline.
+
+SHAP explains the **model's prediction**, not the causal effect of changing a feature.
+
+::::
+
 
 ## Task 6.1 — Calculate a SHAP explanation
 
 :::: {.direction}
+
+DALEX approximates Shapley values by sampling feature orderings.
 
 Use `DALEX::predict_parts()` with:
 
@@ -656,7 +803,7 @@ Use `DALEX::predict_parts()` with:
 - `type = "shap"`;
 - `B = 25`.
 
-Here, `B = 25` controls the number of sampled orderings used in the approximation. Plot the resulting explanation.
+Here, `B = 25` controls the number of sampled orderings used in the approximation. Plot the result and print its baseline. The baseline is the mean prediction over `explanation_data`; check that baseline plus the summed contributions is approximately the applicant probability. Boxplots show variation across the `B` sampled orderings, and results can change with the seed.
 
 ::: {.callout-tip title="Useful documentation"}
 See the [conceptual Shapley-value documentation](https://ema.drwhy.ai/shapley.html) and the DALEX [`predict_parts()` reference](https://modeloriented.github.io/DALEX/reference/predict_parts.html).
@@ -664,14 +811,8 @@ See the [conceptual Shapley-value documentation](https://ema.drwhy.ai/shapley.ht
 
 ```{r}
 #| label: task-6-1-student
-shap_explanation <- DALEX::predict_parts(
-  explainer_rf,
-  new_observation = applicant,
-  type = "shap",
-  B = 25
-)
+set.seed(42)
 
-# Plot the explanation
 # YOUR CODE HERE
 ```
 
@@ -696,9 +837,20 @@ shap_explanation <- DALEX::predict_parts(
 
 plot(shap_explanation)
 shap_explanation
+
+shap_baseline <- mean(explainer_rf$y_hat)
+shap_check <- shap_explanation |>
+  filter(!variable %in% c("_baseline_", "_full_model_")) |>
+  group_by(variable) |>
+  summarise(contribution = mean(contribution), .groups = "drop") |>
+  summarise(reconstructed_probability = shap_baseline + sum(contribution))
+
+shap_baseline
+shap_check
+predict_default_probability(rf_fit, applicant)
 ```
 
-Positive contributions move the prediction above the baseline prediction; negative contributions move it below the baseline.
+Positive contributions move the prediction above the baseline prediction; negative contributions move it below the baseline. The boxplots summarize variation across sampled orderings, so a different seed can change the approximation.
 
 The SHAP explanation is **local**: it explains this prediction rather than the behavior of the model as a whole.
 
@@ -708,7 +860,13 @@ The SHAP explanation is **local**: it explains this prediction rather than the b
 
 ::: {.direction}
 
-Compare the explanations produced for this applicant by logistic regression, the decision tree, and SHAP applied to the random forest.
+Compare the explanations produced for this applicant by logistic regression, the decision tree, and SHAP applied to the random forest. Logistic-regression contributions use the log-odds scale while SHAP contributions use the probability scale, so their numerical values are not directly comparable.
+
+| Method | Top three drivers for this applicant |
+|---|---|
+| Logistic regression | |
+| Decision tree | |
+| SHAP | |
 
 Do the three approaches emphasize broadly similar characteristics?
 
@@ -726,19 +884,19 @@ Does the SHAP explanation tell us what **caused** the applicant's predicted defa
 
 ::: {.sol}
 
-The models may emphasize similar predictors, but agreement is not guaranteed because they represent relationships differently.
+1. **Agreement:** Fill the three rows from `term_contributions`, the variables on `applicant_leaf`'s tree path, and the largest absolute SHAP contributions. The models may emphasize different characteristics because they represent relationships differently; compare ranks and directions rather than numerical magnitudes across the log-odds and probability scales.
 
-The logistic regression and shallow tree expose their prediction logic directly. SHAP provides a compact attribution for an otherwise difficult-to-inspect random forest.
+2. **Communication:** The tree path is easiest to communicate to a nontechnical applicant because it can be stated as a short sequence of plain-language rules. One caveat is that thresholds simplify relationships and a shallow tree may be less accurate than the random forest.
 
-A stakeholder-facing explanation would normally translate these technical outputs into concise, meaningful language rather than displaying a raw coefficient table, decision tree, or SHAP plot.
-
-SHAP attributes a **model prediction**. It does not establish that the attributed characteristics causally determine default risk.
+3. **Causality:** SHAP attributes a **model prediction** relative to its baseline. It does not establish that the attributed characteristics caused default risk.
 
 :::
 
 # Wrap-up — Match the explanation to the question {#wrap-up}
 
 ::: {.direction}
+
+**Model-specific** methods use a model's internal structure; **model-agnostic** methods explain it through inputs and predictions.
 
 Complete the comparison.
 
@@ -759,6 +917,14 @@ Finally, select the explanation you would prioritize for each stakeholder.
 | Applicant affected by a decision | | |
 | Model-governance team | | |
 
+Compare `applicant_outcome` with the three predictions from Task 1.1. What does this case suggest, and why can one case prove little about model quality?
+
+**Your answer:** *Write your answer here.*
+
+Optional discussion: How should regulation, contestability, and governance shape which explanations the organization records and communicates?
+
+**Your answer:** *Write your answer here.*
+
 :::
 
 ::: {.sol}
@@ -770,7 +936,7 @@ Finally, select the explanation you would prioritize for each stakeholder.
 | Permutation importance | Global | No | Which predictors does the model rely on? | Gives no direction or causality; correlated predictors complicate interpretation |
 | Partial dependence | Global | No | How does the average prediction vary with a predictor? | Can hide heterogeneous effects and create unrealistic combinations |
 | Individual profile | Local | No | How would one prediction vary when one predictor changes? | One-at-a-time changes may be unrealistic and are not causal |
-| SHAP | Local | No | Which variables contribute to this prediction relative to a baseline? | Attribution depends on the model and background distribution and is not causal |
+| SHAP | Local | DALEX sampling: no; TreeSHAP: yes | Which variables contribute to this prediction relative to a baseline? | Attribution depends on the model and background distribution and is not causal |
 
 Possible stakeholder choices:
 
@@ -779,6 +945,10 @@ Possible stakeholder choices:
 | Credit analyst reviewing one case | SHAP, individual profile, or decision path | Provides case-specific evidence that can support review |
 | Applicant affected by a decision | Simplified local explanation derived from SHAP/tree plus carefully validated what-if information | Focuses on factors relevant to the individual and can support understanding or contestability |
 | Model-governance team | Permutation importance, PDP, model structure, plus performance and monitoring evidence | Requires a global view of model behavior rather than only individual predictions |
+
+Compare `applicant_outcome` with each thresholded prediction. A match or error for one applicant is only one observation and cannot establish general model quality; use test-set metrics and broader validation.
+
+Regulation, contestability, and governance may require auditable explanations, review and appeal routes, documented limitations, and monitoring.
 
 The central lesson is that **explainability is question-dependent**. There is no single explanation that is appropriate for every model, stakeholder, or deployment decision.
 
