@@ -117,7 +117,6 @@ TBD: is this really relevant (given that we initially focus on the single-class 
 
 ```{python}
 #| label: 4-python-illustration-entropy-vs-number-of-classes-import-numpy-as-np
-#| fig-align: center
 #| echo: false
 import numpy as np
 import matplotlib.pyplot as plt

@@ -17,7 +17,6 @@ What we have done so far (geometrically):
 ```{python}
 #| label: linear-regression-plot
 #| echo: false
-#| fig-align: center
 #| out-width: 50%
 
 import numpy as np
@@ -44,7 +43,6 @@ plt.show()
 
 ```{python}
 #| label: categorical-regression-plot
-#| fig-align: center
 #| echo: false
 #| out-width: 50%
 
@@ -111,7 +109,6 @@ Emphasize the distinction between probability estimation and the threshold-based
 
 ```{python}
 #| label: logistic-regression-plot
-#| fig-align: center
 #| echo: false
 #| out-width: 50%
 

@@ -501,7 +501,6 @@ Use `pROC` to evaluate discrimination across all possible thresholds. Here, high
 ```{r}
 #| label: part-4-roc-curve-and-auc-roc-ec
 #| out-width: 60%
-#| fig-align: center
 
 roc_ec <- roc(
   response = df_ec_urban$default,
@@ -675,7 +674,6 @@ Income and months with company are negative in both models but do not reach the 
 ```{r}
 #| label: task-5-3-compare-roc-and-auc-y-prob-platform
 #| out-width: 68%
-#| fig-align: center
 
 y_prob_platform <- predict(
   model_platform,

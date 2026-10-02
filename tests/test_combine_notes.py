@@ -39,6 +39,7 @@ def test_orders_sessions_and_extracts_yaml_titles(tmp_path: Path) -> None:
 
     result = combine_notes([later, earlier])
 
+    assert "knitr:\n  opts_chunk:\n    fig.align: center" in result
     assert result.index("# Session Two") < result.index("# Session Ten")
 
 

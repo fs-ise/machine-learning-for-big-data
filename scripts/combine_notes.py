@@ -108,6 +108,9 @@ def combine_notes(paths: Sequence[Path], checklist: Path | None = None) -> str:
 title: "{DOCUMENT_TITLE}"
 execute:
   enabled: true
+knitr:
+  opts_chunk:
+    fig.align: center
 format:
   pdf:
     papersize: a4

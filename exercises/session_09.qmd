@@ -504,7 +504,6 @@ Which terminal node does the applicant reach, and what does that node tell you?
 
 ```{r}
 #| label: task-3-1-solution
-#| fig-align: center
 
 tree_engine <- extract_fit_engine(tree_fit)
 
@@ -704,7 +703,6 @@ For each predictor, describe the overall direction of the relationship, whether 
 ```{r}
 #| label: task-5-1-solution
 #| out-width: 80%
-#| fig-align: center
 
 set.seed(42)
 
@@ -759,7 +757,6 @@ Suppose the individual profile shows that lower credit utilization would reduce 
 ```{r}
 #| label: task-5-2-solution
 #| out-width: 80%
-#| fig-align: center
 individual_profile <- DALEX::predict_profile(
   explainer_rf,
   new_observation = applicant,

@@ -81,6 +81,7 @@ def test_pdf_config_and_templates_use_static_preamble_and_dynamic_body() -> None
     preamble = templates.joinpath("exercise-solution-preamble.tex").read_text()
     body = templates.joinpath("exercise-solution-before-body.tex").read_text()
 
+    assert "knitr:\n  opts_chunk:\n    fig.align: center" in PROJECT_CONFIG
     assert "include-in-header:\n      - solution-pdf/preamble.tex" in PROJECT_CONFIG
     assert "template-partials:\n      - solution-pdf/before-body.tex" in PROJECT_CONFIG
     assert "solution-pdf/in-header.tex" not in PROJECT_CONFIG

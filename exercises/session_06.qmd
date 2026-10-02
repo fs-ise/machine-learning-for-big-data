@@ -523,7 +523,6 @@ Use `collect_metrics(tree_results)` to retrieve the results and:
 ```{r}
 #| label: task-7-2-visualize-tuning-results
 #| out-width: 57%
-#| fig-align: center
 
 collect_metrics(tree_results) |>
   filter(
@@ -800,7 +799,6 @@ Use yardstick to create a test confusion matrix and ROC curve.
 ```{r}
 #| label: task-9-2-inspect-final-predictions
 #| out-width: 60%
-#| fig-align: center
 
 final_predictions <- collect_predictions(final_fit)
 final_confusion_matrix <- final_predictions |>
@@ -815,7 +813,6 @@ autoplot(final_confusion_matrix, type = "heatmap")
 ```{r}
 #| label: task-9-2-inspect-final-predictions-roc
 #| out-width: 40%
-#| fig-align: center
 
 final_roc <- final_predictions |>
   roc_curve(

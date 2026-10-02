@@ -22,6 +22,10 @@ PROJECT_CONFIG = """project:
   resources:
     - "data/**"
 
+knitr:
+  opts_chunk:
+    fig.align: center
+
 format:
   pdf:
     pdf-engine: lualatex
