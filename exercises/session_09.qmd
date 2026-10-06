@@ -69,10 +69,15 @@ df <- read_csv(
 ) |>
   mutate(
     customer_category = factor(customer_category),
+    # The event of interest ("default") is the SECOND level.
+    # R's glm() models the probability of the second level,
+    # so raw glm coefficients then refer directly to default.
+    # tidymodels and yardstick treat the FIRST level as the event
+    # by default, so metric calls need event_level = "second".
     default = factor(
       default,
-      levels = c(1, 0),
-      labels = c("default", "no_default")
+      levels = c(0, 1),
+      labels = c("no_default", "default")
     )
   )
 
@@ -248,14 +253,25 @@ tibble(
     predict_default_probability(tree_fit, applicant),
     predict_default_probability(rf_fit, applicant)
   )
-)
+) |>
+  mutate(
+    predicted_class = if_else(
+      default_probability >= 0.5,
+      "default",
+      "no_default"
+    )
+  )
 ```
 
 The probabilities need not be identical because the models represent relationships differently. At a 0.5 threshold, probabilities at least 0.5 predict `default`; models can agree on that class while relying on different relationships.
 
 A probability alone does not explain the reasoning behind the prediction. To understand the prediction, we need information about the model structure or an additional explanation method.
 
+**Answer.** In the reference run, the logistic regression (about 0.54), the decision tree (about 0.61) and the random forest (about 0.50, only just above the threshold) all predict `default`. Agreeing on the class does not mean agreeing on the reasons: the logistic regression adds weighted contributions of all predictors, the tree applies a few thresholds on a handful of variables, and the forest averages hundreds of trees. The probability only says *what* the model predicts, not *why*.
+
 :::
+
+{{< needspace 20 >}}
 
 ## Task 1.2 — Classify the models
 
@@ -302,6 +318,8 @@ Compute test-set ROC AUC for all three models with yardstick. Why does model qua
 #| label: task-1-3-student
 model_fits <- list(logistic = logistic_fit, tree = tree_fit, random_forest = rf_fit)
 
+# Hint: `default` is the second factor level, so pass `event_level = "second"`
+# to yardstick metrics such as roc_auc().
 # YOUR CODE HERE
 ```
 
@@ -315,15 +333,15 @@ model_fits <- list(logistic = logistic_fit, tree = tree_fit, random_forest = rf_
 #| label: task-1-3-solution
 logistic_auc <- predict(logistic_fit, test_data, type = "prob") |>
   bind_cols(test_data |> select(default)) |>
-  roc_auc(truth = default, .pred_default)
+  roc_auc(truth = default, .pred_default, event_level = "second")
 
 tree_auc <- predict(tree_fit, test_data, type = "prob") |>
   bind_cols(test_data |> select(default)) |>
-  roc_auc(truth = default, .pred_default)
+  roc_auc(truth = default, .pred_default, event_level = "second")
 
 rf_auc <- predict(rf_fit, test_data, type = "prob") |>
   bind_cols(test_data |> select(default)) |>
-  roc_auc(truth = default, .pred_default)
+  roc_auc(truth = default, .pred_default, event_level = "second")
 
 logistic_auc
 tree_auc
@@ -331,6 +349,8 @@ rf_auc
 ```
 
 Explanations are useful only if the model is sufficiently valid for its intended use. A much weaker tree can explain its own predictions faithfully, but it is a poor surrogate for the random forest and should not be presented as explaining that forest.
+
+**Answer.** In the reference run the logistic regression has the highest test AUC (about 0.78), followed by the random forest (about 0.71) and the tree (about 0.66). All three are only moderately accurate, so any explanation describes a model of modest quality. Note also that the least transparent model does not outperform the transparent logistic regression here, which raises the question of whether the black box is needed at all.
 
 :::
 
@@ -344,7 +364,7 @@ A logistic regression exposes its internal structure directly. Each predictor ha
 
 Extract the fitted `glm` model with `extract_fit_engine()` and inspect its coefficients using `broom::tidy()`.
 
-Because raw `glm` models the second factor level (`no_default`) while tidymodels treats the first level (`default`) as the event, negate `estimate` first. Then add `odds_ratio = exp(estimate)` to obtain effects for the odds of **default**.
+Because `default` is the second factor level, raw `glm` models the log-odds of **default** directly, so the coefficients need no sign adjustment. Add `odds_ratio = exp(estimate)` to express each effect as a multiplicative change in the odds of default.
 
 Ignore `(Intercept)`, inspect `p.value`, and remember that coefficient magnitudes are not comparable across predictors on different scales unless predictors are standardized. Check the reference level with `levels(train_data$customer_category)`.
 
@@ -357,12 +377,7 @@ See the [`logistic_reg()` documentation](https://parsnip.tidymodels.org/referenc
 coef_tbl <- logistic_fit |>
   extract_fit_engine() |>
   broom::tidy() |>
-  mutate(
-    # glm models the second outcome level (no_default);
-    # flip signs so coefficients refer to default.
-    estimate = -estimate,
-    odds_ratio = exp(estimate)
-  )
+  mutate(odds_ratio = exp(estimate))
 
 # YOUR CODE HERE
 ```
@@ -389,7 +404,6 @@ coef_tbl <- logistic_fit |>
   extract_fit_engine() |>
   broom::tidy() |>
   mutate(
-    estimate = -estimate,
     odds_ratio = exp(estimate)
   )
 
@@ -402,19 +416,27 @@ An odds ratio above `1` means that a one-unit increase in the predictor multipli
 
 Use `p.value` as evidence about sampling uncertainty, not as a measure of practical importance. Ignore the intercept when identifying characteristics, and sanity-check directions against the tree or a PDP. The interpretation depends on the predictor's unit; magnitudes across different scales are not directly comparable. Dummy variables are interpreted relative to the omitted reference category, which `levels(train_data$customer_category)` helps identify.
 
+**Answers.**
+
+- **Higher risk:** `missed_payments_12m` (odds ratio about 2.06 per additional missed payment, p < 0.001) and `credit_utilization` (odds ratio about 6.3 for a one-unit increase, i.e. the whole 0–1 range, p = 0.002). **Lower risk:** `months_with_company` (odds ratio about 0.98 per additional month, borderline with p ≈ 0.05) and `income` (the odds ratio of about 1.000 per unit looks like "no effect" only because one unit is tiny; per 1,000 units it is exp(−0.323) ≈ 0.72, p = 0.017).
+- **Sanity check:** the tree splits first on `missed_payments_12m` (more missed payments, higher default share), sends high `credit_utilization` (at least 0.75) to a riskier branch, and has lower-income leaves with higher default shares. The PDPs for `credit_utilization` and `debt_to_income` also rise on average. All directions agree.
+- **Odds ratio above 1:** a one-unit increase in the predictor multiplies the odds of default by that factor, holding the other predictors constant (2.06 is roughly a doubling of the odds per additional missed payment).
+- **Reference category:** the omitted first level is `early_career_urban`. The `customer_category_platform_worker` coefficient (odds ratio about 1.5, p ≈ 0.16) compares platform workers with that reference group and is not statistically distinguishable from zero.
+- Since `default` is the modeled level, `estimate` and `statistic` now have the same sign.
+
 :::
 
 ## Task 2.2 — Explain the applicant
 
 ::: {.direction}
 
-Use the applicant's encoded values (and reference categories) together with `coef_tbl`. Here, a **contribution** is a term's change from its training-average value: coefficient × value relative to zero is usually uninformative for uncentered variables.
+Use the applicant's encoded values (and reference categories) together with `coef_tbl`. Here, the **contribution** of a predictor is its coefficient times the difference between the applicant's value and the training average of that predictor, $\beta_j \times (x_j^{\text{applicant}} - \bar{x}_j^{\text{train}})$. Coefficient × raw value is usually uninformative because it depends on where the predictor's zero lies.
 
 ```{r}
 #| label: task-2-2-student
-# Bake the applicant with the fitted recipe.
-# Obtain per-term predictions and compare them with training-average terms.
-# Flip signs because glm terms refer to no_default.
+# Bake the applicant and the training data with the fitted recipe.
+# For each predictor, compute: coefficient * (applicant value - training mean).
+# Sort by absolute contribution.
 # YOUR CODE HERE
 ```
 
@@ -437,28 +459,43 @@ baked_applicant <- extract_recipe(logistic_fit) |>
 baked_train <- extract_recipe(logistic_fit) |>
   bake(train_data)
 
-applicant_terms <- predict(
-  extract_fit_engine(logistic_fit),
-  newdata = baked_applicant,
-  type = "terms"
-)
-training_terms <- predict(
-  extract_fit_engine(logistic_fit),
-  newdata = baked_train,
-  type = "terms"
-)
-
-term_contributions <- tibble(
-  term = colnames(applicant_terms),
-  contribution_default_log_odds = -as.numeric(
-    applicant_terms[1, ] - colMeans(training_terms)
-  )
-) |>
+term_contributions <- coef_tbl |>
+  filter(term != "(Intercept)") |>
+  transmute(
+    term,
+    coefficient = estimate,
+    applicant_value = unlist(baked_applicant[1, term], use.names = FALSE),
+    training_mean = unname(colMeans(baked_train[term])),
+    contribution_default_log_odds =
+      coefficient * (applicant_value - training_mean)
+  ) |>
   arrange(desc(abs(contribution_default_log_odds)))
+
 term_contributions
 ```
 
-Positive values push toward default and negative values toward no default, relative to the training-average term contributions. Combining these corrected signs with the applicant's encoded values and the relevant reference categories indicates which observed characteristics the fitted model associates with higher or lower predicted default risk. A sign by itself is not an applicant-specific contribution.
+```{r}
+#| label: task-2-2-check-solution
+# Check: the contributions add up to the applicant's log-odds minus the
+# log-odds of a hypothetical applicant at the training mean of every predictor.
+glm_engine <- extract_fit_engine(logistic_fit)
+
+average_profile_log_odds <- coef(glm_engine)[["(Intercept)"]] +
+  sum(term_contributions$coefficient * term_contributions$training_mean)
+
+applicant_log_odds <- as.numeric(
+  predict(glm_engine, newdata = baked_applicant, type = "link")
+)
+
+tibble(
+  sum_of_contributions = sum(term_contributions$contribution_default_log_odds),
+  applicant_minus_average_profile = applicant_log_odds - average_profile_log_odds
+)
+```
+
+Positive values push the applicant's log-odds of default **above**, and negative values **below**, those of a hypothetical applicant who sits at the training average on every predictor. The contributions add up exactly to the difference between the two log-odds (see the check). A coefficient alone is not an applicant-specific contribution: it also matters how far the applicant's value lies from the average (for a dummy variable, from the share of training cases in that category).
+
+**Answer.** In the reference run, the largest push toward **higher** risk comes from `missed_payments_12m` (about +0.53; the applicant has 2, above the training average), followed by `income` (about +0.20; below-average income); `debt_to_income` is negligible (about +0.01). Pushing toward **lower** risk are `customer_category_platform_worker` (about −0.22; the applicant is not a platform worker, and platform workers carry higher modeled risk than the reference group `early_career_urban`), `credit_utilization` (about −0.10; below average) and `months_with_company` (about −0.08; above-average tenure).
 
 However, the model estimates predictive associations. The coefficients do not establish causal effects. A predictor can be associated with default because of confounding, selection effects, correlated variables, or other characteristics represented in the training data.
 
@@ -472,7 +509,7 @@ A shallow decision tree provides another form of inherent interpretability. Inst
 
 :::: {.direction}
 
-Extract the fitted `rpart` model and visualize it. With `extra = 104`, each node shows the predicted class, class probabilities, and percentage of observations; the probability for the first response level, `default`, is listed first. Use `nn = TRUE` to number nodes, and `rpart.plot::rpart.predict(..., nn = TRUE)` to check the applicant's leaf.
+Extract the fitted `rpart` model and visualize it. With `extra = 104`, each node shows the predicted class, class probabilities, and percentage of observations; probabilities are listed in factor-level order, so `no_default` comes first and `default` second. Use `nn = TRUE` to number nodes, and `rpart.plot::rpart.predict(..., nn = TRUE)` to check the applicant's leaf.
 
 ::: {.callout-tip title="Useful documentation"}
 See the [`decision_tree()` documentation](https://parsnip.tidymodels.org/reference/decision_tree.html) and [`rpart.plot`](https://cran.r-project.org/package=rpart.plot).
@@ -511,7 +548,8 @@ rpart.plot::rpart.plot(
   tree_engine,
   type = 2,
   extra = 104,
-  nn = TRUE
+  nn = TRUE,
+  roundint = FALSE
 )
 
 applicant_leaf <- rpart.plot::rpart.predict(
@@ -522,7 +560,26 @@ applicant_leaf <- rpart.plot::rpart.predict(
 applicant_leaf
 ```
 
-The applicant can be explained by following the applicable split at each node until reaching a leaf.
+```{r}
+#| label: task-3-1-path-solution
+leaf_node <- as.numeric(applicant_leaf[1, "nn"])
+
+tree_path <- rpart::path.rpart(
+  tree_engine,
+  nodes = leaf_node,
+  print.it = FALSE
+)[[1]]
+
+tree_path
+```
+
+The applicant can be explained by following the applicable split at each node until reaching a leaf. In the reference run the path is:
+
+1. `missed_payments_12m >= 1.5`: yes (the applicant has 2), go to node 2.
+2. `missed_payments_12m >= 2.5`: no (2 < 2.5), go to node 5.
+3. `income < 3542`: yes (income is about 2,211), reach **leaf 10**.
+
+Only two variables determine the path: `missed_payments_12m` (twice) and `income`. `credit_utilization` and `debt_to_income` are not used for this applicant. Leaf 10 holds about 22% of the training cases, of which about 61% defaulted, which is where the tree's predicted probability of 0.61 comes from. Defaults are not rare in this data (about 46% of training cases), so several leaves predict `default`. The leaf is far from pure: roughly 4 in 10 similar applicants did not default.
 
 The variables encountered on that path constitute a compact local explanation of this prediction. The leaf summarizes the class distribution and prediction for training observations satisfying the same rules.
 
@@ -614,6 +671,8 @@ Which predictors does the random forest rely on most strongly?
 
 ```{r}
 #| label: task-4-1-solution
+#| warning: false
+
 set.seed(42)
 
 importance <- DALEX::model_parts(
@@ -627,6 +686,8 @@ importance
 ```
 
 Variables with a larger deterioration in model performance after permutation are more important to the random forest's predictions.
+
+**Answer.** In the reference run the forest relies most on `missed_payments_12m` (AUC loss of about 0.11), then `credit_utilization` (about 0.06) and `debt_to_income` (about 0.03). The importances of `customer_category`, `income` and `months_with_company` are around zero or slightly negative, with whiskers that span zero. A negative value means that shuffling the variable happened to improve AUC marginally, which is noise: the forest does not detectably rely on these variables. This contrasts with the logistic regression, where `income` has a clear coefficient. Only the top one or two variables are ranked reliably given `B = 10` permutations on 500 rows.
 
 :::
 
@@ -723,6 +784,8 @@ The profiles show how the random forest's prediction changes **on average** when
 
 Unlike logistic-regression coefficients, the resulting relationship does not have to be linear or monotonic. PDPs can mislead when predictors are correlated because they may average predictions for unrealistic combinations.
 
+**Answer.** Both profiles trend upward: higher `credit_utilization` and higher `debt_to_income` are associated with a higher average predicted default probability. Neither is linear. `credit_utilization` rises in steps, with a pronounced jump around 0.75 (matching the tree's split at 0.75). `debt_to_income` is roughly flat until about 0.6 and then climbs, levelling off at the highest values. Small wiggles are probably sampling noise (`N = 200`) and should not be interpreted.
+
 :::
 
 ## Task 5.2 — Explain the same applicant with an individual profile
@@ -787,7 +850,14 @@ The PDP asks how the model's **average prediction** changes as a predictor chang
 
 Neither establishes causality. One-at-a-time changes can also create unrealistic combinations of characteristics, so a model-based what-if result is not automatically valid real-world advice or actionable recourse.
 
+**Answers.**
+
+- **Different questions:** the PDP asks, across applicants, how the average prediction changes with a variable. The individual profile asks how *this* applicant's prediction would change with everything else fixed. For this applicant the individual curve lies mostly above the PDP, because other characteristics (two missed payments) put them above the average applicant, and it is more irregular because it is not smoothed by averaging. Where the two curves differ, the average effect is a poor description of this person.
+- **Not automatically advice:** the profile describes the model's behavior, not a causal effect, so reducing utilization may not lower the applicant's actual risk. Changing one variable alone may be unrealistic or infeasible, since utilization, debt-to-income and missed payments are linked. The curve is also an estimate with noise, and presenting it as advice invites gaming the score and creates expectations the bank may not honor.
+
 :::
+
+{{< needspace 20 >}}
 
 # Part 6 — Local post-hoc explanation with SHAP {#shap}
 
@@ -888,6 +958,8 @@ Positive contributions move the prediction above the baseline prediction; negati
 
 The SHAP explanation is **local**: it explains this prediction rather than the behavior of the model as a whole.
 
+**Answer.** In the reference run, `missed_payments_12m = 2` pushes the prediction most strongly toward default (about +0.15 on the probability scale). `credit_utilization = 0.545` (about −0.10) and `debt_to_income = 0.536` (about −0.03) push it away from default; `months_with_company` and `customer_category` have small negative contributions (about −0.01), and `income` is close to zero. The baseline (the mean predicted probability, about 0.49) plus the contributions reproduces the applicant's 0.50. The upward push of the missed payments is largely offset by the other variables, which is why this is a borderline case.
+
 :::
 
 ## Task 6.2 — Compare the local explanations
@@ -918,9 +990,43 @@ Does the SHAP explanation tell us what **caused** the applicant's predicted defa
 
 ::: {.sol}
 
-1. **Agreement:** Fill the three rows from `term_contributions`, the variables on `applicant_leaf`'s tree path, and the largest absolute SHAP contributions. The models may emphasize different characteristics because they represent relationships differently; compare ranks and directions rather than numerical magnitudes across the log-odds and probability scales.
+```{r}
+#| label: task-6-2-solution
+shap_top <- shap_explanation |>
+  filter(!variable %in% c("_baseline_", "_full_model_")) |>
+  group_by(variable) |>
+  summarise(contribution = mean(contribution), .groups = "drop") |>
+  arrange(desc(abs(contribution))) |>
+  slice_head(n = 3)
 
-2. **Communication:** The tree path is easiest to communicate to a nontechnical applicant because it can be stated as a short sequence of plain-language rules. One caveat is that thresholds simplify relationships and a shallow tree may be less accurate than the random forest.
+tree_path_variables <- tree_path |>
+  setdiff("root") |>
+  str_extract("^[A-Za-z0-9_]+") |>
+  unique()
+
+tibble(
+  method = c("Logistic regression", "Decision tree", "SHAP"),
+  top_drivers = c(
+    term_contributions |>
+      slice_head(n = 3) |>
+      mutate(
+        label = sprintf("%s (%+.2f log-odds)", term, contribution_default_log_odds)
+      ) |>
+      pull(label) |>
+      paste(collapse = "; "),
+    paste(tree_path_variables, collapse = ", "),
+    shap_top |>
+      mutate(label = sprintf("%s (%+.2f)", variable, contribution)) |>
+      pull(label) |>
+      paste(collapse = "; ")
+  )
+) |>
+  knitr::kable()
+```
+
+1. **Agreement:** All three methods put `missed_payments_12m` first, pushing toward default, so the dominant driver is robust across models. Beyond that they diverge. The logistic regression adds `customer_category` and `income` (below-average income raises risk). SHAP gives `income` almost no weight, consistent with its near-zero permutation importance, while the tree uses `income` at its last split. `credit_utilization` pushes toward lower risk in both the logistic regression (about −0.10) and SHAP (about −0.10). `debt_to_income` is negligible in the logistic regression, slightly negative in SHAP and absent from the tree path. These differences are expected: the models represent relationships differently, predictors are correlated, and a tree path only shows the variables needed to reach one leaf. Compare ranks and directions, not magnitudes across the log-odds and probability scales.
+
+2. **Communication:** The tree path is easiest to communicate to a nontechnical applicant because it can be stated as a short sequence of plain-language rules, for example: "Applicants with two missed payments in the last year and an income below 3,542 defaulted in about six out of ten historical cases." One caveat is that thresholds simplify relationships and a shallow tree may be less accurate than the random forest.
 
 3. **Causality:** SHAP attributes a **model prediction** relative to its baseline. It does not establish that the attributed characteristics caused default risk.
 
@@ -981,6 +1087,8 @@ Optional discussion: How should regulation, contestability, and governance shape
 \endgroup
 ```
 
+{{< pagebreak >}}
+
 Possible stakeholder choices:
 
 ```{=latex}
@@ -998,7 +1106,22 @@ Possible stakeholder choices:
 \endgroup
 ```
 
-Compare `applicant_outcome` with each thresholded prediction. A match or error for one applicant is only one observation and cannot establish general model quality; use test-set metrics and broader validation.
+```{r}
+#| label: wrap-up-solution
+tibble(
+  model = c("Logistic regression", "Decision tree", "Random forest"),
+  default_probability = c(
+    predict_default_probability(logistic_fit, applicant),
+    predict_default_probability(tree_fit, applicant),
+    predict_default_probability(rf_fit, applicant)
+  ),
+  predicted_class = if_else(default_probability >= 0.5, "default", "no_default"),
+  actual_outcome = as.character(applicant_outcome)
+) |>
+  mutate(correct = predicted_class == actual_outcome)
+```
+
+All three models predict `default` in the reference run (the random forest only just, at about 0.50), so they are either all right or all wrong, as shown in the `correct` column. Either way, one case proves little. This applicant was chosen because the forest's probability is near 0.5, so the outcome is close to a coin flip by construction: a miss would not show the model is bad, and a hit would not show it is good. Model quality has to be judged with test-set metrics (such as the AUC from Task 1.3), calibration, the costs of the different error types and, ideally, cross-validation.
 
 Regulation, contestability, and governance may require auditable explanations, review and appeal routes, documented limitations, and monitoring.
 
