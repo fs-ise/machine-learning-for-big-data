@@ -13,6 +13,7 @@ title: "Feedback"
 - Replace Google Forms with Canvas Quizzes for feedback.
 - Create Cheatsheet together to condense and clarify knowledge
 - Explicitly solve exercises together
+- Anounce that presentation times are approximate. Be prepared to present early/any time in your assigned session.
 
 Regression
 
