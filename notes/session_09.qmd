@@ -75,6 +75,11 @@ Connect these functions to the deployment questions: Who is affected? What decis
 
 The slides retain the source treatment of GDPR Articles 15 and 22 and EU AI Act Articles 27 and 86. Present these as regulatory context for meaningful information, intervention, contestability, transparency, oversight, logging, and fundamental-rights assessment—not as legal advice. The article-specific claims and implementation timelines are time-sensitive and should receive a later substantive/legal review rather than being expanded during this migration.
 
+## Outlook
+
+- What remains?: question for all
+- Who will retain expertise of ML? (e.g., digital sovereignty + open source (ML libraries) -> consider in discussions with system providers)
+
 ## Exercise facilitation
 
 motivate dalex as an emerging package:
