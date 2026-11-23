@@ -152,7 +152,7 @@ quarto render your-analysis.qmd --to pdf
 Rendering must execute the R code (do not disable execution or rely on stale results).
 -->
 
-::: {.callout-tip title="Individual contributions"}
+::: {.callout-tip title="Statement of individual contributions"}
 
 Each student should be the primary author of approximately three pages of report text.
 The remaining material may be written jointly or developed collaboratively.
